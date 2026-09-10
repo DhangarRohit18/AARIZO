@@ -44,6 +44,10 @@ class _InsideCommunityScreenState extends State<InsideCommunityScreen> {
       backgroundColor: AppColors.appBackground,
       appBar: AppBar(
         title: const Text('Active Inside Community Registry'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
           IconButton(
             onPressed: _refreshList,

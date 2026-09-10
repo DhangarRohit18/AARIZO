@@ -115,7 +115,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('COMMUNITYOS GUARD GATE TERMINAL'), findsOneWidget);
+    expect(find.text('Guard Gate Terminal'), findsOneWidget);
     expect(find.text('Officer R. Singh'), findsWidgets);
     expect(find.text('Dashboard'), findsOneWidget);
     expect(find.text('Verify Pass'), findsOneWidget);

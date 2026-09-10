@@ -170,43 +170,80 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                       ),
                     ),
 
-                    // Center 3D Hero Illustration with Glow & Float Animation
+                    // Center Human-Designed Glassmorphic Hero Badge with Concentric Breathing Rings
                     AnimatedBuilder(
-                      animation: _floatAnimation,
+                      animation: _pulseController,
                       builder: (context, child) {
-                        return Transform.translate(
-                          offset: Offset(0, _floatAnimation.value),
-                          child: child,
-                        );
-                      },
-                      child: Container(
-                        height: 240,
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.brandBlue.withAlpha(25),
-                              blurRadius: 32,
-                              offset: const Offset(0, 16),
+                        return Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Outer ambient glowing ring 2
+                            Transform.scale(
+                              scale: 1.0 + (_pulseController.value * 0.15),
+                              child: Container(
+                                width: 220,
+                                height: 220,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColors.brandBlue.withAlpha((25 * (1.0 - _pulseController.value)).toInt()),
+                                ),
+                              ),
+                            ),
+                            // Outer ambient glowing ring 1
+                            Transform.scale(
+                              scale: 1.0 + (_pulseController.value * 0.08),
+                              child: Container(
+                                width: 180,
+                                height: 180,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColors.brandBlue.withAlpha((45 * (1.0 - _pulseController.value)).toInt()),
+                                ),
+                              ),
+                            ),
+                            // Main Glassmorphic Emblem Card
+                            Transform.translate(
+                              offset: Offset(0, _floatAnimation.value),
+                              child: Container(
+                                width: 140,
+                                height: 140,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFF2563EB),
+                                      Color(0xFF1D4ED8),
+                                      Color(0xFF0F172A),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(36),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.brandBlue.withAlpha(80),
+                                      blurRadius: 28,
+                                      offset: const Offset(0, 14),
+                                    ),
+                                  ],
+                                  border: Border.all(
+                                    color: Colors.white.withAlpha(100),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(34),
+                                  child: Image.asset(
+                                    'assets/images/app_logo.png',
+                                    width: 140,
+                                    height: 140,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(24),
-                          child: Image.asset(
-                            'assets/images/splash_hero.png',
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: AppColors.brandBlue,
-                                child: const Icon(Icons.apartment_rounded, size: 80, color: Colors.white),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
 
                     // Brand Title & Tagline

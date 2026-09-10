@@ -100,6 +100,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         backgroundColor: AppColors.primaryDarkNavy,
         foregroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
           if (unreadCount > 0)
             TextButton.icon(

@@ -6,7 +6,6 @@ import '../../../../core/theme/app_typography.dart';
 import '../committee/committee_roster_screen.dart';
 import '../finances/issue_bill_modal.dart';
 import '../notices/create_notice_modal.dart';
-import '../notifications/secretary_notifications_screen.dart';
 
 class SecretaryHomeTab extends StatefulWidget {
   final Function(int)? onNavigateToTab;
@@ -23,674 +22,413 @@ class SecretaryHomeTab extends StatefulWidget {
 class _SecretaryHomeTabState extends State<SecretaryHomeTab> {
   @override
   Widget build(BuildContext context) {
-    final unreadNotifs = SecretaryRepository.getNotifications().where((n) => !n.isRead).length;
     final notices = SecretaryRepository.getNotices();
     final publishedNotices = notices.where((n) => n.status.toLowerCase() == 'published').toList();
-    final pendingKycCount = SecretaryRepository.getResidents()
-        .where((r) => r.status.toLowerCase().contains('pending'))
-        .length;
 
-    return Scaffold(
-      backgroundColor: AppColors.appBackground,
-      body: CustomScrollView(
-        slivers: [
-          // Custom Header Sliver
-          SliverToBoxAdapter(
-            child: Container(
-              color: AppColors.primaryDarkNavy,
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.xl + 12,
-                AppSpacing.lg,
-                AppSpacing.xl,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: AppColors.brandBlue,
-                                borderRadius: BorderRadius.circular(22),
-                                border: Border.all(color: Colors.white24, width: 2),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  'MU',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Mayuri Udar',
-                                    style: AppTypography.titleLarge.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.brandBlue.withAlpha(76),
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                        child: const Text(
-                                          'Managing Secretary',
-                                          style: TextStyle(
-                                            color: Colors.white70,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      const Expanded(
-                                        child: Text(
-                                          '• Green Valley Society',
-                                          style: TextStyle(
-                                            color: Colors.white60,
-                                            fontSize: 11,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.people_outline, color: Colors.white),
-                            tooltip: 'Committee Roster',
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const CommitteeRosterScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          Stack(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.notifications_none_rounded, color: Colors.white),
-                                tooltip: 'Notifications',
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const SecretaryNotificationsScreen(),
-                                    ),
-                                  ).then((_) => setState(() {}));
-                                },
-                              ),
-                              if (unreadNotifs > 0)
-                                Positioned(
-                                  right: 8,
-                                  top: 8,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.crimsonDanger,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 16,
-                                      minHeight: 16,
-                                    ),
-                                    child: Text(
-                                      '$unreadNotifs',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. Greeting Card (Matching Screenshot 1)
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0F7FF),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-          ),
-
-          // Main Body
-          SliverPadding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                // Greeting Card (Matching secretary-home.png)
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.skyBlueInfoBg,
-                    borderRadius: AppRadius.borderLg,
-                    border: Border.all(color: AppColors.skyBlueInfo.withAlpha(76)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Good Morning, Secretary 👋',
-                              style: AppTypography.titleMedium.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primaryDarkNavy,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Here\'s what\'s happening in your society today.',
-                              style: AppTypography.caption.copyWith(color: AppColors.textMuted),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.brandBlue),
-                          const SizedBox(height: 2),
-                          Text(
-                            '10 Sept 2026\nThursday',
-                            style: AppTypography.caption.copyWith(
-                              color: AppColors.primaryDarkNavy,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 10,
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: AppSpacing.md),
-
-                // Today's Announcements Summary Card (Matching secretary-home.png)
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: AppRadius.borderLg,
-                    border: Border.all(color: AppColors.borderSubtle),
-                    boxShadow: AppShadows.cardShadow,
-                  ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.skyBlueInfoBg,
-                                    borderRadius: AppRadius.borderSm,
-                                  ),
-                                  child: const Icon(Icons.campaign_rounded, size: 18, color: AppColors.brandBlue),
-                                ),
-                                const SizedBox(width: AppSpacing.xs),
-                                Expanded(
-                                  child: Text(
-                                    'Today\'s Announcements',
-                                    style: AppTypography.bodyMedium.copyWith(fontWeight: FontWeight.bold),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          Row(
-                            children: [
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.transparent,
-                                    builder: (context) => CreateNoticeModal(
-                                      onUpdated: () => setState(() {}),
-                                    ),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.brandBlue,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  minimumSize: const Size(0, 32),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                ),
-                                icon: const Icon(Icons.add, size: 14, color: Colors.white),
-                                label: const Text('New', style: TextStyle(fontSize: 11, color: Colors.white)),
-                              ),
-                              const SizedBox(width: 4),
-                              OutlinedButton.icon(
-                                onPressed: () {
-                                  if (widget.onNavigateToTab != null) {
-                                    widget.onNavigateToTab!(2);
-                                  }
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  minimumSize: const Size(0, 32),
-                                  side: const BorderSide(color: AppColors.borderSubtle),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                ),
-                                icon: const Icon(Icons.list_alt_rounded, size: 14, color: AppColors.primaryDarkNavy),
-                                label: const Text('All', style: TextStyle(fontSize: 11, color: AppColors.primaryDarkNavy)),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
                       Text(
-                        publishedNotices.isNotEmpty
-                            ? '${publishedNotices.length} active announcements broadcasted to Green Valley residents.'
-                            : 'No announcements for today.',
-                        style: AppTypography.caption.copyWith(color: AppColors.textMuted),
+                        'Good Morning, Secretary 👋',
+                        style: AppTypography.titleMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryDarkNavy,
+                          fontSize: 16,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Here\'s what\'s happening in your society today.',
+                        style: AppTypography.caption.copyWith(
+                          color: AppColors.textMuted,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
                 ),
-
-                const SizedBox(height: AppSpacing.lg),
-
-                // Metrics Overview Header
-                Text(
-                  'Society Metrics Overview',
-                  style: AppTypography.titleMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-
-                // 4 Metric Cards Grid (2x2)
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: AppSpacing.md,
-                  mainAxisSpacing: AppSpacing.md,
-                  childAspectRatio: 1.5,
-                  children: [
-                    _buildMetricCard(
-                      title: 'Total Residents',
-                      value: '${SecretaryRepository.getResidents().length + 138}',
-                      subtext: '12 Wing Blocks',
-                      icon: Icons.groups_rounded,
-                      color: AppColors.brandBlue,
-                    ),
-                    _buildMetricCard(
-                      title: 'Pending KYC',
-                      value: '$pendingKycCount',
-                      subtext: 'Action Required',
-                      icon: Icons.assignment_ind_rounded,
-                      color: AppColors.amberWarning,
-                      onTap: () {
-                        if (widget.onNavigateToTab != null) {
-                          widget.onNavigateToTab!(1); // Residents tab
-                        }
-                      },
-                    ),
-                    _buildMetricCard(
-                      title: 'Open Tickets',
-                      value: '5',
-                      subtext: '2 High Priority',
-                      icon: Icons.confirmation_number_rounded,
-                      color: AppColors.skyBlueInfo,
-                    ),
-                    _buildMetricCard(
-                      title: 'Dues Collection',
-                      value: '84.5%',
-                      subtext: '₹5.4K Outstanding',
-                      icon: Icons.account_balance_wallet_rounded,
-                      color: AppColors.emeraldSuccess,
-                      onTap: () {
-                        if (widget.onNavigateToTab != null) {
-                          widget.onNavigateToTab!(3); // Finances tab
-                        }
-                      },
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                // Quick Administrative Actions
-                Text(
-                  'Quick Administrative Actions',
-                  style: AppTypography.titleMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-
+                const SizedBox(width: AppSpacing.sm),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: _buildQuickActionButton(
-                        icon: Icons.person_add_rounded,
-                        label: 'Add / Verify',
-                        color: AppColors.brandBlue,
-                        onTap: () {
-                          if (widget.onNavigateToTab != null) {
-                            widget.onNavigateToTab!(1); // Residents tab
-                          }
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: _buildQuickActionButton(
-                        icon: Icons.campaign_rounded,
-                        label: 'Broadcast',
-                        color: AppColors.emeraldSuccess,
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) => CreateNoticeModal(
-                              onUpdated: () => setState(() {}),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildQuickActionButton(
-                        icon: Icons.fact_check_rounded,
-                        label: 'Review KYC',
-                        color: AppColors.amberWarning,
-                        onTap: () {
-                          if (widget.onNavigateToTab != null) {
-                            widget.onNavigateToTab!(1); // Residents tab
-                          }
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: _buildQuickActionButton(
-                        icon: Icons.receipt_long_rounded,
-                        label: 'Issue Bill',
-                        color: const Color(0xFF8B5CF6),
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) => IssueBillModal(
-                              onUpdated: () => setState(() {}),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                // Recent Announcements Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Recent Announcements',
-                      style: AppTypography.titleMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        if (widget.onNavigateToTab != null) {
-                          widget.onNavigateToTab!(2); // Notices tab
-                        }
-                      },
-                      child: Text(
-                        'View All (${publishedNotices.length})',
-                        style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.brandBlue,
-                          fontWeight: FontWeight.w600,
+                    const Icon(Icons.calendar_month_outlined, size: 16, color: AppColors.primaryDarkNavy),
+                    const SizedBox(width: 4),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '07 Sept 2026',
+                          style: AppTypography.caption.copyWith(
+                            color: AppColors.primaryDarkNavy,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
                         ),
-                      ),
+                        Text(
+                          'Monday',
+                          style: AppTypography.caption.copyWith(
+                            color: AppColors.textMuted,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.xs),
-
-                // Announcements Feed List
-                ...publishedNotices.take(3).map((notice) => Container(
-                      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-                      padding: const EdgeInsets.all(AppSpacing.md),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: AppRadius.borderMd,
-                        border: Border.all(color: AppColors.borderSubtle),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: notice.priority.toLowerCase() == 'urgent' || notice.priority.toLowerCase() == 'high'
-                                      ? AppColors.crimsonDangerBg
-                                      : notice.priority.toLowerCase() == 'important' || notice.priority.toLowerCase() == 'medium'
-                                          ? AppColors.amberWarningBg
-                                          : AppColors.skyBlueInfoBg,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  notice.priority.toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: notice.priority.toLowerCase() == 'urgent' || notice.priority.toLowerCase() == 'high'
-                                        ? AppColors.crimsonDanger
-                                        : notice.priority.toLowerCase() == 'important' || notice.priority.toLowerCase() == 'medium'
-                                            ? AppColors.amberWarning
-                                            : AppColors.skyBlueInfo,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                notice.publishedAt,
-                                style: AppTypography.caption.copyWith(color: AppColors.textSubtle),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: AppSpacing.xs),
-                          Text(
-                            notice.title,
-                            style: AppTypography.bodyMedium.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            notice.content,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          Row(
-                            children: [
-                              const Icon(Icons.people_outline, size: 14, color: AppColors.textSubtle),
-                              const SizedBox(width: 4),
-                              Text(
-                                notice.targetAudience,
-                                style: AppTypography.caption.copyWith(color: AppColors.textSubtle),
-                              ),
-                              const Spacer(),
-                              const Icon(Icons.check_circle_outline, size: 14, color: AppColors.emeraldSuccess),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${notice.acknowledgmentCount} Acked',
-                                style: AppTypography.caption.copyWith(
-                                  color: AppColors.emeraldSuccess,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )),
-              ]),
+              ],
             ),
           ),
+
+          const SizedBox(height: AppSpacing.md),
+
+          // 2. Today's Announcements Card (Matching Screenshot 1)
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0F7FF),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  right: -10,
+                  bottom: -10,
+                  child: Icon(
+                    Icons.campaign_outlined,
+                    size: 80,
+                    color: AppColors.brandBlue.withAlpha(20),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: AppColors.brandBlue.withAlpha(25),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.campaign_rounded, size: 18, color: AppColors.brandBlue),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Today\'s Announcements',
+                          style: AppTypography.bodyMedium.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryDarkNavy,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      publishedNotices.isNotEmpty
+                          ? '${publishedNotices.length} active announcements broadcasted to residents.'
+                          : 'No announcements for today.',
+                      style: AppTypography.caption.copyWith(color: AppColors.textMuted),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        // + New Button
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => CreateNoticeModal(
+                                onUpdated: () => setState(() {}),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryDarkNavy,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            minimumSize: const Size(0, 32),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            elevation: 0,
+                          ),
+                          icon: const Icon(Icons.add_circle_outline, size: 14, color: Colors.white),
+                          label: const Text('New', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        ),
+                        const SizedBox(width: 8),
+                        // ≡ All Button
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            if (widget.onNavigateToTab != null) {
+                              widget.onNavigateToTab!(2); // Notices tab
+                            }
+                          },
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white.withAlpha(180),
+                            foregroundColor: AppColors.primaryDarkNavy,
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            minimumSize: const Size(0, 32),
+                            side: const BorderSide(color: Color(0xFFCBD5E1)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          icon: const Icon(Icons.format_list_bulleted_rounded, size: 14, color: AppColors.primaryDarkNavy),
+                          label: const Text('All', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: AppSpacing.xl),
+
+          // 3. Quick Actions Section (Matching Screenshot 1 Grid)
+          Text(
+            'Quick Actions',
+            style: AppTypography.titleMedium.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryDarkNavy,
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+
+          GridView.count(
+            crossAxisCount: 3,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 1.0,
+            children: [
+              _buildQuickActionTile(
+                icon: Icons.apartment_outlined,
+                label: 'Residents',
+                onTap: () {
+                  if (widget.onNavigateToTab != null) {
+                    widget.onNavigateToTab!(1); // Residents tab
+                  }
+                },
+              ),
+              _buildQuickActionTile(
+                icon: Icons.assignment_outlined,
+                label: 'Complaints',
+                onTap: () {
+                  if (widget.onNavigateToTab != null) {
+                    widget.onNavigateToTab!(2); // Notices / Complaints
+                  }
+                },
+              ),
+              _buildQuickActionTile(
+                icon: Icons.build_outlined,
+                label: 'Maintenance',
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => IssueBillModal(onUpdated: () => setState(() {})),
+                  );
+                },
+              ),
+              _buildQuickActionTile(
+                icon: Icons.grid_view_rounded,
+                label: 'Amenities',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Clubhouse & Amenities Reservation Management')),
+                  );
+                },
+              ),
+              _buildQuickActionTile(
+                icon: Icons.support_agent_outlined,
+                label: 'Staff',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Society Guards & Housekeeping Staff Roster')),
+                  );
+                },
+              ),
+              _buildQuickActionTile(
+                icon: Icons.event_note_outlined,
+                label: 'Events',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const CommitteeRosterScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          const SizedBox(height: AppSpacing.xl),
+
+          // 4. Recent Activity Section (Matching Screenshot 1)
+          Text(
+            'Recent Activity',
+            style: AppTypography.titleMedium.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryDarkNavy,
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: AppShadows.cardShadow,
+            ),
+            child: Column(
+              children: [
+                _buildActivityTile(
+                  icon: Icons.person_outline_rounded,
+                  iconColor: AppColors.emeraldSuccess,
+                  iconBg: AppColors.emeraldSuccessBg,
+                  title: 'Visitor approved for A-204',
+                  subtitle: '5 mins ago',
+                ),
+                const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                _buildActivityTile(
+                  icon: Icons.build_outlined,
+                  iconColor: AppColors.brandBlue,
+                  iconBg: AppColors.skyBlueInfoBg,
+                  title: 'Maintenance paid by B-302',
+                  subtitle: '20 mins ago',
+                ),
+                const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                _buildActivityTile(
+                  icon: Icons.notifications_none_rounded,
+                  iconColor: AppColors.amberWarning,
+                  iconBg: AppColors.amberWarningBg,
+                  title: 'New Helpdesk ticket TK-4029 raised',
+                  subtitle: '1 hour ago',
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 80), // Padding above floating nav bar
         ],
       ),
     );
   }
 
-  Widget _buildMetricCard({
-    required String title,
-    required String value,
-    required String subtext,
+  Widget _buildQuickActionTile({
     required IconData icon,
-    required Color color,
-    VoidCallback? onTap,
+    required String label,
+    required VoidCallback onTap,
   }) {
-    return Card(
-      elevation: 0,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.borderMd,
-        side: const BorderSide(color: AppColors.borderSubtle),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(6),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: AppRadius.borderMd,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    title,
-                    style: AppTypography.caption.copyWith(
-                      color: AppColors.textMuted,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Icon(icon, size: 18, color: color),
-                ],
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
               ),
-              Text(
-                value,
-                style: AppTypography.displayHeading.copyWith(
-                  fontSize: 22,
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Icon(icon, size: 24, color: AppColors.primaryDarkNavy),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: AppTypography.caption.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryDarkNavy,
+                fontSize: 12,
               ),
-              Text(
-                subtext,
-                style: AppTypography.caption.copyWith(
-                  color: AppColors.textSubtle,
-                  fontSize: 11,
-                ),
-              ),
-            ],
-          ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildQuickActionButton({
+  Widget _buildActivityTile({
     required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
+    required Color iconColor,
+    required Color iconBg,
+    required String title,
+    required String subtitle,
   }) {
-    return ElevatedButton(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: AppColors.textPrimary,
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppSpacing.sm),
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.borderMd,
-          side: const BorderSide(color: AppColors.borderSubtle),
-        ),
-        minimumSize: const Size(0, 52),
-      ),
+    return Padding(
+      padding: const EdgeInsets.all(14),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 20, color: color),
-          const SizedBox(width: AppSpacing.xs),
-          Flexible(
-            child: Text(
-              label,
-              style: AppTypography.bodySmall.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-              overflow: TextOverflow.ellipsis,
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: iconBg,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 20, color: iconColor),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: AppTypography.bodyMedium.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryDarkNavy,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.textMuted,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -698,3 +436,4 @@ class _SecretaryHomeTabState extends State<SecretaryHomeTab> {
     );
   }
 }
+

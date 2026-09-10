@@ -68,6 +68,10 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: AppColors.appBackground,
       appBar: AppBar(
         title: Text(isResident ? 'Resident Login' : 'Guard Terminal Entry'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SafeArea(
         child: Padding(

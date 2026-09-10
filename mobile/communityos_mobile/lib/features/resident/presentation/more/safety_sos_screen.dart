@@ -75,6 +75,10 @@ class _SafetySosScreenState extends State<SafetySosScreen> {
         backgroundColor: AppColors.primaryDarkNavy,
         foregroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.lg),

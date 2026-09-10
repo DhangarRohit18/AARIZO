@@ -79,6 +79,10 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
         backgroundColor: AppColors.primaryDarkNavy,
         foregroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
           IconButton(
             onPressed: _openCreateTicket,
@@ -231,9 +235,12 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
                               children: [
                                 const Icon(Icons.engineering_rounded, size: 16, color: AppColors.secondarySlate),
                                 const SizedBox(width: AppSpacing.xs),
-                                Text(
-                                  'Assigned to: ${ticket.assignedStaffName} (${ticket.assignedStaffRole})',
-                                  style: AppTypography.caption.copyWith(fontWeight: FontWeight.w600, color: AppColors.primarySlate),
+                                Expanded(
+                                  child: Text(
+                                    'Assigned to: ${ticket.assignedStaffName} (${ticket.assignedStaffRole})',
+                                    style: AppTypography.caption.copyWith(fontWeight: FontWeight.w600, color: AppColors.primarySlate),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),

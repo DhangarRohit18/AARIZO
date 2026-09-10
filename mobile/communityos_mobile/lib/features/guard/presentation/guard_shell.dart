@@ -83,37 +83,43 @@ class _GuardShellState extends State<GuardShell> {
 
     return Scaffold(
       backgroundColor: AppColors.appBackground,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(48),
-        child: AppBar(
-          backgroundColor: AppColors.primaryDarkNavy,
-          elevation: 0,
-          title: Row(
-            children: [
-              const Icon(Icons.shield_rounded, color: AppColors.amberWarning, size: 20),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'COMMUNITYOS GUARD GATE TERMINAL',
-                  style: AppTypography.caption.copyWith(
-                    color: Colors.white,
-                    letterSpacing: 1.0,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 12,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryDarkNavy,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          tooltip: 'Exit Terminal / Switch Role',
+          onPressed: _onLogout,
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Guard Gate Terminal',
+              style: AppTypography.titleMedium.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
               ),
-            ],
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.swap_horiz_rounded, color: Colors.white),
-              tooltip: 'Switch Role / Exit Terminal',
-              onPressed: _onLogout,
+            ),
+            Text(
+              'Officer R. Singh • Main Gate #1',
+              style: AppTypography.caption.copyWith(
+                color: AppColors.amberWarning,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.swap_horiz_rounded, color: Colors.white),
+            tooltip: 'Switch Role',
+            onPressed: _onLogout,
+          ),
+        ],
       ),
       body: SafeArea(
         child: AnimatedSwitcher(

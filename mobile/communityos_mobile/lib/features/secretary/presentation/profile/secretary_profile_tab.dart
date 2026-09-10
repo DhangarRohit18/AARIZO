@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/repositories/repositories.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -52,232 +51,309 @@ class SecretaryProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final residentsCount = SecretaryRepository.getResidents().length + 138;
-    final committeeCount = SecretaryRepository.getCommittee().length;
-
-    return Scaffold(
-      backgroundColor: AppColors.appBackground,
-      appBar: AppBar(
-        title: const Text('Secretary Profile & Society Info'),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Identity & Avatar Header Card (Matching secretary-profile.png.jpeg)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(AppSpacing.xl),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: AppRadius.borderLg,
-                  border: Border.all(color: AppColors.borderSubtle),
-                  boxShadow: AppShadows.cardShadow,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. Sub-Header Banner (Matching Screenshot 2)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            color: const Color(0xFFEBF5FF),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFDBEAFE),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.arrow_back_rounded, color: AppColors.primaryDarkNavy, size: 20),
                 ),
-                child: Column(
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: 80,
-                          height: 80,
-                          decoration: const BoxDecoration(
-                            color: AppColors.primaryDarkNavy,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              'MU',
-                              style: AppTypography.displayHeading.copyWith(color: Colors.white, fontSize: 28),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.md),
                     Text(
-                      SecretaryRepository.secretaryName,
-                      style: AppTypography.titleLarge.copyWith(fontSize: 22, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.emeraldSuccessBg,
-                        borderRadius: AppRadius.borderFull,
-                        border: Border.all(color: AppColors.emeraldSuccess.withAlpha(76)),
+                      'Profile',
+                      style: AppTypography.titleLarge.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryDarkNavy,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    ),
+                    const Text(
+                      'Green Valley Society',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textMuted,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 2. Profile Details Card (Matching Screenshot 2)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    boxShadow: AppShadows.cardShadow,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.verified_user_rounded, size: 14, color: AppColors.emeraldSuccess),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Secretary',
-                            style: AppTypography.caption.copyWith(
-                              color: AppColors.emeraldSuccess,
-                              fontWeight: FontWeight.bold,
+                          Row(
+                            children: [
+                              Container(
+                                width: 68,
+                                height: 68,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primaryDarkNavy,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'MU',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Mayuri Udar',
+                                    style: AppTypography.titleLarge.copyWith(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primaryDarkNavy,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFDCFCE7),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: const [
+                                        Icon(Icons.verified_user_rounded, size: 12, color: Color(0xFF15803D)),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'Secretary',
+                                          style: TextStyle(
+                                            color: Color(0xFF15803D),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: const BoxDecoration(
+                              color: AppColors.primaryDarkNavy,
+                              shape: BoxShape.circle,
                             ),
+                            child: const Icon(Icons.edit_outlined, color: Colors.white, size: 18),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    const Divider(height: 1, color: AppColors.borderSubtle),
-                    const SizedBox(height: AppSpacing.md),
 
-                    // Information Rows with Round Icons
-                    const _InfoRow(icon: Icons.phone_outlined, label: 'Phone Number', value: '+91 98200 12345'),
-                    const SizedBox(height: AppSpacing.md),
-                    const _InfoRow(icon: Icons.email_outlined, label: 'Email', value: 'mayuri@greenvalleysociety.org'),
-                    const SizedBox(height: AppSpacing.md),
-                    const _InfoRow(icon: Icons.apartment_rounded, label: 'Society', value: 'Green Valley Society'),
-                    const SizedBox(height: AppSpacing.md),
-                    const _InfoRow(icon: Icons.location_on_outlined, label: 'Location', value: 'Navi Mumbai, India'),
-                    const SizedBox(height: AppSpacing.md),
-                    const _InfoRow(icon: Icons.check_circle_outline_rounded, label: 'Status', value: 'ACTIVE', valueColor: AppColors.emeraldSuccess),
+                      const SizedBox(height: 20),
+                      const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                      const SizedBox(height: 16),
+
+                      // Info Rows
+                      const _ProfileInfoRow(icon: Icons.phone_outlined, label: 'Phone Number', value: '9876543210'),
+                      const SizedBox(height: 14),
+                      const _ProfileInfoRow(icon: Icons.email_outlined, label: 'Email', value: 'mayuri@gmail.com'),
+                      const SizedBox(height: 14),
+                      const _ProfileInfoRow(icon: Icons.apartment_rounded, label: 'Society', value: 'Green Valley Society'),
+                      const SizedBox(height: 14),
+                      const _ProfileInfoRow(icon: Icons.location_on_outlined, label: 'Location', value: 'Navi Mumbai, India'),
+                      const SizedBox(height: 14),
+                      const _ProfileInfoRow(
+                        icon: Icons.person_outline_rounded,
+                        label: 'Status',
+                        value: 'ACTIVE',
+                        valueColor: Color(0xFF15803D),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // 3. Statistics 4-Grid (Matching Screenshot 2)
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildMetricCard(
+                        icon: Icons.home_outlined,
+                        value: '4',
+                        label: 'Total Flats',
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildMetricCard(
+                        icon: Icons.people_outline_rounded,
+                        value: '520',
+                        label: 'Residents',
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildMetricCard(
+                        icon: Icons.error_outline_rounded,
+                        value: '7',
+                        label: 'Open Issues',
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildMetricCard(
+                        icon: Icons.account_circle_outlined,
+                        value: '13',
+                        label: 'Staff',
+                      ),
+                    ),
                   ],
                 ),
-              ),
 
-              const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: 16),
 
-              // 4 Prototype Metric Summary Chips (Matching reference grid structure)
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildMetricChip(
-                      icon: Icons.home_work_outlined,
-                      value: '4',
-                      label: 'Blocks',
-                      color: AppColors.brandBlue,
-                    ),
+                // 4. Committee Members Card (Matching Screenshot 2)
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
                   ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Expanded(
-                    child: _buildMetricChip(
-                      icon: Icons.groups_outlined,
-                      value: '$residentsCount',
-                      label: 'Residents',
-                      color: AppColors.emeraldSuccess,
+                  child: ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0F7FF),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.people_alt_rounded, color: AppColors.primaryDarkNavy, size: 22),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Expanded(
-                    child: _buildMetricChip(
-                      icon: Icons.error_outline_rounded,
-                      value: '5',
-                      label: 'Open Issues',
-                      color: AppColors.amberWarning,
+                    title: const Text(
+                      'Committee Members',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryDarkNavy, fontSize: 15),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Expanded(
-                    child: _buildMetricChip(
-                      icon: Icons.badge_outlined,
-                      value: '$committeeCount',
-                      label: 'Committee',
-                      color: AppColors.skyBlueInfo,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: AppSpacing.lg),
-
-              // Committee Members Shortcut Card
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: AppRadius.borderLg,
-                  border: Border.all(color: AppColors.borderSubtle),
-                ),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.skyBlueInfoBg,
-                      borderRadius: AppRadius.borderMd,
-                    ),
-                    child: const Icon(Icons.people_alt_rounded, color: AppColors.brandBlue, size: 20),
-                  ),
-                  title: const Text('Committee Members', style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('$committeeCount Elected Officers • Term 2025–2027', style: const TextStyle(fontSize: 12)),
-                  trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.secondarySlate),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const CommitteeRosterScreen()),
-                    );
-                  },
-                ),
-              ),
-
-              const SizedBox(height: AppSpacing.xl),
-
-              // Account & Role Switch Action Buttons
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: OutlinedButton.icon(
-                  onPressed: () => _onSwitchRole(context),
-                  icon: const Icon(Icons.swap_horiz_rounded, color: AppColors.brandBlue),
-                  label: const Text('Switch to Resident View (Sarvesh)'),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.brandBlue),
-                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.borderLg),
+                    trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFF94A3B8)),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const CommitteeRosterScreen()),
+                      );
+                    },
                   ),
                 ),
-              ),
 
-              const SizedBox(height: AppSpacing.md),
+                const SizedBox(height: 24),
 
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton.icon(
-                  onPressed: () => _onLogout(context),
-                  icon: const Icon(Icons.logout_rounded, color: Colors.white),
-                  label: const Text('Log Out of Secretary Portal'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.crimsonDanger,
-                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.borderLg),
+                // Switch Role & Logout Buttons
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _onSwitchRole(context),
+                    icon: const Icon(Icons.swap_horiz_rounded, color: AppColors.brandBlue),
+                    label: const Text('Switch to Resident View (Sarvesh)'),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.brandBlue),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _onLogout(context),
+                    icon: const Icon(Icons.logout_rounded, color: Colors.white),
+                    label: const Text('Log Out of Secretary Portal'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.crimsonDanger,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 80), // Bottom padding for FAB
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildMetricChip({
+  Widget _buildMetricCard({
     required IconData icon,
     required String value,
     required String label,
-    required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: AppRadius.borderMd,
-        border: Border.all(color: AppColors.borderSubtle),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Column(
         children: [
-          Icon(icon, size: 20, color: color),
-          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Icon(icon, size: 18, color: AppColors.primaryDarkNavy),
+          ),
+          const SizedBox(height: 6),
           Text(
             value,
-            style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.primaryDarkNavy),
           ),
+          const SizedBox(height: 2),
           Text(
             label,
-            style: AppTypography.caption.copyWith(color: AppColors.textMuted, fontSize: 10),
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 10, fontWeight: FontWeight.w500),
             textAlign: TextAlign.center,
           ),
         ],
@@ -286,13 +362,13 @@ class SecretaryProfileTab extends StatelessWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
+class _ProfileInfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
   final Color? valueColor;
 
-  const _InfoRow({
+  const _ProfileInfoRow({
     required this.icon,
     required this.label,
     required this.value,
@@ -307,26 +383,28 @@ class _InfoRow extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: AppColors.surfaceSubtle,
-            borderRadius: AppRadius.borderMd,
+            color: const Color(0xFFF0F7FF),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, size: 18, color: AppColors.secondarySlate),
+          child: Icon(icon, size: 18, color: AppColors.primaryDarkNavy),
         ),
-        const SizedBox(width: AppSpacing.md),
+        const SizedBox(width: 14),
         Expanded(
           child: Text(
             label,
-            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 13, fontWeight: FontWeight.w500),
           ),
         ),
         Text(
           value,
-          style: AppTypography.bodySmall.copyWith(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: valueColor ?? AppColors.textPrimary,
+            fontSize: 13,
+            color: valueColor ?? AppColors.primaryDarkNavy,
           ),
         ),
       ],
     );
   }
 }
+

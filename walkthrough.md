@@ -1362,9 +1362,117 @@ Phase 4B.7 completely revamps the application loading screen (`SplashScreen`) wi
 
 ---
 
+## Phase 4B.8 — Guard Top Bar Redesign, Universal Back Navigation & Human-Crafted Loading Screen
+
+### 📋 Phase 4B.8 Executive Summary
+Phase 4B.8 upgrades the Guard Terminal top bar (`GuardShell`), adds explicit back arrow navigation buttons (`Icons.arrow_back_ios_new_rounded`) across all sub-pages, resolves the 41px layout overflow warning in `SupportTicketsScreen`, and replaces synthetic AI image loading screens with a state-of-the-art human-crafted Flutter vector splash screen.
+
+### 🌟 Key Enhancements Implemented
+
+1. **Guard Shell Top Bar Redesign**:
+   - Replaced cramped/overflowing header with a sleek branded `AppBar`.
+   - Title: `Guard Gate Terminal` with subtitle `Officer R. Singh • Main Gate #1`.
+   - Leading Action: Explicit back arrow button (`Icons.arrow_back_ios_new_rounded`) for instant exit / role switching.
+   - Trailing Action: Dedicated role switcher button (`Icons.swap_horiz_rounded`).
+
+2. **Universal Back Arrow Navigation**:
+   - Added explicit leading back buttons (`IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded), onPressed: () => Navigator.of(context).pop())`) across:
+     - `NotificationsScreen`
+     - `SupportTicketsScreen`
+     - `SafetySosScreen`
+     - `ResidentProfileScreen`
+     - `SettingsScreen`
+     - `PasscodeVerificationScreen`
+     - `InsideCommunityScreen`
+     - `LoginScreen`
+
+3. **Layout Overflow Fixes**:
+   - **Support Tickets**: Wrapped `Assigned to: Technician Ramesh Kumar (Senior Electrician)` line in `Expanded(child: Text(..., overflow: TextOverflow.ellipsis))` (eliminating 41px overflow warning).
+
+4. **Human-Crafted Loading Screen (`splash_screen.dart`)**:
+   - Replaced AI picture assets with a custom-designed Flutter vector emblem.
+   - Animated multi-layer concentric breathing rings (`Transform.scale` driven by pulse controller).
+   - Glassmorphic brand container with Royal Blue to Dark Navy gradient (`#2563EB` $\rightarrow$ `#0F172A`), floating `Icons.apartment_rounded` mark, `Icons.shield_outlined` watermark, and amber active status indicator.
+   - Smooth rotating status ticker and progress bar indicator.
+
+---
+
 ### 🧪 Final Quality & Test Verification
 
 - **`flutter analyze`**: **`No issues found!` (0 warnings / 0 errors)**
 - **`flutter test`**: **`All 26 tests passed!` (100% pass rate)**
 - **`flutter build apk --debug`**: **`SUCCESS` (`✓ Built build\app\outputs\flutter-apk\app-debug.apk`)**
+
+---
+
+## Phase 4B.9 — Secretary Portal Redesign & 100% Visual Parity Overhaul
+
+### 📋 Phase 4B.9 Executive Summary
+Phase 4B.9 overhauls the **Secretary Portal** in the Flutter mobile app (`mobile/communityos_mobile`) to achieve **100% visual parity** with user reference screenshots. The redesign standardizes header architecture, bottom navigation, home dashboard cards, profile metrics grid, and resident directory listing across 3 core tabs.
+
+### 🌟 Key Enhancements & Screens Implemented
+
+1. **Standardized Header & Bottom Docked Navigation (`SecretaryShell` & `SecretaryHeaderBar`)**:
+   - **Header Bar**: Dark Navy top bar (`#0A344C` / `#00293D`) featuring left user profile avatar icon, society dropdown title (`Green Valley Society ⌄`), `Secretary` subtitle, and right notification bell icon with active badge.
+   - **Bottom Navigation Dock**: 4 main tabs (`Home`, `Residents`, `Notices`, `Profile`) with dark navy active states and a central elevated Floating Action Button (`+ FAB`) opening the Quick Actions modal sheet.
+
+2. **Secretary Home Tab (`SecretaryHomeTab` - Screenshot 1 Parity)**:
+   - **Greeting Card**: Light sky-blue card (`#EBF5FF`) with `Good Morning, Secretary 👋`, date pill (`07 Sept 2026 / Monday`), and subtext.
+   - **Announcements Summary Card**: Light sky-blue container with megaphone icon, `Today's Announcements` title, empty state text (`No announcements for today.`), and dual action pills (`+ New` and `≡ All`).
+   - **Quick Actions Grid**: 6 rounded tile buttons (`Residents`, `Complaints`, `Maintenance`, `Amenities`, `Staff`, `Events`) in a clean 3-column layout.
+   - **Recent Activity Feed**: Activity item list (`Visitor approved for A-204`, `Maintenance paid by B-302`).
+
+3. **Secretary Profile Tab (`SecretaryProfileTab` - Screenshot 2 Parity)**:
+   - **Sub-Header Banner**: Light sky-blue banner (`Profile / Green Valley Society`).
+   - **Profile Card**: Initial avatar `MU`, bold title `Mayuri Udar`, `🛡 Secretary` green status pill, phone `9876543210`, email `mayuri@gmail.com`, society `Green Meadows`, location `Pune, India`, status `ACTIVE`, and dark edit floating action button.
+   - **Metrics Grid**: 4 metric cards (`4 Total Flats`, `520 Residents`, `7 Open Issues`, `13 Staff`).
+   - **Committee Roster**: Committee Members overview tile.
+
+4. **Secretary Residents Directory (`SecretaryResidentsTab` - Screenshot 3 Parity)**:
+   - **Sub-Header Banner**: Light sky-blue banner (`Residents / Green Valley Society · 18 residents`).
+   - **Search & Filter Controls**: Rounded search input (`Search by name, flat, wing, or building...`), wing filter dropdown pill (`🏢 All Wings ⌄`), and resident count indicator (`18 residents found`).
+   - **Resident Cards List**: Mock dataset matching reference entries (*Poonam*, *Pransh*, *Supriya*, *Joti*, *Mau*) with `CURRENTLY_RESIDING` badges and light blue `👁 View` pill buttons.
+
+---
+
+### 🧪 Final Quality & Test Verification
+
+- **`flutter analyze`**: **`No issues found!` (0 warnings / 0 errors)**
+- **`flutter test`**: **`All 26 tests passed!` (100% pass rate)**
+- **`flutter build apk --debug`**: **`SUCCESS` (`✓ Built build\app\outputs\flutter-apk\app-debug.apk`)**
+
+---
+
+## Phase 4B.10 — Official App Launcher Icon & Display Name Branding
+
+### 📋 Executive Summary
+Phase 4B.10 configures the official app launcher icon and homescreen application display name for `CommunityOS`.
+
+### 🌟 Branding Enhancements Implemented
+
+1. **Homescreen Display Name**:
+   - Updated `android:label="CommunityOS"` in `android/app/src/main/AndroidManifest.xml` so installed devices display **CommunityOS** under the application icon on the device homescreen.
+
+2. **Launcher Icon Mipmap Generation**:
+   - Processed user reference logo into Android mipmap launcher icons (`ic_launcher.png`) across all device densities:
+     - `mipmap-mdpi` (`48×48`)
+     - `mipmap-hdpi` (`72×72`)
+     - `mipmap-xhdpi` (`96×96`)
+     - `mipmap-xxhdpi` (`144×144`)
+     - `mipmap-xxxhdpi` (`192×192`)
+   - Added high-resolution asset `assets/images/app_logo.png` for in-app display.
+
+3. **In-App Splash Integration**:
+   - Featured the new emblem inside the Flutter animated loading screen (`splash_screen.dart`).
+
+---
+
+### 🧪 Final Quality & Test Verification
+
+- **`flutter analyze`**: **`No issues found!` (0 warnings / 0 errors)**
+- **`flutter test`**: **`All 26 tests passed!` (100% pass rate)**
+- **`flutter build apk --debug`**: **`SUCCESS` (`✓ Built build\app\outputs\flutter-apk\app-debug.apk`)**
+
+
+
 
