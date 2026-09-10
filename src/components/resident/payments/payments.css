@@ -1,0 +1,534 @@
+/* Resident Payments & Dues CSS (Phase 2C) */
+
+.res-payments-container,
+.res-payment-detail-container,
+.res-receipt-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 100%;
+  padding: var(--space-3) var(--space-4);
+  box-sizing: border-box;
+}
+
+/* Header & Context */
+.res-payments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Top Summary Card */
+.res-pay-summary-card {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.res-pay-summary-card::after {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.res-summary-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.summary-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+}
+
+.summary-total {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 2px;
+  letter-spacing: -0.5px;
+}
+
+.summary-overdue-pill {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+}
+
+.res-summary-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: var(--space-3);
+}
+
+.metric-label {
+  font-size: 10px;
+  color: #94a3b8;
+  display: block;
+}
+
+.metric-val {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: #f8fafc;
+  margin-top: 1px;
+}
+
+/* Payment Card List */
+.res-payment-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.res-payment-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.res-payment-card:hover {
+  border-color: var(--color-border);
+}
+
+.res-payment-card.card-overdue {
+  border-left: 3.5px solid var(--color-danger);
+}
+
+.res-payment-card.card-due {
+  border-left: 3.5px solid var(--color-warning);
+}
+
+.res-payment-card.card-paid {
+  border-left: 3.5px solid var(--color-success);
+}
+
+.res-payment-card.card-failed {
+  border-left: 3.5px solid var(--color-danger);
+}
+
+.res-pay-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.res-cat-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-surface-subtle);
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.cat-ic {
+  color: var(--color-primary);
+}
+
+.res-pay-card-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.res-pay-card-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  line-height: 1.3;
+}
+
+.res-pay-card-desc {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+.res-pay-card-amount {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.res-pay-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+.res-pay-date-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.res-pay-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.res-pay-cta-btn {
+  background: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity var(--transition-fast);
+}
+
+.res-pay-cta-btn:hover {
+  opacity: 0.9;
+}
+
+.res-receipt-btn {
+  background: var(--color-surface-subtle);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border-subtle);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Payment Detail Screen */
+.res-detail-hero-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-sm);
+}
+
+.detail-amount-lg {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.5px;
+}
+
+.detail-title-lg {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.res-detail-info-grid {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.res-info-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--color-border-subtle);
+}
+
+.res-info-item-row:last-child {
+  border-bottom: none;
+}
+
+.info-item-lbl {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.info-item-val {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* Checkout Drawer / Modal */
+.res-checkout-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.res-checkout-preview-card {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checkout-preview-title {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.checkout-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.checkout-preview-total {
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: var(--color-text);
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 4px;
+  margin-top: 2px;
+}
+
+.res-method-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.res-method-tab-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.res-method-tab-btn.active {
+  border-color: var(--color-primary);
+  background: var(--color-surface-subtle);
+  color: var(--color-primary);
+}
+
+.res-method-form-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Payment Processing & Success */
+.res-pay-processing-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.res-pay-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border-subtle);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: resPaySpin 0.8s linear infinite;
+}
+
+@keyframes resPaySpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.res-success-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4);
+}
+
+.res-success-ic-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.res-success-title {
+  font-size: var(--font-size-base);
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.res-success-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.res-success-card {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+/* Digital Receipt View */
+.res-receipt-paper {
+  background: #ffffff;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.res-receipt-paper-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: var(--space-3);
+}
+
+.receipt-brand-title {
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.receipt-society-name {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.receipt-stamp-paid {
+  border: 2px solid var(--color-success);
+  color: var(--color-success);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  transform: rotate(-5deg);
+  text-transform: uppercase;
+}
+
+.res-receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-2) 0;
+}
+
+.res-receipt-table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--color-border);
+  padding: 6px 4px;
+}
+
+.res-receipt-table td {
+  font-size: 11px;
+  color: var(--color-text);
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.receipt-total-row td {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  border-bottom: 2px solid var(--color-border);
+  padding-top: 10px;
+}
+
+.res-receipt-footer-text {
+  font-size: 9px;
+  color: var(--color-text-subtle);
+  text-align: center;
+  line-height: 1.4;
+}

@@ -1,0 +1,232 @@
+/* Admin Web Desktop App Shell CSS */
+
+.admin-web-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: var(--color-background);
+  overflow: hidden;
+}
+
+/* Sidebar Navigation */
+.admin-sidebar {
+  width: var(--sidebar-width);
+  background: #0f172a;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #1e293b;
+  flex-shrink: 0;
+}
+
+.sidebar-brand {
+  height: var(--header-height);
+  padding: 0 var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  border-bottom: 1px solid #1e293b;
+}
+
+.brand-icon {
+  color: #38bdf8;
+}
+
+.brand-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.brand-tagline {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: var(--space-3) var(--space-3) var(--space-1);
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 9px var(--space-3);
+  border-radius: var(--radius-md);
+  color: #94a3b8;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+  width: 100%;
+  text-align: left;
+}
+
+.sidebar-nav-item:hover {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.sidebar-nav-item.active {
+  background: #334155;
+  color: #ffffff;
+  font-weight: var(--font-weight-semibold);
+}
+
+.nav-badge-mvp {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 800;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+}
+
+.nav-badge-v1 {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 800;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+}
+
+.nav-badge-v2 {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 800;
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+}
+
+.sidebar-footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid #1e293b;
+  background: #090d16;
+}
+
+.tenant-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.tenant-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.tenant-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+/* Admin Body & Top Header */
+.admin-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.admin-header {
+  height: var(--header-height);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-6);
+  z-index: 10;
+}
+
+.admin-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 380px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-muted);
+}
+
+.admin-search-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-subtle);
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+  outline: none;
+}
+
+.admin-search-input:focus {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.admin-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  background: var(--color-surface-subtle);
+}
+
+.admin-profile-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.profile-name {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.profile-role {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.admin-main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+}

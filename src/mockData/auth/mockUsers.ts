@@ -1,0 +1,40 @@
+import type { UserProfile, UserRole } from '../../domains/auth/types';
+
+export const MOCK_USERS: Record<UserRole, UserProfile> = {
+  resident: {
+    id: 'user-resident-01',
+    name: 'Sarvesh Kulkarni',
+    phone: '9876543210',
+    role: 'resident',
+    roleLabel: 'Resident / Owner',
+    societyName: 'Green Valley Society',
+    flatDetails: 'Tower B · Flat 1204',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+    designation: 'Flat Owner & Resident',
+    statusBadge: 'Verified Resident',
+  },
+  secretary: {
+    id: 'user-secretary-01',
+    name: 'Mayuri Udar',
+    phone: '9820012345',
+    role: 'secretary',
+    roleLabel: 'Society Secretary',
+    societyName: 'Green Valley Society',
+    flatDetails: 'Block A · Flat 101',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=250&q=80',
+    designation: 'Management Committee Secretary',
+    statusBadge: 'Managing Committee',
+  },
+  guard: {
+    id: 'user-guard-01',
+    name: 'Officer R. Singh',
+    phone: '9123456789',
+    role: 'guard',
+    roleLabel: 'Chief Security Officer',
+    societyName: 'Green Valley Society',
+    flatDetails: 'Gate #1 North Terminal',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
+    designation: 'Senior Gate Security Officer',
+    statusBadge: 'On Duty · Shift A',
+  },
+};

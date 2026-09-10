@@ -1,0 +1,547 @@
+/* Resident Visitors Module CSS (Phase 2B) */
+
+.vis-home-container, .vis-type-selector-container, .vis-form-container, .vis-pass-created-container, .vis-history-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 100%;
+  padding: var(--space-3) var(--space-4);
+  box-sizing: border-box;
+}
+
+.vis-main-header, .vis-screen-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.vis-screen-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.vis-screen-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* Visitor Type Selector Cards */
+.vis-type-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.vis-type-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.vis-type-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.vis-type-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-surface-subtle);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vis-type-info {
+  flex: 1;
+}
+
+.vis-type-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.vis-type-desc {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
+.vis-type-arrow {
+  color: var(--color-text-subtle);
+  flex-shrink: 0;
+}
+
+/* Visitor Form */
+.vis-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.vis-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+/* Gate Pass Created Ticket Card */
+.vis-pass-success-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-1);
+}
+
+.vis-success-icon-wrapper {
+  color: var(--color-success);
+  margin-bottom: var(--space-1);
+}
+
+.vis-pass-ticket-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-md);
+}
+
+.vis-ticket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding-bottom: var(--space-2);
+}
+
+.vis-ticket-type {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--color-text-muted);
+  letter-spacing: 0.5px;
+}
+
+.vis-ticket-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.vis-qr-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+  background: var(--color-surface-subtle);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.vis-mock-qr-graphic {
+  color: var(--color-primary);
+}
+
+.vis-qr-caption {
+  font-size: 10px;
+  color: var(--color-text-subtle);
+  margin-top: 4px;
+}
+
+.vis-passcode-reveal-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface-subtle);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.vis-passcode-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.vis-passcode-label {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.vis-passcode-big {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  letter-spacing: 2px;
+}
+
+.vis-passcode-big-masked {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  color: var(--color-text-muted);
+  letter-spacing: 3px;
+}
+
+.vis-ticket-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: var(--space-2);
+}
+
+.vis-detail-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.vis-detail-label {
+  color: var(--color-text-muted);
+}
+
+.vis-detail-value {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.vis-action-btn-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+}
+
+.vis-pass-footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.vis-text-danger-btn {
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  color: var(--color-danger);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+/* Active Visitor Card & Lifecycle Simulator */
+.vis-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.vis-counter-badge {
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.vis-active-passes-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.vis-active-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-sm);
+}
+
+.vis-active-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vis-active-type {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--color-text-muted);
+  letter-spacing: 0.5px;
+}
+
+.vis-active-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.vis-active-sub {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+/* Prototype Lifecycle Simulator Bar */
+.vis-lifecycle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface-subtle);
+  border: 1px dashed var(--color-border);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+}
+
+.vis-lifecycle-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-muted);
+}
+
+.vis-current-st {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.vis-lifecycle-advance-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  border: none;
+  cursor: pointer;
+}
+
+.vis-lifecycle-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--color-success);
+  font-weight: var(--font-weight-bold);
+}
+
+.vis-active-card-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.vis-cancel-pass-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: var(--color-danger);
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.vis-modal-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+/* Frequent Visitors Grid */
+.vis-frequent-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.vis-frequent-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+}
+
+.vis-frequent-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-surface-subtle);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border-subtle);
+}
+
+.vis-frequent-meta {
+  flex: 1;
+}
+
+.vis-frequent-name {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.vis-frequent-cat {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+/* History Box Trigger */
+.vis-history-trigger-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.vis-history-trigger-box:hover {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.vis-hist-trigger-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.hist-ic {
+  color: var(--color-primary);
+}
+
+.vis-hist-trigger-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.vis-hist-trigger-sub {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+/* History Logs View */
+.vis-history-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.vis-back-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.vis-history-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.vis-history-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.vis-history-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vis-history-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.vis-history-ic {
+  color: var(--color-primary);
+}
+
+.vis-history-name {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.vis-history-type {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--color-text-muted);
+}
+
+.vis-history-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 6px;
+}
+
+.vis-history-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.vis-hist-label { color: var(--color-text-muted); }
+.vis-hist-val { font-weight: var(--font-weight-medium); color: var(--color-text); }

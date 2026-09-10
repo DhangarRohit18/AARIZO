@@ -1,0 +1,66 @@
+import type { SupportTicket } from '../../domains/support';
+
+export const initialMockTickets: SupportTicket[] = [
+  {
+    id: 'tk-4029',
+    ticketNumber: 'TK-4029',
+    category: 'electrical',
+    subject: 'Master Bedroom AC Electrical Outlet Flashing',
+    description: 'The 16A power socket in the master bedroom trips the ELCB whenever the AC compressor turns on.',
+    locationArea: 'Master Bedroom (Flat 1204)',
+    status: 'in_progress',
+    createdAt: '05 Sep 2026, 11:30 AM',
+    updatedAt: '05 Sep 2026, 02:15 PM',
+    assignedStaffName: 'Technician Ramesh Kumar',
+    assignedStaffRole: 'Senior Electrician',
+    flatCode: '1204',
+    tower: 'Tower B',
+    updates: [
+      {
+        id: 'up-1',
+        timestamp: '05 Sep 2026, 11:30 AM',
+        authorName: 'Sarvesh Kulkarni',
+        authorRole: 'resident',
+        message: 'Ticket created with priority inspection request.',
+      },
+      {
+        id: 'up-2',
+        timestamp: '05 Sep 2026, 02:15 PM',
+        authorName: 'Estate Management',
+        authorRole: 'manager',
+        message: 'Assigned to Technician Ramesh. Inspection scheduled for tomorrow morning.',
+      },
+    ],
+  },
+  {
+    id: 'tk-3810',
+    ticketNumber: 'TK-3810',
+    category: 'plumbing',
+    subject: 'Kitchen Sink Drain Leakage',
+    description: 'Minor water seepage observed near the PVC trap underneath the kitchen sink counter.',
+    locationArea: 'Kitchen (Flat 1204)',
+    status: 'resolved',
+    createdAt: '28 Aug 2026, 04:00 PM',
+    updatedAt: '29 Aug 2026, 10:30 AM',
+    assignedStaffName: 'Plumber Suresh',
+    assignedStaffRole: 'Facility Staff',
+    flatCode: '1204',
+    tower: 'Tower B',
+    updates: [
+      {
+        id: 'up-10',
+        timestamp: '28 Aug 2026, 04:00 PM',
+        authorName: 'Sarvesh Kulkarni',
+        authorRole: 'resident',
+        message: 'Ticket raised for pipe washer replacement.',
+      },
+      {
+        id: 'up-11',
+        timestamp: '29 Aug 2026, 10:30 AM',
+        authorName: 'Plumber Suresh',
+        authorRole: 'staff',
+        message: 'Replaced rubber gasket washer and tested flow. Leak resolved.',
+      },
+    ],
+  },
+];

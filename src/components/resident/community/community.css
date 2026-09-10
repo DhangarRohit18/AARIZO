@@ -1,0 +1,311 @@
+/* Resident Community CSS (Phase 2D) */
+
+.res-community-container,
+.res-announcement-detail-container,
+.res-event-detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 100%;
+  padding: var(--space-3) var(--space-4);
+  box-sizing: border-box;
+}
+
+/* Section Grouping */
+.res-comm-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.res-comm-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.res-comm-section-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Announcement Card */
+.res-announcement-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.res-announcement-card:hover {
+  border-color: var(--color-border);
+}
+
+.res-announcement-card.unread {
+  border-left: 3.5px solid var(--color-primary);
+  background: #f8fafc;
+}
+
+.res-ann-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.res-ann-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.res-ann-cat-tag {
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+}
+
+.res-ann-unread-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: inline-block;
+}
+
+.res-ann-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  line-height: 1.3;
+}
+
+.res-ann-summary {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.res-ann-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+.res-ann-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 10px;
+  color: var(--color-text-subtle);
+}
+
+/* Event Card */
+.res-event-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-sm);
+}
+
+.res-event-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.res-event-date-box {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.event-date-day {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.event-date-month {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+.res-event-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  line-height: 1.3;
+}
+
+.res-event-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.res-event-info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.res-event-rsvp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 8px;
+}
+
+.res-rsvp-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.res-rsvp-btn {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xs);
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.res-rsvp-btn.active-going {
+  background: var(--color-success-bg);
+  border-color: #bbf7d0;
+  color: var(--color-success);
+}
+
+.res-rsvp-btn.active-maybe {
+  background: var(--color-warning-bg);
+  border-color: #fef08a;
+  color: #a16207;
+}
+
+/* Poll Card */
+.res-poll-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+}
+
+.res-poll-question {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  line-height: 1.35;
+}
+
+.res-poll-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.res-poll-option-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--color-text);
+}
+
+.res-poll-option-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.res-poll-option-btn.selected {
+  border-color: var(--color-primary);
+  background: var(--color-surface-subtle);
+}
+
+.res-poll-result-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.res-poll-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.res-poll-bar-bg {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-surface-subtle);
+  overflow: hidden;
+}
+
+.res-poll-bar-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.res-poll-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--color-text-subtle);
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 6px;
+}
