@@ -1,1 +1,1 @@
-export * from '../../../services/parkingService';
+export * from './qrParkingService';
