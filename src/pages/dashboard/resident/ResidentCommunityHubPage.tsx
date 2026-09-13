@@ -446,6 +446,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
                 </button>
               </div>
             </div>
+          ))}
         </div>
       )}
 

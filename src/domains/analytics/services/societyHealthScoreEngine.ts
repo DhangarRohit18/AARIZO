@@ -147,7 +147,7 @@ class SocietyHealthScoreEngine {
         slaMetPct: slaScore,
         repeatComplaintRatio: 0.04,
         collectionPercentage: collectionPct,
-        expenseBudgetVariancePct: expenseSummary.isOverBudget ? -4 font-bold : 8,
+        expenseBudgetVariancePct: expenseSummary.isOverBudget ? -4 : 8,
         solarWaterSensorStatusPct: 94,
         wasteSegregationPct: 92,
         gateSecurityIncidentCount: 0,
