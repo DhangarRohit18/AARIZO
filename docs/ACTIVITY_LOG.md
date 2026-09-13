@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-018
-- Last Updated: 2026-09-14 02:33
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management, Vendor Comparison & Performance Scorecards, Community & Marketplace Engine, Society Intelligence & Health Score
-- Latest Completed Feature: Society Intelligence & Health Score (Phase 17)
+- Current Prompt ID: PROMPT-019
+- Last Updated: 2026-09-14 02:34
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management, Vendor Comparison & Performance Scorecards, Community & Marketplace Engine, Society Intelligence & Health Score, Practical AI Layer Engine
+- Latest Completed Feature: Practical AI Layer Engine (Phase 18)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -48,6 +48,7 @@
 | Vendor Comparison & Performance | PROMPT-016 | PROMPT-016 | Active |
 | Community & Marketplace Engine | PROMPT-017 | PROMPT-017 | Active |
 | Society Intelligence & Health Score | PROMPT-018 | PROMPT-018 | Active |
+| Practical AI Layer Engine | PROMPT-019 | PROMPT-019 | Active |
 
 ---
 
@@ -1242,3 +1243,65 @@ COMPLETED
 ### Developer Notes
 - Avoids arbitrary hardcoding: every single pillar score explicitly exposes its mathematical weight and real-world inputs (e.g., active AMC ratio, SLA resolution rate, collection percentage).
 
+---
+
+## [PROMPT-019] — PHASE 18 PRACTICAL AI LAYER ENGINE
+
+**Date:** 2026-09-14 02:34
+
+**Prompt Objective:**
+Implement a Practical AI Layer supporting 6 specific non-autonomous use cases (`Complaint Classification`, `AI Move Concierge`, `Duplicate/Spam Detection`, `Predictive Maintenance`, `Vernacular Staff Voice Parsing`, `Plain-Language Society Health Summaries`), while strictly enforcing the AI Safety Boundary Directive (AI is strictly prohibited from approving payments, granting security access, bypassing approval workflows, overriding child safety, or automatically approving NOCs).
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `AIComplaintClassification`, `AIMoveConciergePlan`, `AIDuplicateDetectionResult`, `AIPredictiveMaintenanceAlert`, `AIVernacularVoiceParsing`, and `AISocietyHealthSummary` in `src/domains/analytics/types/aiTypes.ts`.
+- Created `practicalAILayerEngine.ts` providing advisory decision support across all 6 specified use cases without executing privileged write actions or bypassing security/financial approvals.
+- Developed `PracticalAIHub.tsx` UI component rendering tabbed interactive tools for AI Move Concierge, Complaint Classifier, Predictive Maintenance Risk Inspector, Vernacular Voice Parser, and Plain-Language Society Health Explanations.
+- Integrated `PracticalAIHub` into `SocietyIntelligenceDashboardPage.tsx`.
+
+### Files Created
+- `src/domains/analytics/types/aiTypes.ts`
+- `src/domains/analytics/services/practicalAILayerEngine.ts`
+- `src/domains/analytics/components/PracticalAIHub.tsx`
+
+### Files Modified
+- `src/domains/analytics/types/index.ts`
+- `src/domains/analytics/services/index.ts`
+- `src/domains/analytics/components/index.ts`
+- `src/domains/analytics/index.ts`
+- `src/pages/dashboard/admin/SocietyIntelligenceDashboardPage.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Integrates with stored asset compliance records and ticket history.
+
+### Routes / Pages Changed
+- Rendered on `/admin/intelligence`.
+
+### Permissions / RBAC Changes
+- Advisory suggestions only. Strictly enforces human approval guards for payments, security access, NOC approvals, and child safety gates.
+
+### Real-Time Changes
+- None
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Enforces strict AI Safety Boundary Directive: AI assistant acts solely as an advisory assistant and classifier; all financial payouts, gate entry clearances, NOC approvals, and child safety decisions require human authorization.

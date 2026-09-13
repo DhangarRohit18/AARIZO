@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { societyIntelligenceService } from '../../../services/societyIntelligenceService';
 import type { DateRangePreset, IntelligenceAnalytics } from '../../../services/societyIntelligenceService';
-import { SocietyHealthScoreCard } from '../../../domains/analytics';
+import { SocietyHealthScoreCard, PracticalAIHub } from '../../../domains/analytics';
 
 export const SocietyIntelligenceDashboardPage: React.FC = () => {
   const [preset, setPreset] = useState<DateRangePreset>('30_DAYS');
@@ -137,6 +137,9 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
 
       {/* Society Health Score & AGM Report Card */}
       <SocietyHealthScoreCard />
+
+      {/* Practical AI Layer Suite */}
+      <PracticalAIHub />
 
       {/* 15 ADMIN KPIS GRID */}
       <div>
