@@ -1,2 +1,1 @@
-// Services for requests domain
-export {};
+export * from './societyRequestService';

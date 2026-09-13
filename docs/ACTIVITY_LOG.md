@@ -17,11 +17,11 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-003
-- Last Updated: 2026-09-14 01:49
+- Current Prompt ID: PROMPT-004
+- Last Updated: 2026-09-14 01:51
 - Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics
-- Latest Completed Feature: Delivery and Parcel Room System (Phase 2)
-- Current In-Progress Feature: Activity Log System Implementation
+- Latest Completed Feature: Unified Society Request Centre (Phase 3)
+- Current In-Progress Feature: None
 - Known Critical Issues: None
 
 ---
@@ -33,6 +33,7 @@
 | Domain Foundation Architecture | PROMPT-001 | PROMPT-001 | Active |
 | RBAC & Multi-Tenant Role System | PROMPT-002 | PROMPT-002 | Active |
 | Delivery and Parcel Room | PROMPT-003 | PROMPT-003 | Active |
+| Unified Society Request Centre | PROMPT-004 | PROMPT-004 | Active |
 
 ---
 
@@ -225,3 +226,65 @@ COMPLETED
 
 ### Developer Notes
 - Cross-tab `BroadcastChannel` ensures multi-window live testing works seamlessly.
+
+---
+
+## [PROMPT-004] — PHASE 3 UNIFIED SOCIETY REQUEST CENTRE
+
+**Date:** 2026-09-14 01:51
+
+**Prompt Objective:**
+Build a single, audit-backed pipeline for NOCs, tenant registrations, ownership changes, renovation permissions, event permissions, vendor access, parking requests, and society certificates with immutable status change history.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined request categories (`NOC`, `TENANT_REGISTRATION`, `OWNERSHIP_CHANGE`, `RENOVATION_PERMISSION`, `EVENT_PERMISSION`, `VENDOR_ACCESS`, `PARKING_REQUEST`, `SOCIETY_CERTIFICATE`, `OTHER_APPROVAL`) and 6-stage lifecycle (`SUBMITTED`, `UNDER_REVIEW`, `APPROVED` / `REJECTED`, `IN_PROGRESS`, `COMPLETED`, `CLOSED`).
+- Created `societyRequestService.ts` managing local storage persistence, document attachments, SLA targets, and immutable audit logs.
+- Built `UnifiedRequestCenter.tsx` multi-role component supporting Resident request submission & document uploads, Admin review & officer assignment, Committee approval signoffs, and audit history drawer.
+- Integrated `UnifiedRequestCenter` into `CommitteeDashboard` approvals tab and configured routing for `/admin/requests` and `/resident/requests`.
+
+### Files Created
+- `src/domains/requests/types/index.ts`
+- `src/domains/requests/services/societyRequestService.ts`
+- `src/domains/requests/services/index.ts`
+- `src/domains/requests/components/UnifiedRequestCenter.tsx`
+- `src/domains/requests/components/index.ts`
+
+### Files Modified
+- `src/pages/dashboard/CommitteeDashboard.tsx`
+- `src/routes/index.tsx`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Added local storage dataset `aarizo_society_requests_v1` with seed request records and audit logs.
+
+### Routes / Pages Changed
+- Added routes: `/admin/requests`, `/resident/requests`.
+- Mounted `UnifiedRequestCenter` in Committee Dashboard (`/committee`).
+
+### Permissions / RBAC Changes
+- Integrated `committee:approvals` and `residents:manage` permissions.
+
+### Real-Time Changes
+- Real-time notification published on topic `NOTIFICATIONS` on request submission and status transition.
+
+### Validation / Error Handling
+- Field validation on title, category, description, and file attachment handling.
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Immutable audit log records actor name, actor role, timestamp, action, and notes for every status transition.

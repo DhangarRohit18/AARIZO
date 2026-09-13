@@ -6,13 +6,12 @@ import {
   Activity,
   BarChart2,
   BookOpen,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
 } from 'lucide-react';
+import { UnifiedRequestCenter } from '../../domains/requests/components/UnifiedRequestCenter';
 
 export const CommitteeDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'approvals' | 'financials' | 'compliance' | 'health' | 'governance'>('approvals');
+
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -100,33 +99,8 @@ export const CommitteeDashboard: React.FC = () => {
       </div>
 
       {/* Content Section */}
-      {activeTab === 'approvals' && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-4">
-          <h3 className="text-lg font-bold text-slate-800">Pending Executive Approvals</h3>
-          <div className="divide-y">
-            {[
-              { id: 'APP-101', type: 'Renovation NOC', applicant: 'Vikram Joshi (B-1204)', date: '12 Sep 2026', status: 'Pending Review' },
-              { id: 'APP-102', type: 'Vendor Contract Renewal', applicant: 'AquaPure Water Ltd', date: '10 Sep 2026', status: 'Pending Approval' },
-              { id: 'APP-103', type: 'Major Maintenance Expense (> ₹50,000)', applicant: 'Facility Manager', date: '08 Sep 2026', status: 'Pending Signoff' },
-            ].map((item) => (
-              <div key={item.id} className="py-3 flex justify-between items-center">
-                <div>
-                  <h4 className="font-semibold text-slate-800">{item.type}</h4>
-                  <p className="text-xs text-slate-500">{item.applicant} • Received on {item.date}</p>
-                </div>
-                <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-emerald-600 text-white rounded text-xs font-semibold hover:bg-emerald-700 flex items-center gap-1">
-                    <CheckCircle size={14} /> Approve
-                  </button>
-                  <button className="px-3 py-1 bg-rose-50 text-rose-600 rounded text-xs font-semibold hover:bg-rose-100 flex items-center gap-1">
-                    <XCircle size={14} /> Reject
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {activeTab === 'approvals' && <UnifiedRequestCenter />}
+
 
       {activeTab === 'financials' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

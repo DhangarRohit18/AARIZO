@@ -56,7 +56,9 @@ import { RealtimeOperationsHubPage } from '../pages/dashboard/admin/RealtimeOper
 import { CommitteeDashboard } from '../pages/dashboard/CommitteeDashboard';
 import { FacilityManagerDashboard } from '../pages/dashboard/FacilityManagerDashboard';
 import { DomesticWorkerDashboard } from '../pages/dashboard/DomesticWorkerDashboard';
+import { UnifiedRequestCenter } from '../domains/requests/components/UnifiedRequestCenter';
 import {
+
   SuperAdminLayout,
   SocietyAdminLayout,
   SecurityLayout,
@@ -138,6 +140,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="/resident/emergency" element={<ResidentEmergencyPage />} />
           <Route path="/resident/garbage" element={<ResidentGarbagePage />} />
           <Route path="/resident/guest-stay" element={<ResidentGuestStayPage />} />
+          <Route path="/resident/requests" element={<UnifiedRequestCenter />} />
           <Route path="/resident/*" element={<ResidentDashboard />} />
         </Route>
       </Route>
@@ -146,6 +149,8 @@ export const AppRoutes: React.FC = () => {
       <Route element={<ProtectedRoute allowedRoles={['SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
         <Route element={<SocietyAdminLayout />}>
           <Route path="/admin" element={<SecretaryDashboard />} />
+          <Route path="/admin/requests" element={<UnifiedRequestCenter />} />
+
           <Route path="/admin/towers" element={<TowerManagementPage />} />
           <Route path="/admin/flats" element={<FlatManagementPage />} />
           <Route path="/admin/residents" element={<ResidentManagementPage />} />
