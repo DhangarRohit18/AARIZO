@@ -1,42 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Activity } from 'lucide-react';
-import { societyService } from '../../../services/societyService';
-import type { AuditLog } from '../../../types/society';
-import { DataTable } from '../../../components/ui/DataTable';
-import type { Column } from '../../../components/ui/DataTable';
-import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { PrivacyAuditHub } from '../../../domains/security';
 
 export const AuditLogsPage: React.FC = () => {
-  const currentSocietyId = 'soc-gvs';
-  const [logs] = useState<AuditLog[]>(societyService.getAuditLogs(currentSocietyId));
-
-  const columns: Column<AuditLog>[] = [
-    { key: 'timestamp', header: 'Timestamp', width: '170px', sortable: true },
-    {
-      key: 'actorName',
-      header: 'Actor',
-      render: (l) => (
-        <div>
-          <div style={{ fontWeight: 600, color: '#0f172a' }}>{l.actorName}</div>
-          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{l.actorRole}</div>
-        </div>
-      ),
-    },
-    {
-      key: 'action',
-      header: 'Action',
-      render: (l) => (
-        <StatusBadge
-          label={l.action}
-          variant={l.action === 'CREATE' ? 'success' : l.action === 'STATUS_CHANGE' ? 'info' : l.action === 'DELETE' ? 'danger' : 'warning'}
-        />
-      ),
-    },
-    { key: 'targetEntity', header: 'Target Entity' },
-    { key: 'description', header: 'Action Details' },
-  ];
-
   return (
     <div style={{ padding: '1.5rem', maxWidth: '1100px', margin: '0 auto', fontFamily: 'sans-serif' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -57,3 +23,5 @@ export const AuditLogsPage: React.FC = () => {
     </div>
   );
 };
+
+export default AuditLogsPage;

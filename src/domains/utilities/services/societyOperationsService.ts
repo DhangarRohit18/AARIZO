@@ -1,4 +1,4 @@
-import { UtilityItem, OutageHistoryRecord, SocietyOperationsSummary, UtilityCategory, OperationsStatus, IoTSensorPayload } from '../types';
+import type { UtilityItem, OutageHistoryRecord, SocietyOperationsSummary, OperationsStatus, IoTSensorPayload } from '../types';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 const STORAGE_KEY_UTILITIES = 'aarizo_utility_statuses_v1';

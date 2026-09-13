@@ -110,6 +110,16 @@ class RealtimeService {
     return msg;
   }
 
+  public broadcast<T = any>(
+    topic: string,
+    payload: T,
+    societyId = 'soc-gvs',
+    senderRole = 'SYSTEM',
+    senderName = 'Realtime Engine'
+  ): RealtimeMessage<T> {
+    return this.publish(topic as any, payload, societyId, senderRole, senderName);
+  }
+
   /**
    * Internal message handler
    */

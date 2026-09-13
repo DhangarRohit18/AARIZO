@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
   Star,
-  ShieldCheck,
-  Clock,
   AlertCircle,
   CheckCircle,
   Ban,
-  ThumbsUp,
   Columns,
   Eye,
   EyeOff,
-  TrendingUp,
   Award,
-  DollarSign,
   BarChart,
-  UserCheck,
   Search,
   Filter,
 } from 'lucide-react';

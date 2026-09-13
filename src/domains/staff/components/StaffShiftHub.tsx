@@ -19,7 +19,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { staffShiftService } from '../services/staffShiftService';
-import { StaffShiftRecord, StaffDashboardMetrics, StaffRole, ShiftType, ShiftStatus } from '../types';
+import type { StaffShiftRecord, StaffDashboardMetrics, StaffRole, ShiftType, ShiftStatus } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 

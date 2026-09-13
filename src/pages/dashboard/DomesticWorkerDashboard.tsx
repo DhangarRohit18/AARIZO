@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import {
   UserCheck,
   Home,
-  Clock,
-  CheckCircle,
   QrCode,
-  ShieldCheck,
-  AlertCircle,
 } from 'lucide-react';
 
 export const DomesticWorkerDashboard: React.FC = () => {

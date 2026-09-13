@@ -1,7 +1,6 @@
 import type {
   VendorScorecard,
   VendorStatus,
-  VendorPerformanceMetrics,
 } from '../types';
 import { realtimeService } from '../../../services/realtimeService';
 

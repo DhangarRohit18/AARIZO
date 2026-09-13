@@ -4,7 +4,6 @@ import {
   DollarSign,
   ShieldCheck,
   Activity,
-  BarChart2,
   BookOpen,
 } from 'lucide-react';
 import { UnifiedRequestCenter } from '../../domains/requests/components/UnifiedRequestCenter';

@@ -1,4 +1,4 @@
-import { StaffShiftRecord, StaffLeaveRequest, StaffDashboardMetrics, StaffRole, ShiftType, ShiftStatus, ShiftHistoryLog } from '../types';
+import type { StaffShiftRecord, StaffDashboardMetrics, ShiftStatus, ShiftHistoryLog } from '../types';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 const STORAGE_KEY_SHIFTS = 'aarizo_staff_shifts_v1';

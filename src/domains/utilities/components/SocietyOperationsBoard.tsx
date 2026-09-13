@@ -17,10 +17,9 @@ import {
   History,
   Radio,
   Cpu,
-  ShieldAlert,
 } from 'lucide-react';
 import { societyOperationsService } from '../services/societyOperationsService';
-import { UtilityItem, OutageHistoryRecord, SocietyOperationsSummary, UtilityCategory, OperationsStatus } from '../types';
+import type { UtilityItem, OutageHistoryRecord, SocietyOperationsSummary, UtilityCategory, OperationsStatus } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 
