@@ -1,2 +1,1 @@
-// Services for complaints domain
-export {};
+export * from './complaintSLAService';

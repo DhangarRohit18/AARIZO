@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-005
-- Last Updated: 2026-09-14 01:53
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics
-- Latest Completed Feature: Domestic Help Attendance System (Phase 4)
+- Current Prompt ID: PROMPT-006
+- Last Updated: 2026-09-14 01:55
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations
+- Latest Completed Feature: Complaint SLA and Escalation Engine (Phase 5)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -35,6 +35,7 @@
 | Delivery and Parcel Room | PROMPT-003 | PROMPT-003 | Active |
 | Unified Society Request Centre | PROMPT-004 | PROMPT-004 | Active |
 | Domestic Help Attendance | PROMPT-005 | PROMPT-005 | Active |
+| Complaint SLA & Escalation Engine | PROMPT-006 | PROMPT-006 | Active |
 
 ---
 
@@ -352,3 +353,67 @@ COMPLETED
 
 ### Developer Notes
 - Privacy document masking ensures police verification papers are never publicly exposed.
+
+---
+
+## [PROMPT-006] — PHASE 5 COMPLAINT SLA AND ESCALATION ENGINE
+
+**Date:** 2026-09-14 01:55
+
+**Prompt Objective:**
+Build an automated Complaint SLA & Escalation Engine featuring category-configurable SLA policies, live countdown and breach status tracking, automated multi-level escalation (`STAFF` ➔ `FACILITY_MANAGER` ➔ `SOCIETY_ADMIN` ➔ `COMMITTEE`), resident post-service verification with historical resolution preservation, and SLA analytics.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain types and entities for `Complaint`, `SLAPolicy`, `ResolutionAttempt`, `SLAAnalytics`, `ComplaintCategory`, `ComplaintStatus`, and `EscalationLevel`.
+- Created `complaintSLAService.ts` managing dynamic local storage persistence, category SLA policy configuration by admins, auto-escalation evaluation engine based on SLA time breach, resident post-service verification (closing on `YES` vs reopening, incrementing reopen counter, advancing escalation level, and saving history on `NO`), and analytics calculations.
+- Developed `ComplaintSLAEngineHub.tsx` multi-role interface rendering resident ticket creation & live timer counters, resident post-service verification feedback modal, admin SLA policy dynamic editor, and SLA compliance analytics.
+- Broadcast real-time complaint updates via topic `MAINTENANCE_STATUS`.
+- Mounted `ComplaintSLAEngineHub` on resident (`ResidentMaintenancePage.tsx`) and admin (`MaintenanceManagementPage.tsx`) maintenance views.
+
+### Files Created
+- `src/domains/complaints/types/index.ts`
+- `src/domains/complaints/services/complaintSLAService.ts`
+- `src/domains/complaints/services/index.ts`
+- `src/domains/complaints/components/ComplaintSLAEngineHub.tsx`
+- `src/domains/complaints/components/index.ts`
+
+### Files Modified
+- `src/pages/dashboard/resident/ResidentMaintenancePage.tsx`
+- `src/pages/dashboard/admin/MaintenanceManagementPage.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Added local storage datasets: `aarizo_complaints_v1`, `aarizo_sla_policies_v1`.
+
+### Routes / Pages Changed
+- Embedded `ComplaintSLAEngineHub` on `/resident/maintenance` and `/admin/maintenance`.
+
+### Permissions / RBAC Changes
+- Integrates `complaints:write`, `complaints:read`, and SLA management authorization.
+
+### Real-Time Changes
+- Updates broadcast across client tabs using real-time topic `MAINTENANCE_STATUS`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- SLA targets are fully dynamic per category and managed via UI configurator without hardcoding. Resolution attempts preserve complete history upon repeated ticket reopening.
+
