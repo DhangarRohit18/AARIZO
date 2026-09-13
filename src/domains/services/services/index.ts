@@ -1,1 +1,1 @@
-export * from '../../../services/serviceHubService';
+export * from './societyServicesEngine';

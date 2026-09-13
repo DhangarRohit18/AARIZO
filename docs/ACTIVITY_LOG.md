@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-011
-- Last Updated: 2026-09-14 02:12
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations
-- Latest Completed Feature: QR Parking System & Violation Engine (Phase 10)
+- Current Prompt ID: PROMPT-012
+- Last Updated: 2026-09-14 02:16
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions
+- Latest Completed Feature: Society Services & Recurring Subscriptions Engine (Phase 11)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -41,6 +41,7 @@
 | Move & Renovation Engine | PROMPT-009 | PROMPT-009 | Active |
 | Staff Shift Management Engine | PROMPT-010 | PROMPT-010 | Active |
 | QR Parking & Violation Engine | PROMPT-011 | PROMPT-011 | Active |
+| Society Services & Subscriptions | PROMPT-012 | PROMPT-012 | Active |
 
 ---
 
@@ -758,6 +759,77 @@ COMPLETED
 
 ### Developer Notes
 - Parking violations notify vehicle owners privately through targeted notifications with photo evidence links to uphold society dignity without public shaming.
+
+---
+
+## [PROMPT-012] — PHASE 11 SOCIETY SERVICES AND RECURRING SUBSCRIPTIONS ENGINE
+
+**Date:** 2026-09-14 02:16
+
+**Prompt Objective:**
+Build an end-to-end Society Services Marketplace & Recurring Subscriptions Engine supporting 15 service categories (`PLUMBER`, `ELECTRICIAN`, `AC_REPAIR`, `APPLIANCE_REPAIR`, `PEST_CONTROL`, `LAUNDRY`, `CAR_WASH`, `DRIVER`, `GARDENER`, `CLEANING`, `GROCERY`, `FOOD`, `HOTEL_RESTAURANT`, `COURIER`, `OTHER`), resident browsing, one-time & recurring subscriptions (`WEEKLY`, `MONTHLY`, `CUSTOM_SCHEDULE`), order tracking, rating/reviews, vendor portal catalog management, and admin vendor approval & suspension governance.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `ServiceCategory`, `RecurringScheduleType`, `VendorStatus`, `VendorAvailability`, `OrderStatus`, `VendorPartner`, `ServiceItem`, and `ServiceBookingOrder`.
+- Created `societyServicesEngine.ts` managing local storage persistence (`aarizo_vendors_v1`, `aarizo_service_items_v1`, `aarizo_service_orders_v1`), vendor partner approvals & suspensions, service catalog additions, booking order creation, recurring schedule tracking, and rating submissions.
+- Developed `SocietyServicesHub.tsx` multi-role interface rendering:
+  - 15 Service Category Filter Pills with custom icons.
+  - Resident Marketplace Catalog supporting one-time and recurring (`WEEKLY`, `MONTHLY`, `CUSTOM`) subscriptions.
+  - My Orders & Subscriptions Tracker rendering status badges (`PENDING`, `ACCEPTED`, `IN_PROGRESS`, `COMPLETED`) and rating submission forms.
+  - Verified Vendor Directory displaying ratings, review counts, and contact details.
+  - Admin Governance View for approving pending vendors or suspending partners.
+- Updated `AdminServiceHubPage.tsx`, `ResidentMarketplacePage.tsx`, and `VendorPortalPage.tsx` with `SocietyServicesHub`.
+- Broadcast real-time updates across client sessions using topic `SERVICES_UPDATED`.
+
+### Files Created
+- `src/domains/services/services/societyServicesEngine.ts`
+- `src/domains/services/services/index.ts`
+- `src/domains/services/components/SocietyServicesHub.tsx`
+- `src/domains/services/components/index.ts`
+
+### Files Modified
+- `src/domains/services/types/index.ts`
+- `src/domains/services/index.ts`
+- `src/pages/dashboard/admin/AdminServiceHubPage.tsx`
+- `src/pages/dashboard/resident/ResidentMarketplacePage.tsx`
+- `src/pages/dashboard/vendor/VendorPortalPage.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Added local storage datasets `aarizo_vendors_v1`, `aarizo_service_items_v1`, and `aarizo_service_orders_v1`.
+
+### Routes / Pages Changed
+- Mounted `SocietyServicesHub` on `/admin/service-hub`, `/resident/marketplace`, and `/vendor/portal`.
+
+### Permissions / RBAC Changes
+- Enables Resident booking & rating, Vendor catalog & order acceptance, and Admin vendor approvals & suspensions.
+
+### Real-Time Changes
+- Updates broadcast across browser sessions via topic `SERVICES_UPDATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Recurring subscriptions support weekly and monthly frequencies (e.g. Maid, Laundry, Pest Control, Pool Cleaning, AC Servicing, Garbage Collection) with automatic cycle tracking.
+
 
 
 
