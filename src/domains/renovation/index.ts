@@ -1,3 +1,3 @@
-// Domain module export for renovation
 export * from './types';
-export * from './services';
+export * from '../move-management/services';
+export * from '../move-management/components';

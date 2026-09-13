@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-008
-- Last Updated: 2026-09-14 02:02
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications
-- Latest Completed Feature: Multi-Channel Notification Engine (Phase 7)
+- Current Prompt ID: PROMPT-009
+- Last Updated: 2026-09-14 02:05
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine
+- Latest Completed Feature: Move-In / Move-Out & Renovation Engine (Phase 8)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -38,6 +38,7 @@
 | Complaint SLA & Escalation Engine | PROMPT-006 | PROMPT-006 | Active |
 | AMC & Asset Compliance Engine | PROMPT-007 | PROMPT-007 | Active |
 | Multi-Channel Notification Engine | PROMPT-008 | PROMPT-008 | Active |
+| Move & Renovation Engine | PROMPT-009 | PROMPT-009 | Active |
 
 ---
 
@@ -551,6 +552,77 @@ COMPLETED
 
 ### Developer Notes
 - Pluggable provider adapter design ensures WhatsApp (Meta API), SMS (Twilio/DLT), Email (SendGrid), and Push (FCM) production APIs can be injected without altering UI business logic.
+
+---
+
+## [PROMPT-009] — PHASE 8 MOVE-IN / MOVE-OUT + RENOVATION ENGINE
+
+**Date:** 2026-09-14 02:05
+
+**Prompt Objective:**
+Build an end-to-end Move-In / Move-Out & Renovation Permitting Engine featuring lift reservation slots, contractor & vehicle details, society admin approval workflows, gatepass QR generation, mandatory Move-Out exit clearance checklists, time-bound contractor worker verification, noise/weekend rule enforcement, and an admin calendar & security verification terminal.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `MoveEvent`, `MoveType`, `MoveStatus`, `LiftSlot`, `VehicleEntry`, `VendorEntry`, `MoveChecklistItem`, `RenovationPermit`, `RenovationStatus`, and `ContractorWorker`.
+- Created `moveRenovationService.ts` managing local storage persistence (`aarizo_move_events_v1`, `aarizo_renovations_v1`), move request submissions, lift slot reservations, mandatory exit clearance checklists, renovation permit approvals, and security gate worker verification.
+- Developed `MoveRenovationHub.tsx` multi-role interface rendering:
+  - Scheduled Moves directory with status badges, lift slot details, vehicle numbers, and interactive exit clearance checklist checkboxes.
+  - Active Renovation Permits list displaying contractor info, allowed working hours, noise/weekend rules, and approved worker status.
+  - Admin Activity Calendar summarizing active moves, renovations, and freight lift allocations.
+  - Security Gate Verification Scanner for checking incoming contractor workers against approved permits.
+- Created `AdminMoveRenovationPage.tsx` and mounted route `/admin/move-renovation` under `SocietyAdminLayout` (`routes/index.tsx`).
+- Broadcast real-time updates across client sessions using topic `MOVE_RENOVATION_UPDATED`.
+
+### Files Created
+- `src/domains/move-management/types/index.ts`
+- `src/domains/renovation/types/index.ts`
+- `src/domains/move-management/services/moveRenovationService.ts`
+- `src/domains/move-management/services/index.ts`
+- `src/domains/move-management/components/MoveRenovationHub.tsx`
+- `src/domains/move-management/components/index.ts`
+- `src/domains/renovation/index.ts`
+- `src/pages/dashboard/admin/AdminMoveRenovationPage.tsx`
+
+### Files Modified
+- `src/domains/move-management/index.ts`
+- `src/routes/index.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Added local storage datasets `aarizo_move_events_v1` and `aarizo_renovations_v1`.
+
+### Routes / Pages Changed
+- Added `/admin/move-renovation` route.
+
+### Permissions / RBAC Changes
+- Enables Resident move/renovation submissions, Admin permit approval & checklist oversight, and Security gate worker verification.
+
+### Real-Time Changes
+- Updates broadcast across browser sessions via topic `MOVE_RENOVATION_UPDATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Move-out requests strictly track mandatory clearance items (maintenance dues cleared, NOC issued, lift protection installed, security inspection completed) before final completion.
+
 
 
 

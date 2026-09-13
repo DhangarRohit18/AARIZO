@@ -1,2 +1,1 @@
-// Services for move-management domain
-export {};
+export * from './moveRenovationService';
