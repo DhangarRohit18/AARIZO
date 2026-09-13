@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-019
-- Last Updated: 2026-09-14 02:34
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management, Vendor Comparison & Performance Scorecards, Community & Marketplace Engine, Society Intelligence & Health Score, Practical AI Layer Engine
-- Latest Completed Feature: Practical AI Layer Engine (Phase 18)
+- Current Prompt ID: PROMPT-020
+- Last Updated: 2026-09-14 02:36
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management, Vendor Comparison & Performance Scorecards, Community & Marketplace Engine, Society Intelligence & Health Score, Practical AI Layer Engine, Privacy & Structural Audit Engine
+- Latest Completed Feature: Privacy & Structural Audit Engine (Phase 19)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -49,6 +49,7 @@
 | Community & Marketplace Engine | PROMPT-017 | PROMPT-017 | Active |
 | Society Intelligence & Health Score | PROMPT-018 | PROMPT-018 | Active |
 | Practical AI Layer Engine | PROMPT-019 | PROMPT-019 | Active |
+| Privacy & Structural Audit Engine | PROMPT-020 | PROMPT-020 | Active |
 
 ---
 
@@ -1305,3 +1306,67 @@ COMPLETED
 
 ### Developer Notes
 - Enforces strict AI Safety Boundary Directive: AI assistant acts solely as an advisory assistant and classifier; all financial payouts, gate entry clearances, NOC approvals, and child safety decisions require human authorization.
+
+---
+
+## [PROMPT-020] — PHASE 19 PRIVACY AND STRUCTURAL AUDIT ENGINE
+
+**Date:** 2026-09-14 02:36
+
+**Prompt Objective:**
+Implement a comprehensive Privacy Guard and Structural Audit Engine capturing a 10-point audit schema (`actorId`, `role`, `societyId`, `entity`, `entityId`, `action`, `timestamp`, `beforeState`, `afterState`, `metadata`) across 13 audit categories (`LOGIN`, `APPROVAL`, `REJECTION`, `QR_SCAN`, `ENTRY`, `EXIT`, `ATTENDANCE`, `PAYMENT`, `SLA_ESCALATION`, `AMC_RENEWAL`, `NOC_ACTION`, `EMERGENCY_ACTION`, `VENDOR_CHANGE`), while enforcing strict backend privacy rules and sensitive identity document masking.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `AuditActionType`, `StructuralAuditLog`, `PrivacyAccessRule`, and `TrustScoreViewerRecord` in `src/domains/security/types/auditTypes.ts`.
+- Created `privacyAuditEngine.ts` handling local storage persistence (`aarizo_structural_audit_logs_v2`), 10-point audit record creation, privacy access verification rules, and public identity document masking (`XXXX-XXXX-1234`).
+- Developed `PrivacyAuditHub.tsx` UI component displaying:
+  - Privacy & Access Control Enforcement Matrix for Domestic Attendance, Medical Registry, Child Safety, and Trust Scores.
+  - Immutable Audit Log Table with action filtering and raw 10-point JSON schema modal viewer.
+- Integrated `PrivacyAuditHub` into `AuditLogsPage.tsx` (`/admin/audit-logs`).
+
+### Files Created
+- `src/domains/security/types/auditTypes.ts`
+- `src/domains/security/services/privacyAuditEngine.ts`
+- `src/domains/security/components/PrivacyAuditHub.tsx`
+
+### Files Modified
+- `src/domains/security/services/index.ts`
+- `src/domains/security/components/index.ts`
+- `src/domains/security/index.ts`
+- `src/pages/dashboard/admin/AuditLogsPage.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Initialized local storage dataset `aarizo_structural_audit_logs_v2` with initial seed audit entries.
+
+### Routes / Pages Changed
+- Rendered on `/admin/audit-logs`.
+
+### Permissions / RBAC Changes
+- Strict backend authorization: Domestic attendance is restricted to linked household + authorized staff; Medical registry requires opt-in + emergency trigger; Child safety is guardian-authorized only; Trust scores are positive-only and viewable by relevant roles only.
+
+### Real-Time Changes
+- Updates broadcast across client sessions via topic `AUDIT_LOG_CREATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Enforces strict backend authorization logic rather than frontend-only UI hides. Sensitive identity numbers (Aadhaar, Passport, License) are automatically masked before any public DOM rendering.

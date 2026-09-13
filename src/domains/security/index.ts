@@ -1,3 +1,3 @@
-// Domain module export for security
-export * from './types';
+export * from './types/auditTypes';
 export * from './services';
+export * from './components';

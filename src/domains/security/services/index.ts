@@ -1,1 +1,1 @@
-export * from '../../../services/securityService';
+export * from './privacyAuditEngine';

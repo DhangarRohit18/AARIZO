@@ -5,6 +5,7 @@ import type { AuditLog } from '../../../types/society';
 import { DataTable } from '../../../components/ui/DataTable';
 import type { Column } from '../../../components/ui/DataTable';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
+import { PrivacyAuditHub } from '../../../domains/security';
 
 export const AuditLogsPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -50,8 +51,8 @@ export const AuditLogsPage: React.FC = () => {
         </div>
       </header>
 
-      <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem' }}>
-        <DataTable columns={columns} data={logs} keyExtractor={(l) => l.id} />
+      <div style={{ marginBottom: '2rem' }}>
+        <PrivacyAuditHub />
       </div>
     </div>
   );
