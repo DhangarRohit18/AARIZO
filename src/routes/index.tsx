@@ -53,6 +53,9 @@ import { NotificationCenterPage } from '../pages/dashboard/NotificationCenterPag
 import { SocietyIntelligenceDashboardPage } from '../pages/dashboard/admin/SocietyIntelligenceDashboardPage';
 import { SecurityAuditCenterPage } from '../pages/dashboard/admin/SecurityAuditCenterPage';
 import { RealtimeOperationsHubPage } from '../pages/dashboard/admin/RealtimeOperationsHubPage';
+import { CommitteeDashboard } from '../pages/dashboard/CommitteeDashboard';
+import { FacilityManagerDashboard } from '../pages/dashboard/FacilityManagerDashboard';
+import { DomesticWorkerDashboard } from '../pages/dashboard/DomesticWorkerDashboard';
 import {
   SuperAdminLayout,
   SocietyAdminLayout,
@@ -60,6 +63,9 @@ import {
   ResidentLayout,
   VendorLayout,
   ServiceProviderLayout,
+  CommitteeLayout,
+  FacilityManagerLayout,
+  DomesticWorkerLayout,
 } from '../components/layouts';
 import { ProtectedRoute } from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
@@ -68,24 +74,32 @@ export const AppRoutes: React.FC = () => {
   const { isAuthenticated, selectedRole, currentUser } = useAuth();
 
   const getDefaultRoute = () => {
-    const role = (currentUser?.role || selectedRole).toLowerCase();
+    const role = (currentUser?.role || selectedRole).toUpperCase();
     switch (role) {
-      case 'secretary':
-      case 'society_admin':
+      case 'SECRETARY':
+      case 'SOCIETY_ADMIN':
         return '/admin';
-      case 'guard':
-      case 'security':
+      case 'GUARD':
+      case 'SECURITY':
+      case 'SECURITY_GUARD':
         return '/security';
-      case 'super_admin':
+      case 'SUPER_ADMIN':
         return '/super-admin';
-      case 'vendor':
+      case 'COMMITTEE_MEMBER':
+        return '/committee';
+      case 'FACILITY_MANAGER':
+        return '/facility';
+      case 'DOMESTIC_WORKER':
+        return '/domestic';
+      case 'VENDOR':
         return '/vendor';
-      case 'service_provider':
+      case 'SERVICE_PROVIDER':
         return '/service-provider';
       default:
         return '/resident';
     }
   };
+
 
   return (
     <Routes>
@@ -203,6 +217,40 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
+      {/* Committee Member Routes */}
+      <Route element={<ProtectedRoute allowedRoles={['COMMITTEE_MEMBER', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
+        <Route element={<CommitteeLayout />}>
+          <Route path="/committee" element={<CommitteeDashboard />} />
+          <Route path="/committee/approvals" element={<CommitteeDashboard />} />
+          <Route path="/committee/financials" element={<CommitteeDashboard />} />
+          <Route path="/committee/compliance" element={<CommitteeDashboard />} />
+          <Route path="/committee/health" element={<CommitteeDashboard />} />
+          <Route path="/committee/governance" element={<CommitteeDashboard />} />
+          <Route path="/committee/*" element={<CommitteeDashboard />} />
+        </Route>
+      </Route>
+
+      {/* Facility Manager Routes */}
+      <Route element={<ProtectedRoute allowedRoles={['FACILITY_MANAGER', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
+        <Route element={<FacilityManagerLayout />}>
+          <Route path="/facility" element={<FacilityManagerDashboard />} />
+          <Route path="/facility/maintenance" element={<FacilityManagerDashboard />} />
+          <Route path="/facility/shifts" element={<FacilityManagerDashboard />} />
+          <Route path="/facility/amc" element={<FacilityManagerDashboard />} />
+          <Route path="/facility/cleaning" element={<FacilityManagerDashboard />} />
+          <Route path="/facility/utilities" element={<FacilityManagerDashboard />} />
+          <Route path="/facility/*" element={<FacilityManagerDashboard />} />
+        </Route>
+      </Route>
+
+      {/* Domestic Worker Routes */}
+      <Route element={<ProtectedRoute allowedRoles={['DOMESTIC_WORKER', 'RESIDENT', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
+        <Route element={<DomesticWorkerLayout />}>
+          <Route path="/domestic" element={<DomesticWorkerDashboard />} />
+          <Route path="/domestic/*" element={<DomesticWorkerDashboard />} />
+        </Route>
+      </Route>
+
       {/* Catch-all Fallback */}
       <Route
         path="*"
@@ -213,3 +261,4 @@ export const AppRoutes: React.FC = () => {
     </Routes>
   );
 };
+

@@ -1,0 +1,194 @@
+import React, { useState } from 'react';
+import {
+  FileCheck,
+  DollarSign,
+  ShieldCheck,
+  Activity,
+  BarChart2,
+  BookOpen,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from 'lucide-react';
+
+export const CommitteeDashboard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'approvals' | 'financials' | 'compliance' | 'health' | 'governance'>('approvals');
+
+  return (
+    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Management Committee Dashboard</h1>
+          <p className="text-sm text-slate-500">Executive oversight, financial approvals, compliance & governance</p>
+        </div>
+        <div className="mt-3 md:mt-0 flex gap-2">
+          <span className="px-3 py-1 bg-indigo-50 text-indigo-700 font-semibold rounded-full text-xs flex items-center gap-1">
+            <ShieldCheck size={14} /> Committee Access
+          </span>
+        </div>
+      </div>
+
+      {/* Overview Metric Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs text-slate-500 font-medium">Pending Approvals</p>
+            <h3 className="text-2xl font-bold text-amber-600 mt-1">4</h3>
+          </div>
+          <div className="p-3 bg-amber-50 rounded-lg text-amber-600">
+            <FileCheck size={24} />
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs text-slate-500 font-medium">Monthly Collection Rate</p>
+            <h3 className="text-2xl font-bold text-emerald-600 mt-1">94.2%</h3>
+          </div>
+          <div className="p-3 bg-emerald-50 rounded-lg text-emerald-600">
+            <DollarSign size={24} />
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs text-slate-500 font-medium">Society Health Index</p>
+            <h3 className="text-2xl font-bold text-indigo-600 mt-1">98/100</h3>
+          </div>
+          <div className="p-3 bg-indigo-50 rounded-lg text-indigo-600">
+            <Activity size={24} />
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs text-slate-500 font-medium">Compliance Audit</p>
+            <h3 className="text-2xl font-bold text-slate-800 mt-1">COMPLIANT</h3>
+          </div>
+          <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
+            <ShieldCheck size={24} />
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex border-b border-slate-200 space-x-6">
+        {[
+          { key: 'approvals', label: 'Approvals & NOCs', icon: FileCheck },
+          { key: 'financials', label: 'Financial Overview', icon: DollarSign },
+          { key: 'compliance', label: 'Compliance Audit', icon: ShieldCheck },
+          { key: 'health', label: 'Society Health', icon: Activity },
+          { key: 'governance', label: 'Governance & Bye-Laws', icon: BookOpen },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className={`pb-3 font-semibold text-sm flex items-center gap-2 border-b-2 transition-colors ${
+                activeTab === tab.key
+                  ? 'border-indigo-600 text-indigo-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <Icon size={16} />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Content Section */}
+      {activeTab === 'approvals' && (
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-4">
+          <h3 className="text-lg font-bold text-slate-800">Pending Executive Approvals</h3>
+          <div className="divide-y">
+            {[
+              { id: 'APP-101', type: 'Renovation NOC', applicant: 'Vikram Joshi (B-1204)', date: '12 Sep 2026', status: 'Pending Review' },
+              { id: 'APP-102', type: 'Vendor Contract Renewal', applicant: 'AquaPure Water Ltd', date: '10 Sep 2026', status: 'Pending Approval' },
+              { id: 'APP-103', type: 'Major Maintenance Expense (> ₹50,000)', applicant: 'Facility Manager', date: '08 Sep 2026', status: 'Pending Signoff' },
+            ].map((item) => (
+              <div key={item.id} className="py-3 flex justify-between items-center">
+                <div>
+                  <h4 className="font-semibold text-slate-800">{item.type}</h4>
+                  <p className="text-xs text-slate-500">{item.applicant} • Received on {item.date}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button className="px-3 py-1 bg-emerald-600 text-white rounded text-xs font-semibold hover:bg-emerald-700 flex items-center gap-1">
+                    <CheckCircle size={14} /> Approve
+                  </button>
+                  <button className="px-3 py-1 bg-rose-50 text-rose-600 rounded text-xs font-semibold hover:bg-rose-100 flex items-center gap-1">
+                    <XCircle size={14} /> Reject
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'financials' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
+            <h3 className="text-md font-bold text-slate-800">Reserve Fund & Operating Budget</h3>
+            <div className="p-4 bg-slate-50 rounded-lg space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Total Reserve Fund:</span>
+                <span className="font-bold text-slate-900">₹ 42,50,000</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Monthly Expenses (Aug):</span>
+                <span className="font-bold text-slate-900">₹ 3,85,000</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Total Outstanding Dues:</span>
+                <span className="font-bold text-rose-600">₹ 1,12,000</span>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
+            <h3 className="text-md font-bold text-slate-800">Vendor Expenditure Comparison</h3>
+            <p className="text-xs text-slate-500">Quarterly comparison of security, housekeeping and maintenance service costs</p>
+            <div className="h-36 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 text-xs">
+              <BarChart2 size={24} className="mr-2" /> Financial Audit Chart Rendered Here
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'compliance' && (
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <h3 className="text-lg font-bold text-slate-800">Society Statutory Compliance Checklist</h3>
+          <div className="space-y-2">
+            {[
+              { title: 'Fire Safety Audit 2026', status: 'VALID', date: 'Expires Dec 2026' },
+              { title: 'Lift Safety Inspection', status: 'VALID', date: 'Expires Oct 2026' },
+              { title: 'Annual General Meeting (AGM) Minutes', status: 'SUBMITTED', date: 'Filed Aug 2026' },
+              { title: 'Water Tank Quality Certification', status: 'DUE SOON', date: 'Renewal Due 30 Sep' },
+            ].map((c, i) => (
+              <div key={i} className="p-3 bg-slate-50 rounded-lg flex justify-between items-center">
+                <span className="font-medium text-slate-800 text-sm">{c.title}</span>
+                <span className="text-xs font-semibold px-2 py-1 bg-emerald-100 text-emerald-800 rounded">{c.status} ({c.date})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'health' && (
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <h3 className="text-lg font-bold text-slate-800">Society Health & Operational Analytics</h3>
+          <p className="text-sm text-slate-600">Complaint resolution speed: 92% resolved under 24 hours. Resident satisfaction rate: 4.8 / 5.0.</p>
+        </div>
+      )}
+
+      {activeTab === 'governance' && (
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <h3 className="text-lg font-bold text-slate-800">Governance & Bye-Laws Enforcement</h3>
+          <p className="text-sm text-slate-600">Model bye-laws compliant. Digital voting & notice management enabled.</p>
+        </div>
+      )}
+    </div>
+  );
+};

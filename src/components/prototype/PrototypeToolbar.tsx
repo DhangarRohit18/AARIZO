@@ -36,10 +36,17 @@ export const PrototypeToolbar: React.FC = () => {
     isAuthenticated,
   } = useAuth();
 
-  const handleRoleSwitch = (role: 'resident' | 'secretary' | 'guard') => {
-    switchRole(role);
-    if (role === 'secretary') navigate('/admin');
-    else if (role === 'guard') navigate('/security');
+  const handleRoleSwitch = (role: string) => {
+    switchRole(role as any);
+    const r = role.toUpperCase();
+    if (r === 'SOCIETY_ADMIN' || r === 'SECRETARY') navigate('/admin');
+    else if (r === 'SECURITY' || r === 'SECURITY_GUARD' || r === 'GUARD') navigate('/security');
+    else if (r === 'SUPER_ADMIN') navigate('/super-admin');
+    else if (r === 'COMMITTEE_MEMBER') navigate('/committee');
+    else if (r === 'FACILITY_MANAGER') navigate('/facility');
+    else if (r === 'DOMESTIC_WORKER') navigate('/domestic');
+    else if (r === 'VENDOR') navigate('/vendor');
+    else if (r === 'SERVICE_PROVIDER') navigate('/service-provider');
     else navigate('/resident');
   };
 
@@ -57,44 +64,36 @@ export const PrototypeToolbar: React.FC = () => {
     <header className="prototype-toolbar">
       {/* Brand & Laboratory Title */}
       <div className="prototype-brand">
-        <span className="prototype-logo-badge">LAB</span>
+        <span className="prototype-logo-badge">PROD</span>
         <div>
-          <h1 className="prototype-title">CommunityOS</h1>
-          <span className="prototype-subtitle">Phase 0 Refactored Architecture & Central RBAC</span>
+          <h1 className="prototype-title">AARIZO</h1>
+          <span className="prototype-subtitle">Multi-Tenant Role System & Dashboard Suite</span>
         </div>
       </div>
 
       <div className="prototype-toolbar-controls">
         {/* Shared Auth & Role Switcher */}
         <div className="control-group">
-          <span className="control-label">Auth Role</span>
-          <div className="control-pill-toggle">
-            <button
-              className={`pill-btn ${selectedRole === 'resident' && isAuthenticated ? 'pill-active' : ''}`}
-              onClick={() => handleRoleSwitch('resident')}
-              title="Switch to Resident App"
+          <span className="control-label">Switch Persona / Role</span>
+          <div className="control-select-wrapper">
+            <select
+              value={selectedRole}
+              onChange={(e) => handleRoleSwitch(e.target.value)}
+              className="prototype-select font-bold"
             >
-              <Home size={14} />
-              <span>Resident</span>
-            </button>
-            <button
-              className={`pill-btn ${selectedRole === 'secretary' && isAuthenticated ? 'pill-active' : ''}`}
-              onClick={() => handleRoleSwitch('secretary')}
-              title="Switch to Secretary App"
-            >
-              <Building2 size={14} />
-              <span>Secretary</span>
-            </button>
-            <button
-              className={`pill-btn ${selectedRole === 'guard' && isAuthenticated ? 'pill-active' : ''}`}
-              onClick={() => handleRoleSwitch('guard')}
-              title="Switch to Guard App"
-            >
-              <Shield size={14} />
-              <span>Guard</span>
-            </button>
+              <option value="RESIDENT">RESIDENT</option>
+              <option value="SOCIETY_ADMIN">SOCIETY ADMIN</option>
+              <option value="COMMITTEE_MEMBER">COMMITTEE MEMBER</option>
+              <option value="SECURITY_GUARD">SECURITY GUARD</option>
+              <option value="FACILITY_MANAGER">FACILITY MANAGER</option>
+              <option value="VENDOR">VENDOR</option>
+              <option value="SERVICE_PROVIDER">SERVICE PROVIDER</option>
+              <option value="DOMESTIC_WORKER">DOMESTIC WORKER</option>
+              <option value="SUPER_ADMIN">SUPER ADMIN</option>
+            </select>
           </div>
         </div>
+
 
         {/* Viewport Frame Switcher */}
         <div className="control-group">
