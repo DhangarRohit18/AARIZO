@@ -4,15 +4,7 @@ import {
   Lock,
   EyeOff,
   Activity,
-  UserCheck,
   Clock,
-  Filter,
-  CheckCircle,
-  AlertTriangle,
-  Key,
-  Database,
-  FileCode,
-  Download,
 } from 'lucide-react';
 import { privacyAuditEngine } from '../services/privacyAuditEngine';
 import type { StructuralAuditLog, AuditActionType } from '../types/auditTypes';
@@ -20,21 +12,19 @@ import type { StructuralAuditLog, AuditActionType } from '../types/auditTypes';
 export const PrivacyAuditHub: React.FC = () => {
   const [logs, setLogs] = useState<StructuralAuditLog[]>([]);
   const [selectedAction, setSelectedAction] = useState<AuditActionType | 'ALL'>('ALL');
-  const [selectedEntity, setSelectedEntity] = useState<string>('');
   const [activeLogModal, setActiveLogModal] = useState<StructuralAuditLog | null>(null);
 
   const refreshLogs = () => {
     setLogs(
       privacyAuditEngine.getAuditLogs({
         action: selectedAction,
-        entity: selectedEntity || undefined,
       })
     );
   };
 
   useEffect(() => {
     refreshLogs();
-  }, [selectedAction, selectedEntity]);
+  }, [selectedAction]);
 
   const privacyTestCases = [
     {

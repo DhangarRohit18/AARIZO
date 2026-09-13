@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import {
   Wrench,
+  Clock,
   Calendar,
+  Trash2,
   Zap,
   UserCheck,
 } from 'lucide-react';

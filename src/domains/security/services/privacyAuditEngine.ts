@@ -2,12 +2,10 @@ import type {
   StructuralAuditLog,
   AuditActionType,
   PrivacyAccessRule,
-  TrustScoreViewerRecord,
 } from '../types/auditTypes';
 import { realtimeService } from '../../../services/realtimeService';
 
 const STRUCTURAL_AUDIT_KEY = 'aarizo_structural_audit_logs_v2';
-const TRUST_SCORE_KEY = 'aarizo_trust_scores_v2';
 
 const SEED_AUDIT_LOGS: StructuralAuditLog[] = [
   {

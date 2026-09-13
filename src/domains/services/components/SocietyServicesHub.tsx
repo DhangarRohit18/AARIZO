@@ -13,22 +13,13 @@ import {
   Package,
   Star,
   Clock,
-  Calendar,
-  CheckCircle2,
-  XCircle,
   PlusCircle,
-  RefreshCw,
   Search,
-  Filter,
   ShieldCheck,
-  AlertTriangle,
-  RotateCw,
-  Layers,
   Building2,
-  DollarSign,
 } from 'lucide-react';
 import { societyServicesEngine } from '../services/societyServicesEngine';
-import { ServiceCategory, VendorPartner, ServiceItem, ServiceBookingOrder, RecurringScheduleType, OrderStatus } from '../types';
+import type { ServiceCategory, VendorPartner, ServiceItem, ServiceBookingOrder, RecurringScheduleType, OrderStatus } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 

@@ -1,4 +1,4 @@
-import { EmergencyIncidentItem, IncidentStatus, EmergencyCategory, ChildProfileItem, PickupRecord, AuthorizedPickupPerson } from '../types';
+import type { EmergencyIncidentItem, IncidentStatus, EmergencyCategory, ChildProfileItem, PickupRecord, AuthorizedPickupPerson } from '../types';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 const STORAGE_KEY_INCIDENTS = 'aarizo_emergency_incidents_v2';
@@ -306,7 +306,7 @@ class SafetyCommandEngine {
     }
 
     const authorized = child.authorizedPickups.find(
-      p => p.name.toLowerCase().includes(pickupPersonName.toLowerCase()) && p.isApproved
+      (p: AuthorizedPickupPerson) => p.name.toLowerCase().includes(pickupPersonName.toLowerCase()) && p.isApproved
     );
 
     const pickups = this.getStoredPickups();

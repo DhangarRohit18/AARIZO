@@ -1,4 +1,4 @@
-import { VendorPartner, ServiceItem, ServiceBookingOrder, ServiceCategory, RecurringScheduleType, OrderStatus, VendorStatus } from '../types';
+import type { VendorPartner, ServiceItem, ServiceBookingOrder } from '../types';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 const STORAGE_KEY_VENDORS = 'aarizo_vendors_v1';
