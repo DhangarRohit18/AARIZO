@@ -1,2 +1,1 @@
-// Services for vendors domain
-export {};
+export * from './vendorPerformanceEngine';

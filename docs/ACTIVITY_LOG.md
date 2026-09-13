@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-015
-- Last Updated: 2026-09-14 02:27
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management
-- Latest Completed Feature: Society Expense Management (Phase 14)
+- Current Prompt ID: PROMPT-016
+- Last Updated: 2026-09-14 02:29
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management, Vendor Comparison & Performance Scorecards
+- Latest Completed Feature: Vendor Comparison & Performance Scorecards (Phase 15)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -45,6 +45,7 @@
 | Society Operations Centre | PROMPT-013 | PROMPT-013 | Active |
 | Safety Command Center | PROMPT-014 | PROMPT-014 | Active |
 | Society Expense Management | PROMPT-015 | PROMPT-015 | Active |
+| Vendor Comparison & Performance | PROMPT-016 | PROMPT-016 | Active |
 
 ---
 
@@ -1040,3 +1041,70 @@ COMPLETED
 
 ### Developer Notes
 - Variance calculation automatically identifies over-budget categories (`budgeted - actual < 0`) and visually highlights warning badges and progress bar color shifts.
+
+---
+
+## [PROMPT-016] — PHASE 15 VENDOR COMPARISON AND PERFORMANCE SCORECARDS
+
+**Date:** 2026-09-14 02:29
+
+**Prompt Objective:**
+Build a Vendor Performance Scorecard and Side-by-Side Comparison Engine calculating 7 historical service metrics (`price`, `rating`, `SLA compliance`, `response time`, `repeat complaints`, `completed jobs`, `customer satisfaction`), admin status management (`APPROVE`, `SUSPEND`, `PREFERRED VENDOR`, `BLACKLIST`), and strict resident public ranking visibility controls (`isPubliclyRanked`).
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `VendorStatus`, `VendorPerformanceMetrics`, `VendorScorecard`, and `VendorComparisonResult` in `src/domains/vendors/types/index.ts`.
+- Created `vendorPerformanceEngine.ts` handling local storage persistence (`aarizo_vendor_scorecards_v2`), status transitions (`APPROVED` | `SUSPENDED` | `PREFERRED` | `BLACKLISTED`), public visibility toggles, dynamic metric calculation based on historical work orders, and side-by-side vendor matrix compilation.
+- Developed `VendorPerformanceHub.tsx` interface offering:
+  - Side-by-side vendor comparison matrix for up to 3 selected vendors.
+  - Interactive scorecard card grid with category filtering and search.
+  - Public visibility toggle guard (`isPubliclyRanked`).
+  - Detailed scorecard inspection modal showing historical quarterly logs and recent job evaluations.
+- Integrated `VendorPerformanceHub` into `VendorManagementPage.tsx`.
+
+### Files Created
+- `src/domains/vendors/types/index.ts`
+- `src/domains/vendors/services/vendorPerformanceEngine.ts`
+- `src/domains/vendors/services/index.ts`
+- `src/domains/vendors/components/VendorPerformanceHub.tsx`
+- `src/domains/vendors/components/index.ts`
+- `src/domains/vendors/index.ts`
+
+### Files Modified
+- `src/pages/dashboard/admin/VendorManagementPage.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Initialized local storage dataset `aarizo_vendor_scorecards_v2` with historical seed data across Otis Elevator, Apex Security, Kirloskar Pumps, Schindler Elevators, and QuickFix Plumbing.
+
+### Routes / Pages Changed
+- Integrated directly into Admin Vendor Management (`/admin/vendors`).
+
+### Permissions / RBAC Changes
+- Enables Society Admin to compare vendors, update status (`APPROVED`, `SUSPENDED`, `PREFERRED`, `BLACKLISTED`), and configure public ranking visibility.
+
+### Real-Time Changes
+- Updates broadcast across browser sessions via topic `VENDOR_PERFORMANCE_UPDATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Scores are strictly computed from historical work order resolution logs rather than arbitrary manual input. Public vendor rankings are hidden from residents by default unless `isPubliclyRanked` is explicitly enabled.
+

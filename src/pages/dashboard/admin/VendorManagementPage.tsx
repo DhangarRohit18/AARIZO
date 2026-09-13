@@ -7,6 +7,7 @@ import type { Column } from '../../../components/ui/DataTable';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { Modal } from '../../../components/ui/Modal';
 import { Form, FormField } from '../../../components/ui/Form';
+import { VendorPerformanceHub } from '../../../domains/vendors';
 
 export const VendorManagementPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -103,7 +104,14 @@ export const VendorManagementPage: React.FC = () => {
         </button>
       </header>
 
+      <div style={{ marginBottom: '2rem' }}>
+        <VendorPerformanceHub />
+      </div>
+
       <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem' }}>
+        <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 1rem 0', color: '#0f172a' }}>
+          Vendor Directory & Dispatch Roster
+        </h2>
         <DataTable columns={columns} data={vendors} keyExtractor={(v) => v.id} />
       </div>
 
