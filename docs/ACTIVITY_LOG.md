@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-013
-- Last Updated: 2026-09-14 02:22
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre
-- Latest Completed Feature: Society Operations Centre & Utility Health Board (Phase 12)
+- Current Prompt ID: PROMPT-014
+- Last Updated: 2026-09-14 02:26
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center
+- Latest Completed Feature: Safety Command Center & One-Tap Emergency SOS (Phase 13)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -43,6 +43,7 @@
 | QR Parking & Violation Engine | PROMPT-011 | PROMPT-011 | Active |
 | Society Services & Subscriptions | PROMPT-012 | PROMPT-012 | Active |
 | Society Operations Centre | PROMPT-013 | PROMPT-013 | Active |
+| Safety Command Center | PROMPT-014 | PROMPT-014 | Active |
 
 ---
 
@@ -898,6 +899,76 @@ COMPLETED
 
 ### Developer Notes
 - IoT sensor payload ingestion architecture (`IoTSensorPayload`) maps simulated sensor telemetry directly into the exact same event and status model without requiring physical IoT hardware.
+
+---
+
+## [PROMPT-014] — PHASE 13 SAFETY COMMAND CENTER AND ONE-TAP EMERGENCY SOS
+
+**Date:** 2026-09-14 02:26
+
+**Prompt Objective:**
+Build an integrated Safety Command Center & Child Safety Engine featuring One-Tap Emergency SOS across 7 categories (`MEDICAL`, `FIRE`, `SECURITY`, `CHILD_SAFETY`, `LIFT`, `ELECTRICAL`, `WATER`), real-time incident status lifecycle progression (`TRIGGERED` ➔ `ACKNOWLEDGED` ➔ `RESPONDING` ➔ `RESOLVED` ➔ `CLOSED`), security responder dispatch, guardian-authorized child pickup, time-bound QR gate verification, and strict enforcement of the AI Boundary Directive (AI is strictly prohibited from independently making child-safety or gate entry decisions).
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `EmergencyCategory`, `IncidentStatus`, `EmergencyIncidentItem`, `TimelineLog`, `AuthorizedPickupPerson`, `ChildProfileItem`, and `PickupRecord`.
+- Created `safetyCommandEngine.ts` managing local storage persistence (`aarizo_emergency_incidents_v2`, `aarizo_child_profiles_v2`, `aarizo_pickup_records_v2`), One-Tap SOS emergency dispatch, security incident acknowledgments, responder assignment, status timeline logging, guardian pickup authorizations, and gate QR verification.
+- Developed `SafetyCommandHub.tsx` multi-role interface rendering:
+  - One-Tap SOS Emergency Dispatch buttons for all 7 emergency categories.
+  - Command Console Incident Feed with live status lifecycle controls (`ACKNOWLEDGE`, `ASSIGN RESPONDER`, `RESOLVE`).
+  - Child Safety & Guardian Authorization Roster for managing approved pickup persons and generating child QR passes.
+  - Gate Security Verification Scanner for checking incoming pickup persons against guardian authorization records.
+- Updated `AdminSafetyCommandPage.tsx`, `ResidentEmergencyPage.tsx`, and `ResidentChildSafetyPage.tsx` with `SafetyCommandHub`.
+- Broadcast real-time updates across client sessions using topics `EMERGENCY_ALERTS` and `CHILD_SAFETY_UPDATED`.
+
+### Files Created
+- `src/domains/safety/services/safetyCommandEngine.ts`
+- `src/domains/safety/services/index.ts`
+- `src/domains/safety/components/SafetyCommandHub.tsx`
+- `src/domains/safety/components/index.ts`
+
+### Files Modified
+- `src/domains/safety/types/index.ts`
+- `src/domains/safety/index.ts`
+- `src/pages/dashboard/admin/AdminSafetyCommandPage.tsx`
+- `src/pages/dashboard/resident/ResidentEmergencyPage.tsx`
+- `src/pages/dashboard/resident/ResidentChildSafetyPage.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Added local storage datasets `aarizo_emergency_incidents_v2`, `aarizo_child_profiles_v2`, `aarizo_pickup_records_v2`.
+
+### Routes / Pages Changed
+- Mounted `SafetyCommandHub` on `/admin/safety-command`, `/resident/emergency`, and `/resident/child-safety`.
+
+### Permissions / RBAC Changes
+- Enables Resident One-Tap SOS & Child Safety authorization, and Security Command Console acknowledgment & responder dispatch.
+
+### Real-Time Changes
+- Emergency alerts broadcast across browser sessions via topics `EMERGENCY_ALERTS` and `CHILD_SAFETY_UPDATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Enforces strict AI boundary rule: AI assistant is prohibited from independently making child-safety or gate entry decisions; all gate clearances require human guardian authorization.
+
 
 
 
