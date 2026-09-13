@@ -42,7 +42,9 @@ const PrototypeContext = createContext<PrototypeContextType | undefined>(undefin
 
 export const PrototypeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentApp, setCurrentApp] = useState<AppType>('resident');
-  const [viewport, setViewport] = useState<ViewportMode>('mobile');
+  const [viewport, setViewport] = useState<ViewportMode>(
+    typeof window !== 'undefined' && window.innerWidth < 768 ? 'fluid' : 'mobile'
+  );
   const [uiState, setUiState] = useState<UIStateType>('success');
   const [roadmapFilter, setRoadmapFilter] = useState<RoadmapTag | 'ALL'>('ALL');
   const [guardOfflineState, setGuardOfflineState] = useState<GuardOfflineStatus>('online');

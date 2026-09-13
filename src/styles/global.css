@@ -106,3 +106,28 @@ button {
   align-items: center;
   justify-content: space-between;
 }
+
+/* Mobile Responsive Helper Utilities */
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  /* Prevent horizontal page overflow on small devices */
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Ensure tap targets are comfortable for touch */
+  button, input, select, textarea {
+    min-height: 40px;
+  }
+
+  /* Safe area inset for modern mobile browsers */
+  .mobile-safe-bottom {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+}
+

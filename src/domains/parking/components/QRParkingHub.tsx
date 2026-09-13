@@ -211,7 +211,7 @@ export const QRParkingHub: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 space-x-6 bg-white px-4 rounded-xl shadow-sm">
+      <div className="flex border-b border-slate-200 space-x-4 bg-white px-4 rounded-xl shadow-sm overflow-x-auto whitespace-nowrap">
         {[
           { key: 'MAP', label: 'Visual Parking Map', icon: Layers },
           { key: 'SLOTS', label: `Parking Slots (${slots.length})`, icon: Car },

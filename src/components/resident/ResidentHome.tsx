@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePrototype } from '../../context/PrototypeContext';
-import { ResidentHeader } from './ResidentHeader';
 import { ResidentAlertCard } from './ResidentAlertCard';
 import { ResidentVisitorCard } from './ResidentVisitorCard';
 import { ResidentQuickActions } from './ResidentQuickActions';
@@ -10,7 +10,6 @@ import { ResidentParcelWidget } from '../../domains/deliveries/components/Reside
 import { Skeleton, EmptyState, ErrorState } from '../common';
 
 import {
-  mockResidentProfile,
   mockUrgentAlert,
   mockVisitorStatus,
   mockAnnouncements,
@@ -21,7 +20,8 @@ import type { UrgentAlertMock } from '../../mockData/residentHomeData';
 import './resident.css';
 
 export const ResidentHome: React.FC = () => {
-  const { uiState, setResidentTab } = usePrototype();
+  const { uiState } = usePrototype();
+  const navigate = useNavigate();
   const [activeAlert, setActiveAlert] = useState<UrgentAlertMock | null>(mockUrgentAlert);
 
   // Handle Prototype UI States
@@ -45,13 +45,12 @@ export const ResidentHome: React.FC = () => {
   if (uiState === 'empty') {
     return (
       <div className="res-home-container">
-        <ResidentHeader profile={mockResidentProfile} />
         <div className="res-home-content">
           <EmptyState
             title="All Clear on Flat 1204"
             description="You have no expected visitors today, zero pending maintenance dues, and no open helpdesk tickets."
             actionLabel="Pre-approve a Guest"
-            onAction={() => setResidentTab('visitors')}
+            onAction={() => navigate('/resident/visitors')}
           />
         </div>
       </div>
@@ -61,7 +60,6 @@ export const ResidentHome: React.FC = () => {
   if (uiState === 'error') {
     return (
       <div className="res-home-container">
-        <ResidentHeader profile={mockResidentProfile} />
         <div className="res-home-content">
           <ErrorState
             title="Could Not Load Activity Feed"
@@ -75,15 +73,12 @@ export const ResidentHome: React.FC = () => {
 
   return (
     <div className="res-home-container">
-      {/* 1. Header (Resident → Society → Flat) */}
-      <ResidentHeader profile={mockResidentProfile} />
-
       <div className="res-home-content">
         {/* 2. High-Priority Contextual Alert Banner */}
         {activeAlert && (
           <ResidentAlertCard
             alert={activeAlert}
-            onAction={() => setResidentTab('visitors')}
+            onAction={() => navigate('/resident/visitors')}
             onDismiss={() => setActiveAlert(null)}
           />
         )}
@@ -91,7 +86,7 @@ export const ResidentHome: React.FC = () => {
         {/* 3. Live Visitor Status Card */}
         <ResidentVisitorCard
           visitorData={mockVisitorStatus}
-          onInviteVisitor={() => setResidentTab('visitors')}
+          onInviteVisitor={() => navigate('/resident/visitors')}
         />
 
         {/* 3.5 Live Realtime Delivery & Parcel Room Pass Widget */}
@@ -101,13 +96,15 @@ export const ResidentHome: React.FC = () => {
         <ResidentQuickActions
           onActionClick={(actionId) => {
             if (actionId === 'invite_visitor' || actionId === 'delivery_pass') {
-              setResidentTab('visitors');
+              navigate('/resident/visitors');
             } else if (actionId === 'pay_maintenance') {
-              setResidentTab('payments');
+              navigate('/resident/billing');
             } else if (actionId === 'book_amenity') {
-              setResidentTab('community');
-            } else if (actionId === 'raise_ticket' || actionId === 'emergency_sos') {
-              setResidentTab('more');
+              navigate('/resident/amenities');
+            } else if (actionId === 'raise_ticket') {
+              navigate('/resident/requests');
+            } else if (actionId === 'emergency_sos') {
+              navigate('/resident/emergency');
             }
           }}
         />
@@ -115,14 +112,14 @@ export const ResidentHome: React.FC = () => {
         {/* 5. Society Announcement Feed */}
         <ResidentAnnouncementCard
           announcements={mockAnnouncements}
-          onViewAll={() => setResidentTab('community')}
+          onViewAll={() => navigate('/resident/community')}
         />
 
         {/* 6 & 7. Upcoming Activity & Account Snapshot */}
         <ResidentActivity
           activities={mockUpcomingActivities}
           snapshot={mockAccountSnapshot}
-          onPayDuesClick={() => setResidentTab('payments')}
+          onPayDuesClick={() => navigate('/resident/billing')}
         />
       </div>
     </div>

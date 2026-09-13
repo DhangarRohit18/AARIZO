@@ -1,6 +1,6 @@
 import React from 'react';
-import { ResidentShell } from '../../components/resident/ResidentShell';
+import { ResidentHome } from '../../components/resident/ResidentHome';
 
 export const ResidentDashboard: React.FC = () => {
-  return <ResidentShell />;
+  return <ResidentHome />;
 };

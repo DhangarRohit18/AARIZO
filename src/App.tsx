@@ -15,10 +15,20 @@ export const App: React.FC = () => {
         <AuthProvider>
           <ToastProvider>
             <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
-              <PrototypeToolbar />
-              <ViewportContainer>
-                <AppRoutes />
-              </ViewportContainer>
+              {/* Hide PrototypeToolbar and Viewport on native platforms (Capacitor) or small screens if preferred, 
+                  but for now we'll rely on checking window.Capacitor (added by Capacitor) */}
+              {!(window as any).Capacitor?.isNative ? (
+                <>
+                  <PrototypeToolbar />
+                  <ViewportContainer>
+                    <AppRoutes />
+                  </ViewportContainer>
+                </>
+              ) : (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%', height: '100%', overflow: 'auto' }}>
+                   <AppRoutes />
+                </div>
+              )}
             </div>
           </ToastProvider>
         </AuthProvider>

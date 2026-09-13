@@ -49,60 +49,49 @@ export const TowerManagementPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1100px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+    <div className="p-3 sm:p-6 max-w-6xl mx-auto font-sans text-slate-100">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Building size={24} color="#2563eb" />
-            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Tower & Building Structure</h1>
+          <div className="flex items-center gap-2">
+            <Building className="w-6 h-6 text-indigo-400" />
+            <h1 className="text-lg sm:text-xl font-bold text-white">Tower & Building Structure</h1>
           </div>
-          <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
+          <p className="text-xs text-slate-400 mt-1">
             Manage society towers, blocks, and floor configurations.
           </p>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.6rem 1.2rem',
-            background: '#2563eb',
-            color: '#fff',
-            borderRadius: '8px',
-            border: 'none',
-            fontWeight: 600,
-            cursor: 'pointer',
-          }}
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-xs transition shadow-lg shadow-indigo-600/30 w-full sm:w-auto"
         >
-          <Plus size={18} /> Add Tower
+          <Plus className="w-4 h-4" /> Add Tower
         </button>
       </header>
 
       {/* Overview Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-        <div style={{ padding: '1.25rem', background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-          <Building size={22} color="#2563eb" style={{ marginBottom: '0.4rem' }} />
-          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0f172a' }}>{towers.length}</div>
-          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Active Towers</div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl">
+          <Building className="w-5 h-5 text-indigo-400 mb-2" />
+          <div className="text-2xl font-black text-white">{towers.length}</div>
+          <div className="text-xs text-slate-400">Active Towers</div>
         </div>
-        <div style={{ padding: '1.25rem', background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-          <Layers size={22} color="#10b981" style={{ marginBottom: '0.4rem' }} />
-          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0f172a' }}>
+        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl">
+          <Layers className="w-5 h-5 text-emerald-400 mb-2" />
+          <div className="text-2xl font-black text-white">
             {towers.reduce((acc, t) => acc + t.totalFloors, 0)}
           </div>
-          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Total Floors Constructed</div>
+          <div className="text-xs text-slate-400">Total Floors Constructed</div>
         </div>
-        <div style={{ padding: '1.25rem', background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-          <Home size={22} color="#8b5cf6" style={{ marginBottom: '0.4rem' }} />
-          <div style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0f172a' }}>
+        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl">
+          <Home className="w-5 h-5 text-purple-400 mb-2" />
+          <div className="text-2xl font-black text-white">
             {towers.reduce((acc, t) => acc + t.totalFlats, 0)}
           </div>
-          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Configured Flats</div>
+          <div className="text-xs text-slate-400">Configured Flats</div>
         </div>
       </div>
 
-      <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem' }}>
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 overflow-x-auto">
         <DataTable columns={columns} data={towers} keyExtractor={(t) => t.id} />
       </div>
 
@@ -115,7 +104,7 @@ export const TowerManagementPage: React.FC = () => {
               value={towerName}
               onChange={(e) => setTowerName(e.target.value)}
               placeholder="e.g. Tower D"
-              style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
             />
           </FormField>
           <FormField label="Block Code" required>
@@ -125,7 +114,7 @@ export const TowerManagementPage: React.FC = () => {
               value={blockCode}
               onChange={(e) => setBlockCode(e.target.value.toUpperCase())}
               placeholder="e.g. D"
-              style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
             />
           </FormField>
           <FormField label="Total Floors">
@@ -135,20 +124,20 @@ export const TowerManagementPage: React.FC = () => {
               max={50}
               value={totalFloors}
               onChange={(e) => setTotalFloors(Number(e.target.value))}
-              style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
             />
           </FormField>
-          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+          <div className="flex gap-3 mt-4">
             <button
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}
+              className="flex-1 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-300"
             >
               Cancel
             </button>
             <button
               type="submit"
-              style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: 'none', background: '#2563eb', color: '#fff', fontWeight: 600 }}
+              className="flex-1 py-2.5 rounded-xl border border-transparent bg-indigo-600 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30"
             >
               Create Tower
             </button>

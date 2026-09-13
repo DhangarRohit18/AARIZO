@@ -138,7 +138,7 @@ export const ResidentBillingPage: React.FC = () => {
           {/* Line Items Breakdown Table */}
           <div className="space-y-3">
             <h3 className="font-bold text-sm text-slate-900 dark:text-white">Itemized Bill Components</h3>
-            <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+            <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
                   <tr>
@@ -198,7 +198,7 @@ export const ResidentBillingPage: React.FC = () => {
           <History className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Payment & Transaction History
         </h2>
 
-        <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+        <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
               <tr>
