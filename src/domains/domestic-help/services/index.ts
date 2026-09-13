@@ -1,2 +1,1 @@
-// Services for domestic-help domain
-export {};
+export * from './domesticHelpService';

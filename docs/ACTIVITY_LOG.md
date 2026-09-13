@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-004
-- Last Updated: 2026-09-14 01:51
+- Current Prompt ID: PROMPT-005
+- Last Updated: 2026-09-14 01:53
 - Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics
-- Latest Completed Feature: Unified Society Request Centre (Phase 3)
+- Latest Completed Feature: Domestic Help Attendance System (Phase 4)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -34,6 +34,7 @@
 | RBAC & Multi-Tenant Role System | PROMPT-002 | PROMPT-002 | Active |
 | Delivery and Parcel Room | PROMPT-003 | PROMPT-003 | Active |
 | Unified Society Request Centre | PROMPT-004 | PROMPT-004 | Active |
+| Domestic Help Attendance | PROMPT-005 | PROMPT-005 | Active |
 
 ---
 
@@ -288,3 +289,66 @@ COMPLETED
 
 ### Developer Notes
 - Immutable audit log records actor name, actor role, timestamp, action, and notes for every status transition.
+
+---
+
+## [PROMPT-005] — PHASE 4 DOMESTIC HELP ATTENDANCE
+
+**Date:** 2026-09-14 01:53
+
+**Prompt Objective:**
+Build an end-to-end Domestic Help Attendance & Gate Scan system featuring worker profiles, worker types (`MAID`, `COOK`, `DRIVER`, `NANNY`, `CLEANER`, `GARDENER`, `OTHER`), household linkages, resident consent management, gate QR check-in/out, privacy document masking, and real-time entry alerts.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `DomesticWorker`, `HouseholdAssignment`, `AttendanceRecord`, and `WorkerAccessAudit` with statuses (`CHECKED_IN`, `CHECKED_OUT`, `ABSENT`, `SUSPENDED`).
+- Created `domesticHelpService.ts` managing local storage persistence, resident privacy scoping (residents view only linked household staff), gate QR scan check-in/out, and audit history.
+- Created `DomesticHelpManager.tsx` multi-role component supporting Resident household worker list, consent revocation, "Your maid entered at 9:03 AM" real-time entry alert banners, Security Gate QR scanner terminal, and Admin/Facility aggregate directory.
+- Integrated real-time topic `WORKER_ENTRY_EXIT` so gate scans broadcast entry alerts live across browser tabs without page refresh.
+- Mounted `DomesticHelpManager` on `DomesticHelpHubPage` (`/resident/domestic-help`) and `DomesticWorkerManagementPage` (`/admin/domestic-workers`).
+
+### Files Created
+- `src/domains/domestic-help/types/index.ts`
+- `src/domains/domestic-help/services/domesticHelpService.ts`
+- `src/domains/domestic-help/services/index.ts`
+- `src/domains/domestic-help/components/DomesticHelpManager.tsx`
+- `src/domains/domestic-help/components/index.ts`
+
+### Files Modified
+- `src/pages/dashboard/resident/DomesticHelpHubPage.tsx`
+- `src/pages/dashboard/admin/DomesticWorkerManagementPage.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Added local storage datasets: `aarizo_domestic_workers_v1`, `aarizo_worker_assignments_v1`, `aarizo_worker_attendance_v1`.
+
+### Routes / Pages Changed
+- Mounted `DomesticHelpManager` on `/resident/domestic-help` and `/admin/domestic-workers`.
+
+### Permissions / RBAC Changes
+- Integrated `domestic:attendance` and `domestic:households` permissions.
+
+### Real-Time Changes
+- Gate QR check-in/out publishes to real-time topic `WORKER_ENTRY_EXIT`. Residents receive live entry alert notifications without page refresh.
+
+### Validation / Error Handling
+- Verified worker status checks (denies check-in if worker is suspended or rejected).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Privacy document masking ensures police verification papers are never publicly exposed.
