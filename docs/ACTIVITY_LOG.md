@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-014
-- Last Updated: 2026-09-14 02:26
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center
-- Latest Completed Feature: Safety Command Center & One-Tap Emergency SOS (Phase 13)
+- Current Prompt ID: PROMPT-015
+- Last Updated: 2026-09-14 02:27
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management
+- Latest Completed Feature: Society Expense Management (Phase 14)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -44,6 +44,7 @@
 | Society Services & Subscriptions | PROMPT-012 | PROMPT-012 | Active |
 | Society Operations Centre | PROMPT-013 | PROMPT-013 | Active |
 | Safety Command Center | PROMPT-014 | PROMPT-014 | Active |
+| Society Expense Management | PROMPT-015 | PROMPT-015 | Active |
 
 ---
 
@@ -969,11 +970,73 @@ COMPLETED
 ### Developer Notes
 - Enforces strict AI boundary rule: AI assistant is prohibited from independently making child-safety or gate entry decisions; all gate clearances require human guardian authorization.
 
+---
 
+## [PROMPT-015] — PHASE 14 SOCIETY EXPENSE MANAGEMENT
 
+**Date:** 2026-09-14 02:27
 
+**Prompt Objective:**
+Build a multi-role Society Expense Management Engine supporting `SocietyExpense`, `Budget`, `BudgetCategory`, and `VendorInvoice` entities across 9 categories (`utilities`, `staff`, `maintenance`, `repair`, `AMC`, `security`, `events`, `cleaning`, `other`), tracking budget vs. actual variance, multi-role admin/committee approval workflows, invoice attachments, and interactive financial dashboard analytics.
 
+**Status:**
+COMPLETED
 
+### Changes Made
+- Defined domain entities for `ExpenseCategory`, `ExpenseStatus`, `BudgetStatus`, `VendorInvoice`, `SocietyExpense`, `BudgetCategoryItem`, `Budget`, `ExpenseVarianceItem`, and `ExpenseSummary` in `src/domains/expenses/types/index.ts`.
+- Created `societyExpenseEngine.ts` handling local storage persistence (`aarizo_society_expenses_v2`, `aarizo_society_budgets_v2`), expense recording, approval lifecycle (`PENDING_APPROVAL` ➔ `APPROVED` / `REJECTED` ➔ `PAID`), vendor invoice attachment, monthly budget allocation, and variance calculation (`budgeted - actual`).
+- Built `SocietyExpenseHub.tsx` interface offering:
+  - Budget vs. Actual overview cards & progress bars.
+  - Expense audit log with filters, search, approval controls, and invoice viewer.
+  - Monthly budget configuration modal.
+  - Vendor payout ranking and monthly spending trend analytics.
+- Created `AdminExpensePage.tsx` and mounted route `/admin/expenses` in `routes/index.tsx`.
+- Integrated `SocietyExpenseHub` into `CommitteeDashboard.tsx` under Financial Overview tab.
+- Added navigation link in `SocietyAdminLayout.tsx`.
 
+### Files Created
+- `src/domains/expenses/types/index.ts`
+- `src/domains/expenses/services/societyExpenseEngine.ts`
+- `src/domains/expenses/services/index.ts`
+- `src/domains/expenses/components/SocietyExpenseHub.tsx`
+- `src/domains/expenses/components/index.ts`
+- `src/domains/expenses/index.ts`
+- `src/pages/dashboard/admin/AdminExpensePage.tsx`
 
+### Files Modified
+- `src/pages/dashboard/CommitteeDashboard.tsx`
+- `src/components/layouts/SocietyAdminLayout.tsx`
+- `src/routes/index.tsx`
+- `docs/ACTIVITY_LOG.md`
 
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Initialized local storage data structures `aarizo_society_expenses_v2` and `aarizo_society_budgets_v2` with seed expenses and active September 2026 budget allocations.
+
+### Routes / Pages Changed
+- Added `/admin/expenses` route.
+
+### Permissions / RBAC Changes
+- Allows Society Admin & Facility Manager to record expenses and attach vendor invoices; allows Committee Members & Society Admin to approve expenses and configure monthly category budgets.
+
+### Real-Time Changes
+- Broadcasts updates across tabs using topics `EXPENSE_UPDATED` and `BUDGET_UPDATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Variance calculation automatically identifies over-budget categories (`budgeted - actual < 0`) and visually highlights warning badges and progress bar color shifts.

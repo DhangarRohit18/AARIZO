@@ -8,6 +8,7 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { UnifiedRequestCenter } from '../../domains/requests/components/UnifiedRequestCenter';
+import { SocietyExpenseHub } from '../../domains/expenses';
 
 export const CommitteeDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'approvals' | 'financials' | 'compliance' | 'health' | 'governance'>('approvals');
@@ -103,32 +104,7 @@ export const CommitteeDashboard: React.FC = () => {
 
 
       {activeTab === 'financials' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
-            <h3 className="text-md font-bold text-slate-800">Reserve Fund & Operating Budget</h3>
-            <div className="p-4 bg-slate-50 rounded-lg space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Total Reserve Fund:</span>
-                <span className="font-bold text-slate-900">₹ 42,50,000</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Monthly Expenses (Aug):</span>
-                <span className="font-bold text-slate-900">₹ 3,85,000</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Total Outstanding Dues:</span>
-                <span className="font-bold text-rose-600">₹ 1,12,000</span>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
-            <h3 className="text-md font-bold text-slate-800">Vendor Expenditure Comparison</h3>
-            <p className="text-xs text-slate-500">Quarterly comparison of security, housekeeping and maintenance service costs</p>
-            <div className="h-36 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 text-xs">
-              <BarChart2 size={24} className="mr-2" /> Financial Audit Chart Rendered Here
-            </div>
-          </div>
-        </div>
+        <SocietyExpenseHub userRole="COMMITTEE_MEMBER" />
       )}
 
       {activeTab === 'compliance' && (

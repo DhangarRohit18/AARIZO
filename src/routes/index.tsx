@@ -55,6 +55,7 @@ import { SecurityAuditCenterPage } from '../pages/dashboard/admin/SecurityAuditC
 import { RealtimeOperationsHubPage } from '../pages/dashboard/admin/RealtimeOperationsHubPage';
 import { AdminCompliancePage } from '../pages/dashboard/admin/AdminCompliancePage';
 import { AdminMoveRenovationPage } from '../pages/dashboard/admin/AdminMoveRenovationPage';
+import { AdminExpensePage } from '../pages/dashboard/admin/AdminExpensePage';
 import { CommitteeDashboard } from '../pages/dashboard/CommitteeDashboard';
 import { FacilityManagerDashboard } from '../pages/dashboard/FacilityManagerDashboard';
 import { DomesticWorkerDashboard } from '../pages/dashboard/DomesticWorkerDashboard';
@@ -175,6 +176,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="/admin/realtime" element={<RealtimeOperationsHubPage />} />
           <Route path="/admin/compliance" element={<AdminCompliancePage />} />
           <Route path="/admin/move-renovation" element={<AdminMoveRenovationPage />} />
+          <Route path="/admin/expenses" element={<AdminExpensePage />} />
           <Route path="/admin/*" element={<SecretaryDashboard />} />
         </Route>
       </Route>

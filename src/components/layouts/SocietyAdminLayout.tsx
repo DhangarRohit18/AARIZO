@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
   Building2,
   Users,
+  DollarSign,
   Bell,
   LogOut,
   Menu,
@@ -33,6 +34,7 @@ export const SocietyAdminLayout: React.FC = () => {
     { label: 'Resident Approvals', path: '/admin/residents', icon: Users },
     { label: 'Parking Operations', path: '/admin/parking', icon: Car },
     { label: 'Maintenance Operations', path: '/admin/maintenance', icon: Wrench },
+    { label: 'Society Expense Engine', path: '/admin/expenses', icon: DollarSign },
     { label: 'Billing Engine', path: '/admin/billing', icon: CreditCard },
     { label: 'Society Service Hub', path: '/admin/service-hub', icon: Store },
     { label: 'Amenity Management', path: '/admin/amenities', icon: Sparkles },
