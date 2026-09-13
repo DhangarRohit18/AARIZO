@@ -1,5 +1,5 @@
 import React from 'react';
-import { NotificationEngineHub } from '../domains/notifications';
+import { NotificationEngineHub } from '../../domains/notifications';
 
 export const NotificationCenterPage: React.FC = () => {
   return (

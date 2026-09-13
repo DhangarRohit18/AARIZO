@@ -5,7 +5,7 @@ import type {
   ListingStatus,
   ListingType,
   ListingCategory,
-} from '../types';
+} from '../types/index';
 import { realtimeService } from '../../../services/realtimeService';
 
 const MARKETPLACE_STORAGE_KEY = 'aarizo_marketplace_listings_v2';

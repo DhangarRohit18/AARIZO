@@ -6,7 +6,8 @@ import type {
   AIVernacularVoiceParsing,
   AISocietyHealthSummary,
 } from '../types/aiTypes';
-import { assetComplianceEngine } from '../../compliance/services/assetComplianceEngine';
+import { assetComplianceService } from '../../compliance/services/assetComplianceService';
+import type { AssetItem } from '../../compliance/types';
 
 class PracticalAILayerEngine {
 
@@ -117,10 +118,10 @@ class PracticalAILayerEngine {
    * USE CASE 4: Predictive Maintenance
    */
   public getPredictiveMaintenanceAlerts(): AIPredictiveMaintenanceAlert[] {
-    const assets = assetComplianceEngine.getAssets();
+    const assets = assetComplianceService.getAssets();
 
-    return assets.map((a) => {
-      const isExpiring = a.complianceStatus === 'EXPIRING' || a.complianceStatus === 'EXPIRED';
+    return assets.map((a: AssetItem) => {
+      const isExpiring = a.status === 'EXPIRING_SOON' || a.status === 'EXPIRED';
       const risk = isExpiring ? 88 : a.name.includes('Lift') ? 45 : 22;
 
       return {

@@ -274,7 +274,6 @@ class SocietyOperationsService {
     if (index === -1) return null;
 
     const item = utilities[index];
-    const timestamp = new Date().toISOString();
 
     return this.updateUtilityStatus(
       item.id,

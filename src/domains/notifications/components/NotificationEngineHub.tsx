@@ -9,23 +9,20 @@ import {
   Sliders,
   Send,
   RefreshCw,
-  Info,
   Radio,
   CheckCheck,
   AlertTriangle,
-  Clock,
-  Settings,
   Layers,
 } from 'lucide-react';
 import { multiChannelNotificationService } from '../services/multiChannelNotificationService';
-import {
+import type {
   NotificationItemWithLogs,
   NotificationPreference,
   NotificationEventType,
   NotificationCategory,
   NotificationChannel,
   DeliveryLog,
-} from '../types';
+} from '../types/index';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 
@@ -50,7 +47,7 @@ export const NotificationEngineHub: React.FC = () => {
     message: 'Visitor Vijay Malhotra (Intercom Verification) arrived for Flat B-402.',
     isCritical: false,
     phone: currentUser?.phone || '+91 98765 43210',
-    email: currentUser?.email || 'resident@aarizo.com',
+    email: 'resident@aarizo.com',
   });
 
   const loadData = () => {
@@ -385,7 +382,7 @@ export const NotificationEngineHub: React.FC = () => {
                   <div className="space-y-2 pt-2 border-t border-slate-200/60">
                     <h5 className="text-xs font-bold text-slate-600 uppercase tracking-wider">Channel Dispatch Logs</h5>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {event.deliveryLogs.map((log) => (
+                      {event.deliveryLogs.map((log: DeliveryLog) => (
                         <div key={log.id} className="p-2.5 bg-white border rounded-lg text-xs space-y-1">
                           <div className="flex justify-between items-center font-bold">
                             <span className="text-indigo-600 flex items-center gap-1">

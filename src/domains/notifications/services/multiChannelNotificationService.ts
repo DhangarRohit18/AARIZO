@@ -1,9 +1,6 @@
-import {
+import type {
   NotificationEvent,
-  NotificationEventType,
   NotificationCategory,
-  NotificationChannel,
-  DeliveryStatus,
   DeliveryLog,
   NotificationItemWithLogs,
   NotificationPreference,
@@ -12,7 +9,7 @@ import {
   WhatsAppNotificationAdapter,
   SMSNotificationAdapter,
   EmailNotificationAdapter,
-} from '../types';
+} from '../types/index';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 const STORAGE_KEY_NOTIF_EVENTS = 'aarizo_notification_events_v2';
@@ -231,19 +228,19 @@ class MultiChannelNotificationService {
 
     // 3. WHATSAPP Channel
     if (isOverride || categoryPref.whatsapp) {
-      const log = await this.whatsAppAdapter.sendWhatsApp(event, recipientContact?.phone);
+      const log = await this.whatsAppAdapter.sendWhatsApp(event, recipientContact?.phone || '+91 98765 43210');
       deliveryLogs.push(log);
     }
 
     // 4. SMS Channel
     if (isOverride || categoryPref.sms) {
-      const log = await this.smsAdapter.sendSMS(event, recipientContact?.phone);
+      const log = await this.smsAdapter.sendSMS(event, recipientContact?.phone || '+91 98765 43210');
       deliveryLogs.push(log);
     }
 
     // 5. EMAIL Channel
     if (isOverride || categoryPref.email) {
-      const log = await this.emailAdapter.sendEmail(event, recipientContact?.email);
+      const log = await this.emailAdapter.sendEmail(event, recipientContact?.email || 'resident@aarizo.com');
       deliveryLogs.push(log);
     }
 

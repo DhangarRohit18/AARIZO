@@ -90,7 +90,7 @@ export const ResidentHome: React.FC = () => {
 
         {/* 3. Live Visitor Status Card */}
         <ResidentVisitorCard
-          visitorStatus={mockVisitorStatus}
+          visitorData={mockVisitorStatus}
           onInviteVisitor={() => setResidentTab('visitors')}
         />
 

@@ -8,21 +8,14 @@ import {
   Droplet,
   Users,
   CheckCircle2,
-  XCircle,
-  Clock,
-  PlusCircle,
   RefreshCw,
-  Search,
-  Filter,
   Radio,
   QrCode,
-  History,
-  PhoneCall,
   UserPlus,
   Lock,
 } from 'lucide-react';
 import { safetyCommandEngine } from '../services/safetyCommandEngine';
-import { EmergencyIncidentItem, IncidentStatus, EmergencyCategory, ChildProfileItem, PickupRecord } from '../types';
+import type { EmergencyIncidentItem, IncidentStatus, EmergencyCategory, ChildProfileItem, PickupRecord, AuthorizedPickupPerson } from '../types/index';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 
@@ -35,7 +28,7 @@ export const SafetyCommandHub: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'ONE_TAP_SOS' | 'COMMAND_CONSOLE' | 'CHILD_SAFETY' | 'GATE_VERIFIER'>('ONE_TAP_SOS');
   const [incidents, setIncidents] = useState<EmergencyIncidentItem[]>(() => safetyCommandEngine.getIncidents());
   const [children, setChildren] = useState<ChildProfileItem[]>(() => safetyCommandEngine.getChildren());
-  const [pickups, setPickups] = useState<PickupRecord[]>(() => safetyCommandEngine.getPickupRecords());
+  const [_pickups, setPickups] = useState<PickupRecord[]>(() => safetyCommandEngine.getPickupRecords());
 
   const [selectedIncident, setSelectedIncident] = useState<EmergencyIncidentItem | null>(null);
   const [modalMode, setModalMode] = useState<'ASSIGN_RESPONDER' | 'TIMELINE' | 'ADD_CHILD' | 'ADD_PICKUP' | null>(null);
@@ -402,11 +395,11 @@ export const SafetyCommandHub: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    {child.authorizedPickups.map((p) => (
-                      <div key={p.id} className="p-2.5 bg-slate-50 rounded-lg flex justify-between items-center text-xs">
+                    {child.authorizedPickups.map((_p: AuthorizedPickupPerson) => (
+                      <div key={_p.id} className="p-2.5 bg-slate-50 rounded-lg flex justify-between items-center text-xs">
                         <div>
-                          <span className="font-semibold text-slate-800">{p.name}</span>
-                          <span className="text-slate-400 text-[10px]"> ({p.relationship})</span>
+                          <span className="font-semibold text-slate-800">{_p.name}</span>
+                          <span className="text-slate-400 text-[10px]"> ({_p.relationship})</span>
                         </div>
                         <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded text-[10px]">
                           APPROVED

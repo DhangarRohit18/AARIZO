@@ -11,12 +11,10 @@ import {
   XCircle,
   Sliders,
   RotateCcw,
-  BarChart2,
-  Paperclip,
   CheckSquare,
 } from 'lucide-react';
 import { complaintSLAService } from '../services/complaintSLAService';
-import type { Complaint, ComplaintCategory, ComplaintStatus, SLAPolicy, SLAAnalytics } from '../types';
+import type { Complaint, ComplaintCategory, SLAPolicy, SLAAnalytics } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { useRBAC } from '../../../hooks/useRBAC';
 import { realtimeService } from '../../../services/realtimeService';
@@ -26,7 +24,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
   const { activeRole } = useRBAC();
 
   const [complaints, setComplaints] = useState<Complaint[]>([]);
-  const [slaPolicies, setSlaPolicies] = useState<SLAPolicy[]>([]);
+  const [_slaPolicies, setSlaPolicies] = useState<SLAPolicy[]>([]);
   const [analytics, setAnalytics] = useState<SLAAnalytics | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
@@ -72,7 +70,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
       societyId: 'soc-gvs',
       residentId: currentUser?.id || 'res-1',
       residentName: currentUser?.name || 'Vikram Joshi',
-      flatCode: currentUser?.buildingBlock ? `${currentUser.buildingBlock} · ${currentUser.flatNumber}` : 'Tower B · B-1204',
+      flatCode: currentUser?.flatDetails || 'Tower B · B-1204',
       category,
       title,
       description,
@@ -373,6 +371,100 @@ export const ComplaintSLAEngineHub: React.FC = () => {
                 <CheckCircle size={16} /> YES, RESOLVED
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Submit Ticket Modal */}
+      {showSubmitModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <h3 className="text-lg font-bold text-slate-900">Log New Complaint / Issue</h3>
+            <form onSubmit={handleCreateComplaint} className="space-y-3 text-xs">
+              <div>
+                <label className="block font-semibold mb-1 text-slate-700">Complaint Title</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Water leakage in bathroom"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full p-2 border rounded-lg border-slate-300"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold mb-1 text-slate-700">Category</label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value as ComplaintCategory)}
+                    className="w-full p-2 border rounded-lg border-slate-300 bg-white font-bold"
+                  >
+                    <option value="PLUMBING">PLUMBING</option>
+                    <option value="ELECTRICAL">ELECTRICAL</option>
+                    <option value="LIFT">LIFT / ELEVATOR</option>
+                    <option value="SECURITY">SECURITY</option>
+                    <option value="HOUSEKEEPING">HOUSEKEEPING</option>
+                    <option value="PARKING">PARKING</option>
+                    <option value="OTHER">OTHER</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-semibold mb-1 text-slate-700">Urgency Level</label>
+                  <select
+                    value={urgency}
+                    onChange={(e) => setUrgency(e.target.value as any)}
+                    className="w-full p-2 border rounded-lg border-slate-300 bg-white font-bold text-rose-600"
+                  >
+                    <option value="LOW">LOW</option>
+                    <option value="MEDIUM">MEDIUM</option>
+                    <option value="HIGH">HIGH</option>
+                    <option value="CRITICAL">CRITICAL</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold mb-1 text-slate-700">Location / Flat</label>
+                <input
+                  type="text"
+                  required
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full p-2 border rounded-lg border-slate-300"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold mb-1 text-slate-700">Description</label>
+                <textarea
+                  required
+                  rows={3}
+                  placeholder="Provide detail about the problem..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full p-2 border rounded-lg border-slate-300"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button
+                  type="button"
+                  onClick={() => setShowSubmitModal(false)}
+                  className="px-4 py-2 border rounded-lg text-slate-600 font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 shadow-md"
+                >
+                  Submit & Start SLA Timer
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

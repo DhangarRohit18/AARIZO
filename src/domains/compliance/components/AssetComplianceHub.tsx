@@ -5,7 +5,6 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  FileText,
   PlusCircle,
   RefreshCw,
   Search,
@@ -13,12 +12,10 @@ import {
   Calendar,
   Building2,
   History,
-  Upload,
   UserCheck,
-  ChevronRight,
 } from 'lucide-react';
 import { assetComplianceService } from '../services/assetComplianceService';
-import { AssetItem, ComplianceMetrics, AssetCategory, ComplianceStatus, AlertWindow } from '../types';
+import type { AssetItem, ComplianceMetrics, AssetCategory, ComplianceStatus, AlertWindow } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 

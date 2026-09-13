@@ -8,17 +8,12 @@ import {
   PlusCircle,
   RefreshCw,
   Search,
-  Filter,
-  Eye,
   Camera,
-  Ban,
-  Clock,
   Layers,
-  Building2,
   ShieldAlert,
 } from 'lucide-react';
 import { qrParkingService } from '../services/qrParkingService';
-import { ParkingSlotItem, ParkingViolationRecord, ParkingType, OccupancyState, ParkingPassQR } from '../types';
+import type { ParkingSlotItem, ParkingViolationRecord, ParkingType, OccupancyState, ParkingPassQR } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 
@@ -339,6 +334,18 @@ export const QRParkingHub: React.FC = () => {
                 <option value="SERVICE">SERVICE</option>
                 <option value="DELIVERY">DELIVERY</option>
               </select>
+
+              <select
+                value={selectedStateFilter}
+                onChange={(e) => setSelectedStateFilter(e.target.value)}
+                className="px-3 py-2 border rounded-lg text-xs font-semibold bg-white text-slate-700"
+              >
+                <option value="ALL">All States</option>
+                <option value="VACANT">VACANT</option>
+                <option value="OCCUPIED">OCCUPIED</option>
+                <option value="RESERVED">RESERVED</option>
+                <option value="BLOCKED">BLOCKED</option>
+              </select>
             </div>
 
             <button onClick={loadData} className="text-xs text-slate-500 flex items-center gap-1">
@@ -501,6 +508,75 @@ export const QRParkingHub: React.FC = () => {
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Modal: Add Slot */}
+      {modalMode === 'ADD_SLOT' && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div className="flex justify-between items-center border-b pb-3">
+              <h3 className="font-bold text-slate-900 text-base">Add Parking Slot</h3>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <form onSubmit={handleAddSlotSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Slot Code</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. B2-P15"
+                  value={slotForm.slotCode}
+                  onChange={(e) => setSlotForm({ ...slotForm, slotCode: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Level / Location</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Basement 2"
+                  value={slotForm.level}
+                  onChange={(e) => setSlotForm({ ...slotForm, level: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Parking Slot Type</label>
+                <select
+                  value={slotForm.parkingType}
+                  onChange={(e) => setSlotForm({ ...slotForm, parkingType: e.target.value as ParkingType })}
+                  className="w-full px-3 py-2 border rounded-lg text-xs bg-white font-bold"
+                >
+                  <option value="RESIDENT">RESIDENT</option>
+                  <option value="VISITOR">VISITOR</option>
+                  <option value="EV_CHARGING">EV CHARGING</option>
+                  <option value="TEMPORARY">TEMPORARY</option>
+                  <option value="VACATION">VACATION</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t">
+                <button
+                  type="button"
+                  onClick={() => setModalMode(null)}
+                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
+                >
+                  Create Slot
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 

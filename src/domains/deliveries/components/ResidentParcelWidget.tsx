@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, QrCode, ShieldCheck, Clock, CheckCircle } from 'lucide-react';
+import { Package, QrCode } from 'lucide-react';
 import { parcelRoomService } from '../services/parcelRoomService';
 import type { Parcel } from '../types';
 import { realtimeService } from '../../../services/realtimeService';
@@ -26,7 +26,6 @@ export const ResidentParcelWidget: React.FC = () => {
   }, []);
 
   const activeParcels = parcels.filter((p) => p.status !== 'COLLECTED');
-  const pastParcels = parcels.filter((p) => p.status === 'COLLECTED');
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">

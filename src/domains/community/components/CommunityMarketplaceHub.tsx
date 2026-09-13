@@ -1,24 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
   Store,
-  Tag,
-  Gift,
-  Repeat,
   Plus,
   Search,
-  Filter,
   Users,
   Car,
   Heart,
   HelpCircle,
-  ShieldAlert,
-  CheckCircle,
-  AlertCircle,
-  Phone,
   UserCheck,
-  Building,
   Sparkles,
-  Megaphone,
 } from 'lucide-react';
 import { communityMarketplaceEngine } from '../services/communityMarketplaceEngine';
 import type {
@@ -28,7 +18,7 @@ import type {
   ListingCategory,
   NeighbourhoodDirectoryEntry,
   LostAndFoundItem,
-} from '../types';
+} from '../types/index';
 
 interface CommunityMarketplaceHubProps {
   userRole?: 'RESIDENT' | 'SOCIETY_ADMIN' | 'SUPER_ADMIN';
@@ -158,7 +148,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
     (d) =>
       d.name.toLowerCase().includes(directorySearch.toLowerCase()) ||
       d.profession?.toLowerCase().includes(directorySearch.toLowerCase()) ||
-      d.skills.some((s) => s.toLowerCase().includes(directorySearch.toLowerCase()))
+      d.skills.some((s: string) => s.toLowerCase().includes(directorySearch.toLowerCase()))
   );
 
   const formatCurrency = (amt: number) => {
@@ -270,6 +260,17 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                 <option value="services">Services</option>
                 <option value="electronics">Electronics</option>
                 <option value="other">Other</option>
+              </select>
+
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value as any)}
+                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700"
+              >
+                <option value="ALL">All Statuses</option>
+                <option value="AVAILABLE">AVAILABLE</option>
+                <option value="RESERVED">RESERVED</option>
+                <option value="SOLD">SOLD</option>
               </select>
             </div>
           </div>
@@ -414,9 +415,9 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
                     Skills & Assistance
                   </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {entry.skills.map((s) => (
-                      <span key={s} className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[11px] font-medium">
+                  <div className="flex flex-wrap gap-1">
+                    {entry.skills.map((s: string) => (
+                      <span key={s} className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] rounded font-medium">
                         {s}
                       </span>
                     ))}

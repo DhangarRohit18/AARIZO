@@ -1,4 +1,4 @@
-import type { Parcel, ParcelStatus, ParcelPickup, ParcelNotification } from '../types';
+import type { Parcel, ParcelPickup, ParcelNotification } from '../types';
 import { realtimeService } from '../../../services/realtimeService';
 import { filterBySociety } from '../../../utils/societyIsolation';
 
@@ -102,7 +102,7 @@ class ParcelRoomService {
         ageHours,
         isFlagged24h: ageHours >= 24 && ageHours < 48,
         isFlagged48h: ageHours >= 48,
-        status: ageHours >= 72 && p.status !== 'COLLECTED' ? 'EXPIRED' : p.status,
+        status: ageHours >= 72 && (p.status as string) !== 'COLLECTED' ? 'EXPIRED' : p.status,
       };
     });
 

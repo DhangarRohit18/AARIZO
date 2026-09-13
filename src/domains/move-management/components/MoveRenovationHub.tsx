@@ -3,26 +3,17 @@ import {
   Truck,
   Wrench,
   Calendar,
-  Clock,
   ShieldCheck,
-  CheckCircle2,
-  XCircle,
   PlusCircle,
   QrCode,
-  Users,
-  FileCheck,
-  Building2,
   AlertTriangle,
   RefreshCw,
-  Search,
-  Filter,
   CheckSquare,
   Square,
-  Package,
 } from 'lucide-react';
 import { moveRenovationService } from '../services/moveRenovationService';
-import { MoveEvent, MoveType, MoveStatus, LiftSlot } from '../types';
-import { RenovationPermit, RenovationStatus } from '../../renovation/types';
+import type { MoveEvent, MoveType } from '../types';
+import type { RenovationPermit } from '../../renovation/types';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 
@@ -31,16 +22,15 @@ export const MoveRenovationHub: React.FC = () => {
   const activeRole = (currentUser?.role || selectedRole || '').toUpperCase();
 
   const isAdmin = ['SOCIETY_ADMIN', 'SUPER_ADMIN', 'SECRETARY'].includes(activeRole);
-  const isSecurity = ['SECURITY', 'GUARD', 'SECURITY_GUARD', 'SOCIETY_ADMIN'].includes(activeRole);
 
   const [activeTab, setActiveTab] = useState<'MOVES' | 'RENOVATIONS' | 'CALENDAR' | 'SECURITY_SCANNER'>('MOVES');
   const [moves, setMoves] = useState<MoveEvent[]>(() => moveRenovationService.getMoves());
   const [renovations, setRenovations] = useState<RenovationPermit[]>(() => moveRenovationService.getRenovations());
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [_searchQuery, _setSearchQuery] = useState('');
   const [modalMode, setModalMode] = useState<'CREATE_MOVE' | 'CREATE_RENOVATION' | 'VIEW_GATEPASS' | null>(null);
-  const [selectedMove, setSelectedMove] = useState<MoveEvent | null>(null);
-  const [selectedRenovation, setSelectedRenovation] = useState<RenovationPermit | null>(null);
+  const [_selectedMove, _setSelectedMove] = useState<MoveEvent | null>(null);
+  const [_selectedRenovation, _setSelectedRenovation] = useState<RenovationPermit | null>(null);
 
   // Forms
   const [moveForm, setMoveForm] = useState({

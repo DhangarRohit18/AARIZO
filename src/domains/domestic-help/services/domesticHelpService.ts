@@ -1,4 +1,4 @@
-import type { DomesticWorker, HouseholdAssignment, AttendanceRecord, WorkerAccessAudit } from '../types';
+import type { DomesticWorker, HouseholdAssignment, AttendanceRecord } from '../types';
 import { realtimeService } from '../../../services/realtimeService';
 import { filterBySociety } from '../../../utils/societyIsolation';
 
@@ -159,7 +159,7 @@ class DomesticHelpService {
     };
   }
 
-  public processGateScanCheckOut(workerId: string, gateName = 'Main Gate 1', guardName = 'Guard On Duty'): { success: boolean; message: string } {
+  public processGateScanCheckOut(workerId: string, _gateName = 'Main Gate 1', guardName = 'Guard On Duty'): { success: boolean; message: string } {
     const workers = this.getStorage<DomesticWorker>(STORAGE_KEY_WORKERS, SEED_WORKERS);
     const index = workers.findIndex((w) => w.id === workerId || w.passCode === workerId || w.qrCode.includes(workerId));
 

@@ -1,4 +1,4 @@
-import type { EmergencyIncidentItem, IncidentStatus, EmergencyCategory, ChildProfileItem, PickupRecord, AuthorizedPickupPerson } from '../types';
+import type { EmergencyIncidentItem, EmergencyCategory, ChildProfileItem, PickupRecord, AuthorizedPickupPerson } from '../types/index';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 const STORAGE_KEY_INCIDENTS = 'aarizo_emergency_incidents_v2';

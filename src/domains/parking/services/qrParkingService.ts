@@ -1,8 +1,7 @@
-import { ParkingSlotItem, ParkingPassQR, ParkingViolationRecord, ParkingType, OccupancyState, ViolationSeverity } from '../types';
+import type { ParkingSlotItem, ParkingPassQR, ParkingViolationRecord, ParkingType, OccupancyState } from '../types';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 const STORAGE_KEY_PARKING_SLOTS = 'aarizo_qr_parking_slots_v1';
-const STORAGE_KEY_PARKING_PASSES = 'aarizo_qr_parking_passes_v1';
 const STORAGE_KEY_PARKING_VIOLATIONS = 'aarizo_parking_violations_v1';
 
 const INITIAL_SLOTS: ParkingSlotItem[] = [
@@ -140,7 +139,7 @@ class QRParkingService {
     slotCode: string,
     level: string,
     parkingType: ParkingType,
-    performedBy: string = 'Society Admin'
+    _performedBy: string = 'Society Admin'
   ): ParkingSlotItem {
     const slots = this.getStoredSlots();
     const newId = `ps-${Date.now()}`;

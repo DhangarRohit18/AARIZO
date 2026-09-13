@@ -2,7 +2,6 @@ import type { StaffShiftRecord, StaffDashboardMetrics, ShiftStatus, ShiftHistory
 import { realTimeSync } from '../../../services/realTimeSync';
 
 const STORAGE_KEY_SHIFTS = 'aarizo_staff_shifts_v1';
-const STORAGE_KEY_LEAVES = 'aarizo_staff_leaves_v1';
 
 const INITIAL_MOCK_SHIFTS: StaffShiftRecord[] = [
   {

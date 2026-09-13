@@ -9,18 +9,14 @@ import {
   Leaf,
   TrendingUp,
   Download,
-  CheckCircle,
-  AlertTriangle,
-  Info,
   Calendar,
-  Sparkles,
 } from 'lucide-react';
 import { societyHealthScoreEngine } from '../services/societyHealthScoreEngine';
 import type { SocietyHealthScoreData, HealthScoreComponent } from '../types';
 
 export const SocietyHealthScoreCard: React.FC = () => {
   const [data, setData] = useState<SocietyHealthScoreData | null>(null);
-  const [selectedPillar, setSelectedPillar] = useState<HealthScoreComponent | null>(null);
+  const [_selectedPillar, setSelectedPillar] = useState<HealthScoreComponent | null>(null);
 
   useEffect(() => {
     setData(societyHealthScoreEngine.calculateHealthScore());

@@ -1,4 +1,4 @@
-import type { SocietyRequest, SocietyRequestStatus, SocietyRequestCategory, RequestDocument, RequestAuditLog } from '../types';
+import type { SocietyRequest, SocietyRequestStatus, RequestDocument, RequestAuditLog } from '../types';
 import { realtimeService } from '../../../services/realtimeService';
 import { filterBySociety } from '../../../utils/societyIsolation';
 

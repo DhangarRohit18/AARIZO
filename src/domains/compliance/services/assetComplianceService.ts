@@ -1,4 +1,4 @@
-import { AssetItem, ComplianceMetrics, AlertWindow, ComplianceStatus, InspectionRecord, RenewalRecord, ComplianceAuditLog } from '../types';
+import type { AssetItem, ComplianceMetrics, AlertWindow, ComplianceStatus, InspectionRecord, RenewalRecord, ComplianceAuditLog } from '../types';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 const STORAGE_KEY_ASSETS = 'aarizo_asset_compliance_v1';

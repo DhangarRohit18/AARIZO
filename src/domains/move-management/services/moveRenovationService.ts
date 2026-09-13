@@ -1,5 +1,5 @@
-import { MoveEvent, MoveType, MoveStatus, LiftSlot, VehicleEntry, VendorEntry, MoveChecklistItem } from '../types';
-import { RenovationPermit, RenovationStatus, ContractorWorker } from '../../renovation/types';
+import type { MoveEvent, MoveChecklistItem } from '../types';
+import type { RenovationPermit } from '../../renovation/types';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 const STORAGE_KEY_MOVES = 'aarizo_move_events_v1';

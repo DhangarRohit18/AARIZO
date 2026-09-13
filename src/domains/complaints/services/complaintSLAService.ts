@@ -1,4 +1,4 @@
-import type { Complaint, ComplaintCategory, ComplaintStatus, EscalationLevel, SLAPolicy, ResolutionAttempt, SLAAnalytics } from '../types';
+import type { Complaint, ComplaintCategory, EscalationLevel, SLAPolicy, ResolutionAttempt, SLAAnalytics } from '../types';
 import { realtimeService } from '../../../services/realtimeService';
 import { filterBySociety } from '../../../utils/societyIsolation';
 
@@ -115,9 +115,7 @@ class ComplaintSLAService {
     const evaluated = complaints.map((c) => {
       if (c.status === 'CLOSED' || c.status === 'RESOLVED') return c;
 
-      const createdTime = new Date(c.createdAt).getTime();
       const dueTime = new Date(c.dueAt).getTime();
-      const elapsedMinutes = (now - createdTime) / 60000;
       const remainingMinutes = (dueTime - now) / 60000;
 
       const isWarningState = remainingMinutes > 0 && remainingMinutes <= c.slaMinutes * 0.25;

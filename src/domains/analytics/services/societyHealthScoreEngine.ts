@@ -1,24 +1,25 @@
 import type { SocietyHealthScoreData } from '../types';
-import { assetComplianceEngine } from '../../compliance/services/assetComplianceEngine';
+import { assetComplianceService } from '../../compliance/services/assetComplianceService';
+import type { AssetItem } from '../../compliance/types';
 import { complaintSLAService } from '../../complaints/services/complaintSLAService';
 import { societyExpenseEngine } from '../../expenses/services/societyExpenseEngine';
 
 class SocietyHealthScoreEngine {
   public calculateHealthScore(): SocietyHealthScoreData {
     // Gather dynamic live inputs from underlying domain services
-    const assets = assetComplianceEngine.getAssets();
-    const complaintsSummary = complaintSLAService.getSLASummary();
+    const assets = assetComplianceService.getAssets();
+    const complaintsSummary = complaintSLAService.getSLAAnalytics();
     const expenseSummary = societyExpenseEngine.getExpenseSummary();
 
     // 1. Compliance & AMC Health Calculation (Weight: 20%)
     const totalAssets = assets.length || 1;
     const compliantAssets = assets.filter(
-      (a) => a.complianceStatus === 'ACTIVE' || a.complianceStatus === 'EXPIRING'
+      (a: AssetItem) => a.status === 'ACTIVE' || a.status === 'EXPIRING_SOON'
     ).length;
     const complianceScore = Math.round((compliantAssets / totalAssets) * 100);
 
     // 2. SLA & Operations Health Calculation (Weight: 20%)
-    const slaScore = Math.round(complaintsSummary.overallSLAComplianceRate || 95);
+    const slaScore = Math.round(complaintsSummary.slaComplianceRate || 95);
 
     // 3. Financial Health Calculation (Weight: 20%)
     const collectionPct = 94.2; // From billing service baseline
@@ -31,7 +32,7 @@ class SocietyHealthScoreEngine {
 
     // 5. Resident Experience Health Calculation (Weight: 15%)
     const resolvedRate = complaintsSummary.totalComplaints > 0
-      ? (complaintsSummary.statusBreakdown.RESOLVED + complaintsSummary.statusBreakdown.CLOSED) / complaintsSummary.totalComplaints
+      ? complaintsSummary.resolvedCount / complaintsSummary.totalComplaints
       : 0.95;
     const residentExpScore = Math.round(resolvedRate * 100);
 

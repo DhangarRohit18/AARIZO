@@ -5,7 +5,6 @@ import type {
   ExpenseCategory,
   ExpenseFilter,
   VendorInvoice,
-  BudgetCategoryItem,
 } from '../types';
 import { realtimeService } from '../../../services/realtimeService';
 

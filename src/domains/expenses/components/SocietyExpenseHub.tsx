@@ -3,7 +3,6 @@ import {
   DollarSign,
   Plus,
   Search,
-  Filter,
   FileText,
   Paperclip,
   CheckCircle,
@@ -16,10 +15,7 @@ import {
   Layers,
   ArrowUpRight,
   ArrowDownRight,
-  Eye,
-  Check,
   Edit,
-  Trash2,
 } from 'lucide-react';
 import { societyExpenseEngine } from '../services/societyExpenseEngine';
 import type {

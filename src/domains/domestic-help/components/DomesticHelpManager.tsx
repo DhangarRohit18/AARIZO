@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Users,
   QrCode,
   CheckCircle,
-  Clock,
   ShieldCheck,
   UserX,
-  Plus,
-  Search,
   Bell,
   Lock,
-  AlertCircle,
 } from 'lucide-react';
 import { domesticHelpService } from '../services/domesticHelpService';
 import type { DomesticWorker, HouseholdAssignment, AttendanceRecord } from '../types';

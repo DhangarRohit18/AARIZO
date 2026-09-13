@@ -3,12 +3,10 @@ import {
   Sparkles,
   Bot,
   Truck,
-  ShieldCheck,
   AlertTriangle,
   Mic,
   FileSearch,
   Activity,
-  CheckCircle2,
   Lock,
 } from 'lucide-react';
 import { practicalAILayerEngine } from '../services/practicalAILayerEngine';

@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  FileText,
   Plus,
   Search,
   Filter,
-  CheckCircle,
-  XCircle,
-  Clock,
-  UserCheck,
   Paperclip,
   History,
-  ShieldCheck,
-  AlertCircle,
-  ChevronRight,
 } from 'lucide-react';
 import { societyRequestService } from '../services/societyRequestService';
 import type { SocietyRequest, SocietyRequestCategory, SocietyRequestStatus, RequestDocument } from '../types';
@@ -20,7 +12,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { useRBAC } from '../../../hooks/useRBAC';
 
 export const UnifiedRequestCenter: React.FC = () => {
-  const { currentUser, selectedRole } = useAuth();
+  const { currentUser } = useAuth();
   const { activeRole } = useRBAC();
   const [requests, setRequests] = useState<SocietyRequest[]>([]);
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
@@ -63,7 +55,7 @@ export const UnifiedRequestCenter: React.FC = () => {
         societyId: 'soc-gvs',
         residentId: currentUser?.id || 'res-1',
         residentName: currentUser?.name || 'Vikram Joshi',
-        flatCode: currentUser?.buildingBlock ? `${currentUser.buildingBlock} · ${currentUser.flatNumber}` : 'Tower B · B-1204',
+        flatCode: currentUser?.flatDetails || 'Tower B · B-1204',
         title: newTitle,
         category: newCategory,
         description: newDescription,
@@ -434,6 +426,13 @@ export const UnifiedRequestCenter: React.FC = () => {
                   placeholder="Add officer review notes / correction instructions..."
                   value={actionNotes}
                   onChange={(e) => setActionNotes(e.target.value)}
+                  className="w-full p-2 border rounded-lg text-xs border-slate-300"
+                />
+                <input
+                  type="text"
+                  placeholder="Assign Officer Name (e.g. Committee Sec. Rajesh)"
+                  value={assignedOfficer}
+                  onChange={(e) => setAssignedOfficer(e.target.value)}
                   className="w-full p-2 border rounded-lg text-xs border-slate-300"
                 />
                 <input

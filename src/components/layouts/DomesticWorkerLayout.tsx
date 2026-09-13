@@ -1,16 +1,13 @@
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   UserCheck,
-  Home,
-  QrCode,
   LogOut,
 } from 'lucide-react';
 
 export const DomesticWorkerLayout: React.FC = () => {
   const { currentUser, logout, selectedRole, switchRole } = useAuth();
-  const location = useLocation();
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
