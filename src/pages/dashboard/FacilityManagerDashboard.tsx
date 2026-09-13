@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   UserCheck,
 } from 'lucide-react';
+import { AssetComplianceHub } from '../../domains/compliance';
 
 export const FacilityManagerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'maintenance' | 'shifts' | 'amc' | 'cleaning' | 'utilities'>('maintenance');
@@ -128,24 +129,7 @@ export const FacilityManagerDashboard: React.FC = () => {
       )}
 
       {activeTab === 'amc' && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
-          <h3 className="text-lg font-bold text-slate-800">Annual Maintenance Contracts (AMC)</h3>
-          <div className="space-y-2">
-            {[
-              { vendor: 'Otis Elevators', service: 'Elevator Maintenance', expiry: '31 Dec 2026', status: 'ACTIVE' },
-              { vendor: 'Cummins India', service: 'DG Set & Generator AMC', expiry: '15 Nov 2026', status: 'ACTIVE' },
-              { vendor: 'FireTech Systems', service: 'Fire Extinguisher & Pump AMC', expiry: '30 Sep 2026', status: 'RENEWAL_DUE' },
-            ].map((amc, idx) => (
-              <div key={idx} className="p-3 bg-slate-50 rounded-lg flex justify-between items-center text-sm">
-                <div>
-                  <span className="font-bold text-slate-900">{amc.vendor}</span> - <span className="text-slate-600">{amc.service}</span>
-                  <p className="text-xs text-slate-400">Expires: {amc.expiry}</p>
-                </div>
-                <span className="text-xs font-semibold px-2 py-1 bg-emerald-100 text-emerald-800 rounded">{amc.status}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <AssetComplianceHub userRoleOverride="FACILITY_MANAGER" />
       )}
 
       {activeTab === 'cleaning' && (

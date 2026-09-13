@@ -1,2 +1,1 @@
-// Services for compliance domain
-export {};
+export * from './assetComplianceService';

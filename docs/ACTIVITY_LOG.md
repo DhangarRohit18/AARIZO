@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-006
-- Last Updated: 2026-09-14 01:55
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations
-- Latest Completed Feature: Complaint SLA and Escalation Engine (Phase 5)
+- Current Prompt ID: PROMPT-007
+- Last Updated: 2026-09-14 01:59
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance
+- Latest Completed Feature: AMC and Compliance Engine (Phase 6)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -36,6 +36,7 @@
 | Unified Society Request Centre | PROMPT-004 | PROMPT-004 | Active |
 | Domestic Help Attendance | PROMPT-005 | PROMPT-005 | Active |
 | Complaint SLA & Escalation Engine | PROMPT-006 | PROMPT-006 | Active |
+| AMC & Asset Compliance Engine | PROMPT-007 | PROMPT-007 | Active |
 
 ---
 
@@ -416,4 +417,71 @@ COMPLETED
 
 ### Developer Notes
 - SLA targets are fully dynamic per category and managed via UI configurator without hardcoding. Resolution attempts preserve complete history upon repeated ticket reopening.
+
+---
+
+## [PROMPT-007] — PHASE 6 AMC AND COMPLIANCE ENGINE
+
+**Date:** 2026-09-14 01:59
+
+**Prompt Objective:**
+Build an Asset Compliance & AMC Management Engine tracking society assets (`LIFT`, `GENERATOR`, `PUMP`, `CCTV`, `FIRE_SYSTEM`, `SWIMMING_POOL`, `GYM_EQUIPMENT`, `ELECTRICAL_EQUIPMENT`, `WATER_SYSTEMS`, `OTHER`), multi-window expiration alerts (30 days, 15 days, 7 days, expired), inspection schedules, proof uploads, audited renewals, and health score calculations.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `AssetItem`, `InspectionRecord`, `RenewalRecord`, `ComplianceAuditLog`, `ComplianceMetrics`, `AssetCategory`, `ComplianceStatus`, and `AlertWindow`.
+- Created `assetComplianceService.ts` managing local storage persistence, dynamic status recalculations based on date comparisons against current time, inspection logging with proof attachments, AMC/Insurance/Certificate renewals, and compliance health score computation.
+- Developed `AssetComplianceHub.tsx` rendering compliance metrics dashboard (`ACTIVE`, `EXPIRING`, `EXPIRED`, `NON_COMPLIANT`, Compliance Score %), filterable directory, Admin registration & renewal modals, Facility Manager inspection recorder, and asset audit history view.
+- Mounted `AssetComplianceHub` on Facility Manager Dashboard (`FacilityManagerDashboard.tsx`) under the AMC tab.
+- Created `AdminCompliancePage.tsx` and mounted route `/admin/compliance` under `SocietyAdminLayout` (`routes/index.tsx`).
+- Broadcast real-time updates across client sessions using topic `COMPLIANCE_UPDATED`.
+
+### Files Created
+- `src/domains/compliance/types/index.ts`
+- `src/domains/compliance/services/assetComplianceService.ts`
+- `src/domains/compliance/services/index.ts`
+- `src/domains/compliance/components/AssetComplianceHub.tsx`
+- `src/domains/compliance/components/index.ts`
+- `src/pages/dashboard/admin/AdminCompliancePage.tsx`
+
+### Files Modified
+- `src/domains/compliance/index.ts`
+- `src/pages/dashboard/FacilityManagerDashboard.tsx`
+- `src/routes/index.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Added local storage dataset `aarizo_asset_compliance_v1`.
+
+### Routes / Pages Changed
+- Added `/admin/compliance` route; mounted hub inside `/facility` AMC tab.
+
+### Permissions / RBAC Changes
+- Enables Admin asset registration, vendor assignment, and AMC renewal; enables Facility Manager inspection recording.
+
+### Real-Time Changes
+- Updates broadcast across client tabs using real-time topic `COMPLIANCE_UPDATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Expiry tracking automatically assigns alert windows (30d, 15d, 7d, expired) dynamically by comparing AMC, insurance, and certificate expiration dates against system date.
+
 
