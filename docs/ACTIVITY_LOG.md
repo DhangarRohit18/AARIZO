@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-007
-- Last Updated: 2026-09-14 01:59
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance
-- Latest Completed Feature: AMC and Compliance Engine (Phase 6)
+- Current Prompt ID: PROMPT-008
+- Last Updated: 2026-09-14 02:02
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications
+- Latest Completed Feature: Multi-Channel Notification Engine (Phase 7)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -37,6 +37,7 @@
 | Domestic Help Attendance | PROMPT-005 | PROMPT-005 | Active |
 | Complaint SLA & Escalation Engine | PROMPT-006 | PROMPT-006 | Active |
 | AMC & Asset Compliance Engine | PROMPT-007 | PROMPT-007 | Active |
+| Multi-Channel Notification Engine | PROMPT-008 | PROMPT-008 | Active |
 
 ---
 
@@ -483,5 +484,73 @@ COMPLETED
 
 ### Developer Notes
 - Expiry tracking automatically assigns alert windows (30d, 15d, 7d, expired) dynamically by comparing AMC, insurance, and certificate expiration dates against system date.
+
+---
+
+## [PROMPT-008] — PHASE 7 MULTI-CHANNEL NOTIFICATION ENGINE
+
+**Date:** 2026-09-14 02:02
+
+**Prompt Objective:**
+Build a centralized Multi-Channel Notification Engine supporting 13 event types (`VISITOR_ARRIVAL`, `VISITOR_APPROVAL`, `PARCEL_ARRIVAL`, `PARCEL_REMINDER`, `COMPLAINT_UPDATE`, `SLA_BREACH`, `PAYMENT_DUE`, `MAINTENANCE_UPDATE`, `NOC_UPDATE`, `EMERGENCY`, `AMC_EXPIRY`, `WORKER_ENTRY`, `UTILITY_OUTAGE`), 5 delivery channels (`IN_APP`, `PUSH`, `WHATSAPP`, `SMS`, `EMAIL`), pluggable provider adapters, resident channel preference configuration, critical safety/security overrides, and full delivery audit tracking.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `NotificationEvent`, `NotificationCategory`, `NotificationChannel`, `DeliveryStatus`, `DeliveryLog`, `NotificationPreference`, and provider adapter interfaces (`InAppNotificationAdapter`, `PushNotificationAdapter`, `WhatsAppNotificationAdapter`, `SMSNotificationAdapter`, `EmailNotificationAdapter`).
+- Created `multiChannelNotificationService.ts` managing centralized event dispatching, resident preference evaluation, critical safety override logic (`EMERGENCY` and `VISITOR_ARRIVAL` bypass muted preferences), provider mock adapters (FCM, Meta WhatsApp Cloud API, Twilio SMS, SendGrid), and delivery status log tracking.
+- Developed `NotificationEngineHub.tsx` featuring:
+  - In-App Inbox with category filters & unread badges.
+  - Resident Preference Matrix allowing channel toggling per event category.
+  - Provider Delivery & Audit Trail rendering detailed channel logs (`SENT`, `DELIVERED`, `FAILED`, `READ`).
+  - Test Event Dispatcher Terminal for triggering mock events.
+- Updated `NotificationCenterPage.tsx` to display `NotificationEngineHub`.
+- Broadcast real-time updates across client sessions using topic `NOTIFICATIONS_UPDATED`.
+
+### Files Created
+- `src/domains/notifications/types/index.ts`
+- `src/domains/notifications/services/multiChannelNotificationService.ts`
+- `src/domains/notifications/services/index.ts`
+- `src/domains/notifications/components/NotificationEngineHub.tsx`
+- `src/domains/notifications/components/index.ts`
+
+### Files Modified
+- `src/domains/notifications/index.ts`
+- `src/pages/dashboard/NotificationCenterPage.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Added local storage datasets `aarizo_notification_events_v2`, `aarizo_notification_logs_v2`, `aarizo_notification_prefs_v2`.
+
+### Routes / Pages Changed
+- Mounted `NotificationEngineHub` inside `/notifications`.
+
+### Permissions / RBAC Changes
+- Resident preference management enabled; critical events bypass muted channels automatically.
+
+### Real-Time Changes
+- Event dispatches broadcast across browser sessions via topic `NOTIFICATIONS_UPDATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Pluggable provider adapter design ensures WhatsApp (Meta API), SMS (Twilio/DLT), Email (SendGrid), and Push (FCM) production APIs can be injected without altering UI business logic.
+
 
 
