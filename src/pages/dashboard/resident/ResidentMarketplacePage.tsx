@@ -1,10 +1,10 @@
 import React from 'react';
-import { SocietyServicesHub } from '../../../domains/services';
+import { CommunityMarketplaceHub } from '../../../domains/community';
 
 export const ResidentMarketplacePage: React.FC = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <SocietyServicesHub userRoleOverride="RESIDENT" />
+      <CommunityMarketplaceHub userRole="RESIDENT" initialTab="MARKETPLACE" />
     </div>
   );
 };

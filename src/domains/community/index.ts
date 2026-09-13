@@ -1,3 +1,3 @@
-// Export Resident Community Domain
 export * from './types';
-export * from './states';
+export * from './services';
+export * from './components';

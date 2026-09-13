@@ -1,2 +1,1 @@
-// Services for community domain
-export {};
+export * from './communityMarketplaceEngine';

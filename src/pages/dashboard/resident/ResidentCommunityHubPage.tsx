@@ -9,6 +9,7 @@ import type {
   RSVPStatus
 } from '../../../types/amenity';
 import { Modal } from '../../../components/ui/Modal';
+import { CommunityMarketplaceHub } from '../../../domains/community';
 import {
   Megaphone,
   Calendar,
@@ -177,38 +178,54 @@ export const ResidentCommunityHubPage: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 bg-white px-4 pt-2 rounded-t-2xl">
+      <div className="flex border-b border-slate-200 bg-white px-4 pt-2 rounded-t-2xl space-x-2 overflow-x-auto">
         <button
-          onClick={() => setActiveTab('ANNOUNCEMENTS')}
-          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 transition-colors ${
-            activeTab === 'ANNOUNCEMENTS' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
+          onClick={() => setActiveTab('ANNOUNCEMENTS' as any)}
+          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
+            activeTab === ('ANNOUNCEMENTS' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
           <Megaphone className="w-4 h-4" /> Announcements ({announcements.length})
         </button>
         <button
-          onClick={() => setActiveTab('EVENTS')}
-          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 transition-colors ${
-            activeTab === 'EVENTS' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
+          onClick={() => setActiveTab('EVENTS' as any)}
+          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
+            activeTab === ('EVENTS' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
           <Calendar className="w-4 h-4" /> Events & RSVP ({events.length})
         </button>
         <button
-          onClick={() => setActiveTab('POLLS')}
-          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 transition-colors ${
-            activeTab === 'POLLS' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
+          onClick={() => setActiveTab('POLLS' as any)}
+          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
+            activeTab === ('POLLS' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
           <Vote className="w-4 h-4" /> Society Polls ({polls.length})
         </button>
         <button
-          onClick={() => setActiveTab('POSTS')}
-          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 transition-colors ${
-            activeTab === 'POSTS' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
+          onClick={() => setActiveTab('POSTS' as any)}
+          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
+            activeTab === ('POSTS' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
           <MessageSquare className="w-4 h-4" /> Neighbor Feed ({posts.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('DIRECTORY' as any)}
+          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
+            activeTab === ('DIRECTORY' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <Users className="w-4 h-4" /> Directory & Skills
+        </button>
+        <button
+          onClick={() => setActiveTab('LOST_FOUND' as any)}
+          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
+            activeTab === ('LOST_FOUND' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <Tag className="w-4 h-4" /> Lost & Found
         </button>
       </div>
 
@@ -429,8 +446,17 @@ export const ResidentCommunityHubPage: React.FC = () => {
                 </button>
               </div>
             </div>
-          ))}
         </div>
+      )}
+
+      {/* TAB 5: DIRECTORY */}
+      {(activeTab as string) === 'DIRECTORY' && (
+        <CommunityMarketplaceHub userRole="RESIDENT" initialTab="DIRECTORY" />
+      )}
+
+      {/* TAB 6: LOST & FOUND */}
+      {(activeTab as string) === 'LOST_FOUND' && (
+        <CommunityMarketplaceHub userRole="RESIDENT" initialTab="LOST_FOUND" />
       )}
 
       {/* Modal: Create Post */}

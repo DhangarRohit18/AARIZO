@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-016
-- Last Updated: 2026-09-14 02:29
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management, Vendor Comparison & Performance Scorecards
-- Latest Completed Feature: Vendor Comparison & Performance Scorecards (Phase 15)
+- Current Prompt ID: PROMPT-017
+- Last Updated: 2026-09-14 02:31
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management, Vendor Comparison & Performance Scorecards, Community & Marketplace Engine
+- Latest Completed Feature: Community & Marketplace Engine (Phase 16)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -46,6 +46,7 @@
 | Safety Command Center | PROMPT-014 | PROMPT-014 | Active |
 | Society Expense Management | PROMPT-015 | PROMPT-015 | Active |
 | Vendor Comparison & Performance | PROMPT-016 | PROMPT-016 | Active |
+| Community & Marketplace Engine | PROMPT-017 | PROMPT-017 | Active |
 
 ---
 
@@ -1108,3 +1109,68 @@ COMPLETED
 ### Developer Notes
 - Scores are strictly computed from historical work order resolution logs rather than arbitrary manual input. Public vendor rankings are hidden from residents by default unless `isPubliclyRanked` is explicitly enabled.
 
+---
+
+## [PROMPT-017] — PHASE 16 COMMUNITY AND MARKETPLACE ENGINE
+
+**Date:** 2026-09-14 02:31
+
+**Prompt Objective:**
+Preserve legacy CommunityOS-style community features (announcements, events, polls, neighborhood directory, skills, carpool, pets, lost & found, volunteer network) while building a full Resident Marketplace supporting `BUY`, `SELL`, `BORROW`, and `FREE_REUSE` intent types, seller lifecycle progression (`AVAILABLE` ➔ `RESERVED` ➔ `SOLD`), and admin content moderation tools.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `ListingType`, `ListingStatus`, `ListingCategory`, `MarketplaceListing`, `NeighbourhoodDirectoryEntry`, and `LostAndFoundItem` in `src/domains/community/types/index.ts`.
+- Created `communityMarketplaceEngine.ts` handling local storage persistence (`aarizo_marketplace_listings_v2`, `aarizo_neighbourhood_directory_v2`, `aarizo_lost_found_v2`), listing creation, seller lifecycle state transitions, admin moderation (`isModerated`), directory search, and lost & found reports.
+- Developed `CommunityMarketplaceHub.tsx` UI interface offering:
+  - Marketplace tab with filters for `SELL`, `BUY`, `BORROW`, and `FREE_REUSE` (price = ₹0 giveaway), seller lifecycle controls (`AVAILABLE`, `RESERVED`, `SOLD`), and admin content moderation.
+  - Neighborhood Directory tab featuring resident profiles, profession, skills tag list, carpool opt-in badge, pet owner details, and volunteer interests.
+  - Lost & Found Board with open/claimed status indicators.
+- Embedded `CommunityMarketplaceHub` into `ResidentMarketplacePage.tsx` and `ResidentCommunityHubPage.tsx`.
+
+### Files Created
+- `src/domains/community/types/index.ts`
+- `src/domains/community/services/communityMarketplaceEngine.ts`
+- `src/domains/community/services/index.ts`
+- `src/domains/community/components/CommunityMarketplaceHub.tsx`
+- `src/domains/community/components/index.ts`
+- `src/domains/community/index.ts`
+
+### Files Modified
+- `src/pages/dashboard/resident/ResidentMarketplacePage.tsx`
+- `src/pages/dashboard/resident/ResidentCommunityHubPage.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Initialized local storage datasets `aarizo_marketplace_listings_v2`, `aarizo_neighbourhood_directory_v2`, and `aarizo_lost_found_v2` with seed items.
+
+### Routes / Pages Changed
+- Updated `/resident/marketplace` and `/resident/community`.
+
+### Permissions / RBAC Changes
+- Enables Residents to create marketplace items, manage seller status (`AVAILABLE`, `RESERVED`, `SOLD`), opt into carpool/volunteering, and report lost/found items; enables Admin to moderate flagged marketplace listings.
+
+### Real-Time Changes
+- Updates broadcast across browser sessions via topics `MARKETPLACE_UPDATED` and `LOST_FOUND_UPDATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- `FREE_REUSE` intent automatically forces price to ₹0 and highlights giveaway badges, encouraging zero-waste recycling within the residential community.
