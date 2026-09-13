@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePrototype } from '../../context/PrototypeContext';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -17,6 +18,7 @@ import {
 import './prototype.css';
 
 export const PrototypeToolbar: React.FC = () => {
+  const navigate = useNavigate();
   const {
     viewport,
     setViewport,
@@ -34,6 +36,23 @@ export const PrototypeToolbar: React.FC = () => {
     isAuthenticated,
   } = useAuth();
 
+  const handleRoleSwitch = (role: 'resident' | 'secretary' | 'guard') => {
+    switchRole(role);
+    if (role === 'secretary') navigate('/admin');
+    else if (role === 'guard') navigate('/security');
+    else navigate('/resident');
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const handleResetOnboarding = () => {
+    resetOnboarding();
+    navigate('/onboarding');
+  };
+
   return (
     <header className="prototype-toolbar">
       {/* Brand & Laboratory Title */}
@@ -41,7 +60,7 @@ export const PrototypeToolbar: React.FC = () => {
         <span className="prototype-logo-badge">LAB</span>
         <div>
           <h1 className="prototype-title">CommunityOS</h1>
-          <span className="prototype-subtitle">Phase 3B Guard Gate Operations & Visitor Verification</span>
+          <span className="prototype-subtitle">Phase 0 Refactored Architecture & Central RBAC</span>
         </div>
       </div>
 
@@ -52,7 +71,7 @@ export const PrototypeToolbar: React.FC = () => {
           <div className="control-pill-toggle">
             <button
               className={`pill-btn ${selectedRole === 'resident' && isAuthenticated ? 'pill-active' : ''}`}
-              onClick={() => switchRole('resident')}
+              onClick={() => handleRoleSwitch('resident')}
               title="Switch to Resident App"
             >
               <Home size={14} />
@@ -60,7 +79,7 @@ export const PrototypeToolbar: React.FC = () => {
             </button>
             <button
               className={`pill-btn ${selectedRole === 'secretary' && isAuthenticated ? 'pill-active' : ''}`}
-              onClick={() => switchRole('secretary')}
+              onClick={() => handleRoleSwitch('secretary')}
               title="Switch to Secretary App"
             >
               <Building2 size={14} />
@@ -68,7 +87,7 @@ export const PrototypeToolbar: React.FC = () => {
             </button>
             <button
               className={`pill-btn ${selectedRole === 'guard' && isAuthenticated ? 'pill-active' : ''}`}
-              onClick={() => switchRole('guard')}
+              onClick={() => handleRoleSwitch('guard')}
               title="Switch to Guard App"
             >
               <Shield size={14} />
@@ -118,7 +137,7 @@ export const PrototypeToolbar: React.FC = () => {
           <div className="control-pill-toggle">
             <button
               className="pill-btn"
-              onClick={resetOnboarding}
+              onClick={handleResetOnboarding}
               title="Reset to Onboarding Carousel"
             >
               <RotateCcw size={13} />
@@ -128,7 +147,7 @@ export const PrototypeToolbar: React.FC = () => {
             {isAuthenticated && (
               <button
                 className="pill-btn"
-                onClick={logout}
+                onClick={handleLogout}
                 title="Log Out to Login Screen"
               >
                 <LogOut size={13} />

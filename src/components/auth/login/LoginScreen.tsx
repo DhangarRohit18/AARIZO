@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import type { UserRole } from '../../../domains/auth/types';
 import { MOCK_USERS } from '../../../mockData/auth/mockUsers';
@@ -18,6 +19,7 @@ import {
 import '../auth.css';
 
 export const LoginScreen: React.FC = () => {
+  const navigate = useNavigate();
   const {
     selectedRole,
     selectRole,
@@ -61,12 +63,21 @@ export const LoginScreen: React.FC = () => {
     const isVerified = verifyOtp(otpInput || '4092');
     if (isVerified) {
       setShowOtpModal(false);
+      if (selectedRole === 'secretary') navigate('/admin');
+      else if (selectedRole === 'guard') navigate('/security');
+      else navigate('/resident');
     }
   };
 
   const handleQuickAutoFill = () => {
     setOtpInput('4092');
-    verifyOtp('4092');
+    const isVerified = verifyOtp('4092');
+    if (isVerified) {
+      setShowOtpModal(false);
+      if (selectedRole === 'secretary') navigate('/admin');
+      else if (selectedRole === 'guard') navigate('/security');
+      else navigate('/resident');
+    }
   };
 
   return (
@@ -82,7 +93,13 @@ export const LoginScreen: React.FC = () => {
           </div>
           <span className="auth-brand-badge">Simulated Auth</span>
         </div>
-        <button className="btn-auth-text" onClick={resetOnboarding}>
+        <button
+          className="btn-auth-text"
+          onClick={() => {
+            resetOnboarding();
+            navigate('/onboarding');
+          }}
+        >
           View Onboarding
         </button>
       </header>

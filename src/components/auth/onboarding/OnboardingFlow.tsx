@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { ShieldCheck, Building2, ChevronRight, ArrowLeft, CheckCircle2, QrCode, Sparkles } from 'lucide-react';
 import '../auth.css';
@@ -59,15 +60,21 @@ const ONBOARDING_SLIDES: OnboardingSlide[] = [
 ];
 
 export const OnboardingFlow: React.FC = () => {
+  const navigate = useNavigate();
   const { completeOnboarding } = useAuth();
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
 
   const currentSlide = ONBOARDING_SLIDES[currentSlideIndex];
   const isLastSlide = currentSlideIndex === ONBOARDING_SLIDES.length - 1;
 
+  const handleComplete = () => {
+    completeOnboarding();
+    navigate('/login');
+  };
+
   const handleNext = () => {
     if (isLastSlide) {
-      completeOnboarding();
+      handleComplete();
     } else {
       setCurrentSlideIndex((prev) => prev + 1);
     }
@@ -92,7 +99,7 @@ export const OnboardingFlow: React.FC = () => {
           </div>
           <span className="auth-brand-badge">Pillars</span>
         </div>
-        <button className="btn-auth-text" onClick={completeOnboarding}>
+        <button className="btn-auth-text" onClick={handleComplete}>
           Skip
         </button>
       </header>

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CommunityOS</string>
+    <string name="title_activity_main">CommunityOS</string>
+    <string name="package_name">com.communityos.app</string>
+    <string name="custom_url_scheme">com.communityos.app</string>
+</resources>

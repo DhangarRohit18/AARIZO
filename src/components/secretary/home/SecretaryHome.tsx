@@ -10,6 +10,7 @@ import {
   DollarSign,
   BellRing,
   ArrowRight,
+  BarChart3,
 } from 'lucide-react';
 import type {
   SecretaryResidentRecord,
@@ -39,11 +40,41 @@ export const SecretaryHome: React.FC<SecretaryHomeProps> = ({
 
   return (
     <div>
-      {/* Welcome Banner */}
-      <div className="secretary-welcome-banner">
-        <span className="banner-role-tag">Management Committee</span>
-        <h2 className="banner-title">Welcome back, Mayuri Udar!</h2>
-        <p className="banner-subtitle">Secretary • Green Valley Society (128 Units · 4 Blocks)</p>
+      {/* Executive Intelligence Dashboard Banner */}
+      <div className="bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 text-white rounded-xl p-4 shadow-md flex items-center justify-between mb-4 border border-indigo-800/40">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-indigo-500/20 rounded-lg text-indigo-300">
+            <BarChart3 size={24} />
+          </div>
+          <div>
+            <div className="text-xs font-semibold text-indigo-300 uppercase tracking-wider">Executive Analytics</div>
+            <div className="text-base font-bold">Society Intelligence Dashboard</div>
+            <p className="text-xs text-slate-300">15 Real-time KPIs, 7 Analytics graphs, Date Range filters</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <a
+            href="/admin/intelligence"
+            className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1"
+          >
+            <span>Analytics Hub</span>
+            <ArrowRight size={14} />
+          </a>
+          <a
+            href="/admin/security-audit"
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg shadow transition flex items-center gap-1 border border-slate-700"
+          >
+            <span>Security & Audit</span>
+            <ArrowRight size={14} />
+          </a>
+          <a
+            href="/admin/realtime"
+            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1"
+          >
+            <span>Realtime Hub</span>
+            <ArrowRight size={14} />
+          </a>
+        </div>
       </div>
 
       {/* Quick Stats Grid 2x2 */}
