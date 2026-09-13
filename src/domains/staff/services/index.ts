@@ -1,1 +1,1 @@
-export * from '../../../services/staffService';
+export * from './staffShiftService';

@@ -11,6 +11,7 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { AssetComplianceHub } from '../../domains/compliance';
+import { StaffShiftHub } from '../../domains/staff';
 
 export const FacilityManagerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'maintenance' | 'shifts' | 'amc' | 'cleaning' | 'utilities'>('maintenance');
@@ -122,10 +123,7 @@ export const FacilityManagerDashboard: React.FC = () => {
       )}
 
       {activeTab === 'shifts' && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
-          <h3 className="text-lg font-bold text-slate-800">Staff Shift Roster & Attendance</h3>
-          <p className="text-sm text-slate-600">Morning Shift (08:00 AM - 04:00 PM): 10 Active guards, 5 Housekeeping staff, 2 Electricians.</p>
-        </div>
+        <StaffShiftHub />
       )}
 
       {activeTab === 'amc' && (

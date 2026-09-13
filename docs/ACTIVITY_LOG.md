@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-009
-- Last Updated: 2026-09-14 02:05
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine
-- Latest Completed Feature: Move-In / Move-Out & Renovation Engine (Phase 8)
+- Current Prompt ID: PROMPT-010
+- Last Updated: 2026-09-14 02:09
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management
+- Latest Completed Feature: Staff Shift Management Engine (Phase 9)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -39,6 +39,7 @@
 | AMC & Asset Compliance Engine | PROMPT-007 | PROMPT-007 | Active |
 | Multi-Channel Notification Engine | PROMPT-008 | PROMPT-008 | Active |
 | Move & Renovation Engine | PROMPT-009 | PROMPT-009 | Active |
+| Staff Shift Management Engine | PROMPT-010 | PROMPT-010 | Active |
 
 ---
 
@@ -622,6 +623,73 @@ COMPLETED
 
 ### Developer Notes
 - Move-out requests strictly track mandatory clearance items (maintenance dues cleared, NOC issued, lift protection installed, security inspection completed) before final completion.
+
+---
+
+## [PROMPT-010] — PHASE 9 STAFF SHIFT MANAGEMENT ENGINE
+
+**Date:** 2026-09-14 02:09
+
+**Prompt Objective:**
+Build an end-to-end Staff Shift & Duty Roster Engine for Guards, Cleaners, Technicians, Housekeeping, and Maintenance staff featuring shift scheduling, task assignments, attendance logging, leave & replacement workflows, overtime tracking, shift audit logs, and a facility manager dashboard.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain types for `StaffRole`, `ShiftType`, `ShiftStatus`, `StaffShiftRecord`, `ShiftHistoryLog`, `StaffLeaveRequest`, and `StaffDashboardMetrics`.
+- Created `staffShiftService.ts` managing local storage persistence (`aarizo_staff_shifts_v1`), shift scheduling, attendance check-ins, task completion checkoffs, overtime tracking, and replacement worker assignments.
+- Developed `StaffShiftHub.tsx` multi-role interface rendering:
+  - Summary metrics cards (Today's Staff, On Duty, Absent, Replacement Required, Pending Tasks, Completed Tasks).
+  - Filterable staff roster with role & status badges (`SCHEDULED`, `ON_DUTY`, `ABSENT`, `REPLACED`).
+  - Facility Manager modals: Create Shift & Assign Task, Assign Replacement Worker, Shift Audit History.
+- Mounted `StaffShiftHub` inside `FacilityManagerDashboard.tsx` under the `shifts` tab.
+- Broadcast real-time updates across client sessions using topic `STAFF_SHIFTS_UPDATED`.
+
+### Files Created
+- `src/domains/staff/services/staffShiftService.ts`
+- `src/domains/staff/services/index.ts`
+- `src/domains/staff/components/StaffShiftHub.tsx`
+- `src/domains/staff/components/index.ts`
+
+### Files Modified
+- `src/domains/staff/types/index.ts`
+- `src/domains/staff/index.ts`
+- `src/pages/dashboard/FacilityManagerDashboard.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Added local storage dataset `aarizo_staff_shifts_v1`.
+
+### Routes / Pages Changed
+- Embedded `StaffShiftHub` in `/facility` under the `shifts` tab.
+
+### Permissions / RBAC Changes
+- Enables Facility Manager shift scheduling, task assignment, attendance tracking, and replacement worker assignment.
+
+### Real-Time Changes
+- Updates broadcast across browser sessions via topic `STAFF_SHIFTS_UPDATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- When staff is marked absent, the system automatically flags `REPLACEMENT REQUIRED` until a replacement worker is assigned by the Facility Manager.
+
 
 
 
