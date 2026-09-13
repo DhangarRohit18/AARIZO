@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Truck, Search } from 'lucide-react';
+import { Truck, Search, Package } from 'lucide-react';
 import { visitorService } from '../../../services/visitorService';
 import type { SmartVisitorPass, VisitorAnalyticsData } from '../../../types/visitor';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { VisitorAnalyticsWidget } from '../../../components/visitor/VisitorAnalyticsWidget';
+import { ParcelRoomSecurityHub } from '../../../domains/deliveries/components/ParcelRoomSecurityHub';
 
 export const DeliveryIntelligencePage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -18,7 +19,8 @@ export const DeliveryIntelligencePage: React.FC = () => {
     dailyVisitorTrend: [],
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'DELIVERIES' | 'ANALYTICS'>('DELIVERIES');
+  const [activeTab, setActiveTab] = useState<'PARCEL_ROOM' | 'DELIVERIES' | 'ANALYTICS'>('PARCEL_ROOM');
+
 
   const reloadData = () => {
     const list = visitorService.getPasses(currentSocietyId);
@@ -59,6 +61,16 @@ export const DeliveryIntelligencePage: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           <button
+            onClick={() => setActiveTab('PARCEL_ROOM')}
+            className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 ${
+              activeTab === 'PARCEL_ROOM'
+                ? 'bg-indigo-600 text-white'
+                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
+            }`}
+          >
+            <Package size={14} /> Parcel Room Hub
+          </button>
+          <button
             onClick={() => setActiveTab('DELIVERIES')}
             className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
               activeTab === 'DELIVERIES'
@@ -66,7 +78,7 @@ export const DeliveryIntelligencePage: React.FC = () => {
                 : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
             }`}
           >
-            Delivery Log ({deliveryPasses.length})
+            Delivery Entry Log ({deliveryPasses.length})
           </button>
           <button
             onClick={() => setActiveTab('ANALYTICS')}
@@ -80,6 +92,10 @@ export const DeliveryIntelligencePage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Tab 0: Parcel Room Hub */}
+      {activeTab === 'PARCEL_ROOM' && <ParcelRoomSecurityHub />}
+
 
       {/* Tab 1: Delivery Log */}
       {activeTab === 'DELIVERIES' && (

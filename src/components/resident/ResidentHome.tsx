@@ -6,7 +6,9 @@ import { ResidentVisitorCard } from './ResidentVisitorCard';
 import { ResidentQuickActions } from './ResidentQuickActions';
 import { ResidentAnnouncementCard } from './ResidentAnnouncementCard';
 import { ResidentActivity } from './ResidentActivity';
+import { ResidentParcelWidget } from '../../domains/deliveries/components/ResidentParcelWidget';
 import { Skeleton, EmptyState, ErrorState } from '../common';
+
 import {
   mockResidentProfile,
   mockUrgentAlert,
@@ -86,12 +88,14 @@ export const ResidentHome: React.FC = () => {
           />
         )}
 
-        {/* 3. Visitor Status Card */}
+        {/* 3. Live Visitor Status Card */}
         <ResidentVisitorCard
-          visitorData={mockVisitorStatus}
-          onViewVisitors={() => setResidentTab('visitors')}
+          visitorStatus={mockVisitorStatus}
           onInviteVisitor={() => setResidentTab('visitors')}
         />
+
+        {/* 3.5 Live Realtime Delivery & Parcel Room Pass Widget */}
+        <ResidentParcelWidget />
 
         {/* 4. Quick Actions Grid */}
         <ResidentQuickActions

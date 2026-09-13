@@ -1,2 +1,1 @@
-// Services for deliveries domain
-export {};
+export * from './parcelRoomService';
