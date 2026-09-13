@@ -1,1 +1,1 @@
-export * from '../../../services/realtimeService';
+export * from './societyHealthScoreEngine';

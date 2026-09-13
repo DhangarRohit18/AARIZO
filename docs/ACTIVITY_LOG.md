@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-017
-- Last Updated: 2026-09-14 02:31
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management, Vendor Comparison & Performance Scorecards, Community & Marketplace Engine
-- Latest Completed Feature: Community & Marketplace Engine (Phase 16)
+- Current Prompt ID: PROMPT-018
+- Last Updated: 2026-09-14 02:33
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre, Safety Command Center, Society Expense Management, Vendor Comparison & Performance Scorecards, Community & Marketplace Engine, Society Intelligence & Health Score
+- Latest Completed Feature: Society Intelligence & Health Score (Phase 17)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -47,6 +47,7 @@
 | Society Expense Management | PROMPT-015 | PROMPT-015 | Active |
 | Vendor Comparison & Performance | PROMPT-016 | PROMPT-016 | Active |
 | Community & Marketplace Engine | PROMPT-017 | PROMPT-017 | Active |
+| Society Intelligence & Health Score | PROMPT-018 | PROMPT-018 | Active |
 
 ---
 
@@ -1174,3 +1175,70 @@ COMPLETED
 
 ### Developer Notes
 - `FREE_REUSE` intent automatically forces price to ₹0 and highlights giveaway badges, encouraging zero-waste recycling within the residential community.
+
+---
+
+## [PROMPT-018] — PHASE 17 SOCIETY INTELLIGENCE & HEALTH SCORE
+
+**Date:** 2026-09-14 02:33
+
+**Prompt Objective:**
+Create a non-arbitrary, transparent Society Health Score engine incorporating live inputs from 6 core domain pillars (`Security Health`, `Operations & SLA Health`, `Financial Health`, `Compliance & AMC Health`, `Resident Experience`, `Sustainability Index`), historical quarterly score trends, and automated export functionality for AGM committee reporting.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `HealthScoreComponent` and `SocietyHealthScoreData` in `src/domains/analytics/types/index.ts`.
+- Created `societyHealthScoreEngine.ts` synthesizing real-time operational metrics across compliance status (`AssetComplianceEngine`), ticket SLA resolution rates (`ComplaintSLAService`), and dues collection vs expenditure variance (`SocietyExpenseEngine`).
+- Developed `SocietyHealthScoreCard.tsx` UI component displaying:
+  - Overall health score gauge (0-100) & letter grade (`A+`, `A`, `B`, `C`, `D`).
+  - Transparent 6-pillar breakdown cards detailing score weights, weighted contributions, and specific underlying inputs.
+  - Quarterly historical trend table for committee AGM evaluation.
+  - One-click AGM Audit Report download function.
+- Integrated `SocietyHealthScoreCard` into `SocietyIntelligenceDashboardPage.tsx`.
+
+### Files Created
+- `src/domains/analytics/types/index.ts`
+- `src/domains/analytics/services/societyHealthScoreEngine.ts`
+- `src/domains/analytics/services/index.ts`
+- `src/domains/analytics/components/SocietyHealthScoreCard.tsx`
+- `src/domains/analytics/components/index.ts`
+- `src/domains/analytics/index.ts`
+
+### Files Modified
+- `src/pages/dashboard/admin/SocietyIntelligenceDashboardPage.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Synchronized live score aggregation directly from stored assets, complaints, and budget variance datasets.
+
+### Routes / Pages Changed
+- Rendered on `/admin/intelligence`.
+
+### Permissions / RBAC Changes
+- Enables Society Admin and Committee Members to inspect pillar formulas, review quarterly trends, and export AGM audit reports.
+
+### Real-Time Changes
+- Automatically reflects updates when assets, AMC contracts, or SLA complaints change.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- Avoids arbitrary hardcoding: every single pillar score explicitly exposes its mathematical weight and real-world inputs (e.g., active AMC ratio, SLA resolution rate, collection percentage).
+
