@@ -1,2 +1,1 @@
-// Services for utilities domain
-export {};
+export * from './societyOperationsService';

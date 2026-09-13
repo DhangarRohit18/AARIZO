@@ -19,6 +19,7 @@ import {
   Send,
 } from 'lucide-react';
 import { realtimeService } from '../../../services/realtimeService';
+import { SocietyOperationsBoard } from '../../../domains/utilities';
 import { useRealtimeStream } from '../../../hooks/useRealtime';
 import type { RealtimeTopic } from '../../../types/realtime';
 
@@ -294,6 +295,10 @@ export const RealtimeOperationsHubPage: React.FC = () => {
             </button>
           </form>
         </div>
+      </div>
+
+      <div className="pt-6 border-t border-slate-200 dark:border-slate-800">
+        <SocietyOperationsBoard />
       </div>
     </div>
   );

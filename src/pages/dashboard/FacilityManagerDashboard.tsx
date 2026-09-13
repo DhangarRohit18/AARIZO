@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { AssetComplianceHub } from '../../domains/compliance';
 import { StaffShiftHub } from '../../domains/staff';
+import { SocietyOperationsBoard } from '../../domains/utilities';
 
 export const FacilityManagerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'maintenance' | 'shifts' | 'amc' | 'cleaning' | 'utilities'>('maintenance');
@@ -138,10 +139,7 @@ export const FacilityManagerDashboard: React.FC = () => {
       )}
 
       {activeTab === 'utilities' && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
-          <h3 className="text-lg font-bold text-slate-800">Utilities & Generator Meters</h3>
-          <p className="text-sm text-slate-600">Water Tank level: 85% full. DG Fuel Level: 320 Liters.</p>
-        </div>
+        <SocietyOperationsBoard />
       )}
     </div>
   );

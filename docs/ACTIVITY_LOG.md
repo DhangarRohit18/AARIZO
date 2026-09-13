@@ -17,10 +17,10 @@
 
 ## Current Project Snapshot
 
-- Current Prompt ID: PROMPT-012
-- Last Updated: 2026-09-14 02:16
-- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions
-- Latest Completed Feature: Society Services & Recurring Subscriptions Engine (Phase 11)
+- Current Prompt ID: PROMPT-013
+- Last Updated: 2026-09-14 02:22
+- Current Major Modules: Auth, Residents, Visitors, Security, Parking, Deliveries & Parcel Room, Maintenance, Billing, Amenities, Safety, Analytics, SLA & Escalations, AMC & Asset Compliance, Multi-Channel Notifications, Move & Renovation Engine, Staff Shift Management, QR Parking & Violations, Society Services & Subscriptions, Society Operations Centre
+- Latest Completed Feature: Society Operations Centre & Utility Health Board (Phase 12)
 - Current In-Progress Feature: None
 - Known Critical Issues: None
 
@@ -42,6 +42,7 @@
 | Staff Shift Management Engine | PROMPT-010 | PROMPT-010 | Active |
 | QR Parking & Violation Engine | PROMPT-011 | PROMPT-011 | Active |
 | Society Services & Subscriptions | PROMPT-012 | PROMPT-012 | Active |
+| Society Operations Centre | PROMPT-013 | PROMPT-013 | Active |
 
 ---
 
@@ -829,6 +830,75 @@ COMPLETED
 
 ### Developer Notes
 - Recurring subscriptions support weekly and monthly frequencies (e.g. Maid, Laundry, Pest Control, Pool Cleaning, AC Servicing, Garbage Collection) with automatic cycle tracking.
+
+---
+
+## [PROMPT-013] — PHASE 12 SOCIETY OPERATIONS CENTRE AND UTILITY HEALTH BOARD
+
+**Date:** 2026-09-14 02:22
+
+**Prompt Objective:**
+Build a Live Society Operations Status Board tracking 9 utility categories (`WATER`, `POWER`, `LIFT`, `EV`, `INTERNET`, `GARBAGE`, `CLEANING`, `SWIMMING_POOL`, `COMMON_AREAS`), 5 status states (`NORMAL`, `MAINTENANCE`, `OUTAGE`, `DEGRADED`, `RESTORED`), manual admin/facility status overrides, real-time resident streams, historical outage audit logs, and an IoT sensor event simulation pipeline mapping into the exact same data model without requiring physical hardware.
+
+**Status:**
+COMPLETED
+
+### Changes Made
+- Defined domain entities for `UtilityCategory`, `OperationsStatus`, `UtilityItem`, `OutageHistoryRecord`, `IoTSensorPayload`, and `SocietyOperationsSummary`.
+- Created `societyOperationsService.ts` managing local storage persistence (`aarizo_utility_statuses_v1`, `aarizo_outage_history_v1`), live status updates, automatic outage logging on `OUTAGE` state, duration calculation upon `RESTORED` status, and IoT sensor payload ingestion.
+- Developed `SocietyOperationsBoard.tsx` multi-role interface rendering:
+  - Overall Uptime Percentage & Category Status Cards.
+  - Live Status Board with category icons, metric meters (e.g., Tank 85% Full, Grid 230V), operational notes, and Admin/Facility status update modals.
+  - Historical Outage & Downtime Audit Log displaying start/end timestamps, cause analysis, and resolution duration in minutes.
+  - IoT Sensor Simulation Terminal for testing automated sensor payload ingestion.
+- Mounted `SocietyOperationsBoard` inside `RealtimeOperationsHubPage.tsx` and `FacilityManagerDashboard.tsx` under the `utilities` tab.
+- Broadcast real-time updates across client sessions using topic `UTILITY_STATUS_UPDATED`.
+
+### Files Created
+- `src/domains/utilities/services/societyOperationsService.ts`
+- `src/domains/utilities/services/index.ts`
+- `src/domains/utilities/components/SocietyOperationsBoard.tsx`
+- `src/domains/utilities/components/index.ts`
+
+### Files Modified
+- `src/domains/utilities/types/index.ts`
+- `src/domains/utilities/index.ts`
+- `src/pages/dashboard/admin/RealtimeOperationsHubPage.tsx`
+- `src/pages/dashboard/FacilityManagerDashboard.tsx`
+- `docs/ACTIVITY_LOG.md`
+
+### Files Deleted
+- None
+
+### Database / Data Changes
+- Added local storage datasets `aarizo_utility_statuses_v1` and `aarizo_outage_history_v1`.
+
+### Routes / Pages Changed
+- Embedded `SocietyOperationsBoard` in `/admin/realtime` and `/facility` (`utilities` tab).
+
+### Permissions / RBAC Changes
+- Enables Admin/Facility status overrides and IoT simulation; enables Resident live status stream viewing.
+
+### Real-Time Changes
+- Updates broadcast across browser sessions via topic `UTILITY_STATUS_UPDATED`.
+
+### Validation / Error Handling
+- Verified compilation with `npx tsc --noEmit` (0 errors).
+
+### Testing / Verification
+- Build: PASS (`npx tsc --noEmit` - 0 errors)
+- TypeScript: PASS
+- Manual verification: PASS
+
+### Known Issues / Pending Work
+- None
+
+### Dependencies Added / Removed
+- None
+
+### Developer Notes
+- IoT sensor payload ingestion architecture (`IoTSensorPayload`) maps simulated sensor telemetry directly into the exact same event and status model without requiring physical IoT hardware.
+
 
 
 
