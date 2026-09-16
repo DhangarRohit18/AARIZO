@@ -114,7 +114,7 @@ export const VendorPerformanceHub: React.FC = () => {
 
       {/* SIDE-BY-SIDE COMPARISON VIEW */}
       {isCompareView && comparedVendors.length > 0 ? (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
           <div className="flex justify-between items-center border-b pb-4">
             <div>
               <h2 className="text-lg font-bold text-slate-900">Side-by-Side Vendor Matrix</h2>
@@ -413,7 +413,7 @@ export const VendorPerformanceHub: React.FC = () => {
       {/* DETAILED SCORECARD MODAL */}
       {activeVendor && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-4 md:p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-start border-b pb-4">
               <div>
                 <h2 className="text-lg font-bold text-slate-900">{activeVendor.vendorName}</h2>

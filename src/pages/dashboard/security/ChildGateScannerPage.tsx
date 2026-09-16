@@ -87,7 +87,7 @@ export const ChildGateScannerPage: React.FC = () => {
       )}
 
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -105,7 +105,7 @@ export const ChildGateScannerPage: React.FC = () => {
         {/* Main Column: Scanner Terminal */}
         <div className="lg:col-span-2 space-y-6">
           {/* QR Terminal Box */}
-          <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl space-y-4">
+          <div className="bg-slate-900 text-white p-4 md:p-6 rounded-2xl shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 <QrCode className="w-5 h-5 text-indigo-400" /> Security Gate Scanner Terminal
@@ -195,7 +195,7 @@ export const ChildGateScannerPage: React.FC = () => {
 
         {/* Right Column: Gate Logs */}
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
             <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
               <UserCheck className="w-4 h-4 text-indigo-600" /> Recent Gate Verification Logs
             </h3>

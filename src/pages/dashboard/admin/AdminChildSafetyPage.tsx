@@ -68,7 +68,7 @@ export const AdminChildSafetyPage: React.FC = () => {
       )}
 
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -116,7 +116,7 @@ export const AdminChildSafetyPage: React.FC = () => {
       </div>
 
       {/* Children Register Table */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <h2 className="text-lg font-bold text-slate-900">Registered Society Children Register</h2>
           <div className="relative w-full sm:w-64">
@@ -146,7 +146,7 @@ export const AdminChildSafetyPage: React.FC = () => {
             <tbody className="divide-y divide-slate-100">
               {filteredChildren.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-slate-400">No children profiles found</td>
+                  <td colSpan={6} className="p-4 md:p-6 text-center text-slate-400">No children profiles found</td>
                 </tr>
               ) : (
                 filteredChildren.map(child => (
@@ -181,7 +181,7 @@ export const AdminChildSafetyPage: React.FC = () => {
       </div>
 
       {/* Pickup Event Audit Logs */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900 mb-4">Gate Pickup Audit Logs & Incident History</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-slate-600">
@@ -198,7 +198,7 @@ export const AdminChildSafetyPage: React.FC = () => {
             <tbody className="divide-y divide-slate-100">
               {pickupLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-slate-400">No pickup logs recorded</td>
+                  <td colSpan={6} className="p-4 md:p-6 text-center text-slate-400">No pickup logs recorded</td>
                 </tr>
               ) : (
                 pickupLogs.map(log => (

@@ -15,7 +15,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ invoice, transaction
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-xl w-full p-6 space-y-6 border border-slate-200 dark:border-slate-800 shadow-2xl animate-in fade-in zoom-in duration-150">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-xl w-full p-4 md:p-6 space-y-6 border border-slate-200 dark:border-slate-800 shadow-2xl animate-in fade-in zoom-in duration-150">
         {/* Actions Bar */}
         <div className="flex items-center justify-between border-b pb-4 border-slate-200 dark:border-slate-800 print:hidden">
           <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ invoice, transaction
         </div>
 
         {/* Printable Receipt Card Body */}
-        <div className="p-6 bg-slate-50 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 space-y-6">
+        <div className="p-4 md:p-6 bg-slate-50 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 space-y-6">
           {/* Header Branding */}
           <div className="flex items-start justify-between border-b pb-4 border-slate-200 dark:border-slate-700">
             <div>
@@ -80,8 +80,8 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ invoice, transaction
           </div>
 
           {/* Itemized Line Items Table */}
-          <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
-            <table className="w-full text-left text-xs">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-x-auto">
+<table className="w-full text-left text-xs">
               <thead className="bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700">
                 <tr>
                   <th className="p-2.5">Component</th>

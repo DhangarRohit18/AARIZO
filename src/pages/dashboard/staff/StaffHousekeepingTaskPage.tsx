@@ -62,7 +62,7 @@ export const StaffHousekeepingTaskPage: React.FC = () => {
   return (
     <div className="space-y-6 p-4 md:p-6">
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -79,7 +79,7 @@ export const StaffHousekeepingTaskPage: React.FC = () => {
       {/* Task List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {tasks.map(task => (
-          <div key={task.id} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4 flex flex-col justify-between">
+          <div key={task.id} className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between">
                 <span className="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full">

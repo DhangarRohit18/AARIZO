@@ -185,7 +185,7 @@ export const MoveRenovationHub: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
@@ -427,7 +427,7 @@ export const MoveRenovationHub: React.FC = () => {
 
       {/* Tab 3: CALENDAR */}
       {activeTab === 'CALENDAR' && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
           <h3 className="font-bold text-slate-900 text-lg">Society Move & Renovation Activity Calendar</h3>
           <p className="text-xs text-slate-500">Upcoming lift allocations and active contractor permits.</p>
 
@@ -450,7 +450,7 @@ export const MoveRenovationHub: React.FC = () => {
 
       {/* Tab 4: SECURITY SCANNER */}
       {activeTab === 'SECURITY_SCANNER' && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto space-y-4">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto space-y-4">
           <div className="text-center space-y-1">
             <QrCode size={36} className="mx-auto text-indigo-600" />
             <h3 className="font-bold text-slate-900 text-lg">Gate Security Contractor & Worker Scanner</h3>
@@ -483,7 +483,7 @@ export const MoveRenovationHub: React.FC = () => {
       {/* Create Move Modal */}
       {modalMode === 'CREATE_MOVE' && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Schedule Move-In / Move-Out</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
@@ -588,7 +588,7 @@ export const MoveRenovationHub: React.FC = () => {
       {/* Create Renovation Modal */}
       {modalMode === 'CREATE_RENOVATION' && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Request Renovation Permit</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>

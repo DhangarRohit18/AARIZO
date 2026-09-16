@@ -86,7 +86,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
   });
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4">
         <div>
@@ -184,8 +184,8 @@ export const ParcelRoomSecurityHub: React.FC = () => {
       </div>
 
       {/* Parcels Table */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-        <table className="w-full text-left border-collapse text-xs">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm">
+<table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-slate-50 text-slate-600 border-b border-slate-200 font-bold uppercase text-[10px]">
               <th className="p-3">Parcel ID & Courier</th>
@@ -199,7 +199,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
           <tbody className="divide-y divide-slate-100">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="p-6 text-center text-slate-400">
+                <td colSpan={6} className="p-4 md:p-6 text-center text-slate-400">
                   No parcels found.
                 </td>
               </tr>
@@ -270,7 +270,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
       {/* Add Parcel Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-md w-full shadow-2xl space-y-4">
             <h3 className="text-lg font-bold text-slate-900">Register Incoming Parcel</h3>
             <form onSubmit={handleRegisterParcel} className="space-y-3 text-xs">
               <div>
@@ -360,7 +360,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
       {/* Verify Modal */}
       {showVerifyModal && selectedParcel && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-sm w-full shadow-2xl space-y-4">
             <h3 className="text-lg font-bold text-slate-900">Verify Pickup OTP</h3>
             <p className="text-xs text-slate-500">
               Parcel #{selectedParcel.id} for <strong>{selectedParcel.residentName} ({selectedParcel.flatCode})</strong>

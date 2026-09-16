@@ -47,7 +47,7 @@ export const DeliveryIntelligencePage: React.FC = () => {
   );
 
   return (
-    <div className="p-6 space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -113,8 +113,8 @@ export const DeliveryIntelligencePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <table className="w-full text-left text-xs">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
+<table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
                 <tr>
                   <th className="p-3">Vendor</th>
@@ -159,7 +159,7 @@ export const DeliveryIntelligencePage: React.FC = () => {
 
                 {filteredDeliveries.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="p-6 text-center text-slate-500">
+                    <td colSpan={8} className="p-4 md:p-6 text-center text-slate-500">
                       No delivery package records match current search.
                     </td>
                   </tr>

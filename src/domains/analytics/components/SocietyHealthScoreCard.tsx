@@ -82,9 +82,9 @@ Certified by AARIZO Society Intelligence Engine
   ] as const;
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+    <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
       {/* Top Banner: Score Gauge & AGM Export */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900 text-white p-6 rounded-2xl gap-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900 text-white p-4 md:p-6 rounded-2xl gap-6">
         <div className="flex items-center gap-5">
           {/* Main Score Badge */}
           <div className="relative flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow-lg shrink-0">

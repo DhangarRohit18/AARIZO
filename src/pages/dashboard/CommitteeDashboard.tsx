@@ -14,7 +14,7 @@ export const CommitteeDashboard: React.FC = () => {
 
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4">
         <div>

@@ -128,7 +128,7 @@ export const UnifiedRequestCenter: React.FC = () => {
   });
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4">
         <div>
@@ -244,7 +244,7 @@ export const UnifiedRequestCenter: React.FC = () => {
       {/* Submit Modal */}
       {showSubmitModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-lg w-full shadow-2xl space-y-4">
             <h3 className="text-lg font-bold text-slate-900">Submit New Society Request / NOC</h3>
             <form onSubmit={handleCreateRequest} className="space-y-3 text-xs">
               <div>
@@ -338,7 +338,7 @@ export const UnifiedRequestCenter: React.FC = () => {
       {/* Selected Request Detail Drawer */}
       {selectedRequest && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-end z-50">
-          <div className="bg-white w-full max-w-xl h-full p-6 shadow-2xl overflow-y-auto space-y-6 flex flex-col justify-between">
+          <div className="bg-white w-full max-w-xl h-full p-4 md:p-6 shadow-2xl overflow-y-auto space-y-6 flex flex-col justify-between">
             <div className="space-y-4">
               <div className="flex justify-between items-center border-b pb-4">
                 <div>

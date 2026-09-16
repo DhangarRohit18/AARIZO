@@ -208,7 +208,7 @@ export const PrivacyAuditHub: React.FC = () => {
       {/* RAW JSON MODAL */}
       {activeLogModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Raw 10-Point Audit Schema</h3>
               <button onClick={() => setActiveLogModal(null)} className="text-slate-400 hover:text-slate-600 font-bold">

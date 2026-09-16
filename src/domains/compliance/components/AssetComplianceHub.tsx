@@ -202,7 +202,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-1 z-10">
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
@@ -470,7 +470,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
       {/* Add Asset Modal */}
       {modalMode === 'ADD' && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Register New Asset</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
@@ -617,7 +617,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
       {/* Record Inspection Modal */}
       {modalMode === 'INSPECT' && activeAssetForModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Record Maintenance Inspection</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
@@ -687,7 +687,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
       {/* Renew AMC Modal */}
       {modalMode === 'RENEW' && activeAssetForModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Renew AMC / Insurance / Certificate</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
@@ -776,7 +776,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
       {/* Audit History Modal */}
       {modalMode === 'AUDIT' && activeAssetForModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-base">Asset Audit History</h3>

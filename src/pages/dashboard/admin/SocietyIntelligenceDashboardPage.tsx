@@ -61,7 +61,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* Header & Date Range Filter Bar */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 text-white shadow-xl border border-indigo-900/30">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-4 md:p-6 text-white shadow-xl border border-indigo-900/30">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold uppercase tracking-wider mb-2">
@@ -374,7 +374,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
         {/* Row 1: Visitor Trends & Payment Collection */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Chart 1: Visitor Trends */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -410,7 +410,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           </div>
 
           {/* Chart 2: Payment Collection */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -454,7 +454,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
         {/* Row 2: Maintenance Trends & Parking Utilization */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Chart 3: Maintenance Trends */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -485,7 +485,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           </div>
 
           {/* Chart 4: Parking Utilization */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -522,7 +522,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
         {/* Row 3: Amenity Usage & Complaint Categories */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Chart 5: Amenity Usage */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -553,7 +553,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           </div>
 
           {/* Chart 6: Complaint Categories */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -585,7 +585,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
         </div>
 
         {/* Row 4: Worker Attendance Trends */}
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+        <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">

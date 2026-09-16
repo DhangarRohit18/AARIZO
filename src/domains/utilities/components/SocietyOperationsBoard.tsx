@@ -147,7 +147,7 @@ export const SocietyOperationsBoard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
@@ -306,7 +306,7 @@ export const SocietyOperationsBoard: React.FC = () => {
 
       {/* Tab 2: OUTAGE HISTORY */}
       {activeTab === 'OUTAGE_HISTORY' && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
           <div>
             <h3 className="font-bold text-slate-900 text-lg">Historical Outage & Downtime Audit Trail</h3>
             <p className="text-xs text-slate-500">Record of unscheduled interruptions, cause analysis, and restoration durations.</p>
@@ -340,7 +340,7 @@ export const SocietyOperationsBoard: React.FC = () => {
 
       {/* Tab 3: IOT TERMINAL */}
       {activeTab === 'IOT_TERMINAL' && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto space-y-6">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto space-y-6">
           <div>
             <h3 className="font-bold text-slate-900 text-lg">IoT Sensor Event Simulation Terminal</h3>
             <p className="text-xs text-slate-500">
@@ -417,7 +417,7 @@ export const SocietyOperationsBoard: React.FC = () => {
       {/* Modal: Update Status */}
       {isUpdateModalOpen && selectedUtility && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Update Status: {selectedUtility.name}</h3>
               <button onClick={() => setIsUpdateModalOpen(false)} className="text-slate-400 hover:text-slate-600">✕</button>

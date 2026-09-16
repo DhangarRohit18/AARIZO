@@ -326,7 +326,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
       {/* TAB 1: OVERVIEW & VARIANCE */}
       {activeTab === 'OVERVIEW' && summary && (
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm">
             <h2 className="text-base font-bold text-slate-900 mb-4">Category-Wise Budget vs Actual Breakdown</h2>
             <div className="space-y-4">
               {summary.categoryBreakdown.map((item) => {
@@ -537,7 +537,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
 
       {/* TAB 3: BUDGET BREAKDOWN */}
       {activeTab === 'BUDGET' && budget && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
           <div className="flex justify-between items-center pb-4 border-b border-slate-100">
             <div>
               <h2 className="text-base font-bold text-slate-900">{budget.title}</h2>
@@ -565,7 +565,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
       {/* TAB 4: VENDOR & MONTHLY ANALYTICS */}
       {activeTab === 'ANALYTICS' && summary && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <h2 className="text-base font-bold text-slate-900">Vendor Payout Ranking</h2>
             <div className="space-y-3">
               {summary.vendorSpending.map((v) => (
@@ -580,7 +580,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <h2 className="text-base font-bold text-slate-900">Monthly Expenditure History</h2>
             <div className="space-y-3">
               {summary.monthlySpending.map((m) => (
@@ -600,7 +600,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
       {/* MODAL: CREATE EXPENSE */}
       {isExpenseModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Record New Society Expense</h3>
               <button onClick={() => setIsExpenseModalOpen(false)} className="text-slate-400 hover:text-slate-600">
@@ -743,7 +743,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
       {/* MODAL: INVOICE PREVIEW */}
       {isInvoiceModalOpen && activeInvoice && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Vendor Invoice Details</h3>
               <button onClick={() => setIsInvoiceModalOpen(false)} className="text-slate-400 hover:text-slate-600">
@@ -783,7 +783,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
       {/* MODAL: EDIT BUDGET */}
       {isBudgetModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Configure Monthly Budget Allocations</h3>
               <button onClick={() => setIsBudgetModalOpen(false)} className="text-slate-400 hover:text-slate-600">

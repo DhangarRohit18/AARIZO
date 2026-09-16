@@ -183,7 +183,7 @@ export const BillingManagementPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -310,8 +310,8 @@ export const BillingManagementPage: React.FC = () => {
           </div>
 
           {/* Table */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <table className="w-full text-left text-xs">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
+<table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
                 <tr>
                   <th className="p-3">Invoice ID</th>
@@ -399,8 +399,8 @@ export const BillingManagementPage: React.FC = () => {
 
       {/* Tab 3: Transactions & Refunds */}
       {activeTab === 'TRANSACTIONS' && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <table className="w-full text-left text-xs">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
+<table className="w-full text-left text-xs">
             <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
               <tr>
                 <th className="p-3">Txn ID</th>
@@ -450,7 +450,7 @@ export const BillingManagementPage: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <form
             onSubmit={handleCreateCycle}
-            className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl"
+            className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-4 md:p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl"
           >
             <h3 className="font-bold text-slate-900 dark:text-white text-base">Create New Billing Cycle</h3>
             <div className="space-y-3 text-xs">
@@ -510,7 +510,7 @@ export const BillingManagementPage: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <form
             onSubmit={handleManualPaymentSubmit}
-            className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl"
+            className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-4 md:p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl"
           >
             <h3 className="font-bold text-slate-900 dark:text-white text-base">
               Mark Manual Offline Payment - Flat {manualInvoice.flatCode}
@@ -576,7 +576,7 @@ export const BillingManagementPage: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <form
             onSubmit={handlePenaltySubmit}
-            className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl"
+            className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-4 md:p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl"
           >
             <h3 className="font-bold text-slate-900 dark:text-white text-base">
               Apply Charge / Penalty - Flat {penaltyInvoice.flatCode}

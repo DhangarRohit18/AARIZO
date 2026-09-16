@@ -346,7 +346,7 @@ export const StaffShiftHub: React.FC = () => {
       {/* Create Shift Modal */}
       {modalMode === 'CREATE' && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Schedule Staff Shift</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
@@ -454,7 +454,7 @@ export const StaffShiftHub: React.FC = () => {
       {/* Replace Staff Modal */}
       {modalMode === 'REPLACE' && activeShiftForModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Assign Shift Replacement</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
@@ -500,7 +500,7 @@ export const StaffShiftHub: React.FC = () => {
       {/* History Modal */}
       {modalMode === 'HISTORY' && activeShiftForModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-base">Shift Audit History</h3>

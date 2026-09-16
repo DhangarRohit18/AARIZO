@@ -11,7 +11,7 @@ export const DomesticWorkerDashboard: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="bg-emerald-600 text-white rounded-2xl p-6 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-emerald-600 text-white rounded-2xl p-4 md:p-6 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span className="text-xs uppercase font-bold tracking-wider bg-emerald-700 px-2.5 py-1 rounded-full text-emerald-100">
             Domestic Staff Pass
@@ -38,7 +38,7 @@ export const DomesticWorkerDashboard: React.FC = () => {
       </div>
 
       {/* QR Pass Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col items-center text-center space-y-3">
+      <div className="bg-white rounded-2xl border border-slate-200 p-4 md:p-6 shadow-sm flex flex-col items-center text-center space-y-3">
         <h3 className="font-bold text-slate-800 text-sm">Gate Entry QR Pass</h3>
         <div className="p-4 bg-slate-100 rounded-xl border border-slate-200">
           <QrCode size={120} className="text-slate-800" />

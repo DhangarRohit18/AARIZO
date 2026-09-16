@@ -103,7 +103,7 @@ export const RealtimeOperationsHubPage: React.FC = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-950 rounded-2xl p-6 text-white shadow-xl border border-indigo-900/30">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-950 rounded-2xl p-4 md:p-6 text-white shadow-xl border border-indigo-900/30">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold uppercase tracking-wider mb-2">
@@ -222,7 +222,7 @@ export const RealtimeOperationsHubPage: React.FC = () => {
         </div>
 
         {/* Right Column (1 Col): Broadcast Event Simulator */}
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 h-fit">
+        <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 h-fit">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Send className="w-4 h-4 text-indigo-500" /> Dispatch Real-Time Event

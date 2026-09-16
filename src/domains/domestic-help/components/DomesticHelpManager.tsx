@@ -70,7 +70,7 @@ export const DomesticHelpManager: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
       {/* Real-time Alert Banner */}
       {realtimeEntryAlert && (
         <div className="p-4 bg-emerald-600 text-white rounded-2xl shadow-lg flex justify-between items-center animate-bounce">
@@ -225,7 +225,8 @@ export const DomesticHelpManager: React.FC = () => {
       {/* Attendance Log Table */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
         <h3 className="text-base font-bold text-slate-800">Attendance Log History</h3>
-        <table className="w-full text-left border-collapse text-xs">
+        <div className="overflow-x-auto">
+<table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-slate-50 text-slate-600 border-b font-bold uppercase text-[10px]">
               <th className="p-3">Staff Name & Type</th>

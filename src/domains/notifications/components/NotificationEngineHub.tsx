@@ -119,7 +119,7 @@ export const NotificationEngineHub: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-1 z-10">
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
@@ -272,7 +272,7 @@ export const NotificationEngineHub: React.FC = () => {
 
       {/* Tab 2: PREFERENCES */}
       {activeTab === 'PREFERENCES' && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
           <div>
             <h3 className="text-lg font-bold text-slate-900">Resident Multi-Channel Notification Matrix</h3>
             <p className="text-xs text-slate-500">
@@ -345,7 +345,7 @@ export const NotificationEngineHub: React.FC = () => {
 
       {/* Tab 3: DELIVERY LOGS */}
       {activeTab === 'DELIVERY_LOGS' && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
           <div className="flex justify-between items-center border-b pb-4">
             <div>
               <h3 className="text-lg font-bold text-slate-900">Provider Delivery & Audit Trail</h3>
@@ -411,7 +411,7 @@ export const NotificationEngineHub: React.FC = () => {
 
       {/* Tab 4: DISPATCH SIMULATOR */}
       {activeTab === 'DISPATCH_SIMULATOR' && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-2xl mx-auto space-y-6">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-2xl mx-auto space-y-6">
           <div>
             <h3 className="text-lg font-bold text-slate-900">Notification Event Dispatch Terminal</h3>
             <p className="text-xs text-slate-500">Simulate business events and observe multi-channel routing.</p>

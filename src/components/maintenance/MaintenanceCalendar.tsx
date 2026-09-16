@@ -152,7 +152,7 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({ events
       {/* Event Details Modal */}
       {selectedEvent && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl animate-in fade-in zoom-in duration-150">
+          <div className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-4 md:p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl animate-in fade-in zoom-in duration-150">
             <div className="flex items-center justify-between border-b pb-3 border-slate-200 dark:border-slate-700">
               <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />

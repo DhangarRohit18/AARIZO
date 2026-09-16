@@ -115,7 +115,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
   });
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4">
         <div>
@@ -289,7 +289,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
       {/* Policy Config Modal */}
       {showPolicyModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-md w-full shadow-2xl space-y-4">
             <h3 className="text-lg font-bold text-slate-900">Configure Category SLA Policy</h3>
             <form onSubmit={handleUpdatePolicy} className="space-y-3 text-xs">
               <div>
@@ -342,7 +342,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
       {/* Resident Post-Service Verification Modal */}
       {verifyComplaint && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center space-y-4">
+          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-sm w-full shadow-2xl text-center space-y-4">
             <h3 className="text-lg font-bold text-slate-900">Post-Service Verification</h3>
             <p className="text-xs text-slate-600">
               Was ticket <strong>"{verifyComplaint.title}"</strong> resolved to your satisfaction?
@@ -378,7 +378,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
       {/* Submit Ticket Modal */}
       {showSubmitModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-md w-full shadow-2xl space-y-4">
             <h3 className="text-lg font-bold text-slate-900">Log New Complaint / Issue</h3>
             <form onSubmit={handleCreateComplaint} className="space-y-3 text-xs">
               <div>

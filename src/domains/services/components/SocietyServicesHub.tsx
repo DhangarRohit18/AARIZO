@@ -178,7 +178,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
@@ -465,7 +465,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
 
       {/* Tab 4: ADMIN GOVERNANCE */}
       {activeTab === 'ADMIN_APPROVALS' && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
           <h3 className="font-bold text-slate-900 text-lg">Admin Vendor Approval & Suspension Governance</h3>
           <p className="text-xs text-slate-500">Approve new vendor applications or suspend non-compliant services.</p>
 
@@ -505,7 +505,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
       {/* Rate Modal */}
       {modalMode === 'RATE' && selectedOrderForRate && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Rate Service Experience</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
@@ -562,7 +562,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
       {/* Book Modal */}
       {modalMode === 'BOOK' && selectedItemForBook && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Book {selectedItemForBook.title}</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
@@ -622,7 +622,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
       {/* Add Item Modal */}
       {modalMode === 'ADD_ITEM' && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Service to Catalog</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>

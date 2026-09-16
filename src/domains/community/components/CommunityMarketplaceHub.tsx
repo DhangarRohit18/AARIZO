@@ -483,7 +483,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
       {/* MODAL: CREATE LISTING */}
       {isListingModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-xl space-y-4">
             <h3 className="font-bold text-slate-900 text-base border-b pb-3">Create Marketplace Item</h3>
             <form onSubmit={handleCreateListing} className="space-y-3 text-xs">
               <div>
@@ -558,7 +558,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
       {/* MODAL: CREATE LOST & FOUND */}
       {isLostFoundModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-xl space-y-4">
             <h3 className="font-bold text-slate-900 text-base border-b pb-3">Report Lost / Found Item</h3>
             <form onSubmit={handleCreateLostFound} className="space-y-3 text-xs">
               <div>

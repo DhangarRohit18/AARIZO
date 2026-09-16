@@ -108,7 +108,7 @@ export const AdminGuestStayPage: React.FC = () => {
   return (
     <div className="space-y-6 p-4 md:p-6">
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -235,7 +235,7 @@ export const AdminGuestStayPage: React.FC = () => {
           </div>
 
           {/* Reservations Board */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
             <h2 className="text-lg font-bold text-slate-900">Resident Stay Reservations</h2>
 
             <div className="overflow-x-auto">
@@ -255,7 +255,7 @@ export const AdminGuestStayPage: React.FC = () => {
                 <tbody className="divide-y divide-slate-100">
                   {reservations.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="p-6 text-center text-slate-400">No guest stay reservations recorded</td>
+                      <td colSpan={8} className="p-4 md:p-6 text-center text-slate-400">No guest stay reservations recorded</td>
                     </tr>
                   ) : (
                     reservations.map(resv => (

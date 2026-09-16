@@ -82,7 +82,7 @@ export const ResidentBillingPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -103,7 +103,7 @@ export const ResidentBillingPage: React.FC = () => {
 
       {/* Active Bill Hero Card */}
       {activeInvoice && (
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+        <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 border-slate-200 dark:border-slate-700">
             <div>
               <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
@@ -193,7 +193,7 @@ export const ResidentBillingPage: React.FC = () => {
       )}
 
       {/* Past Invoices & Payment History */}
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+      <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
         <h2 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
           <History className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Payment & Transaction History
         </h2>
@@ -242,7 +242,7 @@ export const ResidentBillingPage: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <form
             onSubmit={handleOnlineCheckout}
-            className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 space-y-5 border border-slate-200 dark:border-slate-700 shadow-2xl"
+            className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-4 md:p-6 space-y-5 border border-slate-200 dark:border-slate-700 shadow-2xl"
           >
             <div className="flex items-center justify-between border-b pb-3 border-slate-200 dark:border-slate-700">
               <div>

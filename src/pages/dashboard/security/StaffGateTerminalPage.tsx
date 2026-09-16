@@ -120,7 +120,7 @@ export const StaffGateTerminalPage: React.FC = () => {
   );
 
   return (
-    <div className="p-6 space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -232,7 +232,7 @@ export const StaffGateTerminalPage: React.FC = () => {
         {/* Right Column: Worker Pass Verification & Actions */}
         <div className="lg:col-span-7 space-y-6">
           {selectedWorker ? (
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+            <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
               <div className="flex items-center justify-between border-b pb-4 border-slate-200 dark:border-slate-700">
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 dark:text-white">Staff Gate Pass Verification</h2>
@@ -355,7 +355,7 @@ export const StaffGateTerminalPage: React.FC = () => {
           )}
 
           {/* Attendance Activity Log */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
             <h2 className="font-bold text-slate-900 dark:text-white">Recent Staff Gate Activity Log</h2>
             <div className="space-y-3">
               {attendanceLogs.slice(0, 5).map((log: StaffAttendanceLog) => (

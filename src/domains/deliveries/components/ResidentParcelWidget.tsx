@@ -80,7 +80,7 @@ export const ResidentParcelWidget: React.FC = () => {
       {/* QR Modal */}
       {selectedQrParcel && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xs w-full text-center space-y-3">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 max-w-xs w-full text-center space-y-3">
             <h4 className="font-bold text-white text-sm">Gate Pickup Digital Pass</h4>
             <p className="text-xs text-slate-400">{selectedQrParcel.courierCompany} • {selectedQrParcel.storageLocation}</p>
             <div className="p-4 bg-white rounded-xl flex justify-center">

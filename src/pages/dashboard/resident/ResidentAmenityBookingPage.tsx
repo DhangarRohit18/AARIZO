@@ -102,7 +102,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
   return (
     <div className="space-y-6 p-4 md:p-6">
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -178,7 +178,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
       </div>
 
       {/* User Booking History */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900 mb-4">My Bookings History</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-slate-600">
@@ -195,7 +195,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
             <tbody className="divide-y divide-slate-100">
               {userBookings.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-slate-400">You have no upcoming or past bookings</td>
+                  <td colSpan={6} className="p-4 md:p-6 text-center text-slate-400">You have no upcoming or past bookings</td>
                 </tr>
               ) : (
                 userBookings.map(bk => (

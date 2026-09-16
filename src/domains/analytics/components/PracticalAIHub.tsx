@@ -54,7 +54,7 @@ export const PracticalAIHub: React.FC = () => {
   const healthSummary = practicalAILayerEngine.getPlainLanguageHealthSummary(94, 91);
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+    <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
       {/* Header & Safety Guard Warning */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-gradient-to-r from-indigo-900 to-slate-900 text-white p-5 rounded-2xl gap-4">
         <div>

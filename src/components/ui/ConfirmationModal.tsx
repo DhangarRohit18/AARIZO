@@ -40,7 +40,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4"
+        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4"
       >
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">

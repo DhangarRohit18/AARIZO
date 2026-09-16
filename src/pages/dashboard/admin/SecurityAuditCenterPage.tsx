@@ -118,7 +118,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* Top Banner Header */}
-      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-rose-950 rounded-2xl p-6 text-white shadow-xl border border-slate-800">
+      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-rose-950 rounded-2xl p-4 md:p-6 text-white shadow-xl border border-slate-800">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 text-xs font-semibold uppercase tracking-wider mb-2">
@@ -335,7 +335,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
 
       {/* TAB 3: RBAC MATRIX */}
       {activeTab === 'rbac' && (
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-6">
+        <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-6">
           <div>
             <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Lock className="w-4 h-4 text-indigo-500" /> Platform Role-Based Access Control (RBAC)
@@ -421,7 +421,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
       {activeTab === 'simulator' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Payload Sanitizer Simulator */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4">
+          <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4">
             <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Code className="w-4 h-4 text-rose-500" /> Payload Sanitizer & XSS Inspector
             </h3>
@@ -469,7 +469,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
           </div>
 
           {/* Rate Limiting Simulator */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4">
+          <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4">
             <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Zap className="w-4 h-4 text-amber-500" /> Sliding-Window Rate Limiter
             </h3>

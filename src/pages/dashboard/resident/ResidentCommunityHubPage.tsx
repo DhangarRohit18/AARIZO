@@ -137,7 +137,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
   return (
     <div className="space-y-6 p-4 md:p-6">
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -233,7 +233,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
       {activeTab === 'ANNOUNCEMENTS' && (
         <div className="space-y-4">
           {announcements.map(ann => (
-            <div key={ann.id} className={`bg-white p-6 rounded-2xl border shadow-sm border-l-4 ${ann.isPinned ? 'border-l-indigo-600 bg-indigo-50/20' : 'border-slate-200 border-l-slate-300'}`}>
+            <div key={ann.id} className={`bg-white p-4 md:p-6 rounded-2xl border shadow-sm border-l-4 ${ann.isPinned ? 'border-l-indigo-600 bg-indigo-50/20' : 'border-slate-200 border-l-slate-300'}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {ann.isPinned && <Pin className="w-4 h-4 text-indigo-600 fill-indigo-600" />}
@@ -263,7 +263,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
             const totalGoing = evt.rsvps.filter(r => r.status === 'GOING').reduce((acc, curr) => acc + 1 + curr.guestsCount, 0);
 
             return (
-              <div key={evt.id} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+              <div key={evt.id} className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="px-2.5 py-1 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded-full">
@@ -332,7 +332,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
             const totalVotes = poll.options.reduce((acc, curr) => acc + curr.votes.length, 0);
 
             return (
-              <div key={poll.id} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+              <div key={poll.id} className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div className="flex items-center justify-between text-xs text-slate-400">
                   <span>Created by {poll.createdBy}</span>
                   <span>Expires: {poll.expiresAt}</span>
@@ -384,7 +384,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
       {activeTab === 'POSTS' && (
         <div className="space-y-6">
           {posts.map(post => (
-            <div key={post.id} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div key={post.id} className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">

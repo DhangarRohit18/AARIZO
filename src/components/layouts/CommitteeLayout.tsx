@@ -77,7 +77,7 @@ export const CommitteeLayout: React.FC = () => {
           })}
         </aside>
 
-        <main className="flex-1 p-6 overflow-y-auto bg-slate-900/50">
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto bg-slate-900/50">
           <Outlet />
         </main>
       </div>

@@ -181,7 +181,7 @@ export const SafetyCommandHub: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="p-2 bg-rose-500/20 text-rose-400 rounded-lg">
@@ -416,7 +416,7 @@ export const SafetyCommandHub: React.FC = () => {
 
       {/* Tab 4: GATE VERIFIER */}
       {activeTab === 'GATE_VERIFIER' && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto space-y-4">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto space-y-4">
           <div className="text-center space-y-1">
             <QrCode size={36} className="mx-auto text-indigo-600" />
             <h3 className="font-bold text-slate-900 text-lg">Gate Security Child Exit Verifier</h3>
@@ -481,7 +481,7 @@ export const SafetyCommandHub: React.FC = () => {
       {/* Modal: Assign Responder */}
       {modalMode === 'ASSIGN_RESPONDER' && selectedIncident && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Assign Emergency Responder</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
@@ -533,7 +533,7 @@ export const SafetyCommandHub: React.FC = () => {
       {/* Modal: Add Child */}
       {modalMode === 'ADD_CHILD' && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Child Profile</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
@@ -598,7 +598,7 @@ export const SafetyCommandHub: React.FC = () => {
       {/* Modal: Add Pickup */}
       {modalMode === 'ADD_PICKUP' && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Authorized Pickup Person</h3>
               <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>

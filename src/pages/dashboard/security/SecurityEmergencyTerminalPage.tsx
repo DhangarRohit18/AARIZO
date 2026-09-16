@@ -92,7 +92,7 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
       )}
 
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="p-2 bg-rose-50 text-rose-600 rounded-xl">
@@ -122,7 +122,7 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
             activeTriggered.map(inc => (
               <div
                 key={inc.id}
-                className={`bg-white p-6 rounded-2xl border shadow-md flex flex-col justify-between space-y-4 ${
+                className={`bg-white p-4 md:p-6 rounded-2xl border shadow-md flex flex-col justify-between space-y-4 ${
                   inc.status === 'TRIGGERED' ? 'border-2 border-rose-500 bg-rose-50/30' : 'border-slate-200'
                 }`}
               >
