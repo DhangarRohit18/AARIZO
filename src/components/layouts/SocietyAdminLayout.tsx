@@ -2,246 +2,379 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
+  LayoutDashboard,
+  Settings,
+  CheckSquare,
+  BarChart3,
+  User,
   Building2,
   Users,
   DollarSign,
   Bell,
   LogOut,
-  Menu,
-  X,
   CreditCard,
   Wrench,
   Car,
   Store,
   Sparkles,
   ShieldCheck,
-  BarChart3,
   Lock,
   Radio,
-  Layers,
   BedDouble,
+  Layers,
+  HardHat,
+  X,
+  Menu,
+  ChevronRight,
 } from 'lucide-react';
+
+const BOTTOM_NAV = [
+  { label: 'Overview', path: '/admin', icon: LayoutDashboard },
+  { label: 'Operations', path: '/admin/operations', icon: Settings },
+  { label: 'Approvals', path: '/admin/residents', icon: CheckSquare },
+  { label: 'Reports', path: '/admin/intelligence', icon: BarChart3 },
+  { label: 'Profile', path: '/admin/profile', icon: User },
+];
+
+const DRAWER_NAV = [
+  { label: 'Admin Overview', path: '/admin', icon: LayoutDashboard },
+  { label: 'Towers & Blocks', path: '/admin/towers', icon: Layers },
+  { label: 'Flat Management', path: '/admin/flats', icon: Building2 },
+  { label: 'Resident Approvals', path: '/admin/residents', icon: Users },
+  { label: 'Parking Operations', path: '/admin/parking', icon: Car },
+  { label: 'Maintenance Ops', path: '/admin/maintenance', icon: Wrench },
+  { label: 'Staff Management', path: '/admin/staff', icon: HardHat },
+  { label: 'Domestic Workers', path: '/admin/domestic-workers', icon: HardHat },
+  { label: 'Vendor Management', path: '/admin/vendors', icon: Store },
+  { label: 'Society Expenses', path: '/admin/expenses', icon: DollarSign },
+  { label: 'Billing Engine', path: '/admin/billing', icon: CreditCard },
+  { label: 'Service Hub', path: '/admin/service-hub', icon: Store },
+  { label: 'Amenity Management', path: '/admin/amenities', icon: Sparkles },
+  { label: 'Child Safety Board', path: '/admin/child-safety', icon: ShieldCheck },
+  { label: 'Guest Stay', path: '/admin/guest-stay', icon: BedDouble },
+  { label: 'Society Intelligence', path: '/admin/intelligence', icon: BarChart3 },
+  { label: 'Security & Audit', path: '/admin/security-audit', icon: Lock },
+  { label: 'Realtime Hub', path: '/admin/realtime', icon: Radio },
+  { label: 'Notifications', path: '/notifications', icon: Bell },
+];
 
 export const SocietyAdminLayout: React.FC = () => {
   const { currentUser, logout, selectedRole, switchRole } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
 
-  const navItems = [
-    { label: 'Admin Command Board', path: '/admin', icon: Building2 },
-    { label: 'Towers & Blocks', path: '/admin/towers', icon: Layers },
-    { label: 'Flat Management', path: '/admin/flats', icon: Building2 },
-    { label: 'Resident Approvals', path: '/admin/residents', icon: Users },
-    { label: 'Parking Operations', path: '/admin/parking', icon: Car },
-    { label: 'Maintenance Operations', path: '/admin/maintenance', icon: Wrench },
-    { label: 'Society Expense Engine', path: '/admin/expenses', icon: DollarSign },
-    { label: 'Billing Engine', path: '/admin/billing', icon: CreditCard },
-    { label: 'Society Service Hub', path: '/admin/service-hub', icon: Store },
-    { label: 'Amenity Management', path: '/admin/amenities', icon: Sparkles },
-    { label: 'Child Safety Board', path: '/admin/child-safety', icon: ShieldCheck },
-    { label: 'Guest Stay Module', path: '/admin/guest-stay', icon: BedDouble },
-    { label: 'Society Intelligence', path: '/admin/intelligence', icon: BarChart3 },
-    { label: 'Security & Audit Logs', path: '/admin/security-audit', icon: Lock },
-    { label: 'Realtime Socket Hub', path: '/admin/realtime', icon: Radio },
-    { label: 'Notification Center', path: '/notifications', icon: Bell },
-  ];
+  const isActive = (path: string) => {
+    if (path === '/admin') return location.pathname === '/admin';
+    return location.pathname.startsWith(path);
+  };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
-      {/* Sidebar Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-slate-900 border-r border-slate-800 p-4 space-y-4 shrink-0 overflow-y-auto max-h-screen">
-        <div className="flex items-center gap-3 px-2 py-2">
-          <div className="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl">
-            <Building2 className="w-6 h-6" />
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100dvh',
+        width: '100%',
+        backgroundColor: '#f7f4ee',
+        color: '#1c1917',
+        overflowX: 'hidden',
+      }}
+    >
+      {/* ── Top Header ── */}
+      <header className="mobile-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', minWidth: 0, flex: 1 }}>
+          <button
+            onClick={() => setDrawerOpen(true)}
+            aria-label="Open menu"
+            style={{
+              padding: '0.375rem',
+              borderRadius: '0.5rem',
+              background: 'rgba(255,255,255,0.1)',
+              color: '#d6d3d1',
+              display: 'flex',
+              alignItems: 'center',
+              minHeight: 44,
+              minWidth: 44,
+              justifyContent: 'center',
+            }}
+          >
+            <Menu size={20} />
+          </button>
+
+          <div
+            style={{
+              padding: '0.375rem',
+              background: 'rgba(99,102,241,0.25)',
+              borderRadius: '0.5rem',
+              color: '#a5b4fc',
+              display: 'flex',
+            }}
+          >
+            <Building2 size={16} />
           </div>
-          <div>
-            <h1 className="font-black text-sm tracking-tight text-white">Green Valley</h1>
-            <span className="text-[10px] text-indigo-400 uppercase font-bold tracking-wider">Society Admin</span>
+
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 800, fontSize: '0.75rem', color: '#fff', lineHeight: 1.2 }}>
+              Green Valley Admin
+            </div>
+            <div style={{ fontSize: '0.625rem', color: '#a8a29e', lineHeight: 1.2 }}>
+              {currentUser?.name || 'Admin'} • Society Admin
+            </div>
           </div>
         </div>
 
-        <nav className="flex-1 space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  isActive
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                }`}
-              >
-                <Icon className="w-4 h-4 shrink-0" />
-                <span className="truncate">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="pt-3 border-t border-slate-800 space-y-2">
-          <div className="px-2 text-[10px] text-slate-500 uppercase font-bold">Role Switcher</div>
-          <select
-            value={selectedRole}
-            onChange={(e) => switchRole(e.target.value as any)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs text-white p-2"
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+          <Link
+            to="/notifications"
+            aria-label="Notifications"
+            style={{
+              position: 'relative',
+              padding: '0.375rem',
+              color: '#d6d3d1',
+              borderRadius: '0.5rem',
+              display: 'flex',
+              minHeight: 44,
+              minWidth: 44,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <option value="SOCIETY_ADMIN">SOCIETY ADMIN</option>
-            <option value="RESIDENT">RESIDENT</option>
-            <option value="SECURITY">SECURITY GUARD</option>
-            <option value="SUPER_ADMIN">SUPER ADMIN</option>
-          </select>
+            <Bell size={20} />
+            <span
+              style={{
+                position: 'absolute',
+                top: '6px',
+                right: '6px',
+                width: '8px',
+                height: '8px',
+                background: '#f59e0b',
+                borderRadius: '50%',
+                border: '1.5px solid #1c1917',
+              }}
+            />
+          </Link>
           <button
             onClick={logout}
-            className="w-full flex items-center gap-2 px-3 py-2 text-rose-400 hover:bg-rose-950/30 rounded-lg text-xs font-semibold transition"
+            aria-label="Sign Out"
+            style={{
+              padding: '0.375rem',
+              color: '#f87171',
+              borderRadius: '0.5rem',
+              display: 'flex',
+              minHeight: 44,
+              minWidth: 44,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <LogOut className="w-4 h-4" /> Sign Out
+            <LogOut size={20} />
           </button>
         </div>
-      </aside>
+      </header>
 
-      {/* Mobile Drawer Slide-over */}
-      {sidebarOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
-          {/* Backdrop */}
+      {/* ── Drawer ── */}
+      {drawerOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex' }}>
           <div
-            className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"
-            onClick={() => setSidebarOpen(false)}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(28,25,23,0.65)', backdropFilter: 'blur(2px)' }}
+            onClick={() => setDrawerOpen(false)}
           />
-          {/* Drawer Content */}
-          <div className="relative flex-1 max-w-xs w-full bg-slate-900 border-r border-slate-800 p-4 space-y-4 overflow-y-auto flex flex-col z-10">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl">
-                  <Building2 className="w-5 h-5" />
+          <div
+            style={{
+              position: 'relative',
+              width: '82vw',
+              maxWidth: '320px',
+              height: '100%',
+              background: '#f7f4ee',
+              borderRight: '1px solid #dcd4c7',
+              display: 'flex',
+              flexDirection: 'column',
+              zIndex: 1,
+              boxShadow: '4px 0 24px rgba(0,0,0,0.25)',
+            }}
+          >
+            <div
+              style={{
+                padding: '1rem',
+                paddingTop: 'calc(1rem + env(safe-area-inset-top, 0px))',
+                background: '#1c1917',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexShrink: 0,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    background: 'rgba(99,102,241,0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#a5b4fc',
+                    fontWeight: 800,
+                    fontSize: '1rem',
+                  }}
+                >
+                  {(currentUser?.name || 'A').charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h2 className="font-extrabold text-sm text-white">Society Admin</h2>
-                  <p className="text-[10px] text-slate-400">Green Valley Management</p>
+                  <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.8125rem' }}>
+                    {currentUser?.name || 'Admin'}
+                  </div>
+                  <div style={{ color: '#a8a29e', fontSize: '0.625rem' }}>
+                    Society Administrator
+                  </div>
                 </div>
               </div>
               <button
-                onClick={() => setSidebarOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg bg-slate-800"
+                onClick={() => setDrawerOpen(false)}
+                style={{
+                  padding: '0.375rem',
+                  color: '#78716c',
+                  borderRadius: '0.5rem',
+                  display: 'flex',
+                  minHeight: 40,
+                  minWidth: 40,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(255,255,255,0.08)',
+                }}
               >
-                <X className="w-5 h-5" />
+                <X size={18} />
               </button>
             </div>
 
-            <nav className="flex-1 space-y-1">
-              {navItems.map((item) => {
+            {/* Role switcher */}
+            <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid #e8e2d8', flexShrink: 0 }}>
+              <label style={{ display: 'block', fontSize: '0.5625rem', color: '#78716c', fontWeight: 700, marginBottom: '0.25rem', textTransform: 'uppercase' }}>
+                Switch Role
+              </label>
+              <select
+                value={selectedRole}
+                onChange={(e) => switchRole(e.target.value as never)}
+                style={{
+                  width: '100%',
+                  background: '#fff',
+                  border: '1px solid #dcd4c7',
+                  borderRadius: '0.5rem',
+                  color: '#1c1917',
+                  fontSize: '0.75rem',
+                  padding: '0.375rem 0.5rem',
+                  minHeight: 36,
+                }}
+              >
+                <option value="SOCIETY_ADMIN">SOCIETY ADMIN</option>
+                <option value="RESIDENT">RESIDENT</option>
+                <option value="SECURITY">SECURITY GUARD</option>
+                <option value="SUPER_ADMIN">SUPER ADMIN</option>
+                <option value="COMMITTEE_MEMBER">COMMITTEE</option>
+                <option value="FACILITY_MANAGER">FACILITY MANAGER</option>
+                <option value="VENDOR">VENDOR</option>
+              </select>
+            </div>
+
+            <nav style={{ flex: 1, overflowY: 'auto', padding: '0.75rem 0.5rem' }}>
+              {DRAWER_NAV.map((item) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.path;
+                const active = isActive(item.path);
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
-                      isActive
-                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                        : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                    }`}
+                    onClick={() => setDrawerOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      padding: '0.75rem',
+                      borderRadius: '0.75rem',
+                      marginBottom: '0.125rem',
+                      fontWeight: 600,
+                      fontSize: '0.8125rem',
+                      textDecoration: 'none',
+                      minHeight: 48,
+                      background: active ? '#1c1917' : 'transparent',
+                      color: active ? '#fff' : '#44403c',
+                    }}
                   >
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span className="truncate">{item.label}</span>
+                    <Icon size={17} style={{ flexShrink: 0 }} />
+                    <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {item.label}
+                    </span>
+                    {active && <ChevronRight size={14} style={{ color: '#78716c' }} />}
                   </Link>
                 );
               })}
             </nav>
 
-            <div className="pt-3 border-t border-slate-800 space-y-3">
-              <div className="space-y-1">
-                <label className="text-[10px] text-slate-500 uppercase font-bold">Role Switcher</label>
-                <select
-                  value={selectedRole}
-                  onChange={(e) => switchRole(e.target.value as any)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs text-white p-2"
-                >
-                  <option value="SOCIETY_ADMIN">SOCIETY ADMIN</option>
-                  <option value="RESIDENT">RESIDENT</option>
-                  <option value="SECURITY">SECURITY GUARD</option>
-                  <option value="SUPER_ADMIN">SUPER ADMIN</option>
-                </select>
-              </div>
+            <div
+              style={{
+                padding: '0.75rem',
+                borderTop: '1px solid #dcd4c7',
+                paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))',
+                flexShrink: 0,
+              }}
+            >
               <button
-                onClick={() => {
-                  setSidebarOpen(false);
-                  logout();
+                onClick={() => { setDrawerOpen(false); logout(); }}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  padding: '0.75rem',
+                  borderRadius: '0.75rem',
+                  background: '#fff1f2',
+                  color: '#be123c',
+                  fontWeight: 700,
+                  fontSize: '0.8125rem',
+                  border: '1px solid #fecdd3',
+                  minHeight: 48,
                 }}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-rose-400 bg-rose-950/20 hover:bg-rose-950/40 rounded-lg text-xs font-semibold transition border border-rose-900/30"
               >
-                <LogOut className="w-4 h-4" /> Sign Out
+                <LogOut size={16} />
+                Sign Out
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Header */}
-        <header className="h-16 bg-slate-900/80 border-b border-slate-800 backdrop-blur-md px-4 md:px-6 flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-3 md:hidden">
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-slate-300">
-              {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-            <span className="font-bold text-xs text-indigo-400">Green Valley Admin</span>
-          </div>
+      {/* ── Main Content ── */}
+      <main
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          paddingBottom: 'calc(3.75rem + env(safe-area-inset-bottom, 0px))',
+        }}
+      >
+        <Outlet />
+      </main>
 
-          <div className="hidden md:flex items-center gap-2 text-xs text-slate-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Society Admin Portal
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link to="/notifications" className="p-2 text-slate-400 hover:text-white relative">
-              <Bell className="w-5 h-5" />
+      {/* ── Bottom Navigation ── */}
+      <nav className="bottom-nav">
+        {BOTTOM_NAV.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.path);
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              aria-label={item.label}
+              className={`bottom-nav-item${active ? ' active' : ''}`}
+            >
+              <Icon className="bottom-nav-icon" strokeWidth={active ? 2.5 : 1.75} />
+              <span>{item.label}</span>
             </Link>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-xs">
-                SA
-              </div>
-              <div className="hidden sm:block text-left text-xs">
-                <div className="font-bold text-white">{currentUser?.name || 'Mayuri Udar'}</div>
-                <div className="text-[10px] text-slate-400">Secretary Admin</div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Page Content */}
-        <main className="flex-1 p-3 md:p-6 overflow-y-auto pb-24 md:pb-6">
-          <Outlet />
-        </main>
-
-        {/* Mobile Bottom Navigation for Admin */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-slate-900 border-t border-slate-800 px-2 flex items-center justify-around z-40">
-          {[
-            { label: 'Board', path: '/admin', icon: Building2 },
-            { label: 'Towers', path: '/admin/towers', icon: Layers },
-            { label: 'Residents', path: '/admin/residents', icon: Users },
-            { label: 'Billing', path: '/admin/billing', icon: CreditCard },
-            { label: 'Realtime', path: '/admin/realtime', icon: Radio },
-          ].map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex flex-col items-center gap-1 p-1 rounded-lg text-[10px] font-semibold transition ${
-                  isActive ? 'text-indigo-400 font-bold' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+          );
+        })}
+      </nav>
     </div>
   );
 };

@@ -258,5 +258,6 @@ export const DomesticHelpManager: React.FC = () => {
         </table>
       </div>
     </div>
+    </div>
   );
 };

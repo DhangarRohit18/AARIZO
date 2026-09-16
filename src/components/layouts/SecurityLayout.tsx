@@ -2,128 +2,288 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
-  ShieldAlert,
   QrCode,
-  Car,
-  HardHat,
+  Users,
   Package,
-  ShieldCheck,
+  Car,
+  ShieldAlert,
   Bell,
   LogOut,
+  HardHat,
+  ShieldCheck,
   BedDouble,
-  Menu,
   X,
+  Menu,
+  ChevronRight,
 } from 'lucide-react';
+
+const BOTTOM_NAV = [
+  { label: 'Gate', path: '/security', icon: QrCode },
+  { label: 'Visitors', path: '/security/verify', icon: Users },
+  { label: 'Parcels', path: '/security/delivery-intelligence', icon: Package },
+  { label: 'Parking', path: '/security/parking', icon: Car },
+  { label: 'Safety', path: '/security/emergency-command', icon: ShieldAlert },
+];
+
+const DRAWER_NAV = [
+  { label: 'Gate Terminal', path: '/security', icon: QrCode },
+  { label: 'Visitor Scanner', path: '/security/verify', icon: Users },
+  { label: 'Parking Scanner', path: '/security/parking', icon: Car },
+  { label: 'Staff Terminal', path: '/security/staff-scanner', icon: HardHat },
+  { label: 'Child Gate', path: '/security/child-safety', icon: ShieldCheck },
+  { label: 'Delivery / Parcels', path: '/security/delivery-intelligence', icon: Package },
+  { label: 'Guest Stay', path: '/security/guest-stay', icon: BedDouble },
+  { label: 'Emergency Command', path: '/security/emergency-command', icon: ShieldAlert },
+  { label: 'Notifications', path: '/notifications', icon: Bell },
+];
 
 export const SecurityLayout: React.FC = () => {
   const { currentUser, logout, selectedRole, switchRole } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
 
-  const navItems = [
-    { label: 'Gate Terminal', path: '/security', icon: QrCode },
-    { label: 'Parking Scanner', path: '/security/parking', icon: Car },
-    { label: 'Staff Terminal', path: '/security/staff-scanner', icon: HardHat },
-    { label: 'Child Gate', path: '/security/child-safety', icon: ShieldCheck },
-    { label: 'Delivery Intelligence', path: '/security/delivery-intelligence', icon: Package },
-    { label: 'Emergency Command', path: '/security/emergency-command', icon: ShieldAlert },
-    { label: 'Guest Stay Scanner', path: '/security/guest-stay', icon: BedDouble },
-  ];
+  const isActive = (path: string) => {
+    if (path === '/security') return location.pathname === '/security';
+    return location.pathname.startsWith(path);
+  };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pb-16 md:pb-0">
-      {/* Top Header Bar */}
-      <header className="h-16 bg-slate-900 border-b border-slate-800 px-4 md:px-6 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex items-center gap-3">
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100dvh',
+        width: '100%',
+        backgroundColor: '#0c0a09',
+        color: '#fafaf9',
+        overflowX: 'hidden',
+      }}
+    >
+      {/* ── Top Header ── */}
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          background: '#0c0a09',
+          height: '3.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 0.75rem',
+          flexShrink: 0,
+          borderBottom: '1px solid rgba(239,68,68,0.2)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', minWidth: 0, flex: 1 }}>
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden p-2 text-slate-300 rounded-lg hover:bg-slate-800"
+            onClick={() => setDrawerOpen(true)}
+            aria-label="Open menu"
+            style={{
+              padding: '0.375rem',
+              borderRadius: '0.5rem',
+              background: 'rgba(239,68,68,0.1)',
+              color: '#fca5a5',
+              display: 'flex',
+              alignItems: 'center',
+              minHeight: 44,
+              minWidth: 44,
+              justifyContent: 'center',
+            }}
           >
-            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <Menu size={20} />
           </button>
-          <div className="p-2 bg-rose-600/20 text-rose-400 rounded-xl">
-            <ShieldAlert className="w-5 h-5" />
+
+          <div
+            style={{
+              padding: '0.375rem',
+              background: 'rgba(239,68,68,0.15)',
+              borderRadius: '0.5rem',
+              color: '#f87171',
+              display: 'flex',
+            }}
+          >
+            <ShieldAlert size={16} />
           </div>
-          <div>
-            <h1 className="font-extrabold text-xs md:text-sm text-white">Security Command</h1>
-            <p className="text-[10px] text-slate-400">Green Valley • {currentUser?.name || 'Gate 1'}</p>
+
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 800, fontSize: '0.75rem', color: '#fff', lineHeight: 1.2 }}>
+              Security Command
+            </div>
+            <div style={{ fontSize: '0.625rem', color: '#78716c', lineHeight: 1.2 }}>
+              Green Valley • {currentUser?.name || 'Gate 1'}
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <select
-            value={selectedRole}
-            onChange={(e) => switchRole(e.target.value as any)}
-            className="hidden sm:block bg-slate-950 border border-slate-800 rounded-lg text-xs text-white p-1.5"
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+          <Link
+            to="/notifications"
+            aria-label="Notifications"
+            style={{
+              padding: '0.375rem',
+              color: '#a8a29e',
+              borderRadius: '0.5rem',
+              display: 'flex',
+              minHeight: 44,
+              minWidth: 44,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <option value="SECURITY">SECURITY GUARD</option>
-            <option value="SOCIETY_ADMIN">SOCIETY ADMIN</option>
-            <option value="RESIDENT">RESIDENT</option>
-          </select>
-          <Link to="/notifications" className="p-2 text-slate-400 hover:text-white relative">
-            <Bell className="w-5 h-5" />
+            <Bell size={20} />
           </Link>
-          <button onClick={logout} className="p-2 text-rose-400 hover:text-rose-300">
-            <LogOut className="w-5 h-5" />
+          <button
+            onClick={logout}
+            aria-label="Sign Out"
+            style={{
+              padding: '0.375rem',
+              color: '#f87171',
+              borderRadius: '0.5rem',
+              display: 'flex',
+              minHeight: 44,
+              minWidth: 44,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <LogOut size={20} />
           </button>
         </div>
       </header>
 
-      {/* Mobile Slide-over Drawer */}
-      {sidebarOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
+      {/* ── Drawer ── */}
+      {drawerOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex' }}>
           <div
-            className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"
-            onClick={() => setSidebarOpen(false)}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(2px)' }}
+            onClick={() => setDrawerOpen(false)}
           />
-          <div className="relative flex-1 max-w-xs w-full bg-slate-900 border-r border-slate-800 p-4 space-y-4 overflow-y-auto flex flex-col z-10">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-rose-600/20 text-rose-400 rounded-xl">
-                  <ShieldAlert className="w-5 h-5" />
+          <div
+            style={{
+              position: 'relative',
+              width: '82vw',
+              maxWidth: '320px',
+              height: '100%',
+              background: '#0c0a09',
+              borderRight: '1px solid rgba(239,68,68,0.2)',
+              display: 'flex',
+              flexDirection: 'column',
+              zIndex: 1,
+              boxShadow: '4px 0 24px rgba(0,0,0,0.5)',
+            }}
+          >
+            <div
+              style={{
+                padding: '1rem',
+                paddingTop: 'calc(1rem + env(safe-area-inset-top, 0px))',
+                background: 'rgba(239,68,68,0.08)',
+                borderBottom: '1px solid rgba(239,68,68,0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexShrink: 0,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    background: 'rgba(239,68,68,0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#f87171',
+                  }}
+                >
+                  <ShieldAlert size={20} />
                 </div>
                 <div>
-                  <h2 className="font-extrabold text-sm text-white">Security Gate</h2>
-                  <p className="text-[10px] text-slate-400">Green Valley Society</p>
+                  <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.8125rem' }}>
+                    Security Guard
+                  </div>
+                  <div style={{ color: '#78716c', fontSize: '0.625rem' }}>
+                    {currentUser?.name || 'Guard'} • Gate 1
+                  </div>
                 </div>
               </div>
               <button
-                onClick={() => setSidebarOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg bg-slate-800"
+                onClick={() => setDrawerOpen(false)}
+                style={{
+                  padding: '0.375rem',
+                  color: '#78716c',
+                  borderRadius: '0.5rem',
+                  display: 'flex',
+                  minHeight: 40,
+                  minWidth: 40,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
-                <X className="w-5 h-5" />
+                <X size={18} />
               </button>
             </div>
 
-            <nav className="flex-1 space-y-1">
-              {navItems.map((item) => {
+            <nav style={{ flex: 1, overflowY: 'auto', padding: '0.75rem 0.5rem' }}>
+              {DRAWER_NAV.map((item) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.path;
+                const active = isActive(item.path);
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
-                      isActive
-                        ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
-                        : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                    }`}
+                    onClick={() => setDrawerOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      padding: '0.75rem',
+                      borderRadius: '0.75rem',
+                      marginBottom: '0.125rem',
+                      fontWeight: 600,
+                      fontSize: '0.8125rem',
+                      textDecoration: 'none',
+                      minHeight: 48,
+                      background: active ? 'rgba(239,68,68,0.2)' : 'transparent',
+                      color: active ? '#f87171' : '#a8a29e',
+                    }}
                   >
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span className="truncate">{item.label}</span>
+                    <Icon size={17} style={{ flexShrink: 0 }} />
+                    <span style={{ flex: 1 }}>{item.label}</span>
+                    {active && <ChevronRight size={14} />}
                   </Link>
                 );
               })}
             </nav>
 
-            <div className="pt-3 border-t border-slate-800 space-y-3">
-              <div className="space-y-1">
-                <label className="text-[10px] text-slate-500 uppercase font-bold">Role Switcher</label>
+            <div
+              style={{
+                padding: '0.75rem',
+                borderTop: '1px solid rgba(255,255,255,0.06)',
+                paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))',
+                flexShrink: 0,
+              }}
+            >
+              {/* Role switcher for prototype demo */}
+              <div style={{ marginBottom: '0.5rem' }}>
+                <label style={{ display: 'block', fontSize: '0.625rem', color: '#57534e', fontWeight: 700, marginBottom: '0.25rem', textTransform: 'uppercase' }}>
+                  Switch Role
+                </label>
                 <select
                   value={selectedRole}
-                  onChange={(e) => switchRole(e.target.value as any)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs text-white p-2"
+                  onChange={(e) => switchRole(e.target.value as never)}
+                  style={{
+                    width: '100%',
+                    background: '#1c1917',
+                    border: '1px solid #292524',
+                    borderRadius: '0.5rem',
+                    color: '#d6d3d1',
+                    fontSize: '0.75rem',
+                    padding: '0.5rem',
+                    minHeight: 40,
+                  }}
                 >
                   <option value="SECURITY">SECURITY GUARD</option>
                   <option value="SOCIETY_ADMIN">SOCIETY ADMIN</option>
@@ -131,68 +291,92 @@ export const SecurityLayout: React.FC = () => {
                 </select>
               </div>
               <button
-                onClick={() => {
-                  setSidebarOpen(false);
-                  logout();
+                onClick={() => { setDrawerOpen(false); logout(); }}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  padding: '0.75rem',
+                  borderRadius: '0.75rem',
+                  background: 'rgba(239,68,68,0.12)',
+                  color: '#f87171',
+                  fontWeight: 700,
+                  fontSize: '0.8125rem',
+                  border: '1px solid rgba(239,68,68,0.2)',
+                  minHeight: 48,
                 }}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-rose-400 bg-rose-950/20 hover:bg-rose-950/40 rounded-lg text-xs font-semibold transition border border-rose-900/30"
               >
-                <LogOut className="w-4 h-4" /> Sign Out
+                <LogOut size={16} />
+                Sign Out
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Main Content View */}
-      <div className="flex-1 flex min-w-0">
-        {/* Desktop Sidebar */}
-        <aside className="hidden md:flex flex-col w-60 bg-slate-900 border-r border-slate-800 p-4 space-y-2 shrink-0">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
-                  isActive
-                    ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </aside>
+      {/* ── Main Content ── */}
+      <main
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          paddingBottom: 'calc(3.75rem + env(safe-area-inset-bottom, 0px))',
+        }}
+      >
+        <Outlet />
+      </main>
 
-        {/* Page Content Container */}
-        <main className="flex-1 p-3 md:p-6 overflow-y-auto pb-24 md:pb-6">
-          <Outlet />
-        </main>
-      </div>
-
-      {/* Mobile Bottom Navigation Bar (QR-First Security Actions) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-slate-900 border-t border-slate-800 px-2 flex items-center justify-around z-40">
-        {navItems.slice(0, 5).map((item) => {
+      {/* ── Bottom Navigation ── */}
+      <nav
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: 'rgba(12,10,9,0.97)',
+          backdropFilter: 'blur(12px)',
+          borderTop: '1px solid rgba(239,68,68,0.2)',
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-around',
+          paddingTop: '0.5rem',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          zIndex: 100,
+          height: 'calc(3.75rem + env(safe-area-inset-bottom, 0px))',
+        }}
+      >
+        {BOTTOM_NAV.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const active = isActive(item.path);
           return (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center gap-1 p-1 rounded-lg text-[10px] font-semibold transition ${
-                isActive ? 'text-rose-400 font-bold' : 'text-slate-400 hover:text-slate-200'
-              }`}
+              aria-label={item.label}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '2px',
+                padding: '0.25rem 0.75rem',
+                fontSize: '0.625rem',
+                fontWeight: 600,
+                textDecoration: 'none',
+                borderRadius: '0.5rem',
+                minWidth: 56,
+                minHeight: 44,
+                color: active ? '#f87171' : '#57534e',
+                transition: 'color 0.15s',
+              }}
             >
-              <Icon className="w-5 h-5" />
-              <span className="truncate max-w-[60px]">{item.label.split(' ')[0]}</span>
+              <Icon size={22} strokeWidth={active ? 2.5 : 1.75} />
+              <span>{item.label}</span>
             </Link>
           );
         })}
-      </div>
+      </nav>
     </div>
   );
 };
