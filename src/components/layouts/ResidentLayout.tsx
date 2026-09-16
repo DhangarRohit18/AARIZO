@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   Home,
@@ -62,7 +62,6 @@ export const ResidentLayout: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
 
   const isActive = (path: string) => {
     if (path === '/resident') return location.pathname === '/resident';
@@ -129,8 +128,7 @@ export const ResidentLayout: React.FC = () => {
               {currentUser?.name || 'Resident'}
             </div>
             <div style={{ fontSize: '0.625rem', color: '#a8a29e', lineHeight: 1.2 }}>
-              {currentUser?.buildingBlock || 'Tower B'} •{' '}
-              {currentUser?.flatNumber || '301'}
+              {currentUser?.flatDetails || 'Tower B • Flat 301'}
             </div>
           </div>
         </div>
@@ -257,7 +255,7 @@ export const ResidentLayout: React.FC = () => {
                     {currentUser?.name || 'Resident'}
                   </div>
                   <div style={{ color: '#a8a29e', fontSize: '0.625rem' }}>
-                    Flat {currentUser?.flatNumber || '301'} • Green Valley
+                    {currentUser?.flatDetails || 'Tower B • Flat 301'} • Green Valley
                   </div>
                 </div>
               </div>

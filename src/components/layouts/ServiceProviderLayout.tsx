@@ -1,97 +1,103 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Wrench, CheckSquare, Bell, LogOut, HardHat } from 'lucide-react';
+import {
+  Home,
+  CheckSquare,
+  Calendar,
+  User,
+  Wrench,
+  HardHat,
+  Bell,
+  LogOut,
+  X,
+  Menu,
+  ChevronRight,
+} from 'lucide-react';
+
+const BOTTOM_NAV = [
+  { label: 'Home', path: '/service-provider', icon: Home },
+  { label: 'Tasks', path: '/service-provider/tasks', icon: CheckSquare },
+  { label: 'Schedule', path: '/staff/housekeeping-tasks', icon: Calendar },
+  { label: 'Profile', path: '/service-provider/profile', icon: User },
+];
+
+const DRAWER_NAV = [
+  { label: 'Provider Board', path: '/service-provider', icon: Wrench },
+  { label: 'Assigned Tickets', path: '/service-provider/tasks', icon: CheckSquare },
+  { label: 'Housekeeping Tasks', path: '/staff/housekeeping-tasks', icon: HardHat },
+  { label: 'Notifications', path: '/notifications', icon: Bell },
+];
 
 export const ServiceProviderLayout: React.FC = () => {
-  const { currentUser, logout, selectedRole, switchRole } = useAuth();
+  const { currentUser, logout } = useAuth();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
 
-  const navItems = [
-    { label: 'Provider Board', path: '/service-provider', icon: Wrench },
-    { label: 'Assigned Tickets & Proofs', path: '/service-provider/tasks', icon: CheckSquare },
-    { label: 'Housekeeping Tasks', path: '/staff/housekeeping-tasks', icon: HardHat },
-    { label: 'Notifications', path: '/notifications', icon: Bell },
-  ];
+  const isActive = (path: string) => {
+    if (path === '/service-provider') return location.pathname === '/service-provider';
+    return location.pathname.startsWith(path);
+  };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pb-16 md:pb-0">
-      <header className="h-16 bg-slate-900 border-b border-slate-800 px-4 md:px-6 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-cyan-600/20 text-cyan-400 rounded-xl">
-            <Wrench className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="font-extrabold text-xs md:text-sm text-white">Technician & Worker Terminal</h1>
-            <p className="text-[10px] text-slate-400">ProClean Electricals • {currentUser?.name || 'Rajesh Kumar'}</p>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', width: '100%', backgroundColor: '#f7f4ee', color: '#1c1917', overflowX: 'hidden' }}>
+      <header className="mobile-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', flex: 1, minWidth: 0 }}>
+          <button onClick={() => setDrawerOpen(true)} aria-label="Open menu" style={{ padding: '0.375rem', borderRadius: '0.5rem', background: 'rgba(255,255,255,0.1)', color: '#d6d3d1', display: 'flex', minHeight: 44, minWidth: 44, alignItems: 'center', justifyContent: 'center' }}><Menu size={20} /></button>
+          <div style={{ padding: '0.375rem', background: 'rgba(6,182,212,0.25)', borderRadius: '0.5rem', color: '#67e8f9', display: 'flex' }}><Wrench size={16} /></div>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 800, fontSize: '0.75rem', color: '#fff', lineHeight: 1.2 }}>Service Provider</div>
+            <div style={{ fontSize: '0.625rem', color: '#a8a29e', lineHeight: 1.2 }}>{currentUser?.name || 'Technician'}</div>
           </div>
         </div>
-
-        <div className="flex items-center gap-3">
-          <select
-            value={selectedRole}
-            onChange={(e) => switchRole(e.target.value as any)}
-            className="hidden sm:block bg-slate-950 border border-slate-800 rounded-lg text-xs text-white p-1.5"
-          >
-            <option value="SERVICE_PROVIDER">SERVICE PROVIDER</option>
-            <option value="VENDOR">VENDOR</option>
-            <option value="SOCIETY_ADMIN">SOCIETY ADMIN</option>
-          </select>
-          <Link to="/notifications" className="p-2 text-slate-400 hover:text-white relative">
-            <Bell className="w-5 h-5" />
-          </Link>
-          <button onClick={logout} className="p-2 text-rose-400 hover:text-rose-300">
-            <LogOut className="w-5 h-5" />
-          </button>
+        <div style={{ display: 'flex', gap: '0.25rem' }}>
+          <Link to="/notifications" style={{ padding: '0.375rem', color: '#d6d3d1', borderRadius: '0.5rem', display: 'flex', minHeight: 44, minWidth: 44, alignItems: 'center', justifyContent: 'center' }}><Bell size={20} /></Link>
+          <button onClick={logout} style={{ padding: '0.375rem', color: '#f87171', borderRadius: '0.5rem', display: 'flex', minHeight: 44, minWidth: 44, alignItems: 'center', justifyContent: 'center' }}><LogOut size={20} /></button>
         </div>
       </header>
 
-      <div className="flex-1 flex min-w-0">
-        <aside className="hidden md:flex flex-col w-60 bg-slate-900 border-r border-slate-800 p-4 space-y-2 shrink-0">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
-                  isActive
-                    ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </aside>
+      {drawerOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(28,25,23,0.65)', backdropFilter: 'blur(2px)' }} onClick={() => setDrawerOpen(false)} />
+          <div style={{ position: 'relative', width: '82vw', maxWidth: '320px', height: '100%', background: '#f7f4ee', borderRight: '1px solid #dcd4c7', display: 'flex', flexDirection: 'column', zIndex: 1, boxShadow: '4px 0 24px rgba(0,0,0,0.25)' }}>
+            <div style={{ padding: '1rem', paddingTop: 'calc(1rem + env(safe-area-inset-top, 0px))', background: '#1c1917', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+              <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.875rem' }}>Service Provider</div>
+              <button onClick={() => setDrawerOpen(false)} style={{ padding: '0.375rem', color: '#78716c', background: 'rgba(255,255,255,0.08)', borderRadius: '0.5rem', display: 'flex', minHeight: 40, minWidth: 40, alignItems: 'center', justifyContent: 'center' }}><X size={18} /></button>
+            </div>
+            <nav style={{ flex: 1, overflowY: 'auto', padding: '0.75rem 0.5rem' }}>
+              {DRAWER_NAV.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                return (
+                  <Link key={item.path} to={item.path} onClick={() => setDrawerOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', borderRadius: '0.75rem', marginBottom: '0.125rem', fontWeight: 600, fontSize: '0.8125rem', textDecoration: 'none', minHeight: 48, background: active ? '#1c1917' : 'transparent', color: active ? '#fff' : '#44403c' }}>
+                    <Icon size={17} style={{ flexShrink: 0 }} /><span style={{ flex: 1 }}>{item.label}</span>{active && <ChevronRight size={14} />}
+                  </Link>
+                );
+              })}
+            </nav>
+            <div style={{ padding: '0.75rem', borderTop: '1px solid #dcd4c7', paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))', flexShrink: 0 }}>
+              <button onClick={() => { setDrawerOpen(false); logout(); }} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem', borderRadius: '0.75rem', background: '#fff1f2', color: '#be123c', fontWeight: 700, fontSize: '0.8125rem', border: '1px solid #fecdd3', minHeight: 48 }}>
+                <LogOut size={16} /> Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
-          <Outlet />
-        </main>
-      </div>
+      <main style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingBottom: 'calc(3.75rem + env(safe-area-inset-bottom, 0px))' }}><Outlet /></main>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-slate-900 border-t border-slate-800 px-2 flex items-center justify-around z-40">
-        {navItems.map((item) => {
+      <nav className="bottom-nav">
+        {BOTTOM_NAV.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const active = isActive(item.path);
           return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex flex-col items-center gap-1 p-1 rounded-lg text-[10px] font-semibold transition ${
-                isActive ? 'text-cyan-400 font-bold' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              <span>{item.label.split(' ')[0]}</span>
+            <Link key={item.path} to={item.path} aria-label={item.label} className={`bottom-nav-item${active ? ' active' : ''}`}>
+              <Icon className="bottom-nav-icon" strokeWidth={active ? 2.5 : 1.75} />
+              <span>{item.label}</span>
             </Link>
           );
         })}
-      </div>
+      </nav>
     </div>
   );
 };

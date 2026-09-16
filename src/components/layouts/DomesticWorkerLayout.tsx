@@ -1,45 +1,58 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import {
-  UserCheck,
-  LogOut,
-} from 'lucide-react';
+import { UserCheck, LogOut, Home, Clock, User, Bell } from 'lucide-react';
+
+const BOTTOM_NAV = [
+  { label: 'Home', path: '/domestic', icon: Home },
+  { label: 'Attendance', path: '/domestic/attendance', icon: Clock },
+  { label: 'Profile', path: '/domestic/profile', icon: User },
+];
 
 export const DomesticWorkerLayout: React.FC = () => {
-  const { currentUser, logout, selectedRole, switchRole } = useAuth();
+  const { currentUser, logout } = useAuth();
+  const location = useLocation();
+
+  const isActive = (path: string) => {
+    if (path === '/domestic') return location.pathname === '/domestic';
+    return location.pathname.startsWith(path);
+  };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      <header className="h-16 bg-slate-900 border-b border-slate-800 px-4 md:px-6 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-emerald-600/20 text-emerald-400 rounded-xl">
-            <UserCheck className="w-5 h-5" />
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', width: '100%', backgroundColor: '#f7f4ee', color: '#1c1917', overflowX: 'hidden' }}>
+      {/* Header */}
+      <header style={{ position: 'sticky', top: 0, zIndex: 50, background: '#1c1917', height: '3.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 0.75rem', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', flex: 1, minWidth: 0 }}>
+          <div style={{ padding: '0.375rem', background: 'rgba(16,185,129,0.2)', borderRadius: '0.5rem', color: '#34d399', display: 'flex' }}>
+            <UserCheck size={16} />
           </div>
-          <div>
-            <h1 className="font-extrabold text-sm text-white">Domestic Staff Portal</h1>
-            <p className="text-[10px] text-slate-400">{currentUser?.name || 'Sunita Devi'}</p>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 800, fontSize: '0.75rem', color: '#fff', lineHeight: 1.2 }}>Domestic Staff</div>
+            <div style={{ fontSize: '0.625rem', color: '#a8a29e', lineHeight: 1.2 }}>{currentUser?.name || 'Staff Member'}</div>
           </div>
         </div>
-
-        <div className="flex items-center gap-3">
-          <select
-            value={selectedRole}
-            onChange={(e) => switchRole(e.target.value as any)}
-            className="bg-slate-950 border border-slate-800 rounded-lg text-xs text-white p-1.5"
-          >
-            <option value="DOMESTIC_WORKER">DOMESTIC WORKER</option>
-            <option value="RESIDENT">RESIDENT</option>
-          </select>
-          <button onClick={logout} className="p-2 text-rose-400 hover:text-rose-300">
-            <LogOut className="w-5 h-5" />
-          </button>
+        <div style={{ display: 'flex', gap: '0.25rem' }}>
+          <Link to="/notifications" style={{ padding: '0.375rem', color: '#d6d3d1', borderRadius: '0.5rem', display: 'flex', minHeight: 44, minWidth: 44, alignItems: 'center', justifyContent: 'center' }}><Bell size={20} /></Link>
+          <button onClick={logout} aria-label="Sign Out" style={{ padding: '0.375rem', color: '#f87171', borderRadius: '0.5rem', display: 'flex', minHeight: 44, minWidth: 44, alignItems: 'center', justifyContent: 'center' }}><LogOut size={20} /></button>
         </div>
       </header>
 
-      <main className="flex-1 p-4 overflow-y-auto bg-slate-900/40">
+      <main style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingBottom: 'calc(3.75rem + env(safe-area-inset-bottom, 0px))' }}>
         <Outlet />
       </main>
+
+      <nav className="bottom-nav">
+        {BOTTOM_NAV.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.path);
+          return (
+            <Link key={item.path} to={item.path} aria-label={item.label} className={`bottom-nav-item${active ? ' active-accent' : ''}`}>
+              <Icon className="bottom-nav-icon" strokeWidth={active ? 2.5 : 1.75} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 };

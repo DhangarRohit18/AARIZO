@@ -4,7 +4,6 @@ import { LoginPage } from '../pages/auth/LoginPage';
 import { OnboardingPage } from '../pages/auth/OnboardingPage';
 import { UnauthorizedPage } from '../pages/unauthorized/UnauthorizedPage';
 import { ResidentDashboard } from '../pages/dashboard/ResidentDashboard';
-import { SecretaryDashboard } from '../pages/dashboard/SecretaryDashboard';
 import { GuardDashboard } from '../pages/dashboard/GuardDashboard';
 import { SuperAdminDashboard } from '../pages/dashboard/SuperAdminDashboard';
 import { SuperAdminSocietiesPage } from '../pages/dashboard/admin/SuperAdminSocietiesPage';
@@ -15,9 +14,13 @@ import { StaffManagementPage } from '../pages/dashboard/admin/StaffManagementPag
 import { VendorManagementPage } from '../pages/dashboard/admin/VendorManagementPage';
 import { AuditLogsPage } from '../pages/dashboard/admin/AuditLogsPage';
 import { ParkingManagementPage } from '../pages/dashboard/admin/ParkingManagementPage';
+import { AdminHomePage } from '../pages/dashboard/admin/AdminHomePage';
 import { MyFlatPage } from '../pages/dashboard/resident/MyFlatPage';
 import { VisitorPassHubPage } from '../pages/dashboard/resident/VisitorPassHubPage';
 import { ResidentParkingPage } from '../pages/dashboard/resident/ResidentParkingPage';
+import { ResidentProfilePage } from '../pages/dashboard/resident/ResidentProfilePage';
+import { ResidentServicesPage } from '../pages/dashboard/resident/ResidentServicesPage';
+import { ResidentActivityPage } from '../pages/dashboard/resident/ResidentActivityPage';
 import { SecurityTerminalPage } from '../pages/dashboard/security/SecurityTerminalPage';
 import { ParkingGateScannerPage } from '../pages/dashboard/security/ParkingGateScannerPage';
 import { DomesticWorkerManagementPage } from '../pages/dashboard/admin/DomesticWorkerManagementPage';
@@ -61,7 +64,6 @@ import { FacilityManagerDashboard } from '../pages/dashboard/FacilityManagerDash
 import { DomesticWorkerDashboard } from '../pages/dashboard/DomesticWorkerDashboard';
 import { UnifiedRequestCenter } from '../domains/requests/components/UnifiedRequestCenter';
 import {
-
   SuperAdminLayout,
   SocietyAdminLayout,
   SecurityLayout,
@@ -105,7 +107,6 @@ export const AppRoutes: React.FC = () => {
     }
   };
 
-
   return (
     <Routes>
       {/* Public Routes */}
@@ -122,11 +123,11 @@ export const AppRoutes: React.FC = () => {
       />
 
       {/* Shared / Notifications Route */}
-      <Route element={<ProtectedRoute allowedRoles={['RESIDENT', 'SOCIETY_ADMIN', 'SUPER_ADMIN', 'SECURITY', 'VENDOR', 'SERVICE_PROVIDER']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['RESIDENT', 'SOCIETY_ADMIN', 'SUPER_ADMIN', 'SECURITY', 'VENDOR', 'SERVICE_PROVIDER', 'COMMITTEE_MEMBER', 'FACILITY_MANAGER', 'DOMESTIC_WORKER']} />}>
         <Route path="/notifications" element={<NotificationCenterPage />} />
       </Route>
 
-      {/* Resident Routes */}
+      {/* ── Resident Routes ── */}
       <Route element={<ProtectedRoute allowedRoles={['RESIDENT', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
         <Route element={<ResidentLayout />}>
           <Route path="/resident" element={<ResidentDashboard />} />
@@ -144,16 +145,20 @@ export const AppRoutes: React.FC = () => {
           <Route path="/resident/garbage" element={<ResidentGarbagePage />} />
           <Route path="/resident/guest-stay" element={<ResidentGuestStayPage />} />
           <Route path="/resident/requests" element={<UnifiedRequestCenter />} />
+          {/* New mobile-first resident pages */}
+          <Route path="/resident/profile" element={<ResidentProfilePage />} />
+          <Route path="/resident/services" element={<ResidentServicesPage />} />
+          <Route path="/resident/activity" element={<ResidentActivityPage />} />
           <Route path="/resident/*" element={<ResidentDashboard />} />
         </Route>
       </Route>
 
-      {/* Society Admin Routes */}
+      {/* ── Society Admin Routes ── */}
       <Route element={<ProtectedRoute allowedRoles={['SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
         <Route element={<SocietyAdminLayout />}>
-          <Route path="/admin" element={<SecretaryDashboard />} />
+          {/* Mobile admin home replaces SecretaryDashboard as default */}
+          <Route path="/admin" element={<AdminHomePage />} />
           <Route path="/admin/requests" element={<UnifiedRequestCenter />} />
-
           <Route path="/admin/towers" element={<TowerManagementPage />} />
           <Route path="/admin/flats" element={<FlatManagementPage />} />
           <Route path="/admin/residents" element={<ResidentManagementPage />} />
@@ -177,21 +182,23 @@ export const AppRoutes: React.FC = () => {
           <Route path="/admin/compliance" element={<AdminCompliancePage />} />
           <Route path="/admin/move-renovation" element={<AdminMoveRenovationPage />} />
           <Route path="/admin/expenses" element={<AdminExpensePage />} />
-          <Route path="/admin/*" element={<SecretaryDashboard />} />
+          <Route path="/admin/operations" element={<RealtimeOperationsHubPage />} />
+          <Route path="/admin/*" element={<AdminHomePage />} />
         </Route>
       </Route>
 
-      {/* Staff / Service Provider Routes */}
+      {/* ── Staff Routes ── */}
       <Route element={<ProtectedRoute allowedRoles={['SOCIETY_ADMIN', 'SUPER_ADMIN', 'RESIDENT', 'SERVICE_PROVIDER']} />}>
         <Route element={<ServiceProviderLayout />}>
           <Route path="/staff/housekeeping-tasks" element={<StaffHousekeepingTaskPage />} />
         </Route>
       </Route>
 
-      {/* Security Guard Routes */}
+      {/* ── Security Guard Routes ── */}
       <Route element={<ProtectedRoute allowedRoles={['SECURITY', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
         <Route element={<SecurityLayout />}>
           <Route path="/security" element={<SecurityTerminalPage />} />
+          <Route path="/security/gate" element={<SecurityTerminalPage />} />
           <Route path="/security/verify" element={<SecurityTerminalPage />} />
           <Route path="/security/parking" element={<ParkingGateScannerPage />} />
           <Route path="/security/staff-scanner" element={<StaffGateTerminalPage />} />
@@ -203,7 +210,7 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* Super Admin Routes */}
+      {/* ── Super Admin Routes ── */}
       <Route element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']} />}>
         <Route element={<SuperAdminLayout />}>
           <Route path="/super-admin" element={<SuperAdminDashboard />} />
@@ -212,23 +219,25 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* Vendor Routes */}
+      {/* ── Vendor Routes ── */}
       <Route element={<ProtectedRoute allowedRoles={['VENDOR', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
         <Route element={<VendorLayout />}>
+          <Route path="/vendor" element={<VendorDashboard />} />
           <Route path="/vendor/portal" element={<VendorPortalPage />} />
           <Route path="/vendor/*" element={<VendorDashboard />} />
         </Route>
       </Route>
 
-      {/* Service Provider Routes */}
+      {/* ── Service Provider Routes ── */}
       <Route element={<ProtectedRoute allowedRoles={['SERVICE_PROVIDER', 'RESIDENT', 'SUPER_ADMIN']} />}>
         <Route element={<ServiceProviderLayout />}>
+          <Route path="/service-provider" element={<ServiceProviderDashboard />} />
           <Route path="/service-provider/tasks" element={<ServiceProviderTaskPage />} />
           <Route path="/service-provider/*" element={<ServiceProviderDashboard />} />
         </Route>
       </Route>
 
-      {/* Committee Member Routes */}
+      {/* ── Committee Member Routes ── */}
       <Route element={<ProtectedRoute allowedRoles={['COMMITTEE_MEMBER', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
         <Route element={<CommitteeLayout />}>
           <Route path="/committee" element={<CommitteeDashboard />} />
@@ -241,7 +250,7 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* Facility Manager Routes */}
+      {/* ── Facility Manager Routes ── */}
       <Route element={<ProtectedRoute allowedRoles={['FACILITY_MANAGER', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
         <Route element={<FacilityManagerLayout />}>
           <Route path="/facility" element={<FacilityManagerDashboard />} />
@@ -254,7 +263,7 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* Domestic Worker Routes */}
+      {/* ── Domestic Worker Routes ── */}
       <Route element={<ProtectedRoute allowedRoles={['DOMESTIC_WORKER', 'RESIDENT', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
         <Route element={<DomesticWorkerLayout />}>
           <Route path="/domestic" element={<DomesticWorkerDashboard />} />
@@ -272,4 +281,3 @@ export const AppRoutes: React.FC = () => {
     </Routes>
   );
 };
-
