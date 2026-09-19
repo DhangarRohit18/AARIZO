@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Wrench,
   Zap,
@@ -47,11 +47,11 @@ const CATEGORY_ICONS: Record<ServiceCategory, any> = {
 };
 
 export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRoleOverride }) => {
-  const { currentUser, selectedRole } = useAuth();
-  const activeRole = (userRoleOverride || currentUser?.role || selectedRole || '').toUpperCase();
+  const { currentUser } = useAuth();
+  const activeRole = (userRoleOverride || currentUser?.role || '').toLowerCase();
 
-  const isAdmin = ['SOCIETY_ADMIN', 'SUPER_ADMIN', 'SECRETARY'].includes(activeRole);
-  const isVendor = ['VENDOR', 'SERVICE_PROVIDER'].includes(activeRole);
+  const isAdmin = ['admin', 'secretary'].includes(activeRole);
+  const isVendor = ['vendor'].includes(activeRole);
 
   const [activeTab, setActiveTab] = useState<'MARKETPLACE' | 'MY_ORDERS' | 'VENDOR_DIRECTORY' | 'VENDOR_PORTAL' | 'ADMIN_APPROVALS'>('MARKETPLACE');
   const [vendors, setVendors] = useState<VendorPartner[]>(() => societyServicesEngine.getVendors());
@@ -325,7 +325,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
 
                   <div className="pt-3 border-t flex items-center justify-between">
                     <div>
-                      <span className="text-base font-extrabold text-slate-900">₹{item.price}</span>
+                      <span className="text-base font-extrabold text-slate-900">Ã¢â€šÂ¹{item.price}</span>
                       <span className="text-[10px] text-slate-400"> / {item.unit}</span>
                     </div>
 
@@ -369,7 +369,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                   </div>
 
                   <div className="text-xs text-slate-600">
-                    Vendor: <strong className="text-slate-800">{order.vendorName}</strong> • Date: {order.scheduledDate} • Amount: ₹{order.price}
+                    Vendor: <strong className="text-slate-800">{order.vendorName}</strong> Ã¢â‚¬Â¢ Date: {order.scheduledDate} Ã¢â‚¬Â¢ Amount: Ã¢â€šÂ¹{order.price}
                   </div>
 
                   <div className="flex items-center gap-2 text-xs">
@@ -455,7 +455,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                 <span className="flex items-center gap-1 text-amber-600 font-bold">
                   <Star size={14} className="fill-amber-500" /> {v.rating} ({v.ratingCount} reviews)
                 </span>
-                <span className="text-slate-400">•</span>
+                <span className="text-slate-400">Ã¢â‚¬Â¢</span>
                 <span className="font-mono text-slate-600">{v.category}</span>
               </div>
             </div>
@@ -474,7 +474,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
               <div key={v.id} className="py-4 flex justify-between items-center">
                 <div>
                   <h4 className="font-bold text-slate-900 text-sm">{v.businessName}</h4>
-                  <p className="text-xs text-slate-500">Category: {v.category} • Contact: {v.phone}</p>
+                  <p className="text-xs text-slate-500">Category: {v.category} Ã¢â‚¬Â¢ Contact: {v.phone}</p>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -508,7 +508,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Rate Service Experience</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
             </div>
 
             <form onSubmit={handleRateSubmit} className="space-y-4">
@@ -522,7 +522,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                       onClick={() => setRatingVal(star)}
                       className={`text-xl ${ratingVal >= star ? 'opacity-100' : 'opacity-30'}`}
                     >
-                      ★
+                      Ã¢Ëœâ€¦
                     </button>
                   ))}
                 </div>
@@ -565,7 +565,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Book {selectedItemForBook.title}</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
             </div>
 
             <form onSubmit={handleBookSubmit} className="space-y-4">
@@ -606,7 +606,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
               </div>
 
               <div className="flex justify-between items-center pt-3 border-t">
-                <span className="text-base font-extrabold text-slate-900">Total: ₹{selectedItemForBook.price}</span>
+                <span className="text-base font-extrabold text-slate-900">Total: Ã¢â€šÂ¹{selectedItemForBook.price}</span>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
@@ -625,7 +625,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Service to Catalog</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
             </div>
 
             <form onSubmit={handleAddItemSubmit} className="space-y-4">
@@ -643,7 +643,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Price (₹)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Price (Ã¢â€šÂ¹)</label>
                   <input
                     type="number"
                     required
@@ -688,3 +688,6 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
     </div>
   );
 };
+
+
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Car,
   QrCode,
@@ -18,11 +18,11 @@ import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 export const QRParkingHub: React.FC = () => {
-  const { currentUser, selectedRole } = useAuth();
-  const activeRole = (currentUser?.role || selectedRole || '').toUpperCase();
+  const { currentUser } = useAuth();
+  const activeRole = (currentUser?.role || '').toLowerCase();
 
-  const isAdmin = ['SOCIETY_ADMIN', 'SUPER_ADMIN', 'SECRETARY'].includes(activeRole);
-  const isSecurity = ['SECURITY', 'GUARD', 'SECURITY_GUARD', 'SOCIETY_ADMIN'].includes(activeRole);
+  const isAdmin = ['admin', 'secretary'].includes(activeRole);
+  const isSecurity = ['guard', 'admin'].includes(activeRole);
 
   const [activeTab, setActiveTab] = useState<'MAP' | 'SLOTS' | 'VIOLATIONS' | 'SECURITY_SCANNER' | 'MY_PARKING'>('MAP');
   const [slots, setSlots] = useState<ParkingSlotItem[]>(() => qrParkingService.getSlots());
@@ -367,8 +367,8 @@ export const QRParkingHub: React.FC = () => {
                     </span>
                   </div>
                   <div className="text-xs text-slate-500">
-                    Vehicle: <strong className="text-slate-800">{slot.assignedVehicleNumber || 'None'}</strong> • Flat:{' '}
-                    {slot.assignedFlatCode || 'N/A'} • Owner: {slot.assignedResidentName || 'N/A'}
+                    Vehicle: <strong className="text-slate-800">{slot.assignedVehicleNumber || 'None'}</strong> Ã¢â‚¬Â¢ Flat:{' '}
+                    {slot.assignedFlatCode || 'N/A'} Ã¢â‚¬Â¢ Owner: {slot.assignedResidentName || 'N/A'}
                   </div>
                 </div>
 
@@ -446,7 +446,7 @@ export const QRParkingHub: React.FC = () => {
 
                 <p className="text-xs text-slate-600">{v.privateNotes}</p>
                 <div className="text-[11px] text-slate-400">
-                  Reported by: {v.reportedBy} • Owner Flat: {v.flatCode || 'Unregistered'} ({v.residentName || 'Visitor'})
+                  Reported by: {v.reportedBy} Ã¢â‚¬Â¢ Owner Flat: {v.flatCode || 'Unregistered'} ({v.residentName || 'Visitor'})
                 </div>
               </div>
             ))}
@@ -502,7 +502,7 @@ export const QRParkingHub: React.FC = () => {
               {scanResult.reason && <p className="text-xs text-slate-700">{scanResult.reason}</p>}
               {scanResult.slot && (
                 <div className="text-xs text-slate-800 pt-1 font-medium">
-                  Allocated Slot: <strong>{scanResult.slot.slotCode}</strong> ({scanResult.slot.level}) • Flat:{' '}
+                  Allocated Slot: <strong>{scanResult.slot.slotCode}</strong> ({scanResult.slot.level}) Ã¢â‚¬Â¢ Flat:{' '}
                   {scanResult.slot.assignedFlatCode}
                 </div>
               )}
@@ -517,7 +517,7 @@ export const QRParkingHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Parking Slot</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
             </div>
 
             <form onSubmit={handleAddSlotSubmit} className="space-y-4">
@@ -586,7 +586,7 @@ export const QRParkingHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Request Temporary / Vacation Pass</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
             </div>
 
             <form onSubmit={handleRequestPassSubmit} className="space-y-4">
@@ -669,7 +669,7 @@ export const QRParkingHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Assign Slot {selectedSlot.slotCode}</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
             </div>
 
             <form onSubmit={handleAssignSubmit} className="space-y-4">
@@ -735,7 +735,7 @@ export const QRParkingHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Report Parking Violation</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
             </div>
 
             <form onSubmit={handleReportViolationSubmit} className="space-y-4">
@@ -824,3 +824,6 @@ export const QRParkingHub: React.FC = () => {
     </div>
   );
 };
+
+
+

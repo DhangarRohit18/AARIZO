@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   ShieldAlert,
   ShieldCheck,
@@ -20,10 +20,10 @@ import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 export const SafetyCommandHub: React.FC = () => {
-  const { currentUser, selectedRole } = useAuth();
-  const activeRole = (currentUser?.role || selectedRole || '').toUpperCase();
+  const { currentUser } = useAuth();
+  const activeRole = (currentUser?.role || '').toLowerCase();
 
-  const isAdminOrSecurity = ['SOCIETY_ADMIN', 'SUPER_ADMIN', 'SECRETARY', 'SECURITY', 'GUARD', 'SECURITY_GUARD'].includes(activeRole);
+  const isAdminOrSecurity = ['admin', 'secretary', 'guard'].includes(activeRole);
 
   const [activeTab, setActiveTab] = useState<'ONE_TAP_SOS' | 'COMMAND_CONSOLE' | 'CHILD_SAFETY' | 'GATE_VERIFIER'>('ONE_TAP_SOS');
   const [incidents, setIncidents] = useState<EmergencyIncidentItem[]>(() => safetyCommandEngine.getIncidents());
@@ -296,7 +296,7 @@ export const SafetyCommandHub: React.FC = () => {
 
                 <div className="text-xs text-slate-600 space-y-1">
                   <div>
-                    Resident: <strong className="text-slate-900">{inc.residentName}</strong> ({inc.flatCode}) • Phone:{' '}
+                    Resident: <strong className="text-slate-900">{inc.residentName}</strong> ({inc.flatCode}) Ã¢â‚¬Â¢ Phone:{' '}
                     {inc.phone}
                   </div>
                   <div>Location: {inc.location}</div>
@@ -372,7 +372,7 @@ export const SafetyCommandHub: React.FC = () => {
                   <div>
                     <h4 className="font-bold text-slate-900 text-base">{child.childName}</h4>
                     <p className="text-xs text-slate-500">
-                      Flat {child.flatCode} • Guardian: <strong className="text-slate-800">{child.guardianName}</strong>
+                      Flat {child.flatCode} Ã¢â‚¬Â¢ Guardian: <strong className="text-slate-800">{child.guardianName}</strong>
                     </p>
                   </div>
                   <span className="font-mono text-xs text-indigo-600 font-bold bg-indigo-50 px-2.5 py-1 rounded-md">
@@ -484,7 +484,7 @@ export const SafetyCommandHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Assign Emergency Responder</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
             </div>
 
             <form onSubmit={handleAssignSubmit} className="space-y-4">
@@ -536,7 +536,7 @@ export const SafetyCommandHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Child Profile</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
             </div>
 
             <form onSubmit={handleAddChildSubmit} className="space-y-4">
@@ -601,7 +601,7 @@ export const SafetyCommandHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Authorized Pickup Person</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
             </div>
 
             <form onSubmit={handleAddPickupSubmit} className="space-y-4">
@@ -662,3 +662,6 @@ export const SafetyCommandHub: React.FC = () => {
     </div>
   );
 };
+
+
+

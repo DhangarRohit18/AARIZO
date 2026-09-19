@@ -1,11 +1,10 @@
-import React from 'react';
+﻿import React from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import {
   Building2,
   Mail,
   Phone,
   FileText,
-  UserCheck,
   LogOut,
   ChevronRight,
   MapPin,
@@ -13,7 +12,7 @@ import {
 import '../secretary.css';
 
 export const SecretaryProfile: React.FC = () => {
-  const { currentUser, logout, switchRole } = useAuth();
+  const { currentUser, logout } = useAuth();
 
   return (
     <div>
@@ -31,7 +30,7 @@ export const SecretaryProfile: React.FC = () => {
           {currentUser?.name || 'Mayuri Udar'}
         </h2>
         <p className="onboarding-desc" style={{ marginBottom: '0.75rem', fontSize: '0.84375rem' }}>
-          {currentUser?.designation || 'Management Committee Secretary'} • Green Valley Society
+          {currentUser?.designation || 'Management Committee Secretary'} Ã¢â‚¬Â¢ Green Valley Society
         </p>
 
         <span className="banner-role-tag" style={{ background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe' }}>
@@ -71,22 +70,10 @@ export const SecretaryProfile: React.FC = () => {
 
       {/* Management Actions */}
       <div className="section-heading-row">
-        <h3 className="section-title">Portal Actions</h3>
+        <h3 className="section-title">Session Management</h3>
       </div>
 
       <div className="onboarding-features-list" style={{ marginBottom: '1.5rem' }}>
-        <button
-          className="onboarding-feature-item"
-          style={{ width: '100%', cursor: 'pointer', justifyContent: 'space-between', background: '#eff6ff', borderColor: '#bfdbfe' }}
-          onClick={() => switchRole('resident')}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-            <UserCheck size={16} style={{ color: '#2563eb' }} />
-            <span style={{ fontWeight: 700, color: '#1e3a8a' }}>Switch to Resident View (Sarvesh)</span>
-          </div>
-          <ChevronRight size={16} style={{ color: '#2563eb' }} />
-        </button>
-
         <button
           className="onboarding-feature-item"
           style={{ width: '100%', cursor: 'pointer', justifyContent: 'space-between', background: '#fff1f2', borderColor: '#fecaca' }}
@@ -102,3 +89,6 @@ export const SecretaryProfile: React.FC = () => {
     </div>
   );
 };
+
+
+

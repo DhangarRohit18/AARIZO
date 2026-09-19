@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from '../pages/auth/LoginPage';
 import { OnboardingPage } from '../pages/auth/OnboardingPage';
@@ -78,30 +78,24 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 
 export const AppRoutes: React.FC = () => {
-  const { isAuthenticated, selectedRole, currentUser } = useAuth();
+  const { status, currentUser } = useAuth();
 
   const getDefaultRoute = () => {
-    const role = (currentUser?.role || selectedRole).toUpperCase();
+    const role = (currentUser?.role || '').toLowerCase();
     switch (role) {
-      case 'secretary':
+      case 'admin':
+        return '/super-admin';
       case 'secretary':
         return '/admin';
       case 'guard':
-      case 'guard':
-      case 'guard':
         return '/security';
-      case 'admin':
-        return '/super-admin';
       case 'committee':
         return '/committee';
       case 'facility_manager':
         return '/facility';
       case 'vendor':
-        return '/domestic';
-      case 'vendor':
         return '/vendor';
-      case 'vendor':
-        return '/service-provider';
+      case 'resident':
       default:
         return '/resident';
     }
@@ -118,7 +112,7 @@ export const AppRoutes: React.FC = () => {
       <Route
         path="/"
         element={
-          isAuthenticated ? <Navigate to={getDefaultRoute()} replace /> : <Navigate to="/onboarding" replace />
+          status === 'AUTHENTICATED' ? <Navigate to={getDefaultRoute()} replace /> : <Navigate to="/onboarding" replace />
         }
       />
 
@@ -275,12 +269,14 @@ export const AppRoutes: React.FC = () => {
       <Route
         path="*"
         element={
-          isAuthenticated ? <Navigate to={getDefaultRoute()} replace /> : <Navigate to="/login" replace />
+          status === 'AUTHENTICATED' ? <Navigate to={getDefaultRoute()} replace /> : <Navigate to="/login" replace />
         }
       />
     </Routes>
   );
 };
+
+
 
 
 

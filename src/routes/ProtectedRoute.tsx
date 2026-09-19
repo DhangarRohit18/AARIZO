@@ -13,10 +13,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   allowedRoles,
   requiredPermission,
 }) => {
-  const { isAuthenticated, step } = useAuth();
+  const { status } = useAuth();
   const { activeRole, can } = useRBAC();
 
-  if (!isAuthenticated || step === 'login' || step === 'onboarding') {
+  if (status !== 'AUTHENTICATED') {
     return <Navigate to="/login" replace />;
   }
 
@@ -33,5 +33,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   return <Outlet />;
 };
+
 
 

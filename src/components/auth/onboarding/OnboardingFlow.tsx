@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { ShieldCheck, Building2, ChevronRight, ArrowLeft, CheckCircle2, QrCode, Sparkles } from 'lucide-react';
@@ -170,3 +170,5 @@ export const OnboardingFlow: React.FC = () => {
     </div>
   );
 };
+
+

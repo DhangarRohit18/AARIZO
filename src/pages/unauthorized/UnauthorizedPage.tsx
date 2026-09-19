@@ -1,11 +1,11 @@
 ﻿import React from 'react';
-import { ShieldAlert, ArrowLeft } from 'lucide-react';
+import { ShieldAlert, ArrowLeft, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export const UnauthorizedPage: React.FC = () => {
   const navigate = useNavigate();
-  const { currentUser, switchRole } = useAuth();
+  const { currentUser, logout } = useAuth();
 
   return (
     <div
@@ -57,18 +57,21 @@ export const UnauthorizedPage: React.FC = () => {
           <ArrowLeft size={16} /> Go Back
         </button>
         <button
-          onClick={() => switchRole('resident')}
+          onClick={logout}
           style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
             padding: '0.6rem 1.2rem',
             borderRadius: '8px',
             border: 'none',
-            background: '#2563eb',
+            background: '#ef4444',
             color: '#fff',
             cursor: 'pointer',
             fontWeight: 600,
           }}
         >
-          Switch to Resident Role
+          <LogOut size={16} /> Sign Out
         </button>
       </div>
     </div>

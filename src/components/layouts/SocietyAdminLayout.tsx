@@ -59,7 +59,7 @@ const DRAWER_NAV = [
 ];
 
 export const SocietyAdminLayout: React.FC = () => {
-  const { currentUser, logout, selectedRole, switchRole } = useAuth();
+  const { currentUser, logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
 
@@ -80,7 +80,7 @@ export const SocietyAdminLayout: React.FC = () => {
         overflowX: 'hidden',
       }}
     >
-      {/* ── Top Header ── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Top Header Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <header className="mobile-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', minWidth: 0, flex: 1 }}>
           <button
@@ -118,7 +118,7 @@ export const SocietyAdminLayout: React.FC = () => {
               Green Valley Admin
             </div>
             <div style={{ fontSize: '0.625rem', color: '#a8a29e', lineHeight: 1.2 }}>
-              {currentUser?.name || 'Admin'} • Society Admin
+              {currentUser?.name || 'Admin'} Ã¢â‚¬Â¢ Society Admin
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@ export const SocietyAdminLayout: React.FC = () => {
         </div>
       </header>
 
-      {/* ── Drawer ── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Drawer Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {drawerOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex' }}>
           <div
@@ -248,34 +248,7 @@ export const SocietyAdminLayout: React.FC = () => {
               </button>
             </div>
 
-            {/* Role switcher */}
-            <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid #e8e2d8', flexShrink: 0 }}>
-              <label style={{ display: 'block', fontSize: '0.5625rem', color: '#78716c', fontWeight: 700, marginBottom: '0.25rem', textTransform: 'uppercase' }}>
-                Switch Role
-              </label>
-              <select
-                value={selectedRole}
-                onChange={(e) => switchRole(e.target.value as never)}
-                style={{
-                  width: '100%',
-                  background: '#fff',
-                  border: '1px solid #dcd4c7',
-                  borderRadius: '0.5rem',
-                  color: '#1c1917',
-                  fontSize: '0.75rem',
-                  padding: '0.375rem 0.5rem',
-                  minHeight: 36,
-                }}
-              >
-                <option value="SOCIETY_ADMIN">SOCIETY ADMIN</option>
-                <option value="RESIDENT">RESIDENT</option>
-                <option value="SECURITY">SECURITY GUARD</option>
-                <option value="SUPER_ADMIN">SUPER ADMIN</option>
-                <option value="COMMITTEE_MEMBER">COMMITTEE</option>
-                <option value="FACILITY_MANAGER">FACILITY MANAGER</option>
-                <option value="VENDOR">VENDOR</option>
-              </select>
-            </div>
+
 
             <nav style={{ flex: 1, overflowY: 'auto', padding: '0.75rem 0.5rem' }}>
               {DRAWER_NAV.map((item) => {
@@ -345,7 +318,7 @@ export const SocietyAdminLayout: React.FC = () => {
         </div>
       )}
 
-      {/* ── Main Content ── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Main Content Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <main
         style={{
           flex: 1,
@@ -357,7 +330,7 @@ export const SocietyAdminLayout: React.FC = () => {
         <Outlet />
       </main>
 
-      {/* ── Bottom Navigation ── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Bottom Navigation Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <nav className="bottom-nav">
         {BOTTOM_NAV.map((item) => {
           const Icon = item.icon;
@@ -378,3 +351,8 @@ export const SocietyAdminLayout: React.FC = () => {
     </div>
   );
 };
+
+
+
+
+

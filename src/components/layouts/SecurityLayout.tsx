@@ -38,7 +38,7 @@ const DRAWER_NAV = [
 ];
 
 export const SecurityLayout: React.FC = () => {
-  const { currentUser, logout, selectedRole, switchRole } = useAuth();
+  const { currentUser, logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
 
@@ -59,7 +59,7 @@ export const SecurityLayout: React.FC = () => {
         overflowX: 'hidden',
       }}
     >
-      {/* ── Top Header ── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Top Header Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <header
         style={{
           position: 'sticky',
@@ -111,7 +111,7 @@ export const SecurityLayout: React.FC = () => {
               Security Command
             </div>
             <div style={{ fontSize: '0.625rem', color: '#78716c', lineHeight: 1.2 }}>
-              Green Valley • {currentUser?.name || 'Gate 1'}
+              Green Valley Ã¢â‚¬Â¢ {currentUser?.name || 'Gate 1'}
             </div>
           </div>
         </div>
@@ -152,7 +152,7 @@ export const SecurityLayout: React.FC = () => {
         </div>
       </header>
 
-      {/* ── Drawer ── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Drawer Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {drawerOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex' }}>
           <div
@@ -205,7 +205,7 @@ export const SecurityLayout: React.FC = () => {
                     Security Guard
                   </div>
                   <div style={{ color: '#78716c', fontSize: '0.625rem' }}>
-                    {currentUser?.name || 'Guard'} • Gate 1
+                    {currentUser?.name || 'Guard'} Ã¢â‚¬Â¢ Gate 1
                   </div>
                 </div>
               </div>
@@ -266,30 +266,7 @@ export const SecurityLayout: React.FC = () => {
                 flexShrink: 0,
               }}
             >
-              {/* Role switcher for prototype demo */}
-              <div style={{ marginBottom: '0.5rem' }}>
-                <label style={{ display: 'block', fontSize: '0.625rem', color: '#57534e', fontWeight: 700, marginBottom: '0.25rem', textTransform: 'uppercase' }}>
-                  Switch Role
-                </label>
-                <select
-                  value={selectedRole}
-                  onChange={(e) => switchRole(e.target.value as never)}
-                  style={{
-                    width: '100%',
-                    background: '#1c1917',
-                    border: '1px solid #292524',
-                    borderRadius: '0.5rem',
-                    color: '#d6d3d1',
-                    fontSize: '0.75rem',
-                    padding: '0.5rem',
-                    minHeight: 40,
-                  }}
-                >
-                  <option value="SECURITY">SECURITY GUARD</option>
-                  <option value="SOCIETY_ADMIN">SOCIETY ADMIN</option>
-                  <option value="RESIDENT">RESIDENT</option>
-                </select>
-              </div>
+
               <button
                 onClick={() => { setDrawerOpen(false); logout(); }}
                 style={{
@@ -316,7 +293,7 @@ export const SecurityLayout: React.FC = () => {
         </div>
       )}
 
-      {/* ── Main Content ── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Main Content Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <main
         style={{
           flex: 1,
@@ -328,7 +305,7 @@ export const SecurityLayout: React.FC = () => {
         <Outlet />
       </main>
 
-      {/* ── Bottom Navigation ── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Bottom Navigation Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <nav
         style={{
           position: 'fixed',
@@ -380,3 +357,8 @@ export const SecurityLayout: React.FC = () => {
     </div>
   );
 };
+
+
+
+
+

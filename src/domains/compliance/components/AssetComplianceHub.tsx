@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck,
@@ -25,11 +25,11 @@ interface AssetComplianceHubProps {
 }
 
 export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRoleOverride }) => {
-  const { currentUser, selectedRole } = useAuth();
-  const activeRole = (userRoleOverride || currentUser?.role || selectedRole || '').toUpperCase();
+  const { currentUser } = useAuth();
+  const activeRole = (userRoleOverride || currentUser?.role || '').toLowerCase();
 
-  const isAdmin = ['SOCIETY_ADMIN', 'SUPER_ADMIN', 'SECRETARY'].includes(activeRole);
-  const isFacility = ['FACILITY_MANAGER', 'STAFF', 'SOCIETY_ADMIN', 'SUPER_ADMIN'].includes(activeRole);
+  const isAdmin = ['admin', 'secretary'].includes(activeRole);
+  const isFacility = ['facility_manager', 'admin', 'secretary'].includes(activeRole);
 
   const [metrics, setMetrics] = useState<ComplianceMetrics>(() => assetComplianceService.getMetrics());
   const [assets, setAssets] = useState<AssetItem[]>(() => assetComplianceService.getAssets());

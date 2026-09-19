@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Building2, Users, Bell, CreditCard, UserCheck, RefreshCw, X, ShieldCheck } from 'lucide-react';
+import { Building2, Users, Bell, CreditCard, UserCheck, X, ShieldCheck } from 'lucide-react';
 import { SecretaryHome } from './home/SecretaryHome';
 import { SecretaryResidents } from './residents/SecretaryResidents';
 import { SecretaryNoticeCenter } from './notices/SecretaryNoticeCenter';
@@ -31,7 +31,7 @@ import './secretary.css';
 export type SecretaryTab = 'home' | 'residents' | 'notices' | 'finances' | 'profile';
 
 export const SecretaryShell: React.FC = () => {
-  const { currentUser, switchRole } = useAuth();
+  const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState<SecretaryTab>('home');
   const [isNotifHeaderModalOpen, setIsNotifHeaderModalOpen] = useState<boolean>(false);
   const [profileViewMode, setProfileViewMode] = useState<'profile' | 'committee'>('profile');
@@ -261,7 +261,7 @@ export const SecretaryShell: React.FC = () => {
           />
           <div className="secretary-title-box">
             <h2 className="secretary-society-name">Green Valley Society</h2>
-            <p className="secretary-user-title">Mayuri Udar • Secretary</p>
+            <p className="secretary-user-title">Mayuri Udar â€¢ Secretary</p>
           </div>
         </div>
 
@@ -273,15 +273,6 @@ export const SecretaryShell: React.FC = () => {
           >
             <Bell size={18} />
             <span className="header-badge-dot" />
-          </button>
-
-          <button
-            className="btn-switch-role"
-            onClick={() => switchRole('resident')}
-            title="Switch to Resident Portal"
-          >
-            <RefreshCw size={13} />
-            <span>Switch Role</span>
           </button>
         </div>
       </header>
@@ -380,3 +371,5 @@ export const SecretaryShell: React.FC = () => {
     </div>
   );
 };
+
+

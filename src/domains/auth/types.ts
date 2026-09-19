@@ -1,16 +1,31 @@
-export type UserRole = 'resident' | 'secretary' | 'guard' | 'committee' | 'facility_manager' | 'staff' | 'vendor' | 'contractor' | 'admin';
+export type UserRole = 
+  | 'resident' 
+  | 'guard' 
+  | 'secretary' 
+  | 'committee' 
+  | 'facility_manager' 
+  | 'vendor' 
+  | 'admin';
 
 export interface UserProfile {
   id: string;
+  uid?: string;
   name: string;
   phone: string;
+  email?: string;
   role: UserRole;
-  roleLabel: string;
-  societyName: string;
+  societyId: string;
+  societyName?: string;
+  roleLabel?: string;
+  flatNumber?: string;
   flatDetails?: string;
+  unitId?: string;
+  status?: 'ACTIVE' | 'INACTIVE' | 'PENDING';
   avatarUrl?: string;
   designation?: string;
   statusBadge?: string;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export type AuthFlowStep = 'onboarding' | 'login' | 'verify' | 'authenticated';

@@ -1,284 +1,171 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import type { UserRole } from '../../../domains/auth/types';
-import { MOCK_USERS } from '../../../mockData/auth/mockUsers';
-import {
-  Home,
-  Building2,
-  Shield,
-  CheckCircle2,
-  AlertCircle,
-  ArrowRight,
-  Sparkles,
-  Lock,
-  RefreshCw,
-  X,
-  KeyRound,
-} from 'lucide-react';
+import { RecaptchaVerifier } from 'firebase/auth';
+import { auth } from '../../../services/firebase/config';
+import { Building2, Shield, ArrowRight, KeyRound, AlertCircle } from 'lucide-react';
 import '../auth.css';
 
 export const LoginScreen: React.FC = () => {
-  const navigate = useNavigate();
   const {
-    selectedRole,
-    selectRole,
     phoneNumber,
     setPhoneNumber,
     submitLogin,
     verifyOtp,
-    isLoading,
     error,
-    step,
-    resetOnboarding,
+    setError
   } = useAuth();
 
   const [otpInput, setOtpInput] = useState<string>('');
-  const [showOtpModal, setShowOtpModal] = useState<boolean>(step === 'verify');
+  const [showOtpModal, setShowOtpModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [verifier, setVerifier] = useState<RecaptchaVerifier | null>(null);
 
-  const currentMockUser = MOCK_USERS[selectedRole];
-
-  const handleRoleSelect = (role: UserRole) => {
-    selectRole(role);
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.replace(/\D/g, '');
-    if (val.length <= 10) {
-      setPhoneNumber(val);
-    }
-  };
+  useEffect(() => {
+    // Clear captcha on unmount
+    return () => {
+      if (verifier) {
+        verifier.clear();
+      }
+    };
+  }, [verifier]);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await submitLogin();
-    if (success) {
+    if (phoneNumber.length < 10) {
+      setError("Please enter a valid phone number.");
+      return;
+    }
+    setLoading(true);
+    try {
+      let appVerifier = verifier;
+      if (!appVerifier) {
+        appVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+          size: 'invisible'
+        });
+        setVerifier(appVerifier);
+      }
+      await submitLogin(appVerifier);
       setShowOtpModal(true);
-      setOtpInput('');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleOtpVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    const isVerified = await verifyOtp(otpInput || '4092');
-    if (isVerified) {
-      setShowOtpModal(false);
-      if (selectedRole === 'secretary') navigate('/admin');
-      else if (selectedRole === 'guard') navigate('/security');
-      else navigate('/resident');
-    }
-  };
-
-  const handleQuickAutoFill = async () => {
-    setOtpInput('4092');
-    const isVerified = await verifyOtp('4092');
-    if (isVerified) {
-      setShowOtpModal(false);
-      if (selectedRole === 'secretary') navigate('/admin');
-      else if (selectedRole === 'guard') navigate('/security');
-      else navigate('/resident');
+    setLoading(true);
+    try {
+      await verifyOtp(otpInput);
+      // Let AuthContext onAuthStateChanged handle redirect
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="auth-container">
       <div id="recaptcha-container"></div>
-      {/* Top Bar */}
+      
       <header className="auth-header">
-        <div className="auth-brand">
-          <div className="auth-brand-logo">
-            <Sparkles size={20} />
-          </div>
-          <div>
-            <h1 className="auth-brand-title">CommunityOS</h1>
-          </div>
-          <span className="auth-brand-badge">Simulated Auth</span>
+        <div className="auth-logo">
+          <Building2 size={24} style={{ color: '#0f172a' }} />
+          <h1>CommunityOS</h1>
         </div>
-        <button
-          className="btn-auth-text"
-          onClick={() => {
-            resetOnboarding();
-            navigate('/onboarding');
-          }}
-        >
-          View Onboarding
-        </button>
       </header>
 
-      {/* Main Login Form Container */}
-      <main className="login-container">
-        <div className="login-hero">
-          <div className="login-hero-icon">
-            <Lock size={26} />
+      <main className="auth-content">
+        <div className="auth-card">
+          <div className="auth-card-header">
+            <h2>Sign In</h2>
+            <p>Access your society dashboard</p>
           </div>
-          <h2 className="login-hero-title">Welcome to CommunityOS</h2>
-          <p className="login-hero-desc">Select your portal role and enter mobile number to log in</p>
-        </div>
-
-        {/* Role Selector Grid */}
-        <div className="role-section-label">
-          <span>1. Select Portal Role</span>
-          <span style={{ color: '#2563eb', fontWeight: 600 }}>Local Mock Identity</span>
-        </div>
-
-        <div className="role-selector-grid">
-          {/* Resident Role */}
-          <div
-            className={`role-card ${selectedRole === 'resident' ? 'selected' : ''}`}
-            onClick={() => handleRoleSelect('resident')}
-          >
-            {selectedRole === 'resident' && (
-              <div className="role-check-badge">
-                <CheckCircle2 size={12} />
-              </div>
-            )}
-            <div className="role-icon-box">
-              <Home size={20} />
-            </div>
-            <div className="role-name">Resident</div>
-            <div className="role-subtext">Flat Owner / Tenant</div>
-          </div>
-
-          {/* Secretary Role */}
-          <div
-            className={`role-card ${selectedRole === 'secretary' ? 'selected' : ''}`}
-            onClick={() => handleRoleSelect('secretary')}
-          >
-            {selectedRole === 'secretary' && (
-              <div className="role-check-badge">
-                <CheckCircle2 size={12} />
-              </div>
-            )}
-            <div className="role-icon-box">
-              <Building2 size={20} />
-            </div>
-            <div className="role-name">Secretary</div>
-            <div className="role-subtext">Society Admin</div>
-          </div>
-
-          {/* Guard Role */}
-          <div
-            className={`role-card ${selectedRole === 'guard' ? 'selected' : ''}`}
-            onClick={() => handleRoleSelect('guard')}
-          >
-            {selectedRole === 'guard' && (
-              <div className="role-check-badge">
-                <CheckCircle2 size={12} />
-              </div>
-            )}
-            <div className="role-icon-box">
-              <Shield size={20} />
-            </div>
-            <div className="role-name">Security</div>
-            <div className="role-subtext">Gate Officer</div>
-          </div>
-        </div>
-
-        {/* User Identity Preview Card */}
-        <div className="mock-user-preview">
-          <img src={currentMockUser.avatarUrl} alt={currentMockUser.name} className="user-avatar" />
-          <div className="user-info-text">
-            <h4 className="user-name-title">{currentMockUser.name}</h4>
-            <p className="user-property-subtitle">
-              {currentMockUser.roleLabel} • {currentMockUser.societyName}
-              {currentMockUser.flatDetails ? ` (${currentMockUser.flatDetails})` : ''}
-            </p>
-          </div>
-        </div>
-
-        {/* Login Input Form Card */}
-        <form className="login-form-card" onSubmit={handleFormSubmit}>
-          <label className="form-group-label">2. Mobile Number Verification</label>
-          <div className="phone-input-row">
-            <div className="country-code-box">
-              <span>🇮🇳</span>
-              <span>+91</span>
-            </div>
-            <input
-              type="tel"
-              className="phone-input"
-              placeholder="Enter 10-digit number"
-              value={phoneNumber}
-              onChange={handlePhoneChange}
-              maxLength={10}
-            />
-          </div>
-
+          
           {error && (
-            <div className="error-banner">
+            <div style={{ backgroundColor: '#fee2e2', color: '#b91c1c', padding: '12px', borderRadius: '8px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
               <AlertCircle size={16} />
-              <span>{error}</span>
+              {error}
             </div>
           )}
 
-          <button type="submit" className="btn-login-submit" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <RefreshCw size={18} className="spin-icon" />
-                <span>Simulating Verification...</span>
-              </>
-            ) : (
-              <>
-                <span>Continue to {selectedRole.toUpperCase()} Portal</span>
-                <ArrowRight size={18} />
-              </>
-            )}
-          </button>
-        </form>
-      </main>
-
-      {/* Simulated OTP Verification Modal */}
-      {(showOtpModal || step === 'verify') && (
-        <div className="auth-modal-overlay">
-          <div className="auth-modal-card">
-            <div
-              style={{ display: 'flex', justifyContent: 'flex-end', cursor: 'pointer' }}
-              onClick={() => setShowOtpModal(false)}
-            >
-              <X size={18} style={{ color: '#94a3b8' }} />
+          <form onSubmit={handleFormSubmit} className="auth-form">
+            <div className="form-group">
+              <label>Phone Number</label>
+              <div className="phone-input-group">
+                <span className="country-code">+91</span>
+                <input
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                  placeholder="Enter 10-digit number"
+                  disabled={loading || showOtpModal}
+                  required
+                />
+              </div>
             </div>
 
+            {!showOtpModal && (
+              <button 
+                type="submit" 
+                className="auth-btn-primary"
+                disabled={loading || phoneNumber.length < 10}
+              >
+                {loading ? 'Sending OTP...' : 'Send OTP'}
+                <ArrowRight size={18} />
+              </button>
+            )}
+          </form>
+        </div>
+      </main>
+
+      {showOtpModal && (
+        <div className="auth-modal-overlay">
+          <div className="auth-modal-card">
             <div className="otp-icon-header">
               <KeyRound size={24} />
             </div>
 
-            <h3 className="otp-title">Simulated OTP Verification</h3>
+            <h3 className="otp-title">Enter Verification Code</h3>
             <p className="otp-desc">
-              Enter 4-digit code sent to <strong>+91 {phoneNumber}</strong> for <strong>{currentMockUser.name}</strong>
+              We sent a 6-digit code to <strong>+91 {phoneNumber}</strong>
             </p>
-
-            <div className="otp-code-display">Test OTP Code: 4092</div>
 
             <form onSubmit={handleOtpVerify}>
               <input
                 type="text"
                 className="otp-input-field"
-                placeholder="4092"
-                maxLength={4}
+                placeholder="123456"
+                maxLength={6}
                 value={otpInput}
                 onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
                 autoFocus
+                disabled={loading}
               />
 
-              {error && (
-                <div className="error-banner" style={{ marginBottom: '1rem' }}>
-                  <AlertCircle size={16} />
-                  <span>{error}</span>
-                </div>
-              )}
-
-              <button type="submit" className="btn-login-submit" style={{ marginTop: 0 }}>
-                <span>Verify & Enter Portal</span>
-                <ArrowRight size={18} />
+              <button 
+                type="submit" 
+                className="auth-btn-primary" 
+                style={{ width: '100%', marginTop: '16px' }}
+                disabled={loading || otpInput.length < 6}
+              >
+                {loading ? 'Verifying...' : 'Verify & Login'}
+                <Shield size={18} />
               </button>
-
+              
               <button
                 type="button"
-                className="btn-auth-text"
-                style={{ width: '100%', marginTop: '0.75rem', color: '#2563eb' }}
-                onClick={handleQuickAutoFill}
+                className="auth-btn-secondary"
+                style={{ width: '100%', marginTop: '12px' }}
+                onClick={() => {
+                  setShowOtpModal(false);
+                  setOtpInput('');
+                }}
+                disabled={loading}
               >
-                Auto-fill 4092 & Continue
+                Cancel
               </button>
             </form>
           </div>
@@ -287,3 +174,6 @@ export const LoginScreen: React.FC = () => {
     </div>
   );
 };
+
+
+

@@ -2,103 +2,186 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // --- Authentication & Identity Helpers --- //
-    function isAuthenticated() { return request.auth != null; }
+    // --- Authentication & Custom Claims Helpers --- //
+    function isAuthenticated() { 
+      return request.auth != null; 
+    }
     
-    // STRICT CUSTOM CLAIMS: We never trust the document, only the unforgeable JWT token.
-    function getRole() { return request.auth.token.role; }
-    function getSocietyId() { return request.auth.token.societyId; }
+    // STRICT CUSTOM CLAIMS: We trust only the verified Firebase token claims.
+    function getRole() { 
+      return request.auth.token.role; 
+    }
     
-    function isAdmin() { return getRole() == 'ADMIN'; }
-    function isSecretary() { return getRole() == 'SECRETARY'; }
-    function isGuard() { return getRole() == 'GUARD'; }
-    function isResident() { return getRole() == 'RESIDENT'; }
-    function isVendor() { return getRole() == 'VENDOR'; }
+    function getSocietyId() { 
+      return request.auth.token.societyId; 
+    }
     
-    function isSocietyMatch(docSocietyId) { return getSocietyId() == docSocietyId; }
-    function isOwner(residentId) { return request.auth.uid == residentId; }
+    function hasValidClaims() {
+      return isAuthenticated() && 
+             request.auth.token.role != null && 
+             request.auth.token.societyId != null;
+    }
+    
+    function isAdmin() { return hasValidClaims() && getRole() == 'admin'; }
+    function isSecretary() { return hasValidClaims() && getRole() == 'secretary'; }
+    function isCommittee() { return hasValidClaims() && getRole() == 'committee'; }
+    function isFacilityManager() { return hasValidClaims() && getRole() == 'facility_manager'; }
+    function isGuard() { return hasValidClaims() && getRole() == 'guard'; }
+    function isResident() { return hasValidClaims() && getRole() == 'resident'; }
+    function isVendor() { return hasValidClaims() && getRole() == 'vendor'; }
+    
+    function isSocietyMatch(docSocietyId) { 
+      return hasValidClaims() && (isAdmin() || getSocietyId() == docSocietyId); 
+    }
+    
+    function isOwner(userId) { 
+      return isAuthenticated() && request.auth.uid == userId; 
+    }
 
-    // --- Users Collection (Fixes Role Escalation) --- //
+    // --- Users Collection --- //
     match /users/{userId} {
-      // Residents can read their own. Admins/Secretaries can read all in society. Guards view minimal.
+      // 1. Resident reading own profile → allowed
+      // 2. Cross-society reading → denied (only admin or matching society leadership can read other profiles)
       allow read: if isAuthenticated() && (
-        request.auth.uid == userId || 
-        (isSocietyMatch(resource.data.societyId) && (isAdmin() || isSecretary() || isGuard()))
+        isOwner(userId) || 
+        (isSocietyMatch(resource.data.societyId) && (isAdmin() || isSecretary() || isFacilityManager() || isGuard()))
       );
       
-      // Fix: Only Admins can create new users, or users can create their own profile but cannot inject 'role'.
+      // User creation: Only admin or matching secretary, or user creating initial profile without role/society tampering
       allow create: if isAuthenticated() && (
         isAdmin() || 
-        (request.auth.uid == userId && !request.resource.data.keys().hasAny(['role', 'permissions']))
+        (isSecretary() && isSocietyMatch(request.resource.data.societyId)) ||
+        (isOwner(userId) && !request.resource.data.keys().hasAny(['role', 'societyId', 'permissions']))
       );
 
-      // Fix: Role Escalation Attack vector closed. Residents can only modify specific safe fields.
+      // User update:
+      // 3. Changing own role → denied (cannot touch role)
+      // 4. Changing societyId → denied (cannot touch societyId)
       allow update: if isAuthenticated() && (
         isAdmin() || 
-        (request.auth.uid == userId && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'societyId', 'permissions', 'id']))
+        (isSecretary() && isSocietyMatch(resource.data.societyId) && request.resource.data.role != 'admin') ||
+        (isOwner(userId) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'societyId', 'permissions', 'id', 'uid']))
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // --- Complaints Collection --- //
+    match /complaints/{complaintId} {
+      // 7. Cross-society complaint read → denied
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isCommittee() || isFacilityManager() ||
+        (isResident() && isOwner(resource.data.residentId)) ||
+        (isVendor() && request.auth.uid == resource.data.assignedTo)
+      );
+
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        (isResident() && isOwner(request.resource.data.residentId)) ||
+        isAdmin() || isSecretary()
+      );
+
+      // Residents cannot tamper with SLA, priority, or administrative assignment
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager() ||
+        (isResident() && isOwner(resource.data.residentId) && 
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'feedbackNotes', 'updatedAt']) &&
+         request.resource.data.status in ['CLOSED', 'REOPENED']) ||
+        (isVendor() && request.auth.uid == resource.data.assignedTo && 
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'resolvedAt', 'updatedAt']))
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // --- Parcels Collection --- //
+    match /parcels/{parcelId} {
+      // 8. Cross-society parcel read → denied
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager() || isGuard() ||
+        (isResident() && isOwner(resource.data.residentId))
+      );
+
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard()
+      );
+
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard() ||
+        (isResident() && isOwner(resource.data.residentId) && 
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'pickedUpAt', 'updatedAt']))
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // --- Attendance / Domestic Help --- //
+    match /attendance/{attendanceId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager() || isGuard() ||
+        isResident()
+      );
+
+      allow write: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard()
       );
     }
 
-    // --- Complaints (Fixes Isolation & SLA Manipulation) --- //
-    match /complaints/{complaintId} {
+    // --- Moves & Renovations --- //
+    match /moveRequests/{moveId} {
       allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
-        isAdmin() || isSecretary() || 
-        (isResident() && isOwner(resource.data.residentId)) ||
-        (isVendor() && request.auth.uid == resource.data.assignedTo)
+        isAdmin() || isSecretary() || isFacilityManager() || isGuard() ||
+        (isResident() && isOwner(resource.data.residentId))
       );
 
       allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && 
                     isResident() && isOwner(request.resource.data.residentId);
 
-      // Fix: Residents cannot manipulate SLA or escalation statuses.
       allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
-        isAdmin() || isSecretary() || 
-        (isResident() && isOwner(resource.data.residentId) && 
-         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'feedback', 'updatedAt']) &&
-         request.resource.data.status in ['CLOSED', 'REOPENED']) ||
-        (isVendor() && request.auth.uid == resource.data.assignedTo && 
-         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'resolvedAt', 'updatedAt']))
+        isAdmin() || isSecretary() ||
+        (isResident() && isOwner(resource.data.residentId) && request.resource.data.status == 'CANCELLED')
       );
     }
 
-    // --- Generic Module Scoping (Moves, Renovations, Parcels) --- //
-    match /{collection}/{documentId} {
-      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && 
-                     (collection in ['moveRequests', 'renovations', 'parcels', 'attendance']) && (
-                       isAdmin() || isSecretary() || isGuard() || 
-                       (isResident() && (isOwner(resource.data.residentId) || isOwner(resource.data.recipientId)))
-                     );
-                     
+    match /renovations/{renovationId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager() || isGuard() ||
+        (isResident() && isOwner(resource.data.residentId))
+      );
+
       allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && 
-                       (collection in ['moveRequests', 'renovations']) && 
-                       isResident() && isOwner(request.resource.data.residentId);
-                       
-      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && 
-                       (collection in ['moveRequests', 'renovations']) && (
-                         isAdmin() || isSecretary() || isGuard() || 
-                         (isResident() && isOwner(resource.data.residentId) && request.resource.data.status == 'CANCELLED')
-                       );
+                    isResident() && isOwner(request.resource.data.residentId);
+
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() ||
+        (isResident() && isOwner(resource.data.residentId) && request.resource.data.status == 'CANCELLED')
+      );
     }
 
-    // --- AMC & Compliance --- //
+    // --- AMC Contracts & Compliance --- //
+    // 5. Guard performing secretary-only operation → denied
+    // 6. Secretary authorized society operation → allowed
     match /amcContracts/{amcId} {
-      // Only Admins/Secretaries can manage AMCs. Residents can view IF public.
       allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
-        isAdmin() || isSecretary() || 
+        isAdmin() || isSecretary() || isCommittee() || isFacilityManager() ||
         (isResident() && resource.data.isPublicToResidents == true)
       );
-      
-      allow write: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (isAdmin() || isSecretary());
+
+      allow write: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary()
+      );
     }
 
     // --- QR Tokens --- //
     match /qrTokens/{tokenId} {
-      // Extremely strict. No client can CREATE a QR Token directly. Must be done via Cloud Functions or Server.
-      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (isAdmin() || isSecretary() || isGuard());
-      allow write: if false; // Block completely. Must use backend.
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard()
+      );
+      // No client can forge QR tokens
+      allow write: if false;
     }
 
-    // Global Fallback Deny
+    // 9. Unauthenticated Firestore access → denied
+    // 10. Missing custom claims → denied for protected operations
     match /{document=**} {
       allow read, write: if false;
     }

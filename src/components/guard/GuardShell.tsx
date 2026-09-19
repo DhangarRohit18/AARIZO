@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import type {
   GuardVisitor,
@@ -24,13 +24,13 @@ import { GateHistory } from './history/GateHistory';
 import { GuardAlerts } from './alerts/GuardAlerts';
 import { GuardProfile } from './profile/GuardProfile';
 
-import { Shield, Users, Clock, Bell, UserCheck, RefreshCw, KeyRound } from 'lucide-react';
+import { Shield, Users, Clock, Bell, UserCheck, KeyRound } from 'lucide-react';
 import './guard.css';
 
 export type GuardShellTab = 'home' | 'verify' | 'visitors' | 'inside' | 'history' | 'alerts' | 'more';
 
 export const GuardShell: React.FC = () => {
-  const { currentUser, switchRole } = useAuth();
+  const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState<GuardShellTab>('home');
 
   // Guard domain local prototype state
@@ -87,7 +87,7 @@ export const GuardShell: React.FC = () => {
       visitorName: visitor.name,
       visitorType: visitor.visitorType,
       residentName: visitor.residentName,
-      flatCode: `${visitor.tower} · ${visitor.flatCode}`,
+      flatCode: `${visitor.tower} Â· ${visitor.flatCode}`,
       action: 'entry_rejected',
       actionLabel: 'Entry Rejected',
       timestamp,
@@ -116,7 +116,7 @@ export const GuardShell: React.FC = () => {
       visitorName: visitor.name,
       visitorType: visitor.visitorType,
       residentName: visitor.residentName,
-      flatCode: `${visitor.tower} · ${visitor.flatCode}`,
+      flatCode: `${visitor.tower} Â· ${visitor.flatCode}`,
       action: 'checked_in',
       actionLabel: 'Checked In',
       timestamp,
@@ -144,7 +144,7 @@ export const GuardShell: React.FC = () => {
       visitorName: visitor.name,
       visitorType: visitor.visitorType,
       residentName: visitor.residentName,
-      flatCode: `${visitor.tower} · ${visitor.flatCode}`,
+      flatCode: `${visitor.tower} Â· ${visitor.flatCode}`,
       action: 'checked_out',
       actionLabel: 'Checked Out',
       timestamp,
@@ -236,7 +236,7 @@ export const GuardShell: React.FC = () => {
           />
           <div className="guard-terminal-info">
             <h2 className="guard-terminal-title">{gate.name}</h2>
-            <p className="guard-officer-sub">{currentUser?.name || 'Officer R. Singh'} • On Duty</p>
+            <p className="guard-officer-sub">{currentUser?.name || 'Officer R. Singh'} â€¢ On Duty</p>
           </div>
         </div>
 
@@ -256,15 +256,6 @@ export const GuardShell: React.FC = () => {
             />
             <span>{gate.status.toUpperCase()}</span>
           </div>
-
-          <button
-            className="btn-switch-role"
-            onClick={() => switchRole('resident')}
-            title="Switch to Resident App"
-          >
-            <RefreshCw size={13} />
-            <span>Switch</span>
-          </button>
         </div>
       </header>
 
@@ -362,3 +353,5 @@ export const GuardShell: React.FC = () => {
     </div>
   );
 };
+
+

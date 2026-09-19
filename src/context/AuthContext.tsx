@@ -1,196 +1,176 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { UserRole, UserProfile, AuthFlowStep } from '../domains/auth/types';
-import { MOCK_USERS } from '../mockData/auth/mockUsers';
+﻿import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
-  setupRecaptcha, 
-  sendOtp, 
-  verifyOtpCode, 
-  getUserProfile, 
-  logoutUser, 
-  subscribeToAuth 
-} from '../services/firebase/auth';
+  onAuthStateChanged, 
+  signInWithPhoneNumber, 
+  signOut,
+  RecaptchaVerifier,
+} from 'firebase/auth';
+import type { ConfirmationResult } from 'firebase/auth';
+import { auth, db } from '../services/firebase/config';
+import { doc, getDoc } from 'firebase/firestore';
+import type { UserProfile, UserRole } from '../domains/auth/types';
 
-interface AuthContextType {
-  step: AuthFlowStep;
-  hasCompletedOnboarding: boolean;
-  selectedRole: UserRole;
+export type AuthStatus = 
+  | 'INITIALIZING'
+  | 'AUTHENTICATED'
+  | 'UNAUTHENTICATED'
+  | 'PROFILE_MISSING'
+  | 'CLAIMS_MISSING'
+  | 'CLAIMS_MISMATCH';
+
+interface AuthContextProps {
+  status: AuthStatus;
+  currentUser: UserProfile | null;
   phoneNumber: string;
   countryCode: string;
-  currentUser: UserProfile | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  simulatedOtpCode: string;
   error: string | null;
+  hasCompletedOnboarding: boolean;
   completeOnboarding: () => void;
-  selectRole: (role: UserRole) => void;
   setPhoneNumber: (phone: string) => void;
-  submitLogin: (phone?: string) => Promise<boolean>;
-  verifyOtp: (code: string) => Promise<boolean>;
+  submitLogin: (appVerifier: RecaptchaVerifier) => Promise<void>;
+  verifyOtp: (code: string) => Promise<void>;
   logout: () => Promise<void>;
-  switchRole: (role: UserRole) => void;
-  resetOnboarding: () => void;
   setError: (err: string | null) => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+
+const ONBOARDING_STORAGE_KEY = 'communityos_onboarding_completed';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [step, setStep] = useState<AuthFlowStep>('onboarding');
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean>(false);
-  const [selectedRole, setSelectedRole] = useState<UserRole>('resident');
-  const [phoneNumber, setPhoneNumberState] = useState<string>(MOCK_USERS.resident.phone);
-  const [countryCode] = useState<string>('+91');
+  const [status, setStatus] = useState<AuthStatus>('INITIALIZING');
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // initially loading auth state
-  const [simulatedOtpCode] = useState<string>('4092'); // Kept for legacy UI display
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean>(() => {
+    return localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true';
+  });
+  
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [countryCode] = useState('+91');
   const [error, setError] = useState<string | null>(null);
+  
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
 
-  // Subscribe to Firebase Auth State
   useEffect(() => {
-    const unsubscribe = subscribeToAuth(async (firebaseUser) => {
-      setIsLoading(true);
-      if (firebaseUser) {
-        try {
-          const profile = await getUserProfile(firebaseUser.uid);
-          if (profile) {
-            setCurrentUser(profile);
-            setSelectedRole(profile.role);
-            setIsAuthenticated(true);
-            setStep('authenticated');
-          } else {
-            // User exists in auth but no profile - handle graceful failure
-            setError("No profile found for this user in the database.");
-            setIsAuthenticated(false);
-            setCurrentUser(null);
-            setStep('login');
-          }
-        } catch (err) {
-          console.error("Profile fetch error:", err);
-          setError("Failed to fetch user profile.");
-        }
-      } else {
-        // Logged out
-        setIsAuthenticated(false);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
         setCurrentUser(null);
-        if (step === 'authenticated') {
-          setStep('login');
-        }
+        setStatus('UNAUTHENTICATED');
+        return;
       }
-      setIsLoading(false);
+
+      try {
+        const idTokenResult = await firebaseUser.getIdTokenResult(true);
+        const claimsRole = (idTokenResult.claims.role as string | undefined)?.toLowerCase() as UserRole | undefined;
+        const claimsSocietyId = idTokenResult.claims.societyId as string | undefined;
+
+        if (!claimsRole || !claimsSocietyId) {
+          console.error("Missing Custom Claims:", idTokenResult.claims);
+          setStatus('CLAIMS_MISSING');
+          return;
+        }
+
+        const docRef = doc(db, 'users', firebaseUser.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          setStatus('PROFILE_MISSING');
+          return;
+        }
+
+        const profileData = docSnap.data();
+        const profile: UserProfile = {
+          id: docSnap.id,
+          uid: firebaseUser.uid,
+          name: profileData.name || '',
+          phone: profileData.phone || firebaseUser.phoneNumber || '',
+          email: profileData.email || firebaseUser.email || undefined,
+          role: (profileData.role || '').toLowerCase() as UserRole,
+          societyId: profileData.societyId || '',
+          societyName: profileData.societyName,
+          flatNumber: profileData.flatNumber,
+          flatDetails: profileData.flatDetails,
+          unitId: profileData.unitId,
+          status: profileData.status || 'ACTIVE',
+          avatarUrl: profileData.avatarUrl,
+          designation: profileData.designation,
+          statusBadge: profileData.statusBadge,
+          createdAt: profileData.createdAt,
+          updatedAt: profileData.updatedAt
+        };
+
+        if (profile.role !== claimsRole || profile.societyId !== claimsSocietyId) {
+          console.error("Claims mismatch:", { 
+            claims: { role: claimsRole, societyId: claimsSocietyId }, 
+            profile: { role: profile.role, societyId: profile.societyId } 
+          });
+          setStatus('CLAIMS_MISMATCH');
+          return;
+        }
+
+        setCurrentUser(profile);
+        setStatus('AUTHENTICATED');
+
+      } catch (err) {
+        console.error("Auth initialization error:", err);
+        setError("Failed to verify user identity.");
+        setStatus('UNAUTHENTICATED');
+      }
     });
+
     return () => unsubscribe();
-  }, [step]);
+  }, []);
 
   const completeOnboarding = () => {
+    localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
     setHasCompletedOnboarding(true);
-    setStep('login');
   };
 
-  const selectRole = (role: UserRole) => {
-    setSelectedRole(role);
-    setPhoneNumberState(MOCK_USERS[role]?.phone || '');
-    setError(null);
-  };
-
-  const setPhoneNumber = (phone: string) => {
-    setPhoneNumberState(phone);
-    setError(null);
-  };
-
-  const submitLogin = async (overridePhone?: string): Promise<boolean> => {
-    const targetPhone = overridePhone !== undefined ? overridePhone : phoneNumber;
-    const cleanPhone = targetPhone.replace(/\D/g, '');
-
-    if (!cleanPhone || cleanPhone.length < 10) {
-      setError('Please enter a valid 10-digit mobile number.');
-      return false;
-    }
-
-    setError(null);
-    setIsLoading(true);
-
+  const submitLogin = async (appVerifier: RecaptchaVerifier) => {
     try {
-      // In a real app we'd attach recaptcha-container to the UI.
-      const appVerifier = setupRecaptcha('recaptcha-container');
-      const formattedPhone = `${countryCode}${cleanPhone}`;
-      await sendOtp(formattedPhone, appVerifier);
-      setStep('verify');
-      setIsLoading(false);
-      return true;
+      setError(null);
+      const fullNumber = countryCode + phoneNumber;
+      const result = await signInWithPhoneNumber(auth, fullNumber, appVerifier);
+      setConfirmationResult(result);
     } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Failed to send OTP.');
-      setIsLoading(false);
-      return false;
+      setError(err.message || "Failed to send OTP.");
+      throw err;
     }
   };
 
-  const verifyOtp = async (code: string): Promise<boolean> => {
-    if (code.length !== 4 && code.length !== 6) {
-      setError('Invalid OTP code format.');
-      return false;
+  const verifyOtp = async (code: string) => {
+    if (!confirmationResult) {
+      setError("No pending OTP request.");
+      return;
     }
-
-    setIsLoading(true);
-    setError(null);
-
     try {
-      await verifyOtpCode(code);
-      // The onAuthStateChanged listener will catch the login and fetch the profile
-      return true;
+      setError(null);
+      await confirmationResult.confirm(code);
     } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Invalid OTP code.');
-      setIsLoading(false);
-      return false;
+      setError(err.message || "Invalid OTP code.");
+      throw err;
     }
   };
 
   const logout = async () => {
-    setIsLoading(true);
-    await logoutUser();
-    setIsAuthenticated(false);
+    await signOut(auth);
     setCurrentUser(null);
-    setStep('login');
-    setIsLoading(false);
-  };
-
-  const switchRole = (_role: UserRole) => {
-    // Note: For full Firebase Auth migration, this bypass feature must be removed or 
-    // it must use custom Firebase emulation tokens. For now, it warns the user.
-    console.warn("switchRole is deprecated in Firebase Auth mode. Please login via Phone Auth.");
-    setError("Role switching is disabled. Please login securely via Phone Number.");
-  };
-
-  const resetOnboarding = () => {
-    setIsAuthenticated(false);
-    setCurrentUser(null);
-    setHasCompletedOnboarding(false);
-    setStep('onboarding');
+    setStatus('UNAUTHENTICATED');
   };
 
   return (
     <AuthContext.Provider
       value={{
-        step,
-        hasCompletedOnboarding,
-        selectedRole,
+        status,
+        currentUser,
         phoneNumber,
         countryCode,
-        currentUser,
-        isAuthenticated,
-        isLoading,
-        simulatedOtpCode,
         error,
+        hasCompletedOnboarding,
         completeOnboarding,
-        selectRole,
         setPhoneNumber,
         submitLogin,
         verifyOtp,
         logout,
-        switchRole,
-        resetOnboarding,
         setError,
       }}
     >
@@ -206,3 +186,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

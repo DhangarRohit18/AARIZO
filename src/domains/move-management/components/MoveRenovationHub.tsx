@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Truck,
   Wrench,
@@ -18,10 +18,10 @@ import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
 
 export const MoveRenovationHub: React.FC = () => {
-  const { currentUser, selectedRole } = useAuth();
-  const activeRole = (currentUser?.role || selectedRole || '').toUpperCase();
+  const { currentUser } = useAuth();
+  const activeRole = (currentUser?.role || '').toLowerCase();
 
-  const isAdmin = ['SOCIETY_ADMIN', 'SUPER_ADMIN', 'SECRETARY'].includes(activeRole);
+  const isAdmin = ['admin', 'secretary'].includes(activeRole);
 
   const [activeTab, setActiveTab] = useState<'MOVES' | 'RENOVATIONS' | 'CALENDAR' | 'SECURITY_SCANNER'>('MOVES');
   const [moves, setMoves] = useState<MoveEvent[]>(() => moveRenovationService.getMoves());
@@ -361,7 +361,7 @@ export const MoveRenovationHub: React.FC = () => {
                   <div>
                     <h4 className="font-bold text-slate-900 text-base">{permit.projectTitle}</h4>
                     <p className="text-xs text-slate-500">
-                      Flat {permit.flatNumber} • Contractor: <strong className="text-slate-800">{permit.contractorCompany}</strong>
+                      Flat {permit.flatNumber} â€¢ Contractor: <strong className="text-slate-800">{permit.contractorCompany}</strong>
                     </p>
                   </div>
 
@@ -486,7 +486,7 @@ export const MoveRenovationHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Schedule Move-In / Move-Out</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
             </div>
 
             <form onSubmit={handleCreateMove} className="space-y-4">
@@ -591,7 +591,7 @@ export const MoveRenovationHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Request Renovation Permit</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
             </div>
 
             <form onSubmit={handleCreateRenovation} className="space-y-4">
@@ -687,3 +687,4 @@ export const MoveRenovationHub: React.FC = () => {
     </div>
   );
 };
+

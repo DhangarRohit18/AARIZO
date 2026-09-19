@@ -36,9 +36,9 @@ const CATEGORY_ICONS: Record<UtilityCategory, any> = {
 };
 
 export const SocietyOperationsBoard: React.FC = () => {
-  const { currentUser, selectedRole } = useAuth();
-  const activeRole = (currentUser?.role || selectedRole || '').toUpperCase();
-  const isAdminOrFacility = ['SOCIETY_ADMIN', 'SUPER_ADMIN', 'SECRETARY', 'FACILITY_MANAGER'].includes(activeRole);
+  const { currentUser } = useAuth();
+  const activeRole = (currentUser?.role || '').toLowerCase();
+  const isAdminOrFacility = ['admin', 'secretary', 'facility_manager'].includes(activeRole);
 
   const [activeTab, setActiveTab] = useState<'LIVE_BOARD' | 'OUTAGE_HISTORY' | 'IOT_TERMINAL'>('LIVE_BOARD');
   const [summary, setSummary] = useState<SocietyOperationsSummary>(() => societyOperationsService.getSummary());
@@ -420,7 +420,7 @@ export const SocietyOperationsBoard: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Update Status: {selectedUtility.name}</h3>
-              <button onClick={() => setIsUpdateModalOpen(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setIsUpdateModalOpen(false)} className="text-slate-400 hover:text-slate-600">âœ•</button>
             </div>
 
             <form onSubmit={handleUpdateSubmit} className="space-y-4">
@@ -483,3 +483,6 @@ export const SocietyOperationsBoard: React.FC = () => {
     </div>
   );
 };
+
+
+

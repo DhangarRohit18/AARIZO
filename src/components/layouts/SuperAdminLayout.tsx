@@ -35,7 +35,7 @@ const DRAWER_NAV = [
 ];
 
 export const SuperAdminLayout: React.FC = () => {
-  const { logout, selectedRole, switchRole } = useAuth();
+  const { logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
 
@@ -74,16 +74,7 @@ export const SuperAdminLayout: React.FC = () => {
               <button onClick={() => setDrawerOpen(false)} style={{ padding: '0.375rem', color: '#64748b', background: 'rgba(255,255,255,0.05)', borderRadius: '0.5rem', display: 'flex', minHeight: 40, minWidth: 40, alignItems: 'center', justifyContent: 'center' }}><X size={18} /></button>
             </div>
 
-            {/* Role switcher */}
-            <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}>
-              <label style={{ display: 'block', fontSize: '0.5625rem', color: '#475569', fontWeight: 700, marginBottom: '0.25rem', textTransform: 'uppercase' }}>Switch Role</label>
-              <select value={selectedRole} onChange={(e) => switchRole(e.target.value as never)} style={{ width: '100%', background: '#1e293b', border: '1px solid #334155', borderRadius: '0.5rem', color: '#f1f5f9', fontSize: '0.75rem', padding: '0.375rem 0.5rem', minHeight: 36 }}>
-                <option value="SUPER_ADMIN">SUPER ADMIN</option>
-                <option value="SOCIETY_ADMIN">SOCIETY ADMIN</option>
-                <option value="RESIDENT">RESIDENT</option>
-                <option value="SECURITY">SECURITY GUARD</option>
-              </select>
-            </div>
+
 
             <nav style={{ flex: 1, overflowY: 'auto', padding: '0.75rem 0.5rem' }}>
               {DRAWER_NAV.map((item) => {
@@ -122,3 +113,8 @@ export const SuperAdminLayout: React.FC = () => {
     </div>
   );
 };
+
+
+
+
+

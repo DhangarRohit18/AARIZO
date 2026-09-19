@@ -1,10 +1,10 @@
-import React from 'react';
+﻿import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Shield, ArrowLeft, Lock, Sparkles, Building2, Home } from 'lucide-react';
+import { Shield, ArrowLeft, Lock } from 'lucide-react';
 import '../auth/auth.css';
 
 export const GuardPlaceholder: React.FC = () => {
-  const { currentUser, switchRole, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
 
   return (
     <div className="auth-container" style={{ background: '#0f172a', color: '#f8fafc' }}>
@@ -18,11 +18,11 @@ export const GuardPlaceholder: React.FC = () => {
             <h1 className="auth-brand-title" style={{ color: '#ffffff' }}>Gate #1 Security Terminal</h1>
           </div>
           <span className="auth-brand-badge" style={{ background: '#78350f', color: '#fef3c7', borderColor: '#d97706' }}>
-            Phase 3A Placeholder
+            Gate Terminal
           </span>
         </div>
         <button className="btn-auth-text" style={{ color: '#94a3b8' }} onClick={logout}>
-          Return to Login
+          Sign Out
         </button>
       </header>
 
@@ -37,12 +37,11 @@ export const GuardPlaceholder: React.FC = () => {
           </div>
 
           <h2 className="onboarding-title" style={{ color: '#ffffff', fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-            Guard Workspace (Phase 3B)
+            Guard Workspace
           </h2>
 
           <p className="onboarding-desc" style={{ color: '#94a3b8', marginBottom: '1.5rem' }}>
-            The Guard Application Terminal is deferred to Phase 3B as per roadmap scope. Officer{' '}
-            <strong>{currentUser?.name || 'Officer R. Singh'}</strong> is registered and assigned to Gate #1 North Terminal.
+            Officer <strong>{currentUser?.name || 'Officer'}</strong> assigned to Gate #1 Terminal.
           </p>
 
           <div
@@ -51,36 +50,14 @@ export const GuardPlaceholder: React.FC = () => {
           >
             <div className="onboarding-feature-item" style={{ background: '#1e293b', borderColor: '#334155', color: '#cbd5e1' }}>
               <Lock size={14} style={{ color: '#fbbf24' }} />
-              <span>Keypad OTP Verification Terminal (Phase 3B)</span>
-            </div>
-            <div className="onboarding-feature-item" style={{ background: '#1e293b', borderColor: '#334155', color: '#cbd5e1' }}>
-              <Sparkles size={14} style={{ color: '#fbbf24' }} />
-              <span>Visitor Entry Photo Log & Parking Slot Manager</span>
+              <span>Realtime Gate Verification Terminal Active</span>
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%' }}>
-            <button
-              className="btn-onboarding-primary"
-              style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)' }}
-              onClick={() => switchRole('resident')}
-            >
-              <Home size={18} />
-              <span>Switch to Resident App (Sarvesh Kulkarni)</span>
-            </button>
-
-            <button
-              className="btn-onboarding-primary"
-              style={{ background: '#334155', color: '#f8fafc' }}
-              onClick={() => switchRole('secretary')}
-            >
-              <Building2 size={18} />
-              <span>Switch to Secretary Portal (Mayuri Udar)</span>
-            </button>
-
-            <button className="btn-onboarding-secondary" style={{ background: 'transparent', color: '#94a3b8', borderColor: '#475569' }} onClick={logout}>
+            <button className="btn-onboarding-secondary" style={{ background: '#334155', color: '#f8fafc', borderColor: '#475569' }} onClick={logout}>
               <ArrowLeft size={16} />
-              <span>Back to Shared Login Screen</span>
+              <span>Sign Out</span>
             </button>
           </div>
         </div>
@@ -88,3 +65,4 @@ export const GuardPlaceholder: React.FC = () => {
     </div>
   );
 };
+
