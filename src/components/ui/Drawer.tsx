@@ -16,7 +16,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   title,
   children,
   position = 'right',
-  width = '400px',
+  width = '85vw',
 }) => {
   useEffect(() => {
     if (isOpen) {
