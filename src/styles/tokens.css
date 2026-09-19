@@ -1,32 +1,32 @@
 /* CommunityOS Neutral Design Tokens System */
 :root {
-  /* Neutral Color Palette (Functional Grayscale & Standard Status Colors) */
-  --color-primary: #1e293b;            /* Dark Neutral Slate */
-  --color-primary-hover: #0f172a;      /* Deeper Slate Hover */
-  --color-secondary: #64748b;          /* Muted Neutral */
-  --color-accent: #334155;             /* Mid Slate Accent */
+  /* Pure White + Light Blue Theme Palette */
+  --color-primary: #2563eb;            /* Primary Royal Blue */
+  --color-primary-hover: #1d4ed8;      /* Darker Blue Hover */
+  --color-secondary: #64748b;          /* Slate Neutral */
+  --color-accent: #3b82f6;             /* Vibrant Blue Accent */
 
-  --color-background: #f8fafc;         /* Crisp Off-White */
-  --color-surface: #ffffff;            /* Pure White Card/Container Surface */
-  --color-surface-subtle: #f1f5f9;     /* Subtly Tinted Background */
+  --color-background: #f7fbff;         /* Crisp Light Blue / White Tint Background */
+  --color-surface: #ffffff;            /* Pure White Surface */
+  --color-surface-subtle: #eaf5ff;     /* Primary Light Blue Container Surface */
 
   --color-border: #cbd5e1;             /* Standard Border */
   --color-border-subtle: #e2e8f0;      /* Hairline / Subtle Border */
 
-  --color-text: #0f172a;               /* High-Contrast Main Body Text */
-  --color-text-muted: #64748b;         /* Secondary Label Text */
+  --color-text: #0f172a;               /* High-Contrast Body Text */
+  --color-text-muted: #475569;         /* Secondary Label Text */
   --color-text-subtle: #94a3b8;        /* Micro Text / Captions */
-  --color-text-inverse: #ffffff;       /* Inverse Dark Surface Text */
+  --color-text-inverse: #ffffff;       /* Inverse White Text */
 
   /* Functional Status Feedback Colors */
-  --color-success: #15803d;            /* Emerald Success */
+  --color-success: #16a34a;            /* Success Green */
   --color-success-bg: #f0fdf4;
-  --color-warning: #b45309;            /* Amber Warning */
+  --color-warning: #d97706;            /* Warning Amber */
   --color-warning-bg: #fffbeb;
-  --color-danger: #dc2626;             /* Crimson Danger */
+  --color-danger: #dc2626;             /* Danger Red */
   --color-danger-bg: #fef2f2;
   --color-info: #0284c7;               /* Sky Blue Info */
-  --color-info-bg: #f0f9ff;
+  --color-info-bg: #eaf5ff;
 
   /* Typography Scale */
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;

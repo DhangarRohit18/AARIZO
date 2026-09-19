@@ -27,12 +27,12 @@ export const AdminHomePage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ backgroundColor: '#f7f4ee', minHeight: '100%' }}>
+    <div style={{ backgroundColor: '#f7fbff', minHeight: '100%' }}>
       {/* Header */}
-      <div style={{ background: 'linear-gradient(135deg, #1c1917, #292524)', padding: '1.25rem 1rem 1.5rem' }}>
-        <p style={{ color: '#a8a29e', fontSize: '0.75rem' }}>Society Operations</p>
+      <div style={{ background: 'linear-gradient(135deg, #1e40af, #2563eb)', padding: '1.25rem 1rem 1.5rem' }}>
+        <p style={{ color: '#93c5fd', fontSize: '0.75rem' }}>Society Operations</p>
         <h1 style={{ color: '#fff', fontWeight: 800, fontSize: '1.25rem', marginBottom: '0.25rem' }}>Admin Overview</h1>
-        <p style={{ color: '#78716c', fontSize: '0.6875rem' }}>Green Valley Housing Society</p>
+        <p style={{ color: '#bfdbfe', fontSize: '0.6875rem' }}>Green Valley Housing Society</p>
       </div>
 
       <div style={{ padding: '0.75rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
