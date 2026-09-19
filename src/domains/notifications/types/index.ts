@@ -1,103 +1,47 @@
-export type NotificationEventType =
-  | 'VISITOR_ARRIVAL'
-  | 'VISITOR_APPROVAL'
-  | 'PARCEL_ARRIVAL'
-  | 'PARCEL_REMINDER'
-  | 'COMPLAINT_UPDATE'
-  | 'SLA_BREACH'
-  | 'PAYMENT_DUE'
-  | 'MAINTENANCE_UPDATE'
-  | 'NOC_UPDATE'
-  | 'EMERGENCY'
-  | 'AMC_EXPIRY'
-  | 'WORKER_ENTRY'
-  | 'UTILITY_OUTAGE';
+export type NotificationChannel = 'PUSH' | 'WHATSAPP' | 'SMS' | 'IN_APP';
+export type NotificationStatus = 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
 
-export type NotificationCategory =
-  | 'SECURITY'
-  | 'BILLING'
-  | 'MAINTENANCE'
-  | 'COMMUNITY'
-  | 'EMERGENCY'
-  | 'COMPLIANCE';
+// A standardized list of business events that can trigger notifications
+export type NotificationEvent = 
+  | 'GATEPASS_CREATED' 
+  | 'PARCEL_RECEIVED' 
+  | 'PARCEL_PICKUP' 
+  | 'COMPLAINT_CREATED' 
+  | 'COMPLAINT_ESCALATED' 
+  | 'COMPLAINT_RESOLVED' 
+  | 'REQUEST_APPROVED' 
+  | 'REQUEST_REJECTED' 
+  | 'AMC_EXPIRING' 
+  | 'UTILITY_OUTAGE' 
+  | 'EMERGENCY' 
+  | 'ATTENDANCE_CHECKIN';
 
-export type NotificationChannel = 'IN_APP' | 'PUSH' | 'WHATSAPP' | 'SMS' | 'EMAIL';
-
-export type DeliveryStatus = 'SENT' | 'DELIVERED' | 'FAILED' | 'READ';
-
-export interface NotificationEvent {
-  id: string;
+export interface NotificationRecord {
+  id: string; // Guaranteed unique by Firebase
   societyId: string;
-  recipientUserId: string;
-  eventType: NotificationEventType;
-  category: NotificationCategory;
-  title: string;
-  message: string;
-  isCritical: boolean; // Overrides quiet hours / muted channel preferences if true
-  linkUrl?: string;
-  metadata?: Record<string, any>;
-  createdAt: string;
-}
-
-export interface DeliveryLog {
-  id: string;
-  eventId: string;
-  recipientUserId: string;
+  eventId: string; // Unique idempotency key (e.g. "complaint_123_escalation") to prevent duplicate sends
+  eventType: NotificationEvent;
+  recipientId: string; // UID of Resident/Guard/Staff
+  recipientPhone?: string; 
   channel: NotificationChannel;
-  providerName: string;
-  providerRefId: string;
-  status: DeliveryStatus;
-  sentAt: string;
-  deliveredAt?: string;
-  readAt?: string;
-  errorMessage?: string;
+  title: string;
+  body: string;
+  dataPayload?: Record<string, any>; // Used for deep linking in Push/In-App
+  status: NotificationStatus;
+  sentAt?: string; // ISO
+  deliveredAt?: string; // ISO
+  failureReason?: string;
+  createdAt: string; // ISO
 }
 
-export interface NotificationItemWithLogs extends NotificationEvent {
-  isRead: boolean;
-  readAt?: string;
-  deliveryLogs: DeliveryLog[];
-}
-
-export interface CategoryChannelPreference {
-  inApp: boolean;
-  push: boolean;
-  whatsapp: boolean;
-  sms: boolean;
-  email: boolean;
-}
-
-export interface NotificationPreference {
-  userId: string;
-  quietHoursEnabled: boolean;
-  quietHoursStart: string; // e.g. "22:00"
-  quietHoursEnd: string;   // e.g. "07:00"
-  categories: Record<NotificationCategory, CategoryChannelPreference>;
-  updatedAt: string;
-}
-
-// Pluggable Provider Adapter Interfaces
-export interface InAppNotificationAdapter {
-  name: string;
-  sendInApp(event: NotificationEvent): Promise<DeliveryLog>;
-}
-
-export interface PushNotificationAdapter {
-  name: string;
-  sendPush(event: NotificationEvent, deviceToken?: string): Promise<DeliveryLog>;
-}
-
-export interface WhatsAppNotificationAdapter {
-  name: string;
-  sendWhatsApp(event: NotificationEvent, phoneNumber: string): Promise<DeliveryLog>;
-}
-
-export interface SMSNotificationAdapter {
-  name: string;
-  sendSMS(event: NotificationEvent, phoneNumber: string): Promise<DeliveryLog>;
-}
-
-export interface EmailNotificationAdapter {
-  name: string;
-  sendEmail(event: NotificationEvent, emailAddress: string): Promise<DeliveryLog>;
+export interface NotificationPayload {
+  societyId: string;
+  eventId: string;
+  eventType: NotificationEvent;
+  recipientId: string;
+  recipientPhone?: string;
+  channels: NotificationChannel[];
+  title: string;
+  body: string;
+  dataPayload?: Record<string, any>;
 }

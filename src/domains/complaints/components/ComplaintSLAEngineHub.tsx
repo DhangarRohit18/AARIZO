@@ -17,7 +17,7 @@ import { complaintSLAService } from '../services/complaintSLAService';
 import type { Complaint, ComplaintCategory, SLAPolicy, SLAAnalytics } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { useRBAC } from '../../../hooks/useRBAC';
-import { realtimeService } from '../../../services/realtimeService';
+import { subscribeToComplaints, createComplaintToDb, updateComplaintInDb } from '../../../repositories/complaintRepository';
 
 export const ComplaintSLAEngineHub: React.FC = () => {
   const { currentUser } = useAuth();
@@ -48,8 +48,8 @@ export const ComplaintSLAEngineHub: React.FC = () => {
   const [feedbackNotes, setFeedbackNotes] = useState('');
 
   const loadData = () => {
-    const list = complaintSLAService.getAllComplaints('soc-gvs');
-    setComplaints(list);
+    // We still load policies and analytics from local mock service for now
+    // as per incremental migration rules (only migrating complaints CRUD)
     setSlaPolicies(complaintSLAService.getSLAPolicies('soc-gvs'));
     setAnalytics(complaintSLAService.getSLAAnalytics('soc-gvs'));
   };
@@ -57,52 +57,51 @@ export const ComplaintSLAEngineHub: React.FC = () => {
   useEffect(() => {
     loadData();
 
-    const unsubscribe = realtimeService.subscribe('MAINTENANCE_STATUS', () => {
-      loadData();
+    const unsubscribe = subscribeToComplaints('soc-gvs', (list) => {
+      setComplaints(list);
     });
 
     return () => unsubscribe();
   }, []);
 
-  const handleCreateComplaint = (e: React.FormEvent) => {
+  const handleCreateComplaint = async (e: React.FormEvent) => {
     e.preventDefault();
-    complaintSLAService.createComplaint({
+    await createComplaintToDb({
       societyId: 'soc-gvs',
       residentId: currentUser?.id || 'res-1',
       residentName: currentUser?.name || 'Vikram Joshi',
-      flatCode: currentUser?.flatDetails || 'Tower B · B-1204',
+      flatCode: currentUser?.flatDetails || 'Tower B A B-1204',
       category,
       title,
       description,
       location,
       urgency,
       photoUrl,
-    });
+      status: 'OPEN',
+      escalationLevel: 'STAFF'
+    }, currentUser?.id || 'res-1', activeRole);
     setShowSubmitModal(false);
     setTitle('');
     setDescription('');
     setPhotoUrl('');
-    loadData();
   };
 
   const handleUpdatePolicy = (e: React.FormEvent) => {
     e.preventDefault();
     complaintSLAService.updateSLAPolicy('soc-gvs', selectedPolicyCat, newSlaMinutes, currentUser?.name || 'Admin');
     setShowPolicyModal(false);
-    loadData();
   };
 
-  const handleResolveTicket = (id: string) => {
-    complaintSLAService.resolveComplaint(id, currentUser?.name || 'Technician', 'Work completed and tested');
-    loadData();
+  const handleResolveTicket = async (id: string) => {
+    await updateComplaintInDb('soc-gvs', id, { status: 'RESOLVED' }, currentUser?.id || 'tech-1', activeRole, 'COMPLAINT_RESOLVED');
   };
 
-  const handleResidentVerify = (isResolved: boolean) => {
+  const handleResidentVerify = async (isResolved: boolean) => {
     if (!verifyComplaint) return;
-    complaintSLAService.residentVerifyComplaint(verifyComplaint.id, isResolved, feedbackNotes);
+    const newStatus = isResolved ? 'CLOSED' : 'REOPENED';
+    await updateComplaintInDb('soc-gvs', verifyComplaint.id, { status: newStatus }, currentUser?.id || 'res-1', activeRole, 'COMPLAINT_VERIFIED');
     setVerifyComplaint(null);
     setFeedbackNotes('');
-    loadData();
   };
 
   const filtered = complaints.filter((c) => {

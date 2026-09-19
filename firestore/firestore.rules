@@ -1,0 +1,145 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ---------------------------------------------------------
+    // Reusable Functions for RBAC and Data Isolation
+    // ---------------------------------------------------------
+    
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null && request.auth.uid != null;
+    }
+
+    // Get the user's custom claims (role and societyId set by backend auth triggers)
+    function getUserRole() {
+      return request.auth.token.role;
+    }
+    
+    function getUserSocietyId() {
+      return request.auth.token.societyId;
+    }
+
+    // Verify society isolation: the document's societyId must match the user's societyId
+    function isSameSociety(docData) {
+      return docData.societyId == getUserSocietyId();
+    }
+    
+    function isOwner(docData) {
+      return docData.userId == request.auth.uid;
+    }
+
+    // Role Checkers
+    function isAdmin() { return getUserRole() == 'admin'; }
+    function isSecretary() { return getUserRole() == 'secretary'; }
+    function isCommittee() { return getUserRole() == 'committee'; }
+    function isFacilityManager() { return getUserRole() == 'facility_manager'; }
+    function isGuard() { return getUserRole() == 'guard'; }
+    function isResident() { return getUserRole() == 'resident'; }
+    function isStaff() { return getUserRole() == 'staff'; }
+    function isVendor() { return getUserRole() == 'vendor'; }
+    function isContractor() { return getUserRole() == 'contractor'; }
+
+    // Privilege Groups
+    function isManagement() {
+      return isAdmin() || isSecretary() || isFacilityManager();
+    }
+
+    // ---------------------------------------------------------
+    // Collections
+    // ---------------------------------------------------------
+
+    // 1. Societies
+    match /societies/{societyId} {
+      // Anyone authenticated can read their own society data
+      allow read: if isAuthenticated() && (isAdmin() || getUserSocietyId() == societyId);
+      // Only admins can create/update society documents directly
+      allow write: if isAuthenticated() && isAdmin();
+    }
+
+    // 2. Users (Profiles)
+    match /users/{userId} {
+      // Users can read their own profile, or management/guards can read profiles in the same society
+      allow read: if isAuthenticated() && (
+        request.auth.uid == userId || 
+        (isSameSociety(resource.data) && (isManagement() || isGuard() || isCommittee()))
+      );
+      
+      // Users can update their own profile, but cannot elevate their own role
+      allow update: if isAuthenticated() && request.auth.uid == userId &&
+                    !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'societyId', 'status']);
+      
+      // Only Admins can delete users
+      allow delete: if isAuthenticated() && isAdmin();
+      
+      // Account creation is handled via Cloud Functions (Admin SDK), so no direct create here.
+      allow create: if false; 
+    }
+
+    // 3. Complaints
+    match /complaints/{complaintId} {
+      // Residents can read their own complaints. Management can read all in the society.
+      allow read: if isAuthenticated() && isSameSociety(resource.data) && (
+        isOwner(resource.data) || isManagement() || isCommittee()
+      );
+      
+      // Residents can create complaints for their society
+      allow create: if isAuthenticated() && isResident() && isSameSociety(request.resource.data) && isOwner(request.resource.data);
+      
+      // Residents can update their complaints (e.g. add info), but cannot change status/escalations.
+      // Management can update any complaint in their society.
+      allow update: if isAuthenticated() && isSameSociety(resource.data) && (
+        (isOwner(resource.data) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'assignedTo', 'escalated'])) ||
+        isManagement()
+      );
+      
+      allow delete: if isAuthenticated() && isManagement() && isSameSociety(resource.data);
+    }
+
+    // 4. Parcels
+    match /parcels/{parcelId} {
+      // Guards and Management can read all parcels. Residents can only read their own.
+      allow read: if isAuthenticated() && isSameSociety(resource.data) && (
+        isGuard() || isManagement() || resource.data.residentId == request.auth.uid
+      );
+      
+      // Guards can create parcels
+      allow create: if isAuthenticated() && isSameSociety(request.resource.data) && isGuard();
+      
+      // Guards can update parcel status (e.g. to picked up)
+      allow update: if isAuthenticated() && isSameSociety(resource.data) && isGuard();
+    }
+
+    // 5. Visitors
+    match /visitors/{visitorId} {
+      // Guards and Management can see all visitors. Residents see only visitors to their flat.
+      allow read: if isAuthenticated() && isSameSociety(resource.data) && (
+        isGuard() || isManagement() || resource.data.hostId == request.auth.uid
+      );
+      
+      // Residents can pre-approve (create) visitors. Guards can create ad-hoc visitors.
+      allow create: if isAuthenticated() && isSameSociety(request.resource.data) && (
+        (isResident() && request.resource.data.hostId == request.auth.uid) || isGuard()
+      );
+      
+      // Status updates (check-in/out) by Guards. Residents can cancel pending visitors.
+      allow update: if isAuthenticated() && isSameSociety(resource.data) && (
+        isGuard() || (isResident() && resource.data.hostId == request.auth.uid)
+      );
+    }
+
+    // 6. Audit Logs
+    match /auditLogs/{logId} {
+      // Management and Committee can read audit logs for their society
+      allow read: if isAuthenticated() && isSameSociety(resource.data) && (isManagement() || isCommittee());
+      // Absolutely no client-side writes to audit logs. They are generated ONLY by Cloud Functions.
+      allow write: if false;
+    }
+
+    // Default deny for anything else not explicitly allowed above
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

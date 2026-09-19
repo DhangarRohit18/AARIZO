@@ -1,6 +1,14 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { UserRole, UserProfile, AuthFlowStep } from '../domains/auth/types';
 import { MOCK_USERS } from '../mockData/auth/mockUsers';
+import { 
+  setupRecaptcha, 
+  sendOtp, 
+  verifyOtpCode, 
+  getUserProfile, 
+  logoutUser, 
+  subscribeToAuth 
+} from '../services/firebase/auth';
 
 interface AuthContextType {
   step: AuthFlowStep;
@@ -17,8 +25,8 @@ interface AuthContextType {
   selectRole: (role: UserRole) => void;
   setPhoneNumber: (phone: string) => void;
   submitLogin: (phone?: string) => Promise<boolean>;
-  verifyOtp: (code: string) => boolean;
-  logout: () => void;
+  verifyOtp: (code: string) => Promise<boolean>;
+  logout: () => Promise<void>;
   switchRole: (role: UserRole) => void;
   resetOnboarding: () => void;
   setError: (err: string | null) => void;
@@ -34,9 +42,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [countryCode] = useState<string>('+91');
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [simulatedOtpCode] = useState<string>('4092');
+  const [isLoading, setIsLoading] = useState<boolean>(true); // initially loading auth state
+  const [simulatedOtpCode] = useState<string>('4092'); // Kept for legacy UI display
   const [error, setError] = useState<string | null>(null);
+
+  // Subscribe to Firebase Auth State
+  useEffect(() => {
+    const unsubscribe = subscribeToAuth(async (firebaseUser) => {
+      setIsLoading(true);
+      if (firebaseUser) {
+        try {
+          const profile = await getUserProfile(firebaseUser.uid);
+          if (profile) {
+            setCurrentUser(profile);
+            setSelectedRole(profile.role);
+            setIsAuthenticated(true);
+            setStep('authenticated');
+          } else {
+            // User exists in auth but no profile - handle graceful failure
+            setError("No profile found for this user in the database.");
+            setIsAuthenticated(false);
+            setCurrentUser(null);
+            setStep('login');
+          }
+        } catch (err) {
+          console.error("Profile fetch error:", err);
+          setError("Failed to fetch user profile.");
+        }
+      } else {
+        // Logged out
+        setIsAuthenticated(false);
+        setCurrentUser(null);
+        if (step === 'authenticated') {
+          setStep('login');
+        }
+      }
+      setIsLoading(false);
+    });
+    return () => unsubscribe();
+  }, [step]);
 
   const completeOnboarding = () => {
     setHasCompletedOnboarding(true);
@@ -45,7 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const selectRole = (role: UserRole) => {
     setSelectedRole(role);
-    setPhoneNumberState(MOCK_USERS[role].phone);
+    setPhoneNumberState(MOCK_USERS[role]?.phone || '');
     setError(null);
   };
 
@@ -66,40 +110,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
     setIsLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    setIsLoading(false);
-    setStep('verify');
-    return true;
+    try {
+      // In a real app we'd attach recaptcha-container to the UI.
+      const appVerifier = setupRecaptcha('recaptcha-container');
+      const formattedPhone = `${countryCode}${cleanPhone}`;
+      await sendOtp(formattedPhone, appVerifier);
+      setStep('verify');
+      setIsLoading(false);
+      return true;
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'Failed to send OTP.');
+      setIsLoading(false);
+      return false;
+    }
   };
 
-  const verifyOtp = (code: string): boolean => {
-    if (code !== '4092' && code !== '1234' && code.length !== 4) {
-      setError('Invalid OTP code. Try entering 4092.');
+  const verifyOtp = async (code: string): Promise<boolean> => {
+    if (code.length !== 4 && code.length !== 6) {
+      setError('Invalid OTP code format.');
       return false;
     }
 
-    const user = MOCK_USERS[selectedRole] || MOCK_USERS.resident;
-    setCurrentUser(user);
-    setIsAuthenticated(true);
+    setIsLoading(true);
     setError(null);
-    setStep('authenticated');
-    return true;
+
+    try {
+      await verifyOtpCode(code);
+      // The onAuthStateChanged listener will catch the login and fetch the profile
+      return true;
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'Invalid OTP code.');
+      setIsLoading(false);
+      return false;
+    }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    setIsLoading(true);
+    await logoutUser();
     setIsAuthenticated(false);
     setCurrentUser(null);
     setStep('login');
+    setIsLoading(false);
   };
 
   const switchRole = (role: UserRole) => {
-    setSelectedRole(role);
-    const user = MOCK_USERS[role];
-    setPhoneNumberState(user.phone);
-    setCurrentUser(user);
-    setIsAuthenticated(true);
-    setHasCompletedOnboarding(true);
-    setStep('authenticated');
+    // Note: For full Firebase Auth migration, this bypass feature must be removed or 
+    // it must use custom Firebase emulation tokens. For now, it warns the user.
+    console.warn("switchRole is deprecated in Firebase Auth mode. Please login via Phone Auth.");
+    setError("Role switching is disabled. Please login securely via Phone Number.");
   };
 
   const resetOnboarding = () => {

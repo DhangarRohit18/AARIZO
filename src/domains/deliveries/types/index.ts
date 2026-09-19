@@ -22,6 +22,7 @@ export interface Parcel {
   residentId: string;
   residentName: string;
   flatCode: string;
+  authorizedPickupIds?: string[]; // Allowed proxy residents
   courierCompany: string;
   courierName?: string;
   trackingNumber: string;
@@ -29,14 +30,17 @@ export interface Parcel {
   storageLocation: string; // e.g. "Rack A-1", "Locker 102", "Reception Desk"
   status: ParcelStatus;
   arrivalTime: string;
-  pickupOtp: string; // 6-digit OTP
-  pickupQrCode: string; // QR code string
+  pickupOtp: string; // 6-digit OTP (otpFallback)
+  pickupQrCode: string; // QR token 't' from qrTokens collection
   pickupTime?: string;
-  collectedBy?: string;
+  collectedBy?: string; // UID of whoever actually picked it up
   ageHours: number;
   isFlagged24h: boolean;
   isFlagged48h: boolean;
   notes?: string;
+  createdAt: string;
+  expiresAt: string;
+  createdBy: string; // UID of the Guard who received it
 }
 
 export interface DeliveryEntry {

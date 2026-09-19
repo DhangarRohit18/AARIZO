@@ -1,10 +1,10 @@
-import type { UserRole, Permission } from '../types/rbac';
+import type { UserRole, Action } from '../types/rbac';
 
 export interface RouteItem {
   path: string;
   name: string;
   allowedRoles: UserRole[];
-  requiredPermission?: Permission;
+  requiredPermission?: Action;
 }
 
 export const ROUTES = {

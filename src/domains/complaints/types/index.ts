@@ -28,6 +28,7 @@ export interface SLAPolicy {
   societyId: string;
   category: ComplaintCategory;
   slaMinutes: number;
+  escalationLevels: EscalationLevel[];
   updatedBy: string;
 }
 

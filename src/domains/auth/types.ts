@@ -1,4 +1,4 @@
-export type UserRole = 'resident' | 'secretary' | 'guard';
+export type UserRole = 'resident' | 'secretary' | 'guard' | 'committee' | 'facility_manager' | 'staff' | 'vendor' | 'contractor' | 'admin';
 
 export interface UserProfile {
   id: string;

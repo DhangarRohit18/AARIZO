@@ -1,0 +1,48 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null && request.auth.uid != null;
+    }
+
+    // Role Checks (mirrors Firestore claims)
+    function isAdmin() { return request.auth.token.role == 'admin'; }
+    function isManagement() { 
+      return request.auth.token.role in ['admin', 'secretary', 'facility_manager'];
+    }
+
+    // Is the file in the user's society?
+    function isSameSociety(societyId) {
+      return request.auth.token.societyId == societyId;
+    }
+
+    // ---------------------------------------------------------
+    // Path Matching
+    // ---------------------------------------------------------
+
+    // User Profile Pictures
+    match /users/{userId}/profile.jpg {
+      allow read: if isAuthenticated(); // Publicly readable for authenticated users (for avatar display)
+      allow write: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+    }
+
+    // Society Scoped Files (Attachments, Proofs, etc)
+    match /societies/{societyId}/{category}/{fileName} {
+      
+      // Read access: management can read all, others can read if they are in the same society
+      allow read: if isAuthenticated() && isSameSociety(societyId);
+      
+      // Write access (Upload)
+      allow write: if isAuthenticated() && isSameSociety(societyId) && (
+        // Only allow image/pdf uploads
+        request.resource.contentType.matches('image/.*') || 
+        request.resource.contentType.matches('application/pdf')
+      ) && request.resource.size < 5 * 1024 * 1024; // 5MB limit
+      
+      // Delete access (Only management)
+      allow delete: if isAuthenticated() && isSameSociety(societyId) && isManagement();
+    }
+  }
+}

@@ -1,0 +1,49 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // --- Identity Helpers --- //
+    function isAuthenticated() { return request.auth != null; }
+    function getRole() { return request.auth.token.role; }
+    function getSocietyId() { return request.auth.token.societyId; }
+    
+    function isAdmin() { return getRole() == 'ADMIN'; }
+    function isSecretary() { return getRole() == 'SECRETARY'; }
+    
+    // --- Society Scope --- //
+    match /societies/{societyId} {
+      
+      // 1. Public Assets (e.g., Society Logo, public notices)
+      match /public/{allPaths=**} {
+        allow read: if isAuthenticated() && getSocietyId() == societyId;
+        allow write: if isAuthenticated() && getSocietyId() == societyId && (isAdmin() || isSecretary());
+      }
+      
+      // 2. Private User Documents (e.g., Profile Pictures, ID proofs)
+      // Fix: A resident can ONLY write to their explicit UID folder, preventing overwrites.
+      match /users/{userId}/{allPaths=**} {
+        allow read: if isAuthenticated() && getSocietyId() == societyId && (request.auth.uid == userId || isAdmin() || isSecretary());
+        allow write: if isAuthenticated() && getSocietyId() == societyId && (request.auth.uid == userId || isAdmin());
+      }
+
+      // 3. Compliance & AMC Documents (Highly Sensitive)
+      // Fix: Only Admins/Secretaries can upload or modify. Residents can read ONLY if the DB says it's public (handled by UI presigned URLs ideally, but restricted here at root).
+      match /compliance/{allPaths=**} {
+        allow read: if isAuthenticated() && getSocietyId() == societyId; 
+        allow write: if isAuthenticated() && getSocietyId() == societyId && (isAdmin() || isSecretary());
+      }
+      
+      // 4. Invoices & Vendor Docs
+      match /invoices/{allPaths=**} {
+        allow read: if isAuthenticated() && getSocietyId() == societyId && (isAdmin() || isSecretary());
+        // Vendors can upload to the general invoice bucket (ideally bucketed by vendorId, but this closes the major hole)
+        allow write: if isAuthenticated() && getSocietyId() == societyId && (isAdmin() || isSecretary() || getRole() == 'VENDOR');
+      }
+
+    }
+    
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -58,9 +58,9 @@ export const LoginScreen: React.FC = () => {
     }
   };
 
-  const handleOtpVerify = (e: React.FormEvent) => {
+  const handleOtpVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    const isVerified = verifyOtp(otpInput || '4092');
+    const isVerified = await verifyOtp(otpInput || '4092');
     if (isVerified) {
       setShowOtpModal(false);
       if (selectedRole === 'secretary') navigate('/admin');
@@ -69,9 +69,9 @@ export const LoginScreen: React.FC = () => {
     }
   };
 
-  const handleQuickAutoFill = () => {
+  const handleQuickAutoFill = async () => {
     setOtpInput('4092');
-    const isVerified = verifyOtp('4092');
+    const isVerified = await verifyOtp('4092');
     if (isVerified) {
       setShowOtpModal(false);
       if (selectedRole === 'secretary') navigate('/admin');
@@ -82,6 +82,7 @@ export const LoginScreen: React.FC = () => {
 
   return (
     <div className="auth-container">
+      <div id="recaptcha-container"></div>
       {/* Top Bar */}
       <header className="auth-header">
         <div className="auth-brand">

@@ -2,11 +2,11 @@ import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useRBAC } from '../hooks/useRBAC';
-import type { UserRole, Permission } from '../types/rbac';
+import type { UserRole, Action } from '../types/rbac';
 
 interface ProtectedRouteProps {
   allowedRoles?: UserRole[];
-  requiredPermission?: Permission;
+  requiredPermission?: Action;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
