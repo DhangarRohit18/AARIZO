@@ -3,6 +3,7 @@ import type {
   EmergencyType,
   SocietyEmergencyContact
 } from '../types/safetyCommand';
+import { emergencyIncidentRepository } from '../repositories/safety/EmergencyIncidentRepository';
 
 const INCIDENTS_STORAGE_KEY = 'communityos_emergency_incidents';
 const CONTACTS_STORAGE_KEY = 'communityos_emergency_contacts';
@@ -132,6 +133,7 @@ class SafetyCommandService {
     }
 
     localStorage.setItem(INCIDENTS_STORAGE_KEY, JSON.stringify(items));
+    emergencyIncidentRepository.create(incident).catch(() => {});
     return incident;
   }
 

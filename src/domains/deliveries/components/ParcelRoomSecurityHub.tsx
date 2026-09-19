@@ -1,9 +1,11 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { Package, QrCode, Search, ShieldCheck, Clock, AlertTriangle, Plus, Filter } from 'lucide-react';
 import { parcelRoomService } from '../../../domains/deliveries/services/parcelRoomService';
 import type { Parcel } from '../../../domains/deliveries/types';
 import { realtimeService } from '../../../services/realtimeService';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const ParcelRoomSecurityHub: React.FC = () => {
   const [parcels, setParcels] = useState<Parcel[]>([]);
@@ -184,88 +186,138 @@ export const ParcelRoomSecurityHub: React.FC = () => {
         </div>
       </div>
 
-      {/* Parcels Table */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm">
-<table className="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr className="bg-slate-50 text-slate-600 border-b border-slate-200 font-bold uppercase text-[10px]">
-              <th className="p-3">Parcel ID & Courier</th>
-              <th className="p-3">Resident & Flat</th>
-              <th className="p-3">Storage Location</th>
-              <th className="p-3">Arrival Time & Age</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">OTP / Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {filtered.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="p-4 md:p-6 text-center text-slate-400">
-                  No parcels found.
-                </td>
-              </tr>
-            ) : (
-              filtered.map((p) => (
-                <tr key={p.id} className="hover:bg-slate-50 transition">
-                  <td className="p-3">
-                    <div className="font-bold text-slate-800">{p.courierCompany}</div>
-                    <div className="text-[10px] text-slate-400">Track: {p.trackingNumber}</div>
-                  </td>
-                  <td className="p-3">
-                    <div className="font-semibold text-slate-800">{p.residentName}</div>
-                    <div className="text-[10px] text-slate-500">{p.flatCode}</div>
-                  </td>
-                  <td className="p-3">
-                    <span className="px-2 py-1 bg-slate-100 font-bold text-slate-700 rounded text-[11px]">
-                      {p.storageLocation}
+      {/* Parcels List / Table */}
+      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+        <DataTable
+          columns={[
+            {
+              key: 'courier',
+              header: 'Parcel ID & Courier',
+              render: (p: any) => (
+                <div>
+                  <div className="font-bold text-slate-800">{p.courierCompany}</div>
+                  <div className="text-[10px] text-slate-400">Track: {p.trackingNumber}</div>
+                </div>
+              )
+            },
+            {
+              key: 'resident',
+              header: 'Resident & Flat',
+              render: (p: any) => (
+                <div>
+                  <div className="font-semibold text-slate-800">{p.residentName}</div>
+                  <div className="text-[10px] text-slate-500">{p.flatCode}</div>
+                </div>
+              )
+            },
+            {
+              key: 'location',
+              header: 'Storage Location',
+              render: (p: any) => (
+                <span className="px-2 py-1 bg-slate-100 font-bold text-slate-700 rounded text-[11px]">
+                  {p.storageLocation}
+                </span>
+              )
+            },
+            {
+              key: 'arrival',
+              header: 'Arrival Time & Age',
+              render: (p: any) => (
+                <div>
+                  <div>{new Date(p.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                  <div className="text-[10px] text-slate-400">{p.ageHours} hrs ago</div>
+                </div>
+              )
+            },
+            {
+              key: 'status',
+              header: 'Status',
+              render: (p: any) => (
+                <div className="flex flex-col gap-1 items-start">
+                  <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${
+                    p.status === 'COLLECTED' ? 'bg-blue-100 text-blue-800' :
+                    p.status === 'READY_FOR_PICKUP' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-800'
+                  }`}>
+                    {p.status}
+                  </span>
+                  {p.isFlagged48h && (
+                    <span className="px-1.5 py-0.5 bg-rose-100 text-rose-800 font-extrabold text-[9px] rounded flex items-center gap-0.5">
+                      <AlertTriangle size={10} /> 48h Overdue
                     </span>
-                  </td>
-                  <td className="p-3">
-                    <div>{new Date(p.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                    <div className="text-[10px] text-slate-400">{p.ageHours} hrs ago</div>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex flex-col gap-1 items-start">
-                      <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${
-                        p.status === 'COLLECTED' ? 'bg-blue-100 text-blue-800' :
-                        p.status === 'READY_FOR_PICKUP' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-800'
-                      }`}>
-                        {p.status}
-                      </span>
-                      {p.isFlagged48h && (
-                        <span className="px-1.5 py-0.5 bg-rose-100 text-rose-800 font-extrabold text-[9px] rounded flex items-center gap-0.5">
-                          <AlertTriangle size={10} /> 48h Overdue
-                        </span>
-                      )}
-                      {p.isFlagged24h && !p.isFlagged48h && (
-                        <span className="px-1.5 py-0.5 bg-amber-100 text-amber-800 font-extrabold text-[9px] rounded flex items-center gap-0.5">
-                          <Clock size={10} /> 24h Aging
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-3">
-                    {p.status !== 'COLLECTED' ? (
-                      <button
-                        onClick={() => {
-                          setSelectedParcel(p);
-                          setShowVerifyModal(true);
-                        }}
-                        className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold text-[11px] flex items-center gap-1"
-                      >
-                        <QrCode size={12} /> Verify OTP
-                      </button>
-                    ) : (
-                      <span className="text-[11px] font-medium text-emerald-600 flex items-center gap-1">
-                        <ShieldCheck size={14} /> Collected by {p.collectedBy}
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                  )}
+                  {p.isFlagged24h && !p.isFlagged48h && (
+                    <span className="px-1.5 py-0.5 bg-amber-100 text-amber-800 font-extrabold text-[9px] rounded flex items-center gap-0.5">
+                      <Clock size={10} /> 24h Aging
+                    </span>
+                  )}
+                </div>
+              )
+            },
+            {
+              key: 'actions',
+              header: 'OTP / Action',
+              render: (p: any) => (
+                p.status !== 'COLLECTED' ? (
+                  <button
+                    onClick={() => {
+                      setSelectedParcel(p);
+                      setShowVerifyModal(true);
+                    }}
+                    className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold text-[11px] flex items-center gap-1"
+                  >
+                    <QrCode size={12} /> Verify OTP
+                  </button>
+                ) : (
+                  <span className="text-[11px] font-medium text-emerald-600 flex items-center gap-1">
+                    <ShieldCheck size={14} /> Collected by {p.collectedBy}
+                  </span>
+                )
+              )
+            }
+          ]}
+          data={filtered}
+          keyExtractor={(p: any) => p.id}
+          pageSize={10}
+          mobileRender={(p: any) => (
+            <MobileDataCard
+              title={`${p.courierCompany} • ${p.flatCode}`}
+              subtitle={`Track: ${p.trackingNumber} • Resident: ${p.residentName}`}
+              status={
+                <div className="flex flex-col gap-1 items-end">
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                    p.status === 'COLLECTED' ? 'bg-blue-100 text-blue-800' :
+                    p.status === 'READY_FOR_PICKUP' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-800'
+                  }`}>
+                    {p.status}
+                  </span>
+                  {p.isFlagged48h && (
+                    <span className="px-1.5 py-0.5 bg-rose-100 text-rose-800 font-extrabold text-[9px] rounded flex items-center gap-0.5">
+                      <AlertTriangle size={10} /> 48h Overdue
+                    </span>
+                  )}
+                </div>
+              }
+              attributes={[
+                { label: 'Storage Rack', value: p.storageLocation },
+                { label: 'Arrived', value: `${new Date(p.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} (${p.ageHours}h ago)` },
+                { label: 'Collection Note', value: p.status === 'COLLECTED' ? `Collected by ${p.collectedBy}` : 'Awaiting OTP verification' }
+              ]}
+              actions={
+                p.status !== 'COLLECTED' ? (
+                  <button
+                    onClick={() => {
+                      setSelectedParcel(p);
+                      setShowVerifyModal(true);
+                    }}
+                    className="w-full py-1.5 bg-indigo-600 text-white font-bold text-xs rounded-lg min-h-[44px] flex items-center justify-center gap-1.5"
+                  >
+                    <QrCode size={14} /> Verify OTP & Release Package
+                  </button>
+                ) : undefined
+              }
+            />
+          )}
+        />
       </div>
 
       {/* Add Parcel Modal */}

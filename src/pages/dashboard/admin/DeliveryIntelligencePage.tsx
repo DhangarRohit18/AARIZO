@@ -1,10 +1,12 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Truck, Search, Package } from 'lucide-react';
 import { visitorService } from '../../../services/visitorService';
 import type { SmartVisitorPass, VisitorAnalyticsData } from '../../../types/visitor';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { VisitorAnalyticsWidget } from '../../../components/visitor/VisitorAnalyticsWidget';
 import { ParcelRoomSecurityHub } from '../../../domains/deliveries/components/ParcelRoomSecurityHub';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const DeliveryIntelligencePage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -113,59 +115,80 @@ export const DeliveryIntelligencePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
-<table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
-                <tr>
-                  <th className="p-3">Vendor</th>
-                  <th className="p-3">Package Ref No</th>
-                  <th className="p-3">Flat & Resident</th>
-                  <th className="p-3">Agent Name</th>
-                  <th className="p-3">Entry Time</th>
-                  <th className="p-3">Pickup Time</th>
-                  <th className="p-3">Status</th>
-                  <th className="p-3 text-right">Pickup Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-800 dark:text-slate-200">
-                {filteredDeliveries.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                    <td className="p-3 font-bold text-indigo-600 dark:text-indigo-400">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4">
+            <DataTable
+              columns={[
+                {
+                  key: 'vendor',
+                  header: 'Vendor',
+                  render: (p: SmartVisitorPass) => (
+                    <span className="font-bold text-indigo-600 dark:text-indigo-400">
                       {p.deliveryVendor || p.companyName || 'Courier'}
-                    </td>
-                    <td className="p-3 font-mono text-[11px]">{p.packageReferenceNumber || 'N/A'}</td>
-                    <td className="p-3 font-medium">Flat {p.flatCode} ({p.residentName})</td>
-                    <td className="p-3">{p.visitorName} ({p.visitorPhone})</td>
-                    <td className="p-3 text-slate-500">{p.checkedInAt || 'Pending'}</td>
-                    <td className="p-3 text-slate-500">{p.pickupTimestamp || 'Awaiting Pickup'}</td>
-                    <td className="p-3">
-                      <StatusBadge
-                        variant={p.status === 'CHECKED_OUT' ? 'success' : p.isOverdue ? 'danger' : 'info'}
-                        label={p.status === 'CHECKED_OUT' ? 'PICKED UP' : p.status}
-                      />
-                    </td>
-                    <td className="p-3 text-right">
-                      {p.status === 'CHECKED_IN' && (
-                        <button
-                          onClick={() => handleRecordPickup(p.id)}
-                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-semibold text-xs transition-colors"
-                        >
-                          Record Pickup
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-
-                {filteredDeliveries.length === 0 && (
-                  <tr>
-                    <td colSpan={8} className="p-4 md:p-6 text-center text-slate-500">
-                      No delivery package records match current search.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                    </span>
+                  )
+                },
+                { key: 'packageRef', header: 'Package Ref No', render: (p: SmartVisitorPass) => <span className="font-mono text-[11px]">{p.packageReferenceNumber || 'N/A'}</span> },
+                { key: 'flatResident', header: 'Flat & Resident', render: (p: SmartVisitorPass) => `Flat ${p.flatCode} (${p.residentName})` },
+                { key: 'agent', header: 'Agent Name', render: (p: SmartVisitorPass) => `${p.visitorName} (${p.visitorPhone})` },
+                { key: 'entryTime', header: 'Entry Time', render: (p: SmartVisitorPass) => p.checkedInAt || 'Pending' },
+                { key: 'pickupTime', header: 'Pickup Time', render: (p: SmartVisitorPass) => p.pickupTimestamp || 'Awaiting Pickup' },
+                {
+                  key: 'status',
+                  header: 'Status',
+                  render: (p: SmartVisitorPass) => (
+                    <StatusBadge
+                      variant={p.status === 'CHECKED_OUT' ? 'success' : p.isOverdue ? 'danger' : 'info'}
+                      label={p.status === 'CHECKED_OUT' ? 'PICKED UP' : p.status}
+                    />
+                  )
+                },
+                {
+                  key: 'actions',
+                  header: 'Pickup Action',
+                  render: (p: SmartVisitorPass) => (
+                    p.status === 'CHECKED_IN' ? (
+                      <button
+                        onClick={() => handleRecordPickup(p.id)}
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-semibold text-xs transition-colors"
+                      >
+                        Record Pickup
+                      </button>
+                    ) : null
+                  )
+                }
+              ]}
+              data={filteredDeliveries}
+              keyExtractor={(p: SmartVisitorPass) => p.id}
+              pageSize={10}
+              mobileRender={(p: SmartVisitorPass) => (
+                <MobileDataCard
+                  title={`${p.deliveryVendor || p.companyName || 'Courier'} • Flat ${p.flatCode}`}
+                  subtitle={`Agent: ${p.visitorName} (${p.visitorPhone})`}
+                  status={
+                    <StatusBadge
+                      variant={p.status === 'CHECKED_OUT' ? 'success' : p.isOverdue ? 'danger' : 'info'}
+                      label={p.status === 'CHECKED_OUT' ? 'PICKED UP' : p.status}
+                    />
+                  }
+                  attributes={[
+                    { label: 'Package Ref', value: p.packageReferenceNumber || 'N/A' },
+                    { label: 'Resident', value: p.residentName },
+                    { label: 'Entry Time', value: p.checkedInAt || 'Pending' },
+                    { label: 'Pickup Time', value: p.pickupTimestamp || 'Awaiting Pickup' }
+                  ]}
+                  actions={
+                    p.status === 'CHECKED_IN' ? (
+                      <button
+                        onClick={() => handleRecordPickup(p.id)}
+                        className="w-full py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                      >
+                        Record Package Pickup
+                      </button>
+                    ) : undefined
+                  }
+                />
+              )}
+            />
           </div>
         </div>
       )}

@@ -7,6 +7,7 @@ import type {
   Guardian,
   EmergencyContact
 } from '../types/childSafety';
+import { childRepository } from '../repositories/childSafety/ChildRepository';
 
 const CHILDREN_STORAGE_KEY = 'communityos_children_profiles';
 const QR_PASSES_STORAGE_KEY = 'communityos_child_pickup_qrs';
@@ -154,6 +155,7 @@ class ChildSafetyService {
     }
 
     localStorage.setItem(CHILDREN_STORAGE_KEY, JSON.stringify(items));
+    childRepository.create(updated).catch(() => {});
     return updated;
   }
 

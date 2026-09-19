@@ -8,6 +8,7 @@ import type {
   VisitorAnalyticsData,
 } from '../types/visitor';
 import { logAudit } from './societyService';
+import { visitorRepository } from '../repositories/visitors/VisitorRepository';
 
 const STORAGE_KEYS = {
   PASSES: 'communityos_visitor_passes_v2',
@@ -211,6 +212,7 @@ export const visitorService = {
     };
 
     setItem(STORAGE_KEYS.PASSES, [newPass, ...passes]);
+    visitorRepository.create(newPass).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'VisitorPass', newPass.id, `Generated ${data.category} pass ${passCode} for ${data.visitorName}`);
     return newPass;
   },
@@ -287,6 +289,14 @@ export const visitorService = {
     passes[idx].usageCount += 1;
 
     setItem(STORAGE_KEYS.PASSES, passes);
+    visitorRepository.update(passId, {
+      status: 'CHECKED_IN',
+      lifecycleState: 'INSIDE',
+      checkedInAt: timeStr,
+      gateName: gateDetails.gateName,
+      gateOfficerName: gateDetails.officerName,
+      usageCount: passes[idx].usageCount,
+    }).catch(() => {});
     logAudit(passes[idx].societyId, actor, 'STATUS_CHANGE', 'VisitorPass', passId, `Checked in visitor ${passes[idx].visitorName} at ${gateDetails.gateName}`);
     return passes[idx];
   },
@@ -306,6 +316,12 @@ export const visitorService = {
     passes[idx].isOverdue = false;
 
     setItem(STORAGE_KEYS.PASSES, passes);
+    visitorRepository.update(passId, {
+      status: 'CHECKED_OUT',
+      lifecycleState: 'EXITED',
+      checkedOutAt: timeStr,
+      isOverdue: false,
+    }).catch(() => {});
     logAudit(passes[idx].societyId, actor, 'STATUS_CHANGE', 'VisitorPass', passId, `Checked out visitor ${passes[idx].visitorName}`);
     return passes[idx];
   },

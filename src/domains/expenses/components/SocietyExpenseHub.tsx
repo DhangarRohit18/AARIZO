@@ -26,6 +26,8 @@ import type {
   ExpenseSummary,
   VendorInvoice,
 } from '../types';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 interface SocietyExpenseHubProps {
   userRole?: 'SOCIETY_ADMIN' | 'COMMITTEE_MEMBER' | 'FACILITY_MANAGER' | 'SUPER_ADMIN';
@@ -423,114 +425,198 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
             </div>
           </div>
 
-          {/* Expense Items Table */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-600">
-                <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
-                  <tr>
-                    <th className="p-3.5">Expense Record</th>
-                    <th className="p-3.5">Category</th>
-                    <th className="p-3.5">Amount</th>
-                    <th className="p-3.5">Vendor / Invoice</th>
-                    <th className="p-3.5">Status</th>
-                    <th className="p-3.5 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {expenses.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-50 transition">
-                      <td className="p-3.5">
-                        <div className="font-bold text-slate-900 text-xs">{item.title}</div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">{item.description}</div>
-                        <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
-                          <Calendar size={12} /> {item.expenseDate} • Created by {item.createdByName}
-                        </div>
-                      </td>
-
-                      <td className="p-3.5">
-                        <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">
-                          {item.category}
+          {/* Expense Items List / Table */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+            <DataTable
+              columns={[
+                {
+                  key: 'title',
+                  header: 'Expense Record',
+                  render: (item: SocietyExpense) => (
+                    <div>
+                      <div className="font-bold text-slate-900 text-xs">{item.title}</div>
+                      <div className="text-[11px] text-slate-400 mt-0.5">{item.description}</div>
+                      <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
+                        <Calendar size={12} /> {item.expenseDate} • Created by {item.createdByName}
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  key: 'category',
+                  header: 'Category',
+                  render: (item: SocietyExpense) => (
+                    <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">
+                      {item.category}
+                    </span>
+                  )
+                },
+                {
+                  key: 'amount',
+                  header: 'Amount',
+                  render: (item: SocietyExpense) => (
+                    <div className="font-bold text-slate-900 text-sm">{formatCurrency(item.amount)}</div>
+                  )
+                },
+                {
+                  key: 'vendor',
+                  header: 'Vendor / Invoice',
+                  render: (item: SocietyExpense) => (
+                    <div>
+                      <div className="font-semibold text-slate-800">{item.vendorName || 'Internal'}</div>
+                      {item.invoice ? (
+                        <button
+                          onClick={() => {
+                            setActiveInvoice(item.invoice!);
+                            setIsInvoiceModalOpen(true);
+                          }}
+                          className="mt-1 text-[11px] text-indigo-600 font-semibold flex items-center gap-1 hover:underline"
+                        >
+                          <Paperclip size={12} /> #{item.invoice.invoiceNumber}
+                        </button>
+                      ) : (
+                        <span className="text-[10px] text-slate-400">No invoice attached</span>
+                      )}
+                    </div>
+                  )
+                },
+                {
+                  key: 'status',
+                  header: 'Status',
+                  render: (item: SocietyExpense) => (
+                    <div>
+                      {item.status === 'PAID' && (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1 w-max">
+                          <CheckCircle size={12} /> PAID
                         </span>
-                      </td>
+                      )}
+                      {item.status === 'APPROVED' && (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1 w-max">
+                          <CheckCircle size={12} /> APPROVED
+                        </span>
+                      )}
+                      {item.status === 'PENDING_APPROVAL' && (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1 w-max">
+                          <AlertTriangle size={12} /> PENDING
+                        </span>
+                      )}
+                      {item.status === 'REJECTED' && (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1 w-max">
+                          <XCircle size={12} /> REJECTED
+                        </span>
+                      )}
+                    </div>
+                  )
+                },
+                {
+                  key: 'actions',
+                  header: 'Actions',
+                  render: (item: SocietyExpense) => (
+                    <div className="text-right space-x-1">
+                      {item.status === 'PENDING_APPROVAL' &&
+                        (userRole === 'COMMITTEE_MEMBER' || userRole === 'SOCIETY_ADMIN') && (
+                          <>
+                            <button
+                              onClick={() => handleApproveExpense(item.id, true)}
+                              className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-bold"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleApproveExpense(item.id, false)}
+                              className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded text-[11px] font-bold"
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
 
-                      <td className="p-3.5">
-                        <div className="font-bold text-slate-900 text-sm">{formatCurrency(item.amount)}</div>
-                      </td>
-
-                      <td className="p-3.5">
-                        <div className="font-semibold text-slate-800">{item.vendorName || 'Internal'}</div>
-                        {item.invoice ? (
-                          <button
-                            onClick={() => {
-                              setActiveInvoice(item.invoice!);
-                              setIsInvoiceModalOpen(true);
-                            }}
-                            className="mt-1 text-[11px] text-indigo-600 font-semibold flex items-center gap-1 hover:underline"
-                          >
-                            <Paperclip size={12} /> #{item.invoice.invoiceNumber}
-                          </button>
-                        ) : (
-                          <span className="text-[10px] text-slate-400">No invoice attached</span>
+                      {item.status === 'APPROVED' && (
+                        <button
+                          onClick={() => handleMarkPaid(item.id)}
+                          className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[11px] font-bold"
+                        >
+                          Mark Paid
+                        </button>
+                      )}
+                    </div>
+                  )
+                }
+              ]}
+              data={expenses}
+              keyExtractor={(item: SocietyExpense) => item.id}
+              pageSize={10}
+              mobileRender={(item: SocietyExpense) => (
+                <MobileDataCard
+                  title={item.title}
+                  subtitle={`${formatCurrency(item.amount)} • ${item.category} • ${item.expenseDate}`}
+                  status={
+                    item.status === 'PAID' ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        PAID
+                      </span>
+                    ) : item.status === 'APPROVED' ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        APPROVED
+                      </span>
+                    ) : item.status === 'PENDING_APPROVAL' ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        PENDING
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                        REJECTED
+                      </span>
+                    )
+                  }
+                  attributes={[
+                    { label: 'Description', value: item.description },
+                    { label: 'Vendor', value: item.vendorName || 'Internal' },
+                    { label: 'Created By', value: item.createdByName }
+                  ]}
+                  actions={
+                    <div className="flex flex-wrap gap-2 w-full mt-2">
+                      {item.invoice && (
+                        <button
+                          onClick={() => {
+                            setActiveInvoice(item.invoice!);
+                            setIsInvoiceModalOpen(true);
+                          }}
+                          className="flex-1 py-1.5 border border-indigo-200 text-indigo-600 bg-indigo-50/50 text-xs font-semibold rounded-lg min-h-[44px]"
+                        >
+                          View Invoice #{item.invoice.invoiceNumber}
+                        </button>
+                      )}
+                      {item.status === 'PENDING_APPROVAL' &&
+                        (userRole === 'COMMITTEE_MEMBER' || userRole === 'SOCIETY_ADMIN') && (
+                          <>
+                            <button
+                              onClick={() => handleApproveExpense(item.id, true)}
+                              className="flex-1 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleApproveExpense(item.id, false)}
+                              className="flex-1 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                            >
+                              Reject
+                            </button>
+                          </>
                         )}
-                      </td>
-
-                      <td className="p-3.5">
-                        {item.status === 'PAID' && (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1 w-max">
-                            <CheckCircle size={12} /> PAID
-                          </span>
-                        )}
-                        {item.status === 'APPROVED' && (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1 w-max">
-                            <CheckCircle size={12} /> APPROVED
-                          </span>
-                        )}
-                        {item.status === 'PENDING_APPROVAL' && (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1 w-max">
-                            <AlertTriangle size={12} /> PENDING
-                          </span>
-                        )}
-                        {item.status === 'REJECTED' && (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1 w-max">
-                            <XCircle size={12} /> REJECTED
-                          </span>
-                        )}
-                      </td>
-
-                      <td className="p-3.5 text-right space-x-1">
-                        {item.status === 'PENDING_APPROVAL' &&
-                          (userRole === 'COMMITTEE_MEMBER' || userRole === 'SOCIETY_ADMIN') && (
-                            <>
-                              <button
-                                onClick={() => handleApproveExpense(item.id, true)}
-                                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-bold"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => handleApproveExpense(item.id, false)}
-                                className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded text-[11px] font-bold"
-                              >
-                                Reject
-                              </button>
-                            </>
-                          )}
-
-                        {item.status === 'APPROVED' && (
-                          <button
-                            onClick={() => handleMarkPaid(item.id)}
-                            className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[11px] font-bold"
-                          >
-                            Mark Paid
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      {item.status === 'APPROVED' && (
+                        <button
+                          onClick={() => handleMarkPaid(item.id)}
+                          className="w-full py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                        >
+                          Mark Paid
+                        </button>
+                      )}
+                    </div>
+                  }
+                />
+              )}
+            />
           </div>
         </div>
       )}

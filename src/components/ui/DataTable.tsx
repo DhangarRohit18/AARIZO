@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Pagination } from './Pagination';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 export interface Column<T> {
   key: string;
@@ -17,6 +18,7 @@ interface DataTableProps<T> {
   pageSize?: number;
   emptyMessage?: string;
   onRowClick?: (item: T) => void;
+  mobileRender?: (item: T) => React.ReactNode;
 }
 
 export function DataTable<T extends Record<string, any>>({
@@ -26,10 +28,13 @@ export function DataTable<T extends Record<string, any>>({
   pageSize = 10,
   emptyMessage = 'No data available',
   onRowClick,
+  mobileRender,
 }: DataTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -53,6 +58,31 @@ export function DataTable<T extends Record<string, any>>({
 
   const totalPages = Math.ceil(sortedData.length / pageSize) || 1;
   const paginatedData = sortedData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  if (isMobile && mobileRender) {
+    return (
+      <div style={{ width: '100%' }}>
+        {paginatedData.length === 0 ? (
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8', background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+            {emptyMessage}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {paginatedData.map(item => (
+              <div key={keyExtractor(item)}>
+                {mobileRender(item)}
+              </div>
+            ))}
+          </div>
+        )}
+        {totalPages > 1 && (
+           <div style={{ marginTop: '1rem' }}>
+             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+           </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div style={{ width: '100%', overflowX: 'auto', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#fff' }}>

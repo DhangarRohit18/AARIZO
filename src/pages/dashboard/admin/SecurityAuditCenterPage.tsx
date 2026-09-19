@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Shield,
   Terminal,
@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { securityService } from '../../../services/securityService';
 import type { SessionRecord, AuditEventType } from '../../../types/security';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const SecurityAuditCenterPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'audit_logs' | 'sessions' | 'rbac' | 'simulator'>('audit_logs');
@@ -208,73 +210,107 @@ export const SecurityAuditCenterPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Audit Trail Table */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 font-semibold border-b border-slate-200 dark:border-slate-800">
-                  <tr>
-                    <th className="p-3.5">Timestamp</th>
-                    <th className="p-3.5">Actor & Role</th>
-                    <th className="p-3.5">Action Event</th>
-                    <th className="p-3.5">Target Entity</th>
-                    <th className="p-3.5">IP Address</th>
-                    <th className="p-3.5 text-right">Details</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
-                  {filteredLogs.map((log) => {
-                    const isExpanded = expandedLogId === log.id;
-                    return (
-                      <React.Fragment key={log.id}>
-                        <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition">
-                          <td className="p-3.5 font-mono text-[11px] text-slate-500 whitespace-nowrap">
-                            {new Date(log.timestamp).toLocaleString()}
-                          </td>
-                          <td className="p-3.5">
-                            <div className="font-semibold text-slate-900 dark:text-white">{log.actor}</div>
-                            <div className="text-[10px] text-slate-400">{log.role}</div>
-                          </td>
-                          <td className="p-3.5">
-                            <span
-                              className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase ${getActionBadgeColor(
-                                log.action
-                              )}`}
-                            >
-                              {log.action}
-                            </span>
-                          </td>
-                          <td className="p-3.5">
-                            <span className="font-medium text-slate-900 dark:text-white">{log.entity}</span>
-                            <span className="ml-1 text-slate-400 font-mono text-[10px]">({log.entityId})</span>
-                          </td>
-                          <td className="p-3.5 font-mono text-slate-500">{log.ipAddress}</td>
-                          <td className="p-3.5 text-right">
-                            <button
-                              onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
-                              className="text-xs text-rose-600 font-medium hover:underline"
-                            >
-                              {isExpanded ? 'Hide' : 'Metadata'}
-                            </button>
-                          </td>
-                        </tr>
-
+          {/* Audit Trail List / Table */}
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4">
+            <DataTable
+              columns={[
+                {
+                  key: 'timestamp',
+                  header: 'Timestamp',
+                  render: (log: any) => (
+                    <span className="font-mono text-[11px] text-slate-500 whitespace-nowrap">
+                      {new Date(log.timestamp).toLocaleString()}
+                    </span>
+                  )
+                },
+                {
+                  key: 'actor',
+                  header: 'Actor & Role',
+                  render: (log: any) => (
+                    <div>
+                      <div className="font-semibold text-slate-900 dark:text-white">{log.actor}</div>
+                      <div className="text-[10px] text-slate-400">{log.role}</div>
+                    </div>
+                  )
+                },
+                {
+                  key: 'action',
+                  header: 'Action Event',
+                  render: (log: any) => (
+                    <span
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase ${getActionBadgeColor(
+                        log.action
+                      )}`}
+                    >
+                      {log.action}
+                    </span>
+                  )
+                },
+                {
+                  key: 'entity',
+                  header: 'Target Entity',
+                  render: (log: any) => (
+                    <div>
+                      <span className="font-medium text-slate-900 dark:text-white">{log.entity}</span>
+                      <span className="ml-1 text-slate-400 font-mono text-[10px]">({log.entityId})</span>
+                    </div>
+                  )
+                },
+                { key: 'ipAddress', header: 'IP Address', render: (log: any) => <span className="font-mono text-slate-500">{log.ipAddress}</span> },
+                {
+                  key: 'actions',
+                  header: 'Details',
+                  render: (log: any) => (
+                    <button
+                      onClick={() => setExpandedLogId(expandedLogId === log.id ? null : log.id)}
+                      className="text-xs text-rose-600 font-medium hover:underline"
+                    >
+                      {expandedLogId === log.id ? 'Hide' : 'Metadata'}
+                    </button>
+                  )
+                }
+              ]}
+              data={filteredLogs}
+              keyExtractor={(log: any) => log.id}
+              pageSize={10}
+              mobileRender={(log: any) => {
+                const isExpanded = expandedLogId === log.id;
+                return (
+                  <MobileDataCard
+                    title={`${log.actor} (${log.role})`}
+                    subtitle={`${new Date(log.timestamp).toLocaleString()} • IP: ${log.ipAddress}`}
+                    status={
+                      <span
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${getActionBadgeColor(
+                          log.action
+                        )}`}
+                      >
+                        {log.action}
+                      </span>
+                    }
+                    attributes={[
+                      { label: 'Target Entity', value: `${log.entity} (${log.entityId})` },
+                      { label: 'Timestamp', value: new Date(log.timestamp).toLocaleTimeString() }
+                    ]}
+                    actions={
+                      <div className="w-full mt-2">
+                        <button
+                          onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
+                          className="w-full py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-lg min-h-[44px]"
+                        >
+                          {isExpanded ? 'Hide Metadata Record' : 'View Metadata Record'}
+                        </button>
                         {isExpanded && (
-                          <tr className="bg-slate-950 text-emerald-400 font-mono text-[11px]">
-                            <td colSpan={6} className="p-4 border-t border-slate-800">
-                              <div className="text-slate-400 text-[10px] uppercase font-bold mb-1">Metadata Record Payload</div>
-                              <pre className="whitespace-pre-wrap overflow-x-auto bg-slate-900 p-3 rounded-lg border border-slate-800">
-                                {JSON.stringify(log.metadata, null, 2)}
-                              </pre>
-                            </td>
-                          </tr>
+                          <pre className="mt-2 text-emerald-400 font-mono text-[11px] whitespace-pre-wrap overflow-x-auto bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            {JSON.stringify(log.metadata, null, 2)}
+                          </pre>
                         )}
-                      </React.Fragment>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                      </div>
+                    }
+                  />
+                );
+              }}
+            />
           </div>
         </div>
       )}

@@ -1,8 +1,10 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { amenityService } from '../../../services/amenityService';
 import type { SocietyAmenity, AmenityBooking } from '../../../types/amenity';
 import { Modal } from '../../../components/ui/Modal';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 import {
   Calendar,
   Clock,
@@ -180,55 +182,77 @@ export const ResidentAmenityBookingPage: React.FC = () => {
       {/* User Booking History */}
       <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900 mb-4">My Bookings History</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
-              <tr>
-                <th className="p-3">Amenity</th>
-                <th className="p-3">Date</th>
-                <th className="p-3">Time Slot</th>
-                <th className="p-3">Guests</th>
-                <th className="p-3">Status</th>
-                <th className="p-3 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {userBookings.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="p-4 md:p-6 text-center text-slate-400">You have no upcoming or past bookings</td>
-                </tr>
-              ) : (
-                userBookings.map(bk => (
-                  <tr key={bk.id} className="hover:bg-slate-50">
-                    <td className="p-3 font-medium text-slate-900">{bk.amenityName}</td>
-                    <td className="p-3">{bk.bookingDate}</td>
-                    <td className="p-3">{bk.startTime} - {bk.endTime}</td>
-                    <td className="p-3">{bk.guestCount} Pax</td>
-                    <td className="p-3">
-                      <span className={`px-2.5 py-1 text-xs rounded-full font-semibold ${
-                        bk.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
-                        bk.status === 'PENDING' ? 'bg-amber-100 text-amber-800' :
-                        bk.status === 'REJECTED' ? 'bg-rose-100 text-rose-800' :
-                        'bg-slate-100 text-slate-600'
-                      }`}>
-                        {bk.status}
-                      </span>
-                    </td>
-                    <td className="p-3 text-right">
-                      {(bk.status === 'APPROVED' || bk.status === 'PENDING') && (
-                        <button
-                          onClick={() => handleCancelBooking(bk.id)}
-                          className="px-3 py-1.5 border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold rounded-lg flex items-center gap-1 ml-auto"
-                        >
-                          <XCircle className="w-3.5 h-3.5" /> Cancel
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+        <div className="mt-4">
+          <DataTable
+            columns={[
+              { key: 'amenityName', header: 'Amenity', render: (bk: AmenityBooking) => <span className="font-medium text-slate-900">{bk.amenityName}</span> },
+              { key: 'bookingDate', header: 'Date' },
+              { key: 'time', header: 'Time Slot', render: (bk: AmenityBooking) => `${bk.startTime} - ${bk.endTime}` },
+              { key: 'guestCount', header: 'Guests', render: (bk: AmenityBooking) => `${bk.guestCount} Pax` },
+              {
+                key: 'status',
+                header: 'Status',
+                render: (bk: AmenityBooking) => (
+                  <span className={`px-2.5 py-1 text-xs rounded-full font-semibold ${
+                    bk.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
+                    bk.status === 'PENDING' ? 'bg-amber-100 text-amber-800' :
+                    bk.status === 'REJECTED' ? 'bg-rose-100 text-rose-800' :
+                    'bg-slate-100 text-slate-600'
+                  }`}>
+                    {bk.status}
+                  </span>
+                )
+              },
+              {
+                key: 'actions',
+                header: 'Action',
+                render: (bk: AmenityBooking) => (
+                  (bk.status === 'APPROVED' || bk.status === 'PENDING') ? (
+                    <button
+                      onClick={() => handleCancelBooking(bk.id)}
+                      className="px-3 py-1.5 border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold rounded-lg flex items-center gap-1 ml-auto"
+                    >
+                      <XCircle className="w-3.5 h-3.5" /> Cancel
+                    </button>
+                  ) : null
+                )
+              }
+            ]}
+            data={userBookings}
+            keyExtractor={(bk: AmenityBooking) => bk.id}
+            pageSize={10}
+            mobileRender={(bk: AmenityBooking) => (
+              <MobileDataCard
+                title={bk.amenityName}
+                subtitle={`${bk.bookingDate} • ${bk.startTime} - ${bk.endTime}`}
+                status={
+                  <span className={`px-2 py-0.5 text-[0.65rem] rounded-full font-semibold ${
+                    bk.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
+                    bk.status === 'PENDING' ? 'bg-amber-100 text-amber-800' :
+                    bk.status === 'REJECTED' ? 'bg-rose-100 text-rose-800' :
+                    'bg-slate-100 text-slate-600'
+                  }`}>
+                    {bk.status}
+                  </span>
+                }
+                attributes={[
+                  { label: 'Date', value: bk.bookingDate },
+                  { label: 'Time', value: `${bk.startTime} - ${bk.endTime}` },
+                  { label: 'Guests', value: `${bk.guestCount} Pax` }
+                ]}
+                actions={
+                  (bk.status === 'APPROVED' || bk.status === 'PENDING') ? (
+                    <button
+                      onClick={() => handleCancelBooking(bk.id)}
+                      className="w-full py-1.5 border border-rose-200 text-rose-600 bg-rose-50/50 text-xs font-semibold rounded-lg flex items-center justify-center gap-1 min-h-[44px]"
+                    >
+                      <XCircle className="w-4 h-4" /> Cancel Booking
+                    </button>
+                  ) : undefined
+                }
+              />
+            )}
+          />
         </div>
       </div>
 

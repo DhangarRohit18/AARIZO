@@ -9,6 +9,7 @@ import type {
 } from '../types/billing';
 import { defaultPaymentGateway, type PaymentGatewayAdapter } from './payment/PaymentGatewayAdapter';
 import { logAudit } from './societyService';
+import { billingInvoiceRepository, billingCycleRepository, paymentTransactionRepository } from '../repositories/billing/BillingRepository';
 
 const STORAGE_KEYS = {
   CYCLES: 'communityos_billing_cycles_v6',
@@ -199,6 +200,7 @@ export const billingService = {
     };
 
     setItem(STORAGE_KEYS.CYCLES, [newCycle, ...cycles]);
+    billingCycleRepository.create(newCycle).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'BillingCycle', newCycle.id, `Created billing cycle ${data.cycleName}`);
     return newCycle;
   },
@@ -283,6 +285,13 @@ export const billingService = {
     setItem(STORAGE_KEYS.INVOICES, invoices);
     setItem(STORAGE_KEYS.TRANSACTIONS, [successTxn, ...transactions]);
 
+    billingInvoiceRepository.update(inv.id, {
+      paidAmount: inv.paidAmount,
+      outstandingBalance: inv.outstandingBalance,
+      status: inv.status,
+    }).catch(() => {});
+    paymentTransactionRepository.create(successTxn).catch(() => {});
+
     logAudit(inv.societyId, actor, 'UPDATE', 'SocietyInvoice', inv.id, `Processed online payment of ₹${amountToPay} for ${inv.invoiceNumber}`);
     return { success: true, transaction: successTxn, message: 'Payment processed successfully' };
   },
@@ -325,6 +334,13 @@ export const billingService = {
 
     setItem(STORAGE_KEYS.INVOICES, invoices);
     setItem(STORAGE_KEYS.TRANSACTIONS, [newTxn, ...transactions]);
+
+    billingInvoiceRepository.update(inv.id, {
+      paidAmount: inv.paidAmount,
+      outstandingBalance: inv.outstandingBalance,
+      status: inv.status,
+    }).catch(() => {});
+    paymentTransactionRepository.create(newTxn).catch(() => {});
 
     logAudit(inv.societyId, actor, 'UPDATE', 'SocietyInvoice', inv.id, `Recorded manual ${method} payment of ₹${amount} for ${inv.invoiceNumber}`);
     return inv;

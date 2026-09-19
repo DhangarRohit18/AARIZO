@@ -1,8 +1,10 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { guestStayService } from '../../../services/guestStayService';
 import type { GuestRoom, GuestReservation, GuestStaySettings } from '../../../types/guestStay';
 import { Modal } from '../../../components/ui/Modal';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 import {
   Hotel,
   Calendar,
@@ -158,65 +160,98 @@ export const ResidentGuestStayPage: React.FC = () => {
       <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
         <h2 className="text-lg font-bold text-slate-900">My Guest Stay Reservations</h2>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
-              <tr>
-                <th className="p-3">Reservation #</th>
-                <th className="p-3">Suite Name</th>
-                <th className="p-3">Primary Guest</th>
-                <th className="p-3">Dates</th>
-                <th className="p-3">Total Cost</th>
-                <th className="p-3">Status</th>
-                <th className="p-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {myReservations.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="p-4 md:p-6 text-center text-slate-400">You have no active guest room reservations</td>
-                </tr>
-              ) : (
-                myReservations.map(resv => (
-                  <tr key={resv.id} className="hover:bg-slate-50">
-                    <td className="p-3 font-bold text-slate-900">{resv.reservationNumber}</td>
-                    <td className="p-3 font-medium">{resv.roomName} (#{resv.roomNumber})</td>
-                    <td className="p-3">{resv.primaryGuestName} ({resv.primaryGuestPhone})</td>
-                    <td className="p-3">{resv.checkInDate} to {resv.checkOutDate} ({resv.totalNights} nights)</td>
-                    <td className="p-3 font-bold text-slate-900">â‚¹{resv.totalPrice}</td>
-                    <td className="p-3">
-                      <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
-                        resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
-                        resv.status === 'CHECKED_IN' ? 'bg-indigo-100 text-indigo-800' :
-                        resv.status === 'CHECKED_OUT' ? 'bg-slate-100 text-slate-700' :
-                        'bg-rose-100 text-rose-800'
-                      }`}>
-                        {resv.status}
-                      </span>
-                    </td>
-                    <td className="p-3 text-right flex justify-end gap-2">
-                      {(resv.status === 'CONFIRMED' || resv.status === 'CHECKED_IN') && (
-                        <button
-                          onClick={() => setViewingQRResv(resv)}
-                          className="px-3 py-1.5 border border-indigo-200 text-indigo-700 hover:bg-indigo-50 text-xs font-semibold rounded-lg flex items-center gap-1"
-                        >
-                          <QrCode className="w-3.5 h-3.5" /> Gate QR Pass
-                        </button>
-                      )}
-                      {resv.status === 'CONFIRMED' && (
-                        <button
-                          onClick={() => handleCancelReservation(resv.id)}
-                          className="px-2.5 py-1 text-xs border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-lg flex items-center gap-1"
-                        >
-                          <XCircle className="w-3.5 h-3.5" /> Cancel
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+        <div className="mt-4">
+          <DataTable
+            columns={[
+              { key: 'reservationNumber', header: 'Reservation #' },
+              { key: 'roomName', header: 'Suite Name', render: (resv: GuestReservation) => `${resv.roomName} (#${resv.roomNumber})` },
+              { key: 'primaryGuestName', header: 'Primary Guest', render: (resv: GuestReservation) => `${resv.primaryGuestName} (${resv.primaryGuestPhone})` },
+              { key: 'dates', header: 'Dates', render: (resv: GuestReservation) => `${resv.checkInDate} to ${resv.checkOutDate} (${resv.totalNights} nights)` },
+              { key: 'totalPrice', header: 'Total Cost', render: (resv: GuestReservation) => `₹${resv.totalPrice}` },
+              {
+                key: 'status',
+                header: 'Status',
+                render: (resv: GuestReservation) => (
+                  <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
+                    resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
+                    resv.status === 'CHECKED_IN' ? 'bg-indigo-100 text-indigo-800' :
+                    resv.status === 'CHECKED_OUT' ? 'bg-slate-100 text-slate-700' :
+                    'bg-rose-100 text-rose-800'
+                  }`}>
+                    {resv.status}
+                  </span>
+                )
+              },
+              {
+                key: 'actions',
+                header: 'Actions',
+                render: (resv: GuestReservation) => (
+                  <div className="flex justify-end gap-2">
+                    {(resv.status === 'CONFIRMED' || resv.status === 'CHECKED_IN') && (
+                      <button
+                        onClick={() => setViewingQRResv(resv)}
+                        className="px-3 py-1.5 border border-indigo-200 text-indigo-700 hover:bg-indigo-50 text-xs font-semibold rounded-lg flex items-center gap-1"
+                      >
+                        <QrCode className="w-3.5 h-3.5" /> Gate QR Pass
+                      </button>
+                    )}
+                    {resv.status === 'CONFIRMED' && (
+                      <button
+                        onClick={() => handleCancelReservation(resv.id)}
+                        className="px-2.5 py-1 text-xs border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-lg flex items-center gap-1"
+                      >
+                        <XCircle className="w-3.5 h-3.5" /> Cancel
+                      </button>
+                    )}
+                  </div>
+                )
+              }
+            ]}
+            data={myReservations}
+            keyExtractor={(resv: GuestReservation) => resv.id}
+            pageSize={10}
+            mobileRender={(resv: GuestReservation) => (
+              <MobileDataCard
+                title={`${resv.roomName} (#${resv.roomNumber})`}
+                subtitle={`Res #${resv.reservationNumber} • ${resv.checkInDate} to ${resv.checkOutDate}`}
+                status={
+                  <span className={`px-2 py-0.5 text-[0.65rem] rounded-full font-bold ${
+                    resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
+                    resv.status === 'CHECKED_IN' ? 'bg-indigo-100 text-indigo-800' :
+                    resv.status === 'CHECKED_OUT' ? 'bg-slate-100 text-slate-700' :
+                    'bg-rose-100 text-rose-800'
+                  }`}>
+                    {resv.status}
+                  </span>
+                }
+                attributes={[
+                  { label: 'Primary Guest', value: `${resv.primaryGuestName} (${resv.primaryGuestPhone})` },
+                  { label: 'Duration', value: `${resv.totalNights} nights` },
+                  { label: 'Total Cost', value: `₹${resv.totalPrice}` }
+                ]}
+                actions={
+                  <div className="flex flex-wrap gap-2 w-full mt-2">
+                    {(resv.status === 'CONFIRMED' || resv.status === 'CHECKED_IN') && (
+                      <button
+                        onClick={() => setViewingQRResv(resv)}
+                        className="flex-1 py-1.5 border border-indigo-200 text-indigo-700 bg-indigo-50/50 text-xs font-semibold rounded-lg flex items-center justify-center gap-1 min-h-[44px]"
+                      >
+                        <QrCode className="w-4 h-4" /> Gate QR Pass
+                      </button>
+                    )}
+                    {resv.status === 'CONFIRMED' && (
+                      <button
+                        onClick={() => handleCancelReservation(resv.id)}
+                        className="flex-1 py-1.5 border border-rose-200 text-rose-600 bg-rose-50/50 text-xs font-semibold rounded-lg flex items-center justify-center gap-1 min-h-[44px]"
+                      >
+                        <XCircle className="w-4 h-4" /> Cancel
+                      </button>
+                    )}
+                  </div>
+                }
+              />
+            )}
+          />
         </div>
       </div>
 

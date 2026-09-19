@@ -7,6 +7,7 @@ import type {
   CommunityPost,
   RSVPStatus
 } from '../types/amenity';
+import { amenityRepository, amenityBookingRepository } from '../repositories/amenities/AmenityRepository';
 
 const AMENITIES_STORAGE_KEY = 'communityos_amenities';
 const BOOKINGS_STORAGE_KEY = 'communityos_amenity_bookings';
@@ -236,6 +237,7 @@ class AmenityService {
     }
 
     localStorage.setItem(AMENITIES_STORAGE_KEY, JSON.stringify(items));
+    amenityRepository.create(updatedAmenity).catch(() => {});
     return updatedAmenity;
   }
 
@@ -249,7 +251,9 @@ class AmenityService {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    return this.saveAmenity(newAmenity);
+
+    this.saveAmenity(newAmenity);
+    return newAmenity;
   }
 
   addBlackoutDate(societyId: string, amenityId: string, startDate: string, endDate: string, reason: string): SocietyAmenity {
@@ -415,6 +419,8 @@ class AmenityService {
     allBookings.unshift(newBooking);
     localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(allBookings));
 
+    amenityBookingRepository.create(newBooking).catch(() => {});
+
     return newBooking;
   }
 
@@ -430,6 +436,11 @@ class AmenityService {
     allBookings[index].updatedAt = new Date().toISOString();
 
     localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(allBookings));
+    amenityBookingRepository.update(bookingId, {
+      status,
+      adminNotes,
+    }).catch(() => {});
+
     return allBookings[index];
   }
 

@@ -12,8 +12,20 @@ import type {
   AuditLog,
   AuditAction,
 } from '../types/society';
+import { societyRepository } from '../repositories/societies/SocietyRepository';
+import { towerRepository } from '../repositories/societies/TowerRepository';
+import { flatRepository } from '../repositories/societies/FlatRepository';
+import { residentRepository } from '../repositories/societies/ResidentRepository';
+import {
+  familyMemberRepository,
+  vehicleRepository,
+  staffRepository,
+  vendorRepository,
+  domesticWorkerRepository,
+} from '../repositories/societies/OperationsRepositories';
+import { logAuditEvent } from '../repositories/auditRepository';
 
-// Helper to append audit logs
+// Helper to append audit logs to Firestore and local cache
 export function logAudit(
   societyId: string,
   actor: { id: string; name: string; role: string },
@@ -36,6 +48,19 @@ export function logAudit(
     timestamp: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }),
   };
   db.saveAuditLogs([newLog, ...logs]);
+
+  // Async persist to Firestore audit trail
+  logAuditEvent({
+    societyId,
+    actorId: actor.id,
+    actorRole: actor.role,
+    entityType: targetEntity,
+    entityId: targetId,
+    action,
+    metadata: { description, timestamp: newLog.timestamp }
+  }).catch(() => {
+    // Non-blocking background log
+  });
 }
 
 export const societyService = {
@@ -58,6 +83,8 @@ export const societyService = {
       createdAt: new Date().toISOString().split('T')[0],
     };
     db.saveSocieties([newSoc, ...societies]);
+
+    societyRepository.create(newSoc as any).catch(() => {});
     logAudit(newSoc.id, actor, 'CREATE', 'Society', newSoc.id, `Created society ${newSoc.name} (${newSoc.code})`);
     return newSoc;
   },
@@ -73,6 +100,8 @@ export const societyService = {
 
     societies[index].status = status;
     db.saveSocieties(societies);
+
+    societyRepository.update(id, { status } as any).catch(() => {});
     logAudit(id, actor, 'STATUS_CHANGE', 'Society', id, `Changed society status to ${status}`);
     return societies[index];
   },
@@ -91,6 +120,8 @@ export const societyService = {
       id: `tow-${Date.now()}`,
     };
     db.saveTowers([...towers, newTower]);
+
+    towerRepository.create(newTower).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'Tower', newTower.id, `Created tower ${newTower.name}`);
     return newTower;
   },
@@ -115,8 +146,10 @@ export const societyService = {
     if (tIdx !== -1) {
       towers[tIdx].totalFlats += 1;
       db.saveTowers(towers);
+      towerRepository.update(towers[tIdx].id, { totalFlats: towers[tIdx].totalFlats }).catch(() => {});
     }
 
+    flatRepository.create(newFlat).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'Flat', newFlat.id, `Created flat ${newFlat.flatNumber}`);
     return newFlat;
   },
@@ -137,6 +170,7 @@ export const societyService = {
     residents[index].approvalStatus = status;
     db.saveResidents(residents);
 
+    residentRepository.update(id, { approvalStatus: status }).catch(() => {});
     logAudit(
       residents[index].societyId,
       actor,
@@ -164,6 +198,7 @@ export const societyService = {
       id: `fam-${Date.now()}`,
     };
     db.saveFamilyMembers([...members, newMember]);
+    familyMemberRepository.create(newMember).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'FamilyMember', newMember.id, `Added family member ${newMember.name}`);
     return newMember;
   },
@@ -184,6 +219,7 @@ export const societyService = {
       id: `veh-${Date.now()}`,
     };
     db.saveVehicles([...vehicles, newVehicle]);
+    vehicleRepository.create(newVehicle).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'Vehicle', newVehicle.id, `Registered vehicle ${newVehicle.registrationNumber}`);
     return newVehicle;
   },
@@ -202,6 +238,7 @@ export const societyService = {
       id: `st-${Date.now()}`,
     };
     db.saveStaff([...staffList, newStaff]);
+    staffRepository.create(newStaff).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'Staff', newStaff.id, `Registered ${newStaff.staffType} ${newStaff.name}`);
     return newStaff;
   },
@@ -220,6 +257,7 @@ export const societyService = {
       id: `ven-${Date.now()}`,
     };
     db.saveVendors([...vendors, newVendor]);
+    vendorRepository.create(newVendor).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'Vendor', newVendor.id, `Added vendor ${newVendor.companyName}`);
     return newVendor;
   },
@@ -240,6 +278,7 @@ export const societyService = {
       status: 'OUTSIDE',
     };
     db.saveDomesticWorkers([...list, newWorker]);
+    domesticWorkerRepository.create(newWorker).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'DomesticWorker', newWorker.id, `Registered worker ${newWorker.name} (${newWorker.workRole})`);
     return newWorker;
   },

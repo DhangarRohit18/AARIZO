@@ -5,6 +5,7 @@ import type {
   ReservationStatus,
   RoomType
 } from '../types/guestStay';
+import { guestReservationRepository } from '../repositories/guestStay/GuestStayRepository';
 
 const ROOMS_STORAGE_KEY = 'communityos_guest_rooms';
 const RESERVATIONS_STORAGE_KEY = 'communityos_guest_reservations';
@@ -259,6 +260,8 @@ class GuestStayService {
     items.unshift(newReservation);
     localStorage.setItem(RESERVATIONS_STORAGE_KEY, JSON.stringify(items));
 
+    guestReservationRepository.create(newReservation).catch(() => {});
+
     return newReservation;
   }
 
@@ -273,6 +276,11 @@ class GuestStayService {
     if (adminNotes) items[index].adminNotes = adminNotes;
 
     localStorage.setItem(RESERVATIONS_STORAGE_KEY, JSON.stringify(items));
+    guestReservationRepository.update(reservationId, {
+      status,
+      adminNotes,
+    }).catch(() => {});
+
     return items[index];
   }
 

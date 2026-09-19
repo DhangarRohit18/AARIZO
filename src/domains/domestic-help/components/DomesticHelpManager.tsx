@@ -13,6 +13,8 @@ import type { DomesticWorker, HouseholdAssignment, AttendanceRecord } from '../t
 import { useAuth } from '../../../context/AuthContext';
 import { useRBAC } from '../../../hooks/useRBAC';
 import { realtimeService } from '../../../services/realtimeService';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const DomesticHelpManager: React.FC = () => {
   const { currentUser } = useAuth();
@@ -226,39 +228,50 @@ export const DomesticHelpManager: React.FC = () => {
       {/* Attendance Log Table */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
         <h3 className="text-base font-bold text-slate-800">Attendance Log History</h3>
-        <div className="overflow-x-auto">
-<table className="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr className="bg-slate-50 text-slate-600 border-b font-bold uppercase text-[10px]">
-              <th className="p-3">Staff Name & Type</th>
-              <th className="p-3">Flat & Household</th>
-              <th className="p-3">Entry Time</th>
-              <th className="p-3">Exit Time</th>
-              <th className="p-3">Gate & Verified By</th>
-              <th className="p-3">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {attendanceLogs.map((log) => (
-              <tr key={log.id} className="hover:bg-slate-50">
-                <td className="p-3 font-bold text-slate-800">{log.workerName} ({log.workerType})</td>
-                <td className="p-3 text-slate-600">{log.flatCode || 'Multiple Households'}</td>
-                <td className="p-3 text-emerald-600 font-semibold">{log.entryTime}</td>
-                <td className="p-3 text-slate-500">{log.exitTime || 'Inside'}</td>
-                <td className="p-3 text-slate-500">{log.gateName} ({log.checkedInByGuard})</td>
-                <td className="p-3">
+        <div className="mt-4">
+          <DataTable
+            columns={[
+              { key: 'worker', header: 'Staff Name & Type', render: (log: any) => <span className="font-bold text-slate-800">{log.workerName} ({log.workerType})</span> },
+              { key: 'household', header: 'Flat & Household', render: (log: any) => <span className="text-slate-600">{log.flatCode || 'Multiple Households'}</span> },
+              { key: 'entryTime', header: 'Entry Time', render: (log: any) => <span className="text-emerald-600 font-semibold">{log.entryTime}</span> },
+              { key: 'exitTime', header: 'Exit Time', render: (log: any) => <span className="text-slate-500">{log.exitTime || 'Inside'}</span> },
+              { key: 'gate', header: 'Gate & Verified By', render: (log: any) => <span className="text-slate-500">{log.gateName} ({log.checkedInByGuard})</span> },
+              {
+                key: 'status',
+                header: 'Status',
+                render: (log: any) => (
                   <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${
                     log.status === 'CHECKED_IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'
                   }`}>
                     {log.status}
                   </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                )
+              }
+            ]}
+            data={attendanceLogs}
+            keyExtractor={(log: any) => log.id}
+            pageSize={10}
+            mobileRender={(log: any) => (
+              <MobileDataCard
+                title={`${log.workerName} (${log.workerType})`}
+                subtitle={`Household: ${log.flatCode || 'Multiple'} • Gate: ${log.gateName}`}
+                status={
+                  <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${
+                    log.status === 'CHECKED_IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'
+                  }`}>
+                    {log.status}
+                  </span>
+                }
+                attributes={[
+                  { label: 'Entry Time', value: log.entryTime },
+                  { label: 'Exit Time', value: log.exitTime || 'Inside Community' },
+                  { label: 'Guard Verified', value: log.checkedInByGuard }
+                ]}
+              />
+            )}
+          />
+        </div>
       </div>
-    </div>
     </div>
   );
 };

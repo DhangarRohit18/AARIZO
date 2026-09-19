@@ -18,7 +18,7 @@ import { db, auth } from '../services/firebase/config';
 
 export interface BaseEntity {
   id: string;
-  societyId: string;
+  societyId?: string;
   createdAt?: Timestamp | Date | any;
   updatedAt?: Timestamp | Date | any;
   createdBy?: string;

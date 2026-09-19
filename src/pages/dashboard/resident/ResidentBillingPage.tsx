@@ -1,9 +1,11 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CreditCard, FileText, CheckCircle, AlertTriangle, ShieldCheck, History } from 'lucide-react';
 import { billingService } from '../../../services/billingService';
 import type { SocietyInvoice, PaymentTransaction } from '../../../types/billing';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { ReceiptModal } from '../../../components/billing/ReceiptModal';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const ResidentBillingPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -198,42 +200,45 @@ export const ResidentBillingPage: React.FC = () => {
           <History className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Payment & Transaction History
         </h2>
 
-        <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
-              <tr>
-                <th className="p-3">Txn ID</th>
-                <th className="p-3">Date</th>
-                <th className="p-3">Method</th>
-                <th className="p-3">Amount (â‚¹)</th>
-                <th className="p-3">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-800 dark:text-slate-200">
-              {transactions.map((t) => (
-                <tr key={t.id}>
-                  <td className="p-3 font-semibold text-indigo-600 dark:text-indigo-400">{t.transactionId}</td>
-                  <td className="p-3">{t.paymentDate}</td>
-                  <td className="p-3 font-medium">{t.paymentMethod}</td>
-                  <td className="p-3 font-bold">â‚¹{t.amount.toLocaleString()}</td>
-                  <td className="p-3">
-                    <StatusBadge
-                      variant={t.status === 'SUCCESS' ? 'success' : 'danger'}
-                      label={t.status}
-                    />
-                  </td>
-                </tr>
-              ))}
-
-              {transactions.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="p-4 text-center text-slate-500">
-                    No payment transaction records found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className="mt-4">
+          <DataTable
+            columns={[
+              { key: 'transactionId', header: 'Txn ID', render: (t: PaymentTransaction) => <span className="font-semibold text-indigo-600 dark:text-indigo-400">{t.transactionId}</span> },
+              { key: 'paymentDate', header: 'Date' },
+              { key: 'paymentMethod', header: 'Method', render: (t: PaymentTransaction) => <span className="font-medium">{t.paymentMethod}</span> },
+              { key: 'amount', header: 'Amount (₹)', render: (t: PaymentTransaction) => <span className="font-bold">₹{t.amount.toLocaleString()}</span> },
+              {
+                key: 'status',
+                header: 'Status',
+                render: (t: PaymentTransaction) => (
+                  <StatusBadge
+                    variant={t.status === 'SUCCESS' ? 'success' : 'danger'}
+                    label={t.status}
+                  />
+                )
+              }
+            ]}
+            data={transactions}
+            keyExtractor={(t: PaymentTransaction) => t.id}
+            pageSize={10}
+            mobileRender={(t: PaymentTransaction) => (
+              <MobileDataCard
+                title={`Payment ₹${t.amount.toLocaleString()}`}
+                subtitle={`Txn #${t.transactionId} • ${t.paymentDate}`}
+                status={
+                  <StatusBadge
+                    variant={t.status === 'SUCCESS' ? 'success' : 'danger'}
+                    label={t.status}
+                  />
+                }
+                attributes={[
+                  { label: 'Method', value: t.paymentMethod },
+                  { label: 'Amount', value: `₹${t.amount.toLocaleString()}` },
+                  { label: 'Date', value: t.paymentDate }
+                ]}
+              />
+            )}
+          />
         </div>
       </div>
 

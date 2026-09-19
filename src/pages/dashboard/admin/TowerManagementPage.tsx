@@ -1,11 +1,12 @@
-﻿import React, { useState } from 'react';
-import { Building, Plus, Layers, Home } from 'lucide-react';
+import React, { useState } from 'react';
+import { Building, Plus } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Tower } from '../../../types/society';
 import { DataTable } from '../../../components/ui/DataTable';
 import type { Column } from '../../../components/ui/DataTable';
 import { Modal } from '../../../components/ui/Modal';
 import { Form, FormField } from '../../../components/ui/Form';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const TowerManagementPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -62,84 +63,75 @@ export const TowerManagementPage: React.FC = () => {
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-xs transition shadow-lg shadow-indigo-600/30 w-full sm:w-auto"
+          className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-indigo-700"
         >
-          <Plus className="w-4 h-4" /> Add Tower
+          <Plus size={16} /> Add Tower
         </button>
       </header>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl">
-          <Building className="w-5 h-5 text-indigo-400 mb-2" />
-          <div className="text-2xl font-black text-white">{towers.length}</div>
-          <div className="text-xs text-slate-400">Active Towers</div>
-        </div>
-        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl">
-          <Layers className="w-5 h-5 text-emerald-400 mb-2" />
-          <div className="text-2xl font-black text-white">
-            {towers.reduce((acc, t) => acc + t.totalFloors, 0)}
-          </div>
-          <div className="text-xs text-slate-400">Total Floors Constructed</div>
-        </div>
-        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl">
-          <Home className="w-5 h-5 text-purple-400 mb-2" />
-          <div className="text-2xl font-black text-white">
-            {towers.reduce((acc, t) => acc + t.totalFlats, 0)}
-          </div>
-          <div className="text-xs text-slate-400">Configured Flats</div>
-        </div>
+      <div className="mt-4">
+        <DataTable
+          columns={columns}
+          data={towers}
+          keyExtractor={(t) => t.id}
+          pageSize={10}
+          mobileRender={(t) => (
+            <MobileDataCard
+              title={t.name}
+              subtitle={`Block: ${t.blockCode}`}
+              attributes={[
+                { label: 'Floors', value: t.totalFloors },
+                { label: 'Flats', value: t.totalFlats }
+              ]}
+            />
+          )}
+        />
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 overflow-x-auto">
-        <DataTable columns={columns} data={towers} keyExtractor={(t) => t.id} />
-      </div>
-
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Create New Tower / Block">
+      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Register New Tower">
         <Form onSubmit={handleCreateTower}>
-          <FormField label="Tower Name" required>
-            <input
-              type="text"
-              required
-              value={towerName}
-              onChange={(e) => setTowerName(e.target.value)}
-              placeholder="e.g. Tower D"
-              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-            />
-          </FormField>
-          <FormField label="Block Code" required>
-            <input
-              type="text"
-              required
-              value={blockCode}
-              onChange={(e) => setBlockCode(e.target.value.toUpperCase())}
-              placeholder="e.g. D"
-              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-            />
-          </FormField>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <FormField label="Tower Name">
+              <input
+                type="text"
+                value={towerName}
+                onChange={(e) => setTowerName(e.target.value)}
+                placeholder="e.g. Majestic Heights"
+                className="w-full p-2.5 rounded border border-slate-300 text-slate-900"
+              />
+            </FormField>
+            <FormField label="Block Code">
+              <input
+                type="text"
+                value={blockCode}
+                onChange={(e) => setBlockCode(e.target.value)}
+                placeholder="e.g. A, B, T1"
+                className="w-full p-2.5 rounded border border-slate-300 text-slate-900 uppercase"
+              />
+            </FormField>
+          </div>
           <FormField label="Total Floors">
             <input
               type="number"
-              min={1}
-              max={50}
               value={totalFloors}
               onChange={(e) => setTotalFloors(Number(e.target.value))}
-              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
+              min="1"
+              className="w-full p-2.5 rounded border border-slate-300 text-slate-900 mb-4"
             />
           </FormField>
-          <div className="flex gap-3 mt-4">
+          <div className="flex justify-end gap-2 mt-4">
             <button
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              className="flex-1 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-300"
+              className="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded font-semibold text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 py-2.5 rounded-xl border border-transparent bg-indigo-600 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30"
+              className="px-4 py-2 border-none bg-indigo-600 text-white rounded font-semibold text-sm"
             >
-              Create Tower
+              Save Tower
             </button>
           </div>
         </Form>
@@ -147,4 +139,3 @@ export const TowerManagementPage: React.FC = () => {
     </div>
   );
 };
-

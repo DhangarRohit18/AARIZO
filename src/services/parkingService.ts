@@ -8,6 +8,7 @@ import type {
   RequestType,
 } from '../types/parking';
 import { logAudit } from './societyService';
+import { parkingSlotRepository, parkingRequestRepository } from '../repositories/parking/ParkingRepository';
 
 const STORAGE_KEYS = {
   SLOTS: 'communityos_parking_slots_v3',
@@ -83,6 +84,7 @@ export const parkingService = {
     };
 
     setItem(STORAGE_KEYS.SLOTS, [newSlot, ...slots]);
+    parkingSlotRepository.create(newSlot).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'ParkingSlot', newSlot.id, `Created parking slot ${newSlot.slotNumber} (${newSlot.level})`);
     return newSlot;
   },
@@ -110,6 +112,13 @@ export const parkingService = {
     slots[idx].updatedAt = new Date().toISOString().split('T')[0];
 
     setItem(STORAGE_KEYS.SLOTS, slots);
+    parkingSlotRepository.update(slotId, {
+      assignedFlatId: assignment.flatId,
+      assignedFlatCode: assignment.flatCode,
+      assignedResidentName: assignment.residentName,
+      assignedVehicleNumber: assignment.vehicleNumber.toUpperCase(),
+      qrDataString: slots[idx].qrDataString,
+    }).catch(() => {});
     logAudit(slots[idx].societyId, actor, 'UPDATE', 'ParkingSlot', slotId, `Assigned slot ${slots[idx].slotNumber} to ${assignment.residentName} (${assignment.vehicleNumber})`);
     return slots[idx];
   },
@@ -127,6 +136,9 @@ export const parkingService = {
     slots[idx].updatedAt = new Date().toISOString().split('T')[0];
 
     setItem(STORAGE_KEYS.SLOTS, slots);
+    parkingSlotRepository.update(slotId, {
+      occupancyState,
+    }).catch(() => {});
     logAudit(slots[idx].societyId, actor, 'STATUS_CHANGE', 'ParkingSlot', slotId, `Updated slot ${slots[idx].slotNumber} occupancy state to ${occupancyState}`);
     return slots[idx];
   },
@@ -154,6 +166,7 @@ export const parkingService = {
     };
 
     setItem(STORAGE_KEYS.REQUESTS, [newReq, ...requests]);
+    parkingRequestRepository.create(newReq).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'ParkingRequest', newReq.id, `Submitted ${data.requestType} parking request for vehicle ${data.vehicleNumber}`);
     return newReq;
   },

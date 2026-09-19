@@ -1,8 +1,10 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { guestStayService } from '../../../services/guestStayService';
 import type { GuestRoom, GuestReservation, GuestStaySettings, RoomType } from '../../../types/guestStay';
 import { Modal } from '../../../components/ui/Modal';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 import {
   Hotel,
   Building,
@@ -238,67 +240,95 @@ export const AdminGuestStayPage: React.FC = () => {
           <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
             <h2 className="text-lg font-bold text-slate-900">Resident Stay Reservations</h2>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-600">
-                <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
-                  <tr>
-                    <th className="p-3">Reservation #</th>
-                    <th className="p-3">Room</th>
-                    <th className="p-3">Resident Host</th>
-                    <th className="p-3">Primary Guest</th>
-                    <th className="p-3">Stay Dates</th>
-                    <th className="p-3">Total Price</th>
-                    <th className="p-3">Status</th>
-                    <th className="p-3 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {reservations.length === 0 ? (
-                    <tr>
-                      <td colSpan={8} className="p-4 md:p-6 text-center text-slate-400">No guest stay reservations recorded</td>
-                    </tr>
-                  ) : (
-                    reservations.map(resv => (
-                      <tr key={resv.id} className="hover:bg-slate-50">
-                        <td className="p-3 font-bold text-slate-900">{resv.reservationNumber}</td>
-                        <td className="p-3 font-medium">{resv.roomName} (#{resv.roomNumber})</td>
-                        <td className="p-3">{resv.residentName} ({resv.flatNumber})</td>
-                        <td className="p-3">{resv.primaryGuestName} ({resv.primaryGuestPhone})</td>
-                        <td className="p-3">{resv.checkInDate} to {resv.checkOutDate} ({resv.totalNights} nights)</td>
-                        <td className="p-3 font-bold text-slate-900">â‚¹{resv.totalPrice}</td>
-                        <td className="p-3">
-                          <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
-                            resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
-                            resv.status === 'CHECKED_IN' ? 'bg-indigo-100 text-indigo-800' :
-                            resv.status === 'CHECKED_OUT' ? 'bg-slate-100 text-slate-700' :
-                            'bg-rose-100 text-rose-800'
-                          }`}>
-                            {resv.status}
-                          </span>
-                        </td>
-                        <td className="p-3 text-right flex justify-end gap-1">
-                          {resv.status === 'PENDING_APPROVAL' && (
-                            <>
-                              <button
-                                onClick={() => handleApproveReservation(resv.id)}
-                                className="px-2.5 py-1 bg-emerald-600 text-white text-xs font-bold rounded-lg"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => handleRejectReservation(resv.id)}
-                                className="px-2.5 py-1 bg-rose-600 text-white text-xs font-bold rounded-lg"
-                              >
-                                Reject
-                              </button>
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+            <div className="mt-4">
+              <DataTable
+                columns={[
+                  { key: 'reservationNumber', header: 'Reservation #' },
+                  { key: 'roomName', header: 'Room', render: (resv: GuestReservation) => `${resv.roomName} (#${resv.roomNumber})` },
+                  { key: 'residentName', header: 'Resident Host', render: (resv: GuestReservation) => `${resv.residentName} (${resv.flatNumber})` },
+                  { key: 'primaryGuestName', header: 'Primary Guest', render: (resv: GuestReservation) => `${resv.primaryGuestName} (${resv.primaryGuestPhone})` },
+                  { key: 'dates', header: 'Stay Dates', render: (resv: GuestReservation) => `${resv.checkInDate} to ${resv.checkOutDate} (${resv.totalNights} nights)` },
+                  { key: 'totalPrice', header: 'Total Price', render: (resv: GuestReservation) => `₹${resv.totalPrice}` },
+                  {
+                    key: 'status',
+                    header: 'Status',
+                    render: (resv: GuestReservation) => (
+                      <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
+                        resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
+                        resv.status === 'CHECKED_IN' ? 'bg-indigo-100 text-indigo-800' :
+                        resv.status === 'CHECKED_OUT' ? 'bg-slate-100 text-slate-700' :
+                        'bg-rose-100 text-rose-800'
+                      }`}>
+                        {resv.status}
+                      </span>
+                    )
+                  },
+                  {
+                    key: 'actions',
+                    header: 'Actions',
+                    render: (resv: GuestReservation) => (
+                      resv.status === 'PENDING_APPROVAL' ? (
+                        <div className="flex gap-1 justify-end">
+                          <button
+                            onClick={() => handleApproveReservation(resv.id)}
+                            className="px-2.5 py-1 bg-emerald-600 text-white text-xs font-bold rounded-lg"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => handleRejectReservation(resv.id)}
+                            className="px-2.5 py-1 bg-rose-600 text-white text-xs font-bold rounded-lg"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      ) : null
+                    )
+                  }
+                ]}
+                data={reservations}
+                keyExtractor={(resv: GuestReservation) => resv.id}
+                pageSize={10}
+                mobileRender={(resv: GuestReservation) => (
+                  <MobileDataCard
+                    title={`${resv.roomName} (#${resv.roomNumber})`}
+                    subtitle={`Res #${resv.reservationNumber} • ${resv.checkInDate} to ${resv.checkOutDate}`}
+                    status={
+                      <span className={`px-2 py-0.5 text-[0.65rem] rounded-full font-bold ${
+                        resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
+                        resv.status === 'CHECKED_IN' ? 'bg-indigo-100 text-indigo-800' :
+                        resv.status === 'CHECKED_OUT' ? 'bg-slate-100 text-slate-700' :
+                        'bg-rose-100 text-rose-800'
+                      }`}>
+                        {resv.status}
+                      </span>
+                    }
+                    attributes={[
+                      { label: 'Host', value: `${resv.residentName} (${resv.flatNumber})` },
+                      { label: 'Guest', value: `${resv.primaryGuestName} (${resv.primaryGuestPhone})` },
+                      { label: 'Stay', value: `${resv.totalNights} nights (₹${resv.totalPrice})` }
+                    ]}
+                    actions={
+                      resv.status === 'PENDING_APPROVAL' ? (
+                        <div className="flex gap-2 w-full mt-2">
+                          <button
+                            onClick={() => handleApproveReservation(resv.id)}
+                            className="flex-1 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => handleRejectReservation(resv.id)}
+                            className="flex-1 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      ) : undefined
+                    }
+                  />
+                )}
+              />
             </div>
           </div>
         </>

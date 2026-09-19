@@ -1,7 +1,8 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import type { Parcel, ParcelPickup, ParcelNotification } from '../types';
 import { realtimeService } from '../../../services/realtimeService';
 import { filterBySociety } from '../../../utils/societyIsolation';
+import { parcelRepository } from '../../../repositories/deliveries/ParcelRepository';
 
 const STORAGE_KEY_PARCELS = 'aarizo_parcels_v1';
 const STORAGE_KEY_PICKUPS = 'aarizo_parcel_pickups_v1';
@@ -132,6 +133,7 @@ class ParcelRoomService {
 
     const updated = [newParcel, ...parcels];
     this.setStorage(STORAGE_KEY_PARCELS, updated);
+    parcelRepository.create(newParcel).catch(() => {});
 
     // Create Notification
     const notifs = this.getStorage<ParcelNotification>(STORAGE_KEY_NOTIFS, []);
@@ -191,6 +193,11 @@ class ParcelRoomService {
 
     parcels[targetIndex] = updatedParcel;
     this.setStorage(STORAGE_KEY_PARCELS, parcels);
+    parcelRepository.update(parcelId, {
+      status: 'COLLECTED',
+      pickupTime: nowIso,
+      collectedBy: parcel.residentName,
+    }).catch(() => {});
 
     // Save pickup audit log
     const pickups = this.getStorage<ParcelPickup>(STORAGE_KEY_PICKUPS, []);

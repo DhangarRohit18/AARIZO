@@ -1,8 +1,10 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { housekeepingService } from '../../../services/housekeepingService';
 import type { HousekeepingTask, CommonAreaCategory, GarbagePickupLog } from '../../../types/housekeeping';
 import { Modal } from '../../../components/ui/Modal';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 import {
   Sparkles,
   CheckCircle2,
@@ -279,43 +281,62 @@ export const AdminHousekeepingPage: React.FC = () => {
         /* TAB: GARBAGE PICKUP LOGS */
         <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
           <h2 className="text-lg font-bold text-slate-900 mb-4">Area-Wise Garbage Collection Logs</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
-                <tr>
-                  <th className="p-3">Tower</th>
-                  <th className="p-3">Floor</th>
-                  <th className="p-3">Flat</th>
-                  <th className="p-3">Scheduled Time</th>
-                  <th className="p-3">Resident Confirmed</th>
-                  <th className="p-3">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {garbageLogs.map(log => (
-                  <tr key={log.id} className="hover:bg-slate-50">
-                    <td className="p-3 font-bold text-slate-900">{log.tower}</td>
-                    <td className="p-3">{log.floor}</td>
-                    <td className="p-3">{log.flatNumber}</td>
-                    <td className="p-3">{log.scheduledTime}</td>
-                    <td className="p-3">
-                      {log.confirmedByResident ? (
-                        <span className="text-xs font-bold text-emerald-600">âœ… Confirmed</span>
-                      ) : (
-                        <span className="text-xs text-slate-400">Unconfirmed</span>
-                      )}
-                    </td>
-                    <td className="p-3">
-                      <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
-                        log.status === 'COLLECTED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
-                      }`}>
-                        {log.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-4">
+            <DataTable
+              columns={[
+                { key: 'tower', header: 'Tower' },
+                { key: 'floor', header: 'Floor' },
+                { key: 'flatNumber', header: 'Flat' },
+                { key: 'scheduledTime', header: 'Scheduled Time' },
+                {
+                  key: 'confirmed',
+                  header: 'Resident Confirmed',
+                  render: (log: GarbagePickupLog) => (
+                    log.confirmedByResident ? (
+                      <span className="text-xs font-bold text-emerald-600">✅ Confirmed</span>
+                    ) : (
+                      <span className="text-xs text-slate-400">Unconfirmed</span>
+                    )
+                  )
+                },
+                {
+                  key: 'status',
+                  header: 'Status',
+                  render: (log: GarbagePickupLog) => (
+                    <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
+                      log.status === 'COLLECTED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                    }`}>
+                      {log.status}
+                    </span>
+                  )
+                }
+              ]}
+              data={garbageLogs}
+              keyExtractor={(log: GarbagePickupLog) => log.id}
+              pageSize={10}
+              mobileRender={(log: GarbagePickupLog) => (
+                <MobileDataCard
+                  title={`Tower ${log.tower} • Flat ${log.flatNumber}`}
+                  subtitle={`Floor ${log.floor} • Scheduled: ${log.scheduledTime}`}
+                  status={
+                    <span className={`px-2 py-0.5 text-[0.65rem] rounded-full font-bold ${
+                      log.status === 'COLLECTED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                    }`}>
+                      {log.status}
+                    </span>
+                  }
+                  attributes={[
+                    { label: 'Tower', value: log.tower },
+                    { label: 'Floor', value: log.floor },
+                    { label: 'Flat', value: log.flatNumber },
+                    {
+                      label: 'Resident Confirmation',
+                      value: log.confirmedByResident ? '✅ Confirmed' : 'Unconfirmed'
+                    }
+                  ]}
+                />
+              )}
+            />
           </div>
         </div>
       )}

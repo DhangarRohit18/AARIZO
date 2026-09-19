@@ -4,11 +4,13 @@ import { PrototypeProvider } from './context/PrototypeContext';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { AppRoutes } from './routes';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import './styles/global.css';
 
 export const App: React.FC = () => {
   return (
-    <BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
       <PrototypeProvider>
         <AuthProvider>
           <ToastProvider>
@@ -30,6 +32,7 @@ export const App: React.FC = () => {
         </AuthProvider>
       </PrototypeProvider>
     </BrowserRouter>
+  </ErrorBoundary>
   );
 };
 

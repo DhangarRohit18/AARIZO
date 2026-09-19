@@ -7,6 +7,7 @@ import type {
   TicketStatus,
 } from '../types/maintenance';
 import { logAudit } from './societyService';
+import { maintenanceTicketRepository } from '../repositories/maintenance/MaintenanceTicketRepository';
 
 const STORAGE_KEYS = {
   TICKETS: 'communityos_maintenance_tickets_v5',
@@ -253,6 +254,7 @@ export const maintenanceService = {
     };
 
     setItem(STORAGE_KEYS.TICKETS, [newTicket, ...tickets]);
+    maintenanceTicketRepository.create(newTicket).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'MaintenanceTicket', newTicket.id, `Created ${data.category} request for ${data.flatCode}`);
     return newTicket;
   },
@@ -281,6 +283,14 @@ export const maintenanceService = {
     tickets[idx].updatedAt = new Date().toISOString();
 
     setItem(STORAGE_KEYS.TICKETS, tickets);
+    maintenanceTicketRepository.update(ticketId, {
+      assignedVendorId: tickets[idx].assignedVendorId,
+      assignedVendorName: tickets[idx].assignedVendorName,
+      assignedTechnicianName: tickets[idx].assignedTechnicianName,
+      scheduledVisitDate: tickets[idx].scheduledVisitDate,
+      scheduledVisitTime: tickets[idx].scheduledVisitTime,
+      status: 'ASSIGNED',
+    }).catch(() => {});
     logAudit(tickets[idx].societyId, actor, 'UPDATE', 'MaintenanceTicket', ticketId, `Assigned ticket to ${data.technicianName}`);
     return tickets[idx];
   },
@@ -306,6 +316,12 @@ export const maintenanceService = {
     tickets[idx].updatedAt = new Date().toISOString();
 
     setItem(STORAGE_KEYS.TICKETS, tickets);
+    maintenanceTicketRepository.update(ticketId, {
+      status,
+      serviceNotes: extra.serviceNotes,
+      beforeImages: extra.beforeImages,
+      afterImages: extra.afterImages,
+    }).catch(() => {});
     logAudit(tickets[idx].societyId, actor, 'STATUS_CHANGE', 'MaintenanceTicket', ticketId, `Updated status of ticket ${ticketId} to ${status}`);
     return tickets[idx];
   },

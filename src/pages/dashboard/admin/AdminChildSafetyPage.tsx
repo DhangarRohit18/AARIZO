@@ -10,6 +10,9 @@ import {
   AlertTriangle,
   UserCheck
 } from 'lucide-react';
+import { DataTable } from '../../../components/ui/DataTable';
+import type { Column } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const AdminChildSafetyPage: React.FC = () => {
   const { currentUser } = useAuth();
@@ -42,15 +45,47 @@ export const AdminChildSafetyPage: React.FC = () => {
 
   const activeAlerts = safetyAlerts.filter(a => a.status === 'ACTIVE');
 
+  const childrenColumns: Column<ChildProfile>[] = [
+    { key: 'fullName', header: 'Child Name', sortable: true },
+    { key: 'flatNumber', header: 'Flat', sortable: true },
+    { key: 'dateOfBirth', header: 'DOB / Age' },
+    { key: 'guardians', header: 'Primary Guardian', render: (c) => `${c.guardians[0]?.name} (${c.guardians[0]?.phone})` },
+    { key: 'authorizedPickups', header: 'Authorized Caretakers', render: (c) => `${c.authorizedPickups.length} Person(s)` },
+    { key: 'status', header: 'Status', render: (c) => (
+      <span className={`px-2.5 py-1 text-xs rounded-full font-semibold ${
+        c.status === 'SAFE' ? 'bg-emerald-100 text-emerald-800' :
+        c.status === 'OUT_OF_SOCIETY' ? 'bg-amber-100 text-amber-800' :
+        'bg-rose-100 text-rose-800 animate-pulse'
+      }`}>
+        {c.status}
+      </span>
+    )}
+  ];
+
+  const logColumns: Column<PickupLog>[] = [
+    { key: 'childName', header: 'Child Name' },
+    { key: 'flatNumber', header: 'Flat' },
+    { key: 'pickupPersonName', header: 'Caretaker' },
+    { key: 'gateId', header: 'Gate' },
+    { key: 'timestamp', header: 'Time', render: (l) => new Date(l.timestamp).toLocaleString() },
+    { key: 'status', header: 'Outcome', render: (l) => (
+      <span className={`px-2.5 py-1 text-xs rounded-full font-semibold ${
+        l.status === 'ALLOWED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+      }`}>
+        {l.status}
+      </span>
+    )}
+  ];
+
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="space-y-6 p-4 md:p-6 max-w-7xl mx-auto">
       {/* Active Safety Alert Banner */}
       {activeAlerts.length > 0 && (
         <div className="bg-rose-600 text-white p-5 rounded-2xl shadow-lg border-2 border-rose-400 animate-pulse flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <ShieldAlert className="w-8 h-8 text-white shrink-0 mt-0.5" />
             <div>
-              <h2 className="text-xl font-extrabold tracking-wide uppercase">ðŸš¨ ACTIVE MISSING CHILD ALERT BROADCAST</h2>
+              <h2 className="text-xl font-extrabold tracking-wide uppercase">ACTIVE MISSING CHILD ALERT BROADCAST</h2>
               <div className="mt-1 space-y-1 text-sm font-medium">
                 {activeAlerts.map(alert => (
                   <div key={alert.id}>{alert.message}</div>
@@ -131,98 +166,56 @@ export const AdminChildSafetyPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
-              <tr>
-                <th className="p-3">Child Name</th>
-                <th className="p-3">Flat</th>
-                <th className="p-3">DOB / Age</th>
-                <th className="p-3">Primary Guardian</th>
-                <th className="p-3">Authorized Caretakers</th>
-                <th className="p-3">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filteredChildren.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="p-4 md:p-6 text-center text-slate-400">No children profiles found</td>
-                </tr>
-              ) : (
-                filteredChildren.map(child => (
-                  <tr key={child.id} className="hover:bg-slate-50">
-                    <td className="p-3 font-medium text-slate-900 flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-xs">
-                        {child.fullName.charAt(0)}
-                      </div>
-                      {child.fullName}
-                    </td>
-                    <td className="p-3">{child.flatNumber}</td>
-                    <td className="p-3">{child.dateOfBirth}</td>
-                    <td className="p-3">
-                      {child.guardians[0]?.name} ({child.guardians[0]?.phone})
-                    </td>
-                    <td className="p-3">{child.authorizedPickups.length} Person(s)</td>
-                    <td className="p-3">
-                      <span className={`px-2.5 py-1 text-xs rounded-full font-semibold ${
-                        child.status === 'SAFE' ? 'bg-emerald-100 text-emerald-800' :
-                        child.status === 'OUT_OF_SOCIETY' ? 'bg-amber-100 text-amber-800' :
-                        'bg-rose-100 text-rose-800 animate-pulse'
-                      }`}>
-                        {child.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+        <div className="mt-4">
+          <DataTable
+            columns={childrenColumns}
+            data={filteredChildren}
+            keyExtractor={(c) => c.id}
+            pageSize={10}
+            mobileRender={(c) => (
+              <MobileDataCard
+                title={c.fullName}
+                subtitle={`Flat: ${c.flatNumber}`}
+                status={<span className={`px-2 py-0.5 text-[0.65rem] rounded-full font-bold ${
+                  c.status === 'SAFE' ? 'bg-emerald-100 text-emerald-800' :
+                  c.status === 'OUT_OF_SOCIETY' ? 'bg-amber-100 text-amber-800' :
+                  'bg-rose-100 text-rose-800'
+                }`}>{c.status}</span>}
+                attributes={[
+                  { label: 'Guardian', value: c.guardians[0]?.name },
+                  { label: 'Auth Pickups', value: c.authorizedPickups.length }
+                ]}
+              />
+            )}
+          />
         </div>
       </div>
 
       {/* Pickup Event Audit Logs */}
       <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900 mb-4">Gate Pickup Audit Logs & Incident History</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
-              <tr>
-                <th className="p-3">Child Name</th>
-                <th className="p-3">Flat</th>
-                <th className="p-3">Caretaker / Pickup Person</th>
-                <th className="p-3">Gate</th>
-                <th className="p-3">Time</th>
-                <th className="p-3">Verification Outcome</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {pickupLogs.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="p-4 md:p-6 text-center text-slate-400">No pickup logs recorded</td>
-                </tr>
-              ) : (
-                pickupLogs.map(log => (
-                  <tr key={log.id} className="hover:bg-slate-50">
-                    <td className="p-3 font-medium text-slate-900">{log.childName}</td>
-                    <td className="p-3">{log.flatNumber}</td>
-                    <td className="p-3">{log.pickupPersonName}</td>
-                    <td className="p-3">{log.gateId}</td>
-                    <td className="p-3">{new Date(log.timestamp).toLocaleString()}</td>
-                    <td className="p-3">
-                      <span className={`px-2.5 py-1 text-xs rounded-full font-semibold ${
-                        log.status === 'ALLOWED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
-                      }`}>
-                        {log.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+        <div className="mt-4">
+          <DataTable
+            columns={logColumns}
+            data={pickupLogs}
+            keyExtractor={(l) => l.id}
+            pageSize={10}
+            mobileRender={(l) => (
+              <MobileDataCard
+                title={l.childName}
+                subtitle={l.pickupPersonName}
+                status={<span className={`px-2 py-0.5 text-[0.65rem] rounded-full font-bold ${
+                  l.status === 'ALLOWED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                }`}>{l.status}</span>}
+                attributes={[
+                  { label: 'Flat', value: l.flatNumber },
+                  { label: 'Time', value: new Date(l.timestamp).toLocaleString() }
+                ]}
+              />
+            )}
+          />
         </div>
       </div>
     </div>
   );
 };
-

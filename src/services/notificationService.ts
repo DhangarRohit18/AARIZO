@@ -6,6 +6,7 @@ import type {
   EmailNotificationAdapter,
   SMSNotificationAdapter
 } from '../types/notification';
+import { notificationRepository } from '../repositories/notifications/NotificationRepository';
 
 const NOTIFICATIONS_STORAGE_KEY = 'communityos_notifications';
 
@@ -214,6 +215,19 @@ class NotificationService {
     const items: NotificationItem[] = raw ? JSON.parse(raw) : [];
     items.unshift(newNotif);
     localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(items));
+
+    notificationRepository.create({
+      societyId,
+      eventId: newNotif.id,
+      eventType: newNotif.eventType as any,
+      recipientId: newNotif.recipientUserId,
+      recipientPhone: payload.userPhone,
+      channel: 'IN_APP',
+      title: newNotif.title,
+      body: newNotif.message,
+      status: 'SENT',
+      sentAt: newNotif.createdAt,
+    }).catch(() => {});
 
     // Dispatch Push/Email/SMS adapters
     if (payload.userPhone) {

@@ -8,6 +8,7 @@ import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { Modal } from '../../../components/ui/Modal';
 import { Form, FormField } from '../../../components/ui/Form';
 import { FilterBar } from '../../../components/ui/FilterBar';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const FlatManagementPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -84,7 +85,7 @@ export const FlatManagementPage: React.FC = () => {
 
   return (
     <div style={{ padding: '1.5rem', maxWidth: '1100px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Home size={24} color="#2563eb" />
@@ -99,83 +100,93 @@ export const FlatManagementPage: React.FC = () => {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.6rem 1.2rem',
+            gap: '0.35rem',
             background: '#2563eb',
             color: '#fff',
-            borderRadius: '8px',
             border: 'none',
+            padding: '0.65rem 1rem',
+            borderRadius: '0.5rem',
             fontWeight: 600,
+            fontSize: '0.85rem',
             cursor: 'pointer',
           }}
         >
-          <Plus size={18} /> Add Flat
+          <Plus size={16} /> Add Flat
         </button>
       </header>
 
-      {/* Filter Bar */}
-      <div style={{ marginBottom: '1.25rem' }}>
-        <FilterBar
-          options={[
-            { id: 'ALL', label: 'All Units', count: flats.length },
-            { id: 'OWNER_OCCUPIED', label: 'Owner Occupied', count: flats.filter((f) => f.occupancyStatus === 'OWNER_OCCUPIED').length },
-            { id: 'TENANT_OCCUPIED', label: 'Tenant Occupied', count: flats.filter((f) => f.occupancyStatus === 'TENANT_OCCUPIED').length },
-            { id: 'VACANT', label: 'Vacant', count: flats.filter((f) => f.occupancyStatus === 'VACANT').length },
-          ]}
-          activeFilter={occupancyFilter}
-          onFilterChange={setOccupancyFilter}
-        />
-      </div>
+      <FilterBar
+        options={[
+          { label: 'All Flats', id: 'ALL' },
+          { label: 'Owner Occupied', id: 'OWNER_OCCUPIED' },
+          { label: 'Tenant Occupied', id: 'TENANT_OCCUPIED' },
+          { label: 'Vacant', id: 'VACANT' },
+        ]}
+        activeFilter={occupancyFilter}
+        onFilterChange={setOccupancyFilter}
+      />
 
-      <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem' }}>
-        <DataTable columns={columns} data={filteredFlats} keyExtractor={(f) => f.id} />
+      <div style={{ marginTop: '1.5rem' }}>
+        <DataTable
+          columns={columns}
+          data={filteredFlats}
+          keyExtractor={(item) => item.id}
+          pageSize={10}
+          mobileRender={(f) => (
+            <MobileDataCard
+              title={f.flatNumber}
+              subtitle={f.primaryResidentName || 'Vacant'}
+              status={<StatusBadge label={f.occupancyStatus.replace('_', ' ')} variant={f.occupancyStatus === 'OWNER_OCCUPIED' ? 'success' : f.occupancyStatus === 'TENANT_OCCUPIED' ? 'info' : 'warning'} />}
+              attributes={[
+                { label: 'Tower', value: f.towerName },
+                { label: 'Floor', value: f.floorNumber },
+                { label: 'BHK', value: f.bhkType },
+                { label: 'Phone', value: f.phone || '-' }
+              ]}
+            />
+          )}
+        />
       </div>
 
       <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Register New Flat">
         <Form onSubmit={handleCreateFlat}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <FormField label="Tower" required>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <FormField label="Tower / Block">
               <select
                 value={selectedTowerId}
                 onChange={(e) => setSelectedTowerId(e.target.value)}
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}
+                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
               >
-                {towers.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name} (Block {t.blockCode})
-                  </option>
+                {towers.map(t => (
+                  <option key={t.id} value={t.id}>{t.name}</option>
                 ))}
               </select>
             </FormField>
-
-            <FormField label="Floor Number" required>
+            <FormField label="Floor Number">
               <input
                 type="number"
-                min={1}
                 value={floorNumber}
                 onChange={(e) => setFloorNumber(Number(e.target.value))}
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                min="0"
+                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
               />
             </FormField>
           </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <FormField label="Flat Number" required>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <FormField label="Flat Number">
               <input
                 type="text"
-                required
                 value={flatNumber}
                 onChange={(e) => setFlatNumber(e.target.value)}
-                placeholder="e.g. B-1204"
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                placeholder="e.g. 204"
+                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1', textTransform: 'uppercase' }}
               />
             </FormField>
-
-            <FormField label="BHK Layout">
+            <FormField label="BHK Type">
               <select
                 value={bhkType}
                 onChange={(e) => setBhkType(e.target.value as BHKType)}
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}
+                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
               >
                 <option value="1BHK">1 BHK</option>
                 <option value="2BHK">2 BHK</option>
@@ -185,32 +196,30 @@ export const FlatManagementPage: React.FC = () => {
               </select>
             </FormField>
           </div>
-
-          <FormField label="Occupancy Status">
+          <FormField label="Initial Occupancy Status">
             <select
               value={occupancyStatus}
               onChange={(e) => setOccupancyStatus(e.target.value as OccupancyStatus)}
-              style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}
+              style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
             >
               <option value="OWNER_OCCUPIED">Owner Occupied</option>
               <option value="TENANT_OCCUPIED">Tenant Occupied</option>
               <option value="VACANT">Vacant</option>
             </select>
           </FormField>
-
-          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
             <button
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}
+              style={{ padding: '0.65rem 1rem', border: '1px solid #cbd5e1', background: '#fff', borderRadius: '0.375rem', cursor: 'pointer' }}
             >
               Cancel
             </button>
             <button
               type="submit"
-              style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: 'none', background: '#2563eb', color: '#fff', fontWeight: 600 }}
+              style={{ padding: '0.65rem 1rem', border: 'none', background: '#2563eb', color: '#fff', borderRadius: '0.375rem', fontWeight: 600, cursor: 'pointer' }}
             >
-              Add Flat
+              Register Flat
             </button>
           </div>
         </Form>
@@ -218,4 +227,3 @@ export const FlatManagementPage: React.FC = () => {
     </div>
   );
 };
-

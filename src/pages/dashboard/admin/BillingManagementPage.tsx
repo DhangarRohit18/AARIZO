@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CreditCard,
   Plus,
@@ -17,6 +17,8 @@ import type {
 } from '../../../types/billing';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { ReceiptModal } from '../../../components/billing/ReceiptModal';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const BillingManagementPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -310,35 +312,25 @@ export const BillingManagementPage: React.FC = () => {
           </div>
 
           {/* Table */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
-<table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
-                <tr>
-                  <th className="p-3">Invoice ID</th>
-                  <th className="p-3">Flat & Resident</th>
-                  <th className="p-3">Total (â‚¹)</th>
-                  <th className="p-3">Paid (â‚¹)</th>
-                  <th className="p-3">Balance (â‚¹)</th>
-                  <th className="p-3">Due Date</th>
-                  <th className="p-3">Status</th>
-                  <th className="p-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-800 dark:text-slate-200">
-                {filteredInvoices.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                    <td className="p-3 font-semibold text-indigo-600 dark:text-indigo-400">{inv.invoiceNumber}</td>
-                    <td className="p-3 font-medium">
-                      Flat {inv.flatCode} ({inv.residentName})
-                    </td>
-                    <td className="p-3 font-bold">â‚¹{inv.totalAmount.toLocaleString()}</td>
-                    <td className="p-3 text-emerald-600 dark:text-emerald-400 font-semibold">â‚¹{inv.paidAmount.toLocaleString()}</td>
-                    <td className="p-3 text-rose-600 dark:text-rose-400 font-bold">â‚¹{inv.outstandingBalance.toLocaleString()}</td>
-                    <td className="p-3">{inv.dueDate}</td>
-                    <td className="p-3">
-                      <StatusBadge variant={getStatusVariant(inv.status)} label={inv.status} />
-                    </td>
-                    <td className="p-3 text-right space-x-1.5">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4">
+            <DataTable
+              columns={[
+                { key: 'invoiceNumber', header: 'Invoice ID', render: (inv: SocietyInvoice) => <span className="font-semibold text-indigo-600 dark:text-indigo-400">{inv.invoiceNumber}</span> },
+                { key: 'flatResident', header: 'Flat & Resident', render: (inv: SocietyInvoice) => `Flat ${inv.flatCode} (${inv.residentName})` },
+                { key: 'totalAmount', header: 'Total (₹)', render: (inv: SocietyInvoice) => <span className="font-bold">₹{inv.totalAmount.toLocaleString()}</span> },
+                { key: 'paidAmount', header: 'Paid (₹)', render: (inv: SocietyInvoice) => <span className="text-emerald-600 dark:text-emerald-400 font-semibold">₹{inv.paidAmount.toLocaleString()}</span> },
+                { key: 'balance', header: 'Balance (₹)', render: (inv: SocietyInvoice) => <span className="text-rose-600 dark:text-rose-400 font-bold">₹{inv.outstandingBalance.toLocaleString()}</span> },
+                { key: 'dueDate', header: 'Due Date' },
+                {
+                  key: 'status',
+                  header: 'Status',
+                  render: (inv: SocietyInvoice) => <StatusBadge variant={getStatusVariant(inv.status)} label={inv.status} />
+                },
+                {
+                  key: 'actions',
+                  header: 'Actions',
+                  render: (inv: SocietyInvoice) => (
+                    <div className="space-x-1.5 text-right">
                       <button
                         onClick={() => setReceiptInvoice(inv)}
                         className="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded font-semibold text-[11px]"
@@ -366,11 +358,55 @@ export const BillingManagementPage: React.FC = () => {
                           </button>
                         </>
                       )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+                  )
+                }
+              ]}
+              data={filteredInvoices}
+              keyExtractor={(inv: SocietyInvoice) => inv.id}
+              pageSize={10}
+              mobileRender={(inv: SocietyInvoice) => (
+                <MobileDataCard
+                  title={`Flat ${inv.flatCode} • ${inv.residentName}`}
+                  subtitle={`Invoice #${inv.invoiceNumber} • Due: ${inv.dueDate}`}
+                  status={<StatusBadge variant={getStatusVariant(inv.status)} label={inv.status} />}
+                  attributes={[
+                    { label: 'Total Billed', value: `₹${inv.totalAmount.toLocaleString()}` },
+                    { label: 'Amount Paid', value: `₹${inv.paidAmount.toLocaleString()}` },
+                    { label: 'Outstanding Balance', value: `₹${inv.outstandingBalance.toLocaleString()}` }
+                  ]}
+                  actions={
+                    <div className="flex flex-wrap gap-2 w-full mt-2">
+                      <button
+                        onClick={() => setReceiptInvoice(inv)}
+                        className="flex-1 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-lg min-h-[44px]"
+                      >
+                        Receipt
+                      </button>
+                      {inv.outstandingBalance > 0 && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setManualInvoice(inv);
+                              setManualAmount(inv.outstandingBalance);
+                            }}
+                            className="flex-1 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                          >
+                            Mark Paid
+                          </button>
+                          <button
+                            onClick={() => setPenaltyInvoice(inv)}
+                            className="flex-1 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                          >
+                            + Charge
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  }
+                />
+              )}
+            />
           </div>
         </div>
       )}
@@ -399,49 +435,71 @@ export const BillingManagementPage: React.FC = () => {
 
       {/* Tab 3: Transactions & Refunds */}
       {activeTab === 'TRANSACTIONS' && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
-<table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
-              <tr>
-                <th className="p-3">Txn ID</th>
-                <th className="p-3">Invoice</th>
-                <th className="p-3">Flat & Resident</th>
-                <th className="p-3">Amount (â‚¹)</th>
-                <th className="p-3">Method</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Gateway Ref</th>
-                <th className="p-3 text-right">Refund Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-800 dark:text-slate-200">
-              {transactions.map((t) => (
-                <tr key={t.id}>
-                  <td className="p-3 font-semibold text-indigo-600 dark:text-indigo-400">{t.transactionId}</td>
-                  <td className="p-3">{t.invoiceNumber}</td>
-                  <td className="p-3">Flat {t.flatCode} ({t.residentName})</td>
-                  <td className="p-3 font-bold">â‚¹{t.amount.toLocaleString()}</td>
-                  <td className="p-3 font-semibold">{t.paymentMethod}</td>
-                  <td className="p-3">
-                    <StatusBadge
-                      variant={t.status === 'SUCCESS' ? 'success' : t.status === 'REFUNDED' ? 'purple' : 'danger'}
-                      label={t.status}
-                    />
-                  </td>
-                  <td className="p-3 text-slate-500 text-[11px]">{t.gatewayReference || 'N/A'}</td>
-                  <td className="p-3 text-right">
-                    {t.status === 'SUCCESS' && (
-                      <button
-                        onClick={() => handleRefund(t)}
-                        className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded font-semibold text-[11px]"
-                      >
-                        Refund
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4">
+          <DataTable
+            columns={[
+              { key: 'transactionId', header: 'Txn ID', render: (t: PaymentTransaction) => <span className="font-semibold text-indigo-600 dark:text-indigo-400">{t.transactionId}</span> },
+              { key: 'invoiceNumber', header: 'Invoice' },
+              { key: 'flatResident', header: 'Flat & Resident', render: (t: PaymentTransaction) => `Flat ${t.flatCode} (${t.residentName})` },
+              { key: 'amount', header: 'Amount (₹)', render: (t: PaymentTransaction) => <span className="font-bold">₹{t.amount.toLocaleString()}</span> },
+              { key: 'paymentMethod', header: 'Method' },
+              {
+                key: 'status',
+                header: 'Status',
+                render: (t: PaymentTransaction) => (
+                  <StatusBadge
+                    variant={t.status === 'SUCCESS' ? 'success' : t.status === 'REFUNDED' ? 'purple' : 'danger'}
+                    label={t.status}
+                  />
+                )
+              },
+              { key: 'gatewayReference', header: 'Gateway Ref', render: (t: PaymentTransaction) => t.gatewayReference || 'N/A' },
+              {
+                key: 'actions',
+                header: 'Refund Action',
+                render: (t: PaymentTransaction) => (
+                  t.status === 'SUCCESS' ? (
+                    <button
+                      onClick={() => handleRefund(t)}
+                      className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded font-semibold text-[11px]"
+                    >
+                      Refund
+                    </button>
+                  ) : null
+                )
+              }
+            ]}
+            data={transactions}
+            keyExtractor={(t: PaymentTransaction) => t.id}
+            pageSize={10}
+            mobileRender={(t: PaymentTransaction) => (
+              <MobileDataCard
+                title={`Txn #${t.transactionId} • Flat ${t.flatCode}`}
+                subtitle={`Invoice: ${t.invoiceNumber} • Resident: ${t.residentName}`}
+                status={
+                  <StatusBadge
+                    variant={t.status === 'SUCCESS' ? 'success' : t.status === 'REFUNDED' ? 'purple' : 'danger'}
+                    label={t.status}
+                  />
+                }
+                attributes={[
+                  { label: 'Amount', value: `₹${t.amount.toLocaleString()}` },
+                  { label: 'Payment Method', value: t.paymentMethod },
+                  { label: 'Gateway Reference', value: t.gatewayReference || 'N/A' }
+                ]}
+                actions={
+                  t.status === 'SUCCESS' ? (
+                    <button
+                      onClick={() => handleRefund(t)}
+                      className="w-full py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                    >
+                      Process Refund
+                    </button>
+                  ) : undefined
+                }
+              />
+            )}
+          />
         </div>
       )}
 

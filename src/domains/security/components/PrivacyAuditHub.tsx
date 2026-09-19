@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { privacyAuditEngine } from '../services/privacyAuditEngine';
 import type { StructuralAuditLog, AuditActionType } from '../types/auditTypes';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const PrivacyAuditHub: React.FC = () => {
   const [logs, setLogs] = useState<StructuralAuditLog[]>([]);
@@ -145,63 +147,105 @@ export const PrivacyAuditHub: React.FC = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
-            <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
-              <tr>
-                <th className="p-3">Timestamp</th>
-                <th className="p-3">Actor & Role</th>
-                <th className="p-3">Action</th>
-                <th className="p-3">Entity Target</th>
-                <th className="p-3">10-Point Schema State</th>
-                <th className="p-3 text-right">Details</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 font-medium">
-              {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-50 transition">
-                  <td className="p-3 font-bold text-slate-800 flex items-center gap-1.5">
+        <div className="mt-4">
+          <DataTable
+            columns={[
+              {
+                key: 'timestamp',
+                header: 'Timestamp',
+                render: (log: StructuralAuditLog) => (
+                  <span className="font-bold text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
                     <Clock size={12} className="text-slate-400" />
                     {new Date(log.timestamp).toLocaleString('en-IN')}
-                  </td>
-
-                  <td className="p-3">
+                  </span>
+                )
+              },
+              {
+                key: 'actor',
+                header: 'Actor & Role',
+                render: (log: StructuralAuditLog) => (
+                  <div>
                     <div className="font-bold text-slate-900">{log.actorName}</div>
                     <span className="text-[10px] text-indigo-600 font-semibold">{log.role}</span>
-                  </td>
-
-                  <td className="p-3">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                      {log.action}
-                    </span>
-                  </td>
-
-                  <td className="p-3">
+                  </div>
+                )
+              },
+              {
+                key: 'action',
+                header: 'Action',
+                render: (log: StructuralAuditLog) => (
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    {log.action}
+                  </span>
+                )
+              },
+              {
+                key: 'entity',
+                header: 'Entity Target',
+                render: (log: StructuralAuditLog) => (
+                  <div>
                     <div className="font-bold text-slate-800">{log.entity}</div>
                     <span className="text-[10px] text-slate-400">ID: {log.entityId}</span>
-                  </td>
-
-                  <td className="p-3">
+                  </div>
+                )
+              },
+              {
+                key: 'state',
+                header: '10-Point Schema State',
+                render: (log: StructuralAuditLog) => (
+                  <div>
                     <div className="text-[11px] font-mono text-slate-600">
                       {log.beforeState ? `Before: ${JSON.stringify(log.beforeState)}` : 'Before: null'}
                     </div>
                     <div className="text-[11px] font-mono text-emerald-700 font-bold mt-0.5">
                       {log.afterState ? `After: ${JSON.stringify(log.afterState)}` : 'After: null'}
                     </div>
-                  </td>
-
-                  <td className="p-3 text-right">
-                    <button
-                      onClick={() => setActiveLogModal(log)}
-                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[11px] font-bold"
-                    >
-                      View Raw JSON
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                )
+              },
+              {
+                key: 'actions',
+                header: 'Details',
+                render: (log: StructuralAuditLog) => (
+                  <button
+                    onClick={() => setActiveLogModal(log)}
+                    className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[11px] font-bold"
+                  >
+                    View Raw JSON
+                  </button>
+                )
+              }
+            ]}
+            data={logs}
+            keyExtractor={(log: StructuralAuditLog) => log.id}
+            pageSize={10}
+            mobileRender={(log: StructuralAuditLog) => (
+              <MobileDataCard
+                title={`${log.actorName} (${log.role})`}
+                subtitle={`${new Date(log.timestamp).toLocaleString('en-IN')} • Target: ${log.entity}`}
+                status={
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    {log.action}
+                  </span>
+                }
+                attributes={[
+                  { label: 'Target Entity', value: `${log.entity} (${log.entityId})` },
+                  {
+                    label: 'State Change',
+                    value: log.afterState ? JSON.stringify(log.afterState) : 'null'
+                  }
+                ]}
+                actions={
+                  <button
+                    onClick={() => setActiveLogModal(log)}
+                    className="w-full py-1.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-lg min-h-[44px]"
+                  >
+                    View Raw 10-Point Schema JSON
+                  </button>
+                }
+              />
+            )}
+          />
         </div>
       </div>
 

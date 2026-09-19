@@ -8,6 +8,7 @@ import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { Modal } from '../../../components/ui/Modal';
 import { Form, FormField } from '../../../components/ui/Form';
 import { VendorPerformanceHub } from '../../../domains/vendors';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const VendorManagementPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -75,14 +76,14 @@ export const VendorManagementPage: React.FC = () => {
 
   return (
     <div style={{ padding: '1.5rem', maxWidth: '1100px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <ShoppingBag size={24} color="#2563eb" />
-            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Approved Vendors & Service Providers</h1>
+            <ShoppingBag size={24} color="#8b5cf6" />
+            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Vendor Management & Procurement</h1>
           </div>
           <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
-            Manage commercial supply vendors, maintenance contracts, and gate dispatch permissions.
+            Manage society suppliers, contractors, and service partners.
           </p>
         </div>
         <button
@@ -90,95 +91,102 @@ export const VendorManagementPage: React.FC = () => {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.6rem 1.2rem',
-            background: '#2563eb',
+            gap: '0.35rem',
+            background: '#8b5cf6',
             color: '#fff',
-            borderRadius: '8px',
             border: 'none',
+            padding: '0.65rem 1rem',
+            borderRadius: '0.5rem',
             fontWeight: 600,
+            fontSize: '0.85rem',
             cursor: 'pointer',
           }}
         >
-          <Plus size={18} /> Register Vendor
+          <Plus size={16} /> Onboard Vendor
         </button>
       </header>
 
       <div style={{ marginBottom: '2rem' }}>
-        <VendorPerformanceHub />
-      </div>
-
-      <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem' }}>
-        <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 1rem 0', color: '#0f172a' }}>
-          Vendor Directory & Dispatch Roster
-        </h2>
-        <DataTable columns={columns} data={vendors} keyExtractor={(v) => v.id} />
-      </div>
-
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Register Approved Society Vendor">
-        <Form onSubmit={handleCreateVendor}>
-          <FormField label="Company / Vendor Name" required>
-            <input
-              type="text"
-              required
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="e.g. AquaPure Mineral Water"
-              style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+        <DataTable
+          columns={columns}
+          data={vendors}
+          keyExtractor={(v) => v.id}
+          pageSize={10}
+          mobileRender={(v) => (
+            <MobileDataCard
+              title={v.companyName}
+              subtitle={v.category}
+              status={<StatusBadge label={v.contractStatus} variant={v.contractStatus === 'ACTIVE' ? 'success' : 'danger'} />}
+              attributes={[
+                { label: 'Contact', value: `${v.contactPerson} (${v.phone})` },
+                { label: 'Expiry', value: v.contractExpiryDate }
+              ]}
             />
-          </FormField>
+          )}
+        />
+      </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+      <VendorPerformanceHub />
+
+      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Onboard New Vendor">
+        <Form onSubmit={handleCreateVendor}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <FormField label="Company Name">
+              <input
+                type="text"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="e.g. Pure Aqua Solutions"
+                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
+              />
+            </FormField>
             <FormField label="Service Category">
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as VendorCategory)}
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}
+                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
               >
                 <option value="WATER_SUPPLY">Water Supply</option>
                 <option value="WASTE_MANAGEMENT">Waste Management</option>
-                <option value="INTERNET">ISP / Telecom</option>
                 <option value="ELEVATOR_MAINTENANCE">Elevator Maintenance</option>
                 <option value="SECURITY_AGENCY">Security Agency</option>
+                <option value="LANDSCAPING">Landscaping</option>
               </select>
             </FormField>
-
-            <FormField label="Contact Person" required>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <FormField label="Contact Person">
               <input
                 type="text"
-                required
                 value={contactPerson}
                 onChange={(e) => setContactPerson(e.target.value)}
-                placeholder="e.g. Ramesh Gupta"
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                placeholder="e.g. Ramesh Kumar"
+                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
+              />
+            </FormField>
+            <FormField label="Phone Number">
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="e.g. +91 9876543210"
+                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
               />
             </FormField>
           </div>
-
-          <FormField label="Phone Number" required>
-            <input
-              type="tel"
-              required
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="10-digit phone"
-              style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-            />
-          </FormField>
-
-          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
             <button
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}
+              style={{ padding: '0.65rem 1rem', border: '1px solid #cbd5e1', background: '#fff', borderRadius: '0.375rem', cursor: 'pointer' }}
             >
               Cancel
             </button>
             <button
               type="submit"
-              style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: 'none', background: '#2563eb', color: '#fff', fontWeight: 600 }}
+              style={{ padding: '0.65rem 1rem', border: 'none', background: '#8b5cf6', color: '#fff', borderRadius: '0.375rem', fontWeight: 600, cursor: 'pointer' }}
             >
-              Register Vendor
+              Onboard Vendor
             </button>
           </div>
         </Form>
@@ -186,4 +194,3 @@ export const VendorManagementPage: React.FC = () => {
     </div>
   );
 };
-

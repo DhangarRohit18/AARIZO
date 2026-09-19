@@ -3,6 +3,8 @@ import { useAuth } from '../../../context/AuthContext';
 import { amenityService } from '../../../services/amenityService';
 import type { SocietyAmenity, AmenityBooking, AmenityType } from '../../../types/amenity';
 import { Modal } from '../../../components/ui/Modal';
+import { DataTable } from '../../../components/ui/DataTable';
+import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 import {
   Sparkles,
   Clock,
@@ -328,49 +330,48 @@ export const AdminAmenityManagementPage: React.FC = () => {
       {/* Booking History Table */}
       <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900 mb-4">All Resident Amenity Bookings</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
-              <tr>
-                <th className="p-3">Amenity</th>
-                <th className="p-3">Resident</th>
-                <th className="p-3">Flat</th>
-                <th className="p-3">Date</th>
-                <th className="p-3">Time</th>
-                <th className="p-3">Guests</th>
-                <th className="p-3">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {bookings.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="p-4 md:p-6 text-center text-slate-400">No bookings recorded yet</td>
-                </tr>
-              ) : (
-                bookings.map(bk => (
-                  <tr key={bk.id} className="hover:bg-slate-50">
-                    <td className="p-3 font-medium text-slate-900">{bk.amenityName}</td>
-                    <td className="p-3">{bk.residentName}</td>
-                    <td className="p-3">{bk.flatNumber}</td>
-                    <td className="p-3">{bk.bookingDate}</td>
-                    <td className="p-3">{bk.startTime} - {bk.endTime}</td>
-                    <td className="p-3">{bk.guestCount}</td>
-                    <td className="p-3">
-                      <span className={`px-2.5 py-1 text-xs rounded-full font-semibold ${
-                        bk.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
-                        bk.status === 'PENDING' ? 'bg-amber-100 text-amber-800' :
-                        bk.status === 'REJECTED' ? 'bg-rose-100 text-rose-800' :
-                        'bg-slate-100 text-slate-600'
-                      }`}>
-                        {bk.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))
+        <div className="mt-4">
+            <DataTable
+              columns={[
+                { key: 'amenityName', header: 'Amenity' },
+                { key: 'residentName', header: 'Resident' },
+                { key: 'flatNumber', header: 'Flat' },
+                { key: 'date', header: 'Date' },
+                { key: 'timeSlot', header: 'Time' },
+                { key: 'guestsCount', header: 'Guests', render: (b: any) => `${b.guestsCount} Guest(s)` },
+                { key: 'status', header: 'Status', render: (b: any) => (
+                  <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
+                          b.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
+                          b.status === 'PENDING' ? 'bg-amber-100 text-amber-800' :
+                          b.status === 'CANCELLED' ? 'bg-slate-100 text-slate-700' :
+                          'bg-rose-100 text-rose-800'
+                        }`}>
+                          {b.status}
+                        </span>
+                )}
+              ]}
+              data={bookings}
+              keyExtractor={(b: any) => b.id}
+              pageSize={10}
+              mobileRender={(b: any) => (
+                <MobileDataCard
+                  title={b.amenityName}
+                  subtitle={`${b.date} - ${b.timeSlot}`}
+                  status={<span className={`px-2 py-0.5 text-[0.65rem] rounded-full font-bold ${
+                          b.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
+                          b.status === 'PENDING' ? 'bg-amber-100 text-amber-800' :
+                          b.status === 'CANCELLED' ? 'bg-slate-100 text-slate-700' :
+                          'bg-rose-100 text-rose-800'
+                        }`}>{b.status}</span>}
+                  attributes={[
+                    { label: 'Resident', value: `${b.residentName} (${b.flatNumber})` },
+                    { label: 'Guests', value: b.guestsCount }
+                  ]}
+                />
               )}
-            </tbody>
-          </table>
-        </div>
+            />
+          </div>
+
       </div>
 
       {/* Modal: Create Amenity */}

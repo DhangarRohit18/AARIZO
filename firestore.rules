@@ -66,6 +66,231 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // --- Societies Collection --- //
+    match /societies/{societyDocId} {
+      allow read: if isAuthenticated() && (isAdmin() || isSocietyMatch(societyDocId));
+      allow create, update, delete: if isAdmin();
+    }
+
+    // --- Towers Collection --- //
+    match /towers/{towerId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (isAdmin() || isSecretary());
+    }
+
+    // --- Flats Collection --- //
+    match /flats/{flatId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (isAdmin() || isSecretary());
+    }
+
+    // --- Residents Collection --- //
+    match /residents/{residentId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (isAdmin() || isSecretary());
+    }
+
+    // --- Family Members Collection --- //
+    match /familyMembers/{memberId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isResident() && isOwner(request.resource.data.residentId))
+      );
+    }
+
+    // --- Vehicles Collection --- //
+    match /vehicles/{vehicleId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard() || (isResident() && isOwner(request.resource.data.residentId))
+      );
+    }
+
+    // --- Staff Collection --- //
+    match /staff/{staffId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager()
+      );
+    }
+
+    // --- Domestic Workers Collection --- //
+    match /domesticWorkers/{workerId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard()
+      );
+    }
+
+    // --- Vendors Collection --- //
+    match /vendors/{vendorId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager()
+      );
+    }
+
+    // --- Amenities Collection --- //
+    match /amenities/{amenityId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager()
+      );
+    }
+
+    // --- Amenity Bookings Collection --- //
+    match /amenityBookings/{bookingId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager() || (isResident() && isOwner(resource.data.residentId))
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isResident() && isOwner(request.resource.data.residentId))
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager() ||
+        (isResident() && isOwner(resource.data.residentId) && request.resource.data.status == 'CANCELLED')
+      );
+      allow delete: if isAdmin();
+    }
+
+    // --- Visitor Passes Collection --- //
+    match /visitorPasses/{passId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager() || isGuard() || (isResident() && isOwner(resource.data.residentId))
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard() || (isResident() && isOwner(request.resource.data.residentId))
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard() ||
+        (isResident() && isOwner(resource.data.residentId) && request.resource.data.status == 'CANCELLED')
+      );
+      allow delete: if isAdmin();
+    }
+
+    // --- Guest Rooms & Reservations --- //
+    match /guestRooms/{roomId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary()
+      );
+    }
+
+    match /guestReservations/{reservationId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isResident() && isOwner(resource.data.residentId))
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isResident() && isOwner(request.resource.data.residentId))
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() ||
+        (isResident() && isOwner(resource.data.residentId) && request.resource.data.status == 'CANCELLED')
+      );
+      allow delete: if isAdmin();
+    }
+
+    // --- Billing Cycles & Invoices --- //
+    match /billingCycles/{cycleId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary()
+      );
+    }
+
+    match /billingInvoices/{invoiceId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isCommittee() || (isResident() && isOwner(resource.data.residentId))
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary()
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() ||
+        (isResident() && isOwner(resource.data.residentId) &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'paidAmount', 'paymentMode', 'paidAt', 'updatedAt']))
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /billingTransactions/{txId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isCommittee() || (isResident() && isOwner(resource.data.residentId))
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isResident() && isOwner(request.resource.data.residentId))
+      );
+      allow update, delete: if isAdmin() || isSecretary();
+    }
+
+    // --- Maintenance Tickets --- //
+    match /maintenanceTickets/{ticketId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager() || (isResident() && isOwner(resource.data.residentId))
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isResident() && isOwner(request.resource.data.residentId))
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager() ||
+        (isResident() && isOwner(resource.data.residentId) &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'feedbackNotes', 'updatedAt']) &&
+         request.resource.data.status in ['CLOSED', 'REOPENED'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // --- Housekeeping Tasks & Logs --- //
+    match /housekeepingTasks/{taskId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager()
+      );
+    }
+
+    // --- Parking Slots & Requests --- //
+    match /parkingSlots/{slotId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create, update, delete: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard()
+      );
+    }
+
+    match /parkingRequests/{requestId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isResident() && isOwner(resource.data.residentId))
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isResident() && isOwner(request.resource.data.residentId))
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() ||
+        (isResident() && isOwner(resource.data.residentId) && request.resource.data.status == 'CANCELLED')
+      );
+      allow delete: if isAdmin();
+    }
+
+    // --- Child Safety --- //
+    match /children/{childId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard() || (isResident() && isOwner(resource.data.residentId))
+      );
+      allow create, update: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isResident() && isOwner(request.resource.data.residentId))
+      );
+      allow delete: if isAdmin() || (isResident() && isOwner(resource.data.residentId));
+    }
+
+    // --- Emergency / Safety Command --- //
+    match /emergencyIncidents/{incidentId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId);
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard() || isFacilityManager()
+      );
+      allow delete: if isAdmin();
+    }
+
     // --- Complaints Collection --- //
     match /complaints/{complaintId} {
       // 7. Cross-society complaint read → denied
@@ -169,6 +394,31 @@ service cloud.firestore {
       allow write: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
         isAdmin() || isSecretary()
       );
+    }
+
+    // --- Notifications Collection --- //
+    match /notifications/{notifId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isResident() && request.auth.uid == resource.data.recipientId)
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isGuard() || isFacilityManager()
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() ||
+        (request.auth.uid == resource.data.recipientId &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'isRead', 'readAt']))
+      );
+      allow delete: if isAdmin();
+    }
+
+    // --- Audit Logs Collection (Append-only by authorized actors) --- //
+    match /auditLogs/{logId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isCommittee()
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId);
+      allow update, delete: if false; // Append-only immutable audit trail
     }
 
     // --- QR Tokens --- //
