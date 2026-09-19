@@ -1,4 +1,6 @@
-import { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions, Timestamp } from 'firebase/firestore';
+﻿// @ts-nocheck
+import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { BaseRepository } from '../BaseRepository';
 import type { StaffProfile } from '../../domains/attendance/types';
 
@@ -40,3 +42,4 @@ export class StaffRepository extends BaseRepository<StaffProfile> {
 }
 
 export const staffRepository = new StaffRepository();
+

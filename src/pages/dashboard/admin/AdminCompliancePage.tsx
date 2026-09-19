@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { AssetComplianceHub } from '../../../domains/compliance';
 
 export const AdminCompliancePage: React.FC = () => {
@@ -17,3 +17,4 @@ export const AdminCompliancePage: React.FC = () => {
 };
 
 export default AdminCompliancePage;
+

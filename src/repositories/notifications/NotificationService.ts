@@ -2,8 +2,7 @@ import { notificationRepository } from './NotificationRepository';
 import { whatsAppAdapter } from '../../domains/notifications/adapters/WhatsAppAdapter';
 import { pushAdapter } from '../../domains/notifications/adapters/PushAdapter';
 import { smsAdapter } from '../../domains/notifications/adapters/SMSAdapter';
-import type { NotificationPayload, NotificationRecord } from '../../domains/notifications/types';
-import { getDocs, query, where, collection } from 'firebase/firestore';
+import type { NotificationPayload, NotificationRecord } from '../../domains/notifications/types/index';
 
 export class NotificationService {
   

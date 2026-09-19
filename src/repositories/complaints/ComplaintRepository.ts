@@ -1,4 +1,5 @@
-import { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions, Timestamp } from 'firebase/firestore';
+﻿import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { BaseRepository } from '../BaseRepository';
 import type { Complaint } from '../../domains/complaints/types';
 
@@ -15,7 +16,7 @@ export class ComplaintRepository extends BaseRepository<Complaint> {
         
         // Ensure dates are converted properly if they exist as strings
         // Convert string dates back to Timestamp for precise Firestore querying
-        let parsedDueAt = data.dueAt;
+        let parsedDueAt: any = data.dueAt;
         if (typeof data.dueAt === 'string' && data.dueAt.length > 0) {
           parsedDueAt = Timestamp.fromDate(new Date(data.dueAt));
         }
@@ -36,7 +37,6 @@ export class ComplaintRepository extends BaseRepository<Complaint> {
         const updatedAt = data.updatedAt instanceof Timestamp ? data.updatedAt.toDate().toISOString() : data.updatedAt;
         const resolvedAt = data.resolvedAt instanceof Timestamp ? data.resolvedAt.toDate().toISOString() : data.resolvedAt;
         const closedAt = data.closedAt instanceof Timestamp ? data.closedAt.toDate().toISOString() : data.closedAt;
-        const deletedAt = data.deletedAt instanceof Timestamp ? data.deletedAt.toDate().toISOString() : data.deletedAt;
         const dueAt = data.dueAt instanceof Timestamp ? data.dueAt.toDate().toISOString() : data.dueAt;
 
         return {
@@ -74,3 +74,6 @@ export class ComplaintRepository extends BaseRepository<Complaint> {
 
 // Export a singleton instance for easy usage
 export const complaintRepository = new ComplaintRepository();
+
+
+

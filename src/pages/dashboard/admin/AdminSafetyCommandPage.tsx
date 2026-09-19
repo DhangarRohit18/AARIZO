@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { SafetyCommandHub } from '../../../domains/safety';
 
 export const AdminSafetyCommandPage: React.FC = () => {
@@ -10,3 +10,4 @@ export const AdminSafetyCommandPage: React.FC = () => {
 };
 
 export default AdminSafetyCommandPage;
+

@@ -1,4 +1,5 @@
-import { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions, Timestamp } from 'firebase/firestore';
+﻿import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { BaseRepository } from '../BaseRepository';
 import type { SocietyAsset } from '../../domains/compliance/types';
 
@@ -12,7 +13,7 @@ export class AssetRepository extends BaseRepository<SocietyAsset> {
       toFirestore(asset: SocietyAsset): any {
         const { id, ...data } = asset;
         
-        let parsedInstallDate = data.installationDate;
+        let parsedInstallDate: any = data.installationDate;
         if (typeof data.installationDate === 'string' && data.installationDate.length > 0) {
           parsedInstallDate = Timestamp.fromDate(new Date(data.installationDate));
         }
@@ -49,3 +50,4 @@ export class AssetRepository extends BaseRepository<SocietyAsset> {
 }
 
 export const assetRepository = new AssetRepository();
+

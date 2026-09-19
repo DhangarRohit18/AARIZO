@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Shield, Search as SearchIcon, AlertTriangle, Lock, Unlock, CheckCircle2, XCircle, LogOut } from 'lucide-react';
 import { visitorService } from '../../../services/visitorService';
 import type { SmartVisitorPass, BlacklistEntry, PassValidationResult } from '../../../types/visitor';
@@ -106,7 +106,7 @@ export const SecurityTerminalPage: React.FC = () => {
             <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#0f172a' }}>Gate Security Operations Terminal</h1>
           </div>
           <p style={{ margin: '0.2rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
-            Main Gate 1 • Officer R. Singh • Real-Time Gate Pass Verification & Check-In
+            Main Gate 1 â€¢ Officer R. Singh â€¢ Real-Time Gate Pass Verification & Check-In
           </p>
         </div>
 
@@ -254,7 +254,7 @@ export const SecurityTerminalPage: React.FC = () => {
                   <span style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: '#2563eb' }}>{p.passCode}</span>
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>
-                  Destination: <strong>{p.flatCode}</strong> ({p.residentName}) {p.companyName ? `• ${p.companyName}` : ''}
+                  Destination: <strong>{p.flatCode}</strong> ({p.residentName}) {p.companyName ? `â€¢ ${p.companyName}` : ''}
                 </div>
               </div>
 
@@ -332,7 +332,7 @@ export const SecurityTerminalPage: React.FC = () => {
             </div>
 
             <h3 style={{ margin: '0 0 0.5rem 0', color: validationResult.isValid ? '#065f46' : '#991b1b' }}>
-              {validationResult.isValid ? 'PASS VALIDATED — ENTRY PERMITTED' : 'ENTRY REJECTED'}
+              {validationResult.isValid ? 'PASS VALIDATED â€” ENTRY PERMITTED' : 'ENTRY REJECTED'}
             </h3>
 
             {validationResult.pass && (
@@ -417,3 +417,4 @@ export const SecurityTerminalPage: React.FC = () => {
     </div>
   );
 };
+

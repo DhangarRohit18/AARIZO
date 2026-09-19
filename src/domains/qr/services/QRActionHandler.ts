@@ -1,4 +1,4 @@
-import { QRValidationResult } from '../types';
+﻿import type { QRValidationResult } from '../types/index';
 
 /**
  * QRActionHandler routes the validated QR scan result to the appropriate frontend domain service.
@@ -52,3 +52,6 @@ export class QRActionHandler {
 }
 
 export const qrActionHandler = new QRActionHandler();
+
+
+

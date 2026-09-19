@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import {
   Users,
   UserCheck,
@@ -628,3 +628,4 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
     </div>
   );
 };
+

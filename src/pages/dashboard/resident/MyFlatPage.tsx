@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Home, Users, Car, UserCheck, Plus } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { FamilyMember, Vehicle, DomesticWorker } from '../../../types/society';
@@ -51,7 +51,7 @@ export const MyFlatPage: React.FC = () => {
         relationship,
         phone: famPhone,
       },
-      { id: currentResidentId, name: 'Vikram Joshi', role: 'RESIDENT' }
+      { id: currentResidentId, name: 'Vikram Joshi', role: 'resident' }
     );
 
     refreshData();
@@ -75,7 +75,7 @@ export const MyFlatPage: React.FC = () => {
         parkingSlotNumber: slotNumber,
         rfidTagCode: `RFID-${Math.floor(10000 + Math.random() * 90000)}`,
       },
-      { id: currentResidentId, name: 'Vikram Joshi', role: 'RESIDENT' }
+      { id: currentResidentId, name: 'Vikram Joshi', role: 'resident' }
     );
 
     refreshData();
@@ -90,8 +90,8 @@ export const MyFlatPage: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Home size={28} color="#60a5fa" />
           <div>
-            <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Tower B · Flat 1204</h1>
-            <p style={{ margin: '0.2rem 0 0 0', color: '#94a3b8', fontSize: '0.85rem' }}>Green Valley Society • 3 BHK Owner Occupied</p>
+            <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Tower B Â· Flat 1204</h1>
+            <p style={{ margin: '0.2rem 0 0 0', color: '#94a3b8', fontSize: '0.85rem' }}>Green Valley Society â€¢ 3 BHK Owner Occupied</p>
           </div>
         </div>
       </header>
@@ -131,7 +131,7 @@ export const MyFlatPage: React.FC = () => {
               </div>
               <div>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>{fam.name}</div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{fam.relationship} {fam.phone ? `• ${fam.phone}` : ''}</div>
+                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{fam.relationship} {fam.phone ? `â€¢ ${fam.phone}` : ''}</div>
               </div>
             </div>
           ))}
@@ -173,7 +173,7 @@ export const MyFlatPage: React.FC = () => {
                 <StatusBadge label={veh.vehicleType} variant="info" size="sm" />
               </div>
               <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                Slot: <strong>{veh.parkingSlotNumber}</strong> {veh.rfidTagCode ? `• Tag: ${veh.rfidTagCode}` : ''}
+                Slot: <strong>{veh.parkingSlotNumber}</strong> {veh.rfidTagCode ? `â€¢ Tag: ${veh.rfidTagCode}` : ''}
               </div>
             </div>
           ))}
@@ -192,7 +192,7 @@ export const MyFlatPage: React.FC = () => {
             <div key={dw.id} style={{ padding: '1rem', background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>{dw.name}</div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{dw.workRole} • Code: {dw.passCode}</div>
+                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{dw.workRole} â€¢ Code: {dw.passCode}</div>
               </div>
               <StatusBadge
                 label={dw.status === 'INSIDE' ? 'INSIDE COMPLEX' : 'OUTSIDE'}
@@ -290,3 +290,4 @@ export const MyFlatPage: React.FC = () => {
     </div>
   );
 };
+

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from '../pages/auth/LoginPage';
 import { OnboardingPage } from '../pages/auth/OnboardingPage';
@@ -83,24 +83,24 @@ export const AppRoutes: React.FC = () => {
   const getDefaultRoute = () => {
     const role = (currentUser?.role || selectedRole).toUpperCase();
     switch (role) {
-      case 'SECRETARY':
-      case 'SOCIETY_ADMIN':
+      case 'secretary':
+      case 'secretary':
         return '/admin';
-      case 'GUARD':
-      case 'SECURITY':
-      case 'SECURITY_GUARD':
+      case 'guard':
+      case 'guard':
+      case 'guard':
         return '/security';
-      case 'SUPER_ADMIN':
+      case 'admin':
         return '/super-admin';
-      case 'COMMITTEE_MEMBER':
+      case 'committee':
         return '/committee';
-      case 'FACILITY_MANAGER':
+      case 'facility_manager':
         return '/facility';
-      case 'DOMESTIC_WORKER':
+      case 'vendor':
         return '/domestic';
-      case 'VENDOR':
+      case 'vendor':
         return '/vendor';
-      case 'SERVICE_PROVIDER':
+      case 'vendor':
         return '/service-provider';
       default:
         return '/resident';
@@ -123,12 +123,12 @@ export const AppRoutes: React.FC = () => {
       />
 
       {/* Shared / Notifications Route */}
-      <Route element={<ProtectedRoute allowedRoles={['RESIDENT', 'SOCIETY_ADMIN', 'SUPER_ADMIN', 'SECURITY', 'VENDOR', 'SERVICE_PROVIDER', 'COMMITTEE_MEMBER', 'FACILITY_MANAGER', 'DOMESTIC_WORKER']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['resident', 'secretary', 'admin', 'guard', 'vendor', 'vendor', 'committee', 'facility_manager']} />}>
         <Route path="/notifications" element={<NotificationCenterPage />} />
       </Route>
 
-      {/* ── Resident Routes ── */}
-      <Route element={<ProtectedRoute allowedRoles={['RESIDENT', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
+      {/* â”€â”€ Resident Routes â”€â”€ */}
+      <Route element={<ProtectedRoute allowedRoles={['resident', 'secretary', 'admin']} />}>
         <Route element={<ResidentLayout />}>
           <Route path="/resident" element={<ResidentDashboard />} />
           <Route path="/resident/my-flat" element={<MyFlatPage />} />
@@ -153,8 +153,8 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* ── Society Admin Routes ── */}
-      <Route element={<ProtectedRoute allowedRoles={['SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
+      {/* â”€â”€ Society Admin Routes â”€â”€ */}
+      <Route element={<ProtectedRoute allowedRoles={['secretary', 'admin']} />}>
         <Route element={<SocietyAdminLayout />}>
           {/* Mobile admin home replaces SecretaryDashboard as default */}
           <Route path="/admin" element={<AdminHomePage />} />
@@ -187,15 +187,15 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* ── Staff Routes ── */}
-      <Route element={<ProtectedRoute allowedRoles={['SOCIETY_ADMIN', 'SUPER_ADMIN', 'RESIDENT', 'SERVICE_PROVIDER']} />}>
+      {/* â”€â”€ Staff Routes â”€â”€ */}
+      <Route element={<ProtectedRoute allowedRoles={['secretary', 'admin', 'resident', 'vendor']} />}>
         <Route element={<ServiceProviderLayout />}>
           <Route path="/staff/housekeeping-tasks" element={<StaffHousekeepingTaskPage />} />
         </Route>
       </Route>
 
-      {/* ── Security Guard Routes ── */}
-      <Route element={<ProtectedRoute allowedRoles={['SECURITY', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
+      {/* â”€â”€ Security Guard Routes â”€â”€ */}
+      <Route element={<ProtectedRoute allowedRoles={['guard', 'secretary', 'admin']} />}>
         <Route element={<SecurityLayout />}>
           <Route path="/security" element={<SecurityTerminalPage />} />
           <Route path="/security/gate" element={<SecurityTerminalPage />} />
@@ -210,8 +210,8 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* ── Super Admin Routes ── */}
-      <Route element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']} />}>
+      {/* â”€â”€ Super Admin Routes â”€â”€ */}
+      <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
         <Route element={<SuperAdminLayout />}>
           <Route path="/super-admin" element={<SuperAdminDashboard />} />
           <Route path="/super-admin/societies" element={<SuperAdminSocietiesPage />} />
@@ -219,8 +219,8 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* ── Vendor Routes ── */}
-      <Route element={<ProtectedRoute allowedRoles={['VENDOR', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
+      {/* â”€â”€ Vendor Routes â”€â”€ */}
+      <Route element={<ProtectedRoute allowedRoles={['vendor', 'secretary', 'admin']} />}>
         <Route element={<VendorLayout />}>
           <Route path="/vendor" element={<VendorDashboard />} />
           <Route path="/vendor/portal" element={<VendorPortalPage />} />
@@ -228,8 +228,8 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* ── Service Provider Routes ── */}
-      <Route element={<ProtectedRoute allowedRoles={['SERVICE_PROVIDER', 'RESIDENT', 'SUPER_ADMIN']} />}>
+      {/* â”€â”€ Service Provider Routes â”€â”€ */}
+      <Route element={<ProtectedRoute allowedRoles={['vendor', 'resident', 'admin']} />}>
         <Route element={<ServiceProviderLayout />}>
           <Route path="/service-provider" element={<ServiceProviderDashboard />} />
           <Route path="/service-provider/tasks" element={<ServiceProviderTaskPage />} />
@@ -237,8 +237,8 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* ── Committee Member Routes ── */}
-      <Route element={<ProtectedRoute allowedRoles={['COMMITTEE_MEMBER', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
+      {/* â”€â”€ Committee Member Routes â”€â”€ */}
+      <Route element={<ProtectedRoute allowedRoles={['committee', 'secretary', 'admin']} />}>
         <Route element={<CommitteeLayout />}>
           <Route path="/committee" element={<CommitteeDashboard />} />
           <Route path="/committee/approvals" element={<CommitteeDashboard />} />
@@ -250,8 +250,8 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* ── Facility Manager Routes ── */}
-      <Route element={<ProtectedRoute allowedRoles={['FACILITY_MANAGER', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
+      {/* â”€â”€ Facility Manager Routes â”€â”€ */}
+      <Route element={<ProtectedRoute allowedRoles={['facility_manager', 'secretary', 'admin']} />}>
         <Route element={<FacilityManagerLayout />}>
           <Route path="/facility" element={<FacilityManagerDashboard />} />
           <Route path="/facility/maintenance" element={<FacilityManagerDashboard />} />
@@ -263,8 +263,8 @@ export const AppRoutes: React.FC = () => {
         </Route>
       </Route>
 
-      {/* ── Domestic Worker Routes ── */}
-      <Route element={<ProtectedRoute allowedRoles={['DOMESTIC_WORKER', 'RESIDENT', 'SOCIETY_ADMIN', 'SUPER_ADMIN']} />}>
+      {/* â”€â”€ Domestic Worker Routes â”€â”€ */}
+      <Route element={<ProtectedRoute allowedRoles={['vendor', 'resident', 'secretary', 'admin']} />}>
         <Route element={<DomesticWorkerLayout />}>
           <Route path="/domestic" element={<DomesticWorkerDashboard />} />
           <Route path="/domestic/*" element={<DomesticWorkerDashboard />} />
@@ -281,3 +281,6 @@ export const AppRoutes: React.FC = () => {
     </Routes>
   );
 };
+
+
+

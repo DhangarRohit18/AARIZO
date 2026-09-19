@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { qrService } from '../services/QRService';
-import { QREntityType } from '../types';
+import type { QREntityType } from '../types/index';
 
 interface QRGeneratorProps {
   entityType: QREntityType;
@@ -51,3 +51,6 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({
     </div>
   );
 };
+
+
+

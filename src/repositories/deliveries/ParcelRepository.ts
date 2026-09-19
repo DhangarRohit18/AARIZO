@@ -1,4 +1,5 @@
-import { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions, Timestamp } from 'firebase/firestore';
+﻿import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { BaseRepository } from '../BaseRepository';
 import type { Parcel } from '../../domains/deliveries/types';
 
@@ -12,17 +13,17 @@ export class ParcelRepository extends BaseRepository<Parcel> {
       toFirestore(parcel: Parcel): any {
         const { id, ...data } = parcel;
         
-        let parsedArrivalTime = data.arrivalTime;
+        let parsedArrivalTime: any = data.arrivalTime;
         if (typeof data.arrivalTime === 'string' && data.arrivalTime.length > 0) {
           parsedArrivalTime = Timestamp.fromDate(new Date(data.arrivalTime));
         }
 
-        let parsedPickupTime = data.pickupTime;
+        let parsedPickupTime: any = data.pickupTime;
         if (typeof data.pickupTime === 'string' && data.pickupTime.length > 0) {
           parsedPickupTime = Timestamp.fromDate(new Date(data.pickupTime));
         }
 
-        let parsedExpiresAt = data.expiresAt;
+        let parsedExpiresAt: any = data.expiresAt;
         if (typeof data.expiresAt === 'string' && data.expiresAt.length > 0) {
           parsedExpiresAt = Timestamp.fromDate(new Date(data.expiresAt));
         }
@@ -77,3 +78,4 @@ export class ParcelRepository extends BaseRepository<Parcel> {
 }
 
 export const parcelRepository = new ParcelRepository();
+

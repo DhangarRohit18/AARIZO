@@ -121,7 +121,7 @@ class PracticalAILayerEngine {
     const assets = assetComplianceService.getAssets();
 
     return assets.map((a: AssetItem) => {
-      const isExpiring = a.status === 'EXPIRING_SOON' || a.status === 'EXPIRED';
+      const isExpiring = a.complianceStatus === 'EXPIRING_SOON' || a.complianceStatus === 'EXPIRED';
       const risk = isExpiring ? 88 : a.name.includes('Lift') ? 45 : 22;
 
       return {

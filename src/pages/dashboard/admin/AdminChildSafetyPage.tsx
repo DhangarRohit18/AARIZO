@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { childSafetyService } from '../../../services/childSafetyService';
 import type { ChildProfile, PickupLog, ChildSafetyAlert } from '../../../types/childSafety';
@@ -50,7 +50,7 @@ export const AdminChildSafetyPage: React.FC = () => {
           <div className="flex items-start gap-3">
             <ShieldAlert className="w-8 h-8 text-white shrink-0 mt-0.5" />
             <div>
-              <h2 className="text-xl font-extrabold tracking-wide uppercase">🚨 ACTIVE MISSING CHILD ALERT BROADCAST</h2>
+              <h2 className="text-xl font-extrabold tracking-wide uppercase">ðŸš¨ ACTIVE MISSING CHILD ALERT BROADCAST</h2>
               <div className="mt-1 space-y-1 text-sm font-medium">
                 {activeAlerts.map(alert => (
                   <div key={alert.id}>{alert.message}</div>
@@ -225,3 +225,4 @@ export const AdminChildSafetyPage: React.FC = () => {
     </div>
   );
 };
+

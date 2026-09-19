@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Car, Camera, CheckCircle2, XCircle } from 'lucide-react';
 import { parkingService } from '../../../services/parkingService';
 import type { ParkingSlot, ParkingQRValidationResult } from '../../../types/parking';
@@ -154,3 +154,4 @@ export const ParkingGateScannerPage: React.FC = () => {
     </div>
   );
 };
+

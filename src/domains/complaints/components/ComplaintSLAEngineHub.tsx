@@ -105,7 +105,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
   };
 
   const filtered = complaints.filter((c) => {
-    if (activeRole === 'RESIDENT' && c.residentId !== (currentUser?.id || 'res-1')) {
+    if (activeRole === 'resident' && c.residentId !== (currentUser?.id || 'res-1')) {
       return false;
     }
     const matchesSearch = c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.id.toLowerCase().includes(searchQuery.toLowerCase());
@@ -124,7 +124,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
           </p>
         </div>
         <div className="mt-3 md:mt-0 flex gap-2">
-          {(activeRole === 'SOCIETY_ADMIN' || activeRole === 'FACILITY_MANAGER' || activeRole === 'SUPER_ADMIN') && (
+          {(activeRole === 'secretary' || activeRole === 'facility_manager' || activeRole === 'admin') && (
             <button
               onClick={() => setShowPolicyModal(true)}
               className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs flex items-center gap-2"
@@ -262,7 +262,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                {c.status === 'VERIFICATION_REQUIRED' && activeRole === 'RESIDENT' && (
+                {c.status === 'VERIFICATION_REQUIRED' && activeRole === 'resident' && (
                   <button
                     onClick={() => setVerifyComplaint(c)}
                     className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm"

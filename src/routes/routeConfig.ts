@@ -1,10 +1,10 @@
-import type { UserRole, Action } from '../types/rbac';
+﻿import type { UserRole, Action } from '../types/rbac';
 
 export interface RouteItem {
   path: string;
   name: string;
   allowedRoles: UserRole[];
-  requiredPermission?: Action;
+  requiredAction?: Action;
 }
 
 export const ROUTES = {
@@ -29,3 +29,5 @@ export const ROUTES = {
   VENDOR_DASHBOARD: '/vendor',
   SERVICE_PROVIDER_DASHBOARD: '/service-provider',
 };
+
+

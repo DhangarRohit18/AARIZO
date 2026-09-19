@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Users, CheckCircle, XCircle } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Resident } from '../../../types/society';
@@ -53,7 +53,7 @@ export const ResidentManagementPage: React.FC = () => {
           />
           <div>
             <div style={{ fontWeight: 600, color: '#0f172a' }}>{r.name}</div>
-            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{r.email} • {r.phone}</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{r.email} â€¢ {r.phone}</div>
           </div>
         </div>
       ),
@@ -158,3 +158,4 @@ export const ResidentManagementPage: React.FC = () => {
     </div>
   );
 };
+

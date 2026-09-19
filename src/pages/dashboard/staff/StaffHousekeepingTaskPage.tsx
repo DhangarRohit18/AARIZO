@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { housekeepingService } from '../../../services/housekeepingService';
 import type { HousekeepingTask, ChecklistItem } from '../../../types/housekeeping';
@@ -180,3 +180,4 @@ export const StaffHousekeepingTaskPage: React.FC = () => {
     </div>
   );
 };
+

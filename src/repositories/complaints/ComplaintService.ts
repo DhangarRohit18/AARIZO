@@ -1,7 +1,6 @@
-import { Complaint, ComplaintCategory, ComplaintStatus, SLAPolicy } from '../../domains/complaints/types';
+﻿import type { ComplaintCategory } from '../../domains/complaints/types';
 import { complaintRepository } from './ComplaintRepository';
 import { slaPolicyRepository } from './SLAPolicyRepository';
-import { Timestamp } from 'firebase/firestore';
 
 export class ComplaintService {
   /**
@@ -117,3 +116,5 @@ export class ComplaintService {
 }
 
 export const complaintService = new ComplaintService();
+
+

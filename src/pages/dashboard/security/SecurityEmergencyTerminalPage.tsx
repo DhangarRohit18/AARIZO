@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { safetyCommandService } from '../../../services/safetyCommandService';
 import type { EmergencyIncident } from '../../../types/safetyCommand';
@@ -84,7 +84,7 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <Siren className="w-8 h-8 text-white shrink-0 animate-bounce" />
             <div>
-              <h2 className="text-xl font-black uppercase tracking-wider">🚨 NEW UNACKNOWLEDGED SOS ALARM RECEIVED!</h2>
+              <h2 className="text-xl font-black uppercase tracking-wider">ðŸš¨ NEW UNACKNOWLEDGED SOS ALARM RECEIVED!</h2>
               <p className="text-xs text-rose-100 font-medium">Immediate security gate response required. Check active incident list below.</p>
             </div>
           </div>
@@ -251,3 +251,4 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
     </div>
   );
 };
+

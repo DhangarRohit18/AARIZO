@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { ShoppingBag, Plus } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Vendor, VendorCategory } from '../../../types/society';
@@ -186,3 +186,4 @@ export const VendorManagementPage: React.FC = () => {
     </div>
   );
 };
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Plus,
   Search,
@@ -45,7 +45,7 @@ export const UnifiedRequestCenter: React.FC = () => {
   const handleCreateRequest = (e: React.FormEvent) => {
     e.preventDefault();
     const docs: RequestDocument[] = newFileName
-      ? [{ id: `doc-${Date.now()}`, fileName: newFileName, fileUrl: `/docs/${newFileName}`, uploadedBy: currentUser?.name || 'Resident', uploadedAt: new Date().toLocaleString() }]
+      ? [{ id: `doc-${Date.now()}`, fileName: newFileName, fileUrl: `/docs/${newFileName}`, uploadedBy: currentUser?.name || 'resident', uploadedAt: new Date().toLocaleString() }]
       : [];
 
     const requiresCommittee = ['RENOVATION_PERMISSION', 'OWNERSHIP_CHANGE', 'EVENT_PERMISSION'].includes(newCategory);
@@ -55,7 +55,7 @@ export const UnifiedRequestCenter: React.FC = () => {
         societyId: 'soc-gvs',
         residentId: currentUser?.id || 'res-1',
         residentName: currentUser?.name || 'Vikram Joshi',
-        flatCode: currentUser?.flatDetails || 'Tower B · B-1204',
+        flatCode: currentUser?.flatDetails || 'Tower B Â· B-1204',
         title: newTitle,
         category: newCategory,
         description: newDescription,
@@ -65,7 +65,7 @@ export const UnifiedRequestCenter: React.FC = () => {
         targetCompletionDate: new Date(Date.now() + 86400000 * 3).toISOString(),
         documents: docs,
       },
-      currentUser?.name || 'Resident',
+      currentUser?.name || 'resident',
       activeRole
     );
 
@@ -112,7 +112,7 @@ export const UnifiedRequestCenter: React.FC = () => {
 
   const filteredRequests = requests.filter((r) => {
     // If resident role, filter only resident's requests
-    if (activeRole === 'RESIDENT' && r.residentId !== (currentUser?.id || 'res-1')) {
+    if (activeRole === 'resident' && r.residentId !== (currentUser?.id || 'res-1')) {
       return false;
     }
 
@@ -349,7 +349,7 @@ export const UnifiedRequestCenter: React.FC = () => {
                   onClick={() => setSelectedRequest(null)}
                   className="p-2 text-slate-400 hover:text-slate-600 font-bold"
                 >
-                  ✕
+                  âœ•
                 </button>
               </div>
 
@@ -418,7 +418,7 @@ export const UnifiedRequestCenter: React.FC = () => {
             </div>
 
             {/* Admin / Committee Action Panel */}
-            {(activeRole === 'SOCIETY_ADMIN' || activeRole === 'COMMITTEE_MEMBER' || activeRole === 'SUPER_ADMIN') && (
+            {(activeRole === 'secretary' || activeRole === 'committee' || activeRole === 'admin') && (
               <div className="border-t pt-4 space-y-3 bg-slate-50 p-4 rounded-xl border">
                 <h4 className="font-bold text-slate-900 text-xs">Admin & Committee Review Actions</h4>
                 <input
@@ -471,3 +471,4 @@ export const UnifiedRequestCenter: React.FC = () => {
     </div>
   );
 };
+

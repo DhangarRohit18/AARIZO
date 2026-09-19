@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Truck, Search, Package } from 'lucide-react';
 import { visitorService } from '../../../services/visitorService';
 import type { SmartVisitorPass, VisitorAnalyticsData } from '../../../types/visitor';
@@ -175,3 +175,4 @@ export const DeliveryIntelligencePage: React.FC = () => {
     </div>
   );
 };
+

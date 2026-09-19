@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { GuardDashboard } from './GuardDashboard';
 import { ResidentDashboard } from './ResidentDashboard';
 import { SecretaryDashboard } from './SecretaryDashboard';
@@ -7,24 +7,24 @@ import type { RBACUser } from '../../types/rbac';
 export const DashboardWrapper: React.FC<{ user: RBACUser }> = ({ user }) => {
   // Map the strict RBAC Role to the appropriate Dashboard
   switch (user.role) {
-    case 'GUARD':
+    case 'guard':
       return <GuardDashboard user={user} />;
     
-    case 'RESIDENT':
+    case 'resident':
       return <ResidentDashboard user={user} />;
     
-    case 'SECRETARY':
-    case 'ADMIN': // Admin can typically see the Secretary view for operational oversight
+    case 'secretary':
+    case 'admin': // Admin can typically see the Secretary view for operational oversight
       return <SecretaryDashboard user={user} />;
       
-    case 'FACILITY_MANAGER':
+    case 'facility_manager':
       // return <FacilityDashboard user={user} />;
       return <div className="p-4 text-gray-500">Facility Manager Dashboard coming soon.</div>;
       
-    case 'COMMITTEE':
+    case 'committee':
       return <div className="p-4 text-gray-500">Committee Governance Dashboard coming soon.</div>;
       
-    case 'VENDOR':
+    case 'vendor':
       return <div className="p-4 text-gray-500">Vendor Task Dashboard coming soon.</div>;
       
     default:
@@ -35,3 +35,5 @@ export const DashboardWrapper: React.FC<{ user: RBACUser }> = ({ user }) => {
       );
   }
 };
+
+

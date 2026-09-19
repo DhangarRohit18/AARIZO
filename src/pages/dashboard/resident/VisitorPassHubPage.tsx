@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Users, Plus, QrCode, Share2, Clock, Trash2 } from 'lucide-react';
 import { visitorService } from '../../../services/visitorService';
 import type { SmartVisitorPass, VisitorCategory, PassLifecycleType } from '../../../types/visitor';
@@ -54,7 +54,7 @@ export const VisitorPassHubPage: React.FC = () => {
         purpose,
         groupCount: Number(groupCount),
       },
-      { id: currentResidentId, name: 'Vikram Joshi', role: 'RESIDENT' }
+      { id: currentResidentId, name: 'Vikram Joshi', role: 'resident' }
     );
 
     refreshData();
@@ -71,7 +71,7 @@ export const VisitorPassHubPage: React.FC = () => {
   };
 
   const handleRevoke = (passId: string) => {
-    visitorService.revokePass(passId, { id: currentResidentId, name: 'Vikram Joshi', role: 'RESIDENT' });
+    visitorService.revokePass(passId, { id: currentResidentId, name: 'Vikram Joshi', role: 'resident' });
     refreshData();
   };
 
@@ -316,3 +316,4 @@ export const VisitorPassHubPage: React.FC = () => {
     </div>
   );
 };
+

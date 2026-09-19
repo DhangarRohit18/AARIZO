@@ -15,6 +15,7 @@ export type ComplaintStatus =
   | 'RESOLVED'
   | 'VERIFICATION_REQUIRED'
   | 'CLOSED'
+  | 'REOPENED'
   | 'ESCALATED';
 
 export type EscalationLevel =

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { CreditCard, FileText, CheckCircle, AlertTriangle, ShieldCheck, History } from 'lucide-react';
 import { billingService } from '../../../services/billingService';
 import type { SocietyInvoice, PaymentTransaction } from '../../../types/billing';
@@ -12,7 +12,7 @@ export const ResidentBillingPage: React.FC = () => {
     name: 'Rajesh Kumar',
     flatCode: 'B-1204',
     flatId: 'flat-1204',
-    role: 'RESIDENT',
+    role: 'resident',
   };
 
   const [invoices, setInvoices] = useState<SocietyInvoice[]>([]);
@@ -144,7 +144,7 @@ export const ResidentBillingPage: React.FC = () => {
                   <tr>
                     <th className="p-3">Component</th>
                     <th className="p-3">Description</th>
-                    <th className="p-3 text-right">Amount (₹)</th>
+                    <th className="p-3 text-right">Amount (â‚¹)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-800 dark:text-slate-200">
@@ -152,7 +152,7 @@ export const ResidentBillingPage: React.FC = () => {
                     <tr key={item.id}>
                       <td className="p-3 font-semibold text-indigo-600 dark:text-indigo-400">{item.component}</td>
                       <td className="p-3">{item.description}</td>
-                      <td className="p-3 text-right font-medium">₹{item.amount.toLocaleString()}</td>
+                      <td className="p-3 text-right font-medium">â‚¹{item.amount.toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -164,11 +164,11 @@ export const ResidentBillingPage: React.FC = () => {
           <div className="p-5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-sm">
               <div className="flex items-center gap-4 text-xs text-slate-500">
-                <span>Total Bill: <strong>₹{activeInvoice.totalAmount.toLocaleString()}</strong></span>
-                <span>Paid So Far: <strong className="text-emerald-600">₹{activeInvoice.paidAmount.toLocaleString()}</strong></span>
+                <span>Total Bill: <strong>â‚¹{activeInvoice.totalAmount.toLocaleString()}</strong></span>
+                <span>Paid So Far: <strong className="text-emerald-600">â‚¹{activeInvoice.paidAmount.toLocaleString()}</strong></span>
               </div>
               <div className="text-lg font-extrabold text-slate-900 dark:text-white">
-                Outstanding Dues: <span className="text-rose-600 dark:text-rose-400">₹{activeInvoice.outstandingBalance.toLocaleString()}</span>
+                Outstanding Dues: <span className="text-rose-600 dark:text-rose-400">â‚¹{activeInvoice.outstandingBalance.toLocaleString()}</span>
               </div>
             </div>
 
@@ -205,7 +205,7 @@ export const ResidentBillingPage: React.FC = () => {
                 <th className="p-3">Txn ID</th>
                 <th className="p-3">Date</th>
                 <th className="p-3">Method</th>
-                <th className="p-3">Amount (₹)</th>
+                <th className="p-3">Amount (â‚¹)</th>
                 <th className="p-3">Status</th>
               </tr>
             </thead>
@@ -215,7 +215,7 @@ export const ResidentBillingPage: React.FC = () => {
                   <td className="p-3 font-semibold text-indigo-600 dark:text-indigo-400">{t.transactionId}</td>
                   <td className="p-3">{t.paymentDate}</td>
                   <td className="p-3 font-medium">{t.paymentMethod}</td>
-                  <td className="p-3 font-bold">₹{t.amount.toLocaleString()}</td>
+                  <td className="p-3 font-bold">â‚¹{t.amount.toLocaleString()}</td>
                   <td className="p-3">
                     <StatusBadge
                       variant={t.status === 'SUCCESS' ? 'success' : 'danger'}
@@ -254,7 +254,7 @@ export const ResidentBillingPage: React.FC = () => {
                 onClick={() => setCheckoutInvoice(null)}
                 className="text-slate-400 hover:text-slate-600 font-bold"
               >
-                ✕
+                âœ•
               </button>
             </div>
 
@@ -275,12 +275,12 @@ export const ResidentBillingPage: React.FC = () => {
               <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg space-y-1 border border-slate-200 dark:border-slate-700">
                 <div className="flex justify-between">
                   <span className="text-slate-500">Total Invoice Dues:</span>
-                  <span className="font-bold">₹{checkoutInvoice.outstandingBalance.toLocaleString()}</span>
+                  <span className="font-bold">â‚¹{checkoutInvoice.outstandingBalance.toLocaleString()}</span>
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold mb-1">Enter Payment Amount (₹) *</label>
+                <label className="block font-semibold mb-1">Enter Payment Amount (â‚¹) *</label>
                 <input
                   type="number"
                   required
@@ -317,7 +317,7 @@ export const ResidentBillingPage: React.FC = () => {
                   disabled={isProcessing}
                   className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-lg text-xs transition-colors flex items-center gap-2"
                 >
-                  {isProcessing ? 'Connecting Gateway...' : `Confirm & Pay ₹${paymentAmount.toLocaleString()}`}
+                  {isProcessing ? 'Connecting Gateway...' : `Confirm & Pay â‚¹${paymentAmount.toLocaleString()}`}
                 </button>
               )}
             </div>
@@ -336,3 +336,4 @@ export const ResidentBillingPage: React.FC = () => {
     </div>
   );
 };
+

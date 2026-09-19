@@ -8,7 +8,7 @@ export const GuardDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
   
   // Realtime hooks explicitly scoped for the Guard's visibility
   const { todaysMoves, loading: movesLoading } = useMoves(societyId);
-  const { activeRenovations, pendingMaterialGatepasses, loading: renLoading } = useRenovations(societyId, 'GUARD');
+  const { activeRenovations, loading: renLoading } = useRenovations(societyId, 'guard');
 
   if (movesLoading || renLoading) {
     return <div className="p-4">Loading Live Gate Data...</div>;
@@ -20,7 +20,7 @@ export const GuardDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
       
       <section className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <span className="bg-blue-100 text-blue-800 p-1.5 rounded-lg text-sm">🚚</span>
+          <span className="bg-blue-100 text-blue-800 p-1.5 rounded-lg text-sm">ðŸšš</span>
           Today's Scheduled Moves
         </h2>
         {todaysMoves.length === 0 ? (
@@ -44,7 +44,7 @@ export const GuardDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
 
       <section className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <span className="bg-orange-100 text-orange-800 p-1.5 rounded-lg text-sm">🚧</span>
+          <span className="bg-orange-100 text-orange-800 p-1.5 rounded-lg text-sm">ðŸš§</span>
           Active Renovations
         </h2>
         {activeRenovations.length === 0 ? (
@@ -76,3 +76,4 @@ export const GuardDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
     </div>
   );
 };
+

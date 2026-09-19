@@ -1,4 +1,4 @@
-import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
+﻿import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { BaseRepository } from '../BaseRepository';
 import type { MoveRequest } from '../../domains/moves/types';
@@ -13,17 +13,17 @@ export class MoveRepository extends BaseRepository<MoveRequest> {
       toFirestore(request: MoveRequest): any {
         const { id, ...data } = request;
         
-        let parsedDate = data.date;
+        let parsedDate: any = data.date;
         if (typeof data.date === 'string' && data.date.length > 0) {
           parsedDate = Timestamp.fromDate(new Date(data.date));
         }
 
-        let parsedStartedAt = data.startedAt;
+        let parsedStartedAt: any = data.startedAt;
         if (typeof data.startedAt === 'string' && data.startedAt.length > 0) {
           parsedStartedAt = Timestamp.fromDate(new Date(data.startedAt));
         }
 
-        let parsedCompletedAt = data.completedAt;
+        let parsedCompletedAt: any = data.completedAt;
         if (typeof data.completedAt === 'string' && data.completedAt.length > 0) {
           parsedCompletedAt = Timestamp.fromDate(new Date(data.completedAt));
         }
@@ -83,3 +83,4 @@ export class MoveRepository extends BaseRepository<MoveRequest> {
 }
 
 export const moveRepository = new MoveRepository();
+

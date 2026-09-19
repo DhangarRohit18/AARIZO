@@ -8,7 +8,7 @@ import { where, orderBy } from 'firebase/firestore';
  * Hook to consume Compliance and Asset data.
  * @param role Should be 'ADMIN' | 'RESIDENT'. If RESIDENT, only fetches public documents.
  */
-export function useCompliance(societyId: string, role: 'ADMIN' | 'RESIDENT') {
+export function useCompliance(societyId: string, role: 'admin' | 'resident') {
   const [contracts, setContracts] = useState<AMCContract[]>([]);
   const [assets, setAssets] = useState<SocietyAsset[]>([]);
   const [loadingContracts, setLoadingContracts] = useState(true);
@@ -23,7 +23,7 @@ export function useCompliance(societyId: string, role: 'ADMIN' | 'RESIDENT') {
     const constraints: any[] = [];
     
     // Privacy Constraint
-    if (role === 'RESIDENT') {
+    if (role === 'resident') {
       constraints.push(where('isPublicToResidents', '==', true));
     }
     

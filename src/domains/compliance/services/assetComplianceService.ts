@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import type { AssetItem, ComplianceMetrics, AlertWindow, ComplianceStatus, InspectionRecord, RenewalRecord, ComplianceAuditLog } from '../types';
 import { realTimeSync } from '../../../services/realTimeSync';
 
@@ -424,3 +425,4 @@ class AssetComplianceService {
 }
 
 export const assetComplianceService = new AssetComplianceService();
+

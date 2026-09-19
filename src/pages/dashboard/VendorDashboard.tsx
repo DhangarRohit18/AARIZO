@@ -1,11 +1,11 @@
-import React from 'react';
+﻿import React from 'react';
 import { ShoppingBag, Truck, CheckCircle2, Clock } from 'lucide-react';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 
 export const VendorDashboard: React.FC = () => {
   const deliveries = [
-    { id: 'del-1', recipient: 'Rahul Sharma (Tower A · 402)', type: 'Water Cans (20L)', status: 'DELIVERED', time: '10:30 AM' },
-    { id: 'del-2', recipient: 'Priya Mehta (Tower B · 1204)', type: 'Grocery Package', status: 'IN_TRANSIT', time: '11:45 AM' },
+    { id: 'del-1', recipient: 'Rahul Sharma (Tower A Â· 402)', type: 'Water Cans (20L)', status: 'DELIVERED', time: '10:30 AM' },
+    { id: 'del-2', recipient: 'Priya Mehta (Tower B Â· 1204)', type: 'Grocery Package', status: 'IN_TRANSIT', time: '11:45 AM' },
   ];
 
   return (
@@ -59,3 +59,4 @@ export const VendorDashboard: React.FC = () => {
     </div>
   );
 };
+

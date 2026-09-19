@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { NotificationEngineHub } from '../../domains/notifications';
 
 export const NotificationCenterPage: React.FC = () => {
@@ -10,3 +10,4 @@ export const NotificationCenterPage: React.FC = () => {
 };
 
 export default NotificationCenterPage;
+

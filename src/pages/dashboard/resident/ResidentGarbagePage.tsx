@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { housekeepingService } from '../../../services/housekeepingService';
 import type { GarbagePickupLog, HousekeepingTask } from '../../../types/housekeeping';
@@ -103,7 +103,7 @@ export const ResidentGarbagePage: React.FC = () => {
               </div>
               <div className="flex items-center justify-between">
                 <span>Resident Confirmation:</span>
-                <strong>{myFlatLog?.confirmedByResident ? '✅ Confirmed by Resident' : '⚠️ Pending Confirmation'}</strong>
+                <strong>{myFlatLog?.confirmedByResident ? 'âœ… Confirmed by Resident' : 'âš ï¸ Pending Confirmation'}</strong>
               </div>
             </div>
           </div>
@@ -190,3 +190,4 @@ export const ResidentGarbagePage: React.FC = () => {
     </div>
   );
 };
+

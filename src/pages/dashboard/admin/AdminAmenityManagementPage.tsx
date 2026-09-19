@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { amenityService } from '../../../services/amenityService';
 import type { SocietyAmenity, AmenityBooking, AmenityType } from '../../../types/amenity';
@@ -206,7 +206,7 @@ export const AdminAmenityManagementPage: React.FC = () => {
               <div key={bk.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <p className="font-semibold text-slate-900">
-                    {bk.amenityName} — <span className="text-amber-700">{bk.residentName} ({bk.flatNumber})</span>
+                    {bk.amenityName} â€” <span className="text-amber-700">{bk.residentName} ({bk.flatNumber})</span>
                   </p>
                   <div className="flex items-center gap-4 text-xs text-slate-600 mt-1">
                     <span className="flex items-center gap-1">
@@ -572,3 +572,4 @@ export const AdminAmenityManagementPage: React.FC = () => {
     </div>
   );
 };
+

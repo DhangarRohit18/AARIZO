@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Shield, Plus } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Staff, StaffType, DomesticWorker } from '../../../types/society';
@@ -239,3 +239,5 @@ export const StaffManagementPage: React.FC = () => {
     </div>
   );
 };
+
+

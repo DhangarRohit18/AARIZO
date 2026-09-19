@@ -1,4 +1,4 @@
-import { RBAC_MATRIX } from '../types/rbac';
+﻿import { RBAC_MATRIX } from '../types/rbac';
 import type { Action, RBACUser } from '../types/rbac';
 
 /**
@@ -15,7 +15,7 @@ export function can(user: RBACUser | null | undefined, action: Action, resourceO
   if (!user || !user.role) return false;
   
   // Admins bypass all role checks
-  if (user.role === 'ADMIN') return true;
+  if (user.role === 'admin') return true;
 
   // Check the strict RBAC Matrix
   const allowedActions = RBAC_MATRIX[user.role] || [];
@@ -34,3 +34,4 @@ export function can(user: RBACUser | null | undefined, action: Action, resourceO
 
   return true;
 }
+

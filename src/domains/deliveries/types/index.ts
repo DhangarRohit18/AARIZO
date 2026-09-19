@@ -4,6 +4,7 @@ export type ParcelStatus =
   | 'STORED'
   | 'READY_FOR_PICKUP'
   | 'COLLECTED'
+  | 'PICKED_UP'
   | 'RETURNED'
   | 'EXPIRED';
 

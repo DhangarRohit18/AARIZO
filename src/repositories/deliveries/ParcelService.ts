@@ -1,8 +1,6 @@
-import { ParcelRepository, parcelRepository } from './ParcelRepository';
+import { parcelRepository } from './ParcelRepository';
 import { qrService } from '../../domains/qr/services/QRService';
 import { qrTokenRepository } from '../qr/QRTokenRepository';
-import type { Parcel, ParcelStatus } from '../../domains/deliveries/types';
-import { Timestamp } from 'firebase/firestore';
 
 export class ParcelService {
   /**
@@ -85,18 +83,17 @@ export class ParcelService {
   public async handoverParcel(
     parcelId: string, 
     collectedByUserId: string, 
-    guardId: string, 
     verificationMethod: 'QR' | 'OTP' | 'MANUAL'
   ): Promise<void> {
     const parcel = await parcelRepository.getById(parcelId);
     if (!parcel) throw new Error("Parcel not found");
-    if (parcel.status === 'PICKED_UP') throw new Error("Parcel already collected");
+    if (parcel.status === 'COLLECTED') throw new Error("Parcel already collected");
 
     // In a real environment, the QR handler would do this verification. 
     // Here we assume the frontend already validated the QR via QRActionHandler, OR the guard entered the correct OTP.
 
     await parcelRepository.update(parcelId, {
-      status: 'PICKED_UP',
+      status: 'COLLECTED',
       pickupTime: new Date().toISOString(),
       collectedBy: collectedByUserId,
       notes: `Verified via ${verificationMethod}`

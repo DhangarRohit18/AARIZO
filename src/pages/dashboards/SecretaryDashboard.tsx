@@ -11,10 +11,10 @@ export const SecretaryDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
   const societyId = user.societyId!;
   
   // Realtime hooks scoped for the Secretary
-  const { openComplaints, breachedComplaints, loading: compLoading } = useComplaints(societyId);
+  const { breachedComplaints, loading: compLoading } = useComplaints(societyId);
   const { pendingApproval: movePending, loading: movesLoading } = useMoves(societyId);
-  const { pendingApprovals: renPending, loading: renLoading } = useRenovations(societyId, 'SECRETARY');
-  const { expiringContracts, expiredContracts, loading: amcLoading } = useCompliance(societyId, 'ADMIN');
+  const { pendingApprovals: renPending, loading: renLoading } = useRenovations(societyId, 'secretary');
+  const { expiringContracts, expiredContracts, loading: amcLoading } = useCompliance(societyId, 'admin');
   const { insights: pendingInsights, loading: aiLoading } = useAIInsights(societyId, 'PENDING_REVIEW');
 
   const loading = compLoading || movesLoading || renLoading || amcLoading || aiLoading;
@@ -31,7 +31,7 @@ export const SecretaryDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
       {pendingInsights.length > 0 && (
         <section className="bg-indigo-50 p-4 rounded-xl border border-indigo-200 shadow-sm">
           <h2 className="text-lg font-bold text-indigo-900 mb-3 flex items-center gap-2">
-            ✨ AI Operational Insights ({pendingInsights.length})
+            âœ¨ AI Operational Insights ({pendingInsights.length})
           </h2>
           <ul className="space-y-3">
             {pendingInsights.map(insight => (
@@ -71,7 +71,7 @@ export const SecretaryDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
       {breachedComplaints.length > 0 && (
         <section className="bg-red-50 p-4 rounded-xl border border-red-200">
           <h2 className="text-lg font-bold text-red-800 mb-3 flex items-center gap-2">
-            ⚠️ SLA Breaches ({breachedComplaints.length})
+            âš ï¸ SLA Breaches ({breachedComplaints.length})
           </h2>
           <ul className="space-y-2">
             {breachedComplaints.map(comp => (
@@ -92,7 +92,7 @@ export const SecretaryDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
         <div className="space-y-6">
           <section className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <span className="bg-blue-100 text-blue-800 p-1.5 rounded-lg text-sm">📥</span>
+              <span className="bg-blue-100 text-blue-800 p-1.5 rounded-lg text-sm">ðŸ“¥</span>
               Pending Move Approvals
             </h2>
             {movePending.length === 0 ? (
@@ -114,7 +114,7 @@ export const SecretaryDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
 
           <section className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <span className="bg-orange-100 text-orange-800 p-1.5 rounded-lg text-sm">🔨</span>
+              <span className="bg-orange-100 text-orange-800 p-1.5 rounded-lg text-sm">ðŸ”¨</span>
               Pending Renovations
             </h2>
             {renPending.length === 0 ? (
@@ -139,7 +139,7 @@ export const SecretaryDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
         <div className="space-y-6">
           <section className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <span className="bg-purple-100 text-purple-800 p-1.5 rounded-lg text-sm">📄</span>
+              <span className="bg-purple-100 text-purple-800 p-1.5 rounded-lg text-sm">ðŸ“„</span>
               Expiring AMCs
             </h2>
             {expiringContracts.length === 0 && expiredContracts.length === 0 ? (
@@ -172,3 +172,4 @@ export const SecretaryDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
     </div>
   );
 };
+

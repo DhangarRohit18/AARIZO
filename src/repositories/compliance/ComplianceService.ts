@@ -1,6 +1,5 @@
 import { amcRepository } from './AMCRepository';
-import { assetRepository } from './AssetRepository';
-import type { AMCContract, AMCType, AMCStatus } from '../../domains/compliance/types';
+import type { AMCType, AMCStatus } from '../../domains/compliance/types';
 
 export class ComplianceService {
   

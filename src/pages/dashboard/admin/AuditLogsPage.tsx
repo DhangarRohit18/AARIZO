@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Activity } from 'lucide-react';
 import { PrivacyAuditHub } from '../../../domains/security';
 
@@ -25,3 +25,4 @@ export const AuditLogsPage: React.FC = () => {
 };
 
 export default AuditLogsPage;
+

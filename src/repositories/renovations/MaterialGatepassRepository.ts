@@ -1,4 +1,4 @@
-import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
+﻿import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { BaseRepository } from '../BaseRepository';
 import type { MaterialGatepass } from '../../domains/renovations/types';
@@ -13,7 +13,7 @@ export class MaterialGatepassRepository extends BaseRepository<MaterialGatepass>
       toFirestore(gatepass: MaterialGatepass): any {
         const { id, ...data } = gatepass;
         
-        let parsedVerifiedAt = data.verifiedAt;
+        let parsedVerifiedAt: any = data.verifiedAt;
         if (typeof data.verifiedAt === 'string' && data.verifiedAt.length > 0) {
           parsedVerifiedAt = Timestamp.fromDate(new Date(data.verifiedAt));
         }
@@ -51,3 +51,4 @@ export class MaterialGatepassRepository extends BaseRepository<MaterialGatepass>
 }
 
 export const materialGatepassRepository = new MaterialGatepassRepository();
+

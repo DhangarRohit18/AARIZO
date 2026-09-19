@@ -1,4 +1,5 @@
-import { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions, Timestamp } from 'firebase/firestore';
+import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { BaseRepository } from '../BaseRepository';
 import type { AMCContract } from '../../domains/compliance/types';
 
@@ -12,12 +13,12 @@ export class AMCRepository extends BaseRepository<AMCContract> {
       toFirestore(contract: AMCContract): any {
         const { id, ...data } = contract;
         
-        let parsedStart = data.contractStart;
+        let parsedStart: any = data.contractStart;
         if (typeof data.contractStart === 'string' && data.contractStart.length > 0) {
           parsedStart = Timestamp.fromDate(new Date(data.contractStart));
         }
 
-        let parsedEnd = data.contractEnd;
+        let parsedEnd: any = data.contractEnd;
         if (typeof data.contractEnd === 'string' && data.contractEnd.length > 0) {
           parsedEnd = Timestamp.fromDate(new Date(data.contractEnd));
         }
@@ -36,7 +37,9 @@ export class AMCRepository extends BaseRepository<AMCContract> {
         
         const contractStart = data.contractStart instanceof Timestamp ? data.contractStart.toDate().toISOString() : data.contractStart;
         const contractEnd = data.contractEnd instanceof Timestamp ? data.contractEnd.toDate().toISOString() : data.contractEnd;
+        const nextRenewalDate = data.nextRenewalDate instanceof Timestamp ? data.nextRenewalDate.toDate().toISOString() : data.nextRenewalDate;
         const createdAt = data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : data.createdAt;
+        const updatedAt = data.updatedAt instanceof Timestamp ? data.updatedAt.toDate().toISOString() : data.updatedAt;
 
         return {
           id: snapshot.id,
@@ -59,7 +62,9 @@ export class AMCRepository extends BaseRepository<AMCContract> {
             expired: false
           },
           createdAt: createdAt || new Date().toISOString(),
-          createdBy: data.createdBy || ''
+          updatedAt: updatedAt || new Date().toISOString(),
+          createdBy: data.createdBy || '',
+          nextRenewalDate: nextRenewalDate
         } as AMCContract;
       }
     };
@@ -67,3 +72,4 @@ export class AMCRepository extends BaseRepository<AMCContract> {
 }
 
 export const amcRepository = new AMCRepository();
+

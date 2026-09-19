@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { CommunityMarketplaceHub } from '../../../domains/community';
 
 export const ResidentMarketplacePage: React.FC = () => {
@@ -10,3 +10,4 @@ export const ResidentMarketplacePage: React.FC = () => {
 };
 
 export default ResidentMarketplacePage;
+

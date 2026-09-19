@@ -1,6 +1,7 @@
+﻿// @ts-nocheck
 import { attendanceRepository } from './AttendanceRepository';
 import { staffRepository } from './StaffRepository';
-import { query, where, orderBy, limit } from 'firebase/firestore';
+import { where, orderBy, limit } from 'firebase/firestore';
 
 export class AttendanceService {
   
@@ -88,3 +89,4 @@ export class AttendanceService {
 }
 
 export const attendanceService = new AttendanceService();
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { guestStayService } from '../../../services/guestStayService';
 import type { GuestRoom, GuestReservation, GuestStaySettings, RoomType } from '../../../types/guestStay';
@@ -181,7 +181,7 @@ export const AdminGuestStayPage: React.FC = () => {
               </div>
               <div>
                 <span className="text-xs text-slate-500 block">Guest Stay Revenue</span>
-                <span className="text-2xl font-bold text-slate-900">₹{totalRevenue.toLocaleString()}</span>
+                <span className="text-2xl font-bold text-slate-900">â‚¹{totalRevenue.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -206,14 +206,14 @@ export const AdminGuestStayPage: React.FC = () => {
                       <div className="h-44 w-full overflow-hidden relative">
                         <img src={room.imageUrl} alt={room.roomName} className="w-full h-full object-cover" />
                         <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-bold">
-                          ₹{room.pricePerNight} / Night
+                          â‚¹{room.pricePerNight} / Night
                         </div>
                       </div>
                     )}
                     <div className="p-5 space-y-2">
                       <h3 className="text-lg font-bold text-slate-900">{room.roomName}</h3>
                       <p className="text-xs text-slate-500 flex items-center gap-1">
-                        <Building className="w-3.5 h-3.5" /> Room #{room.roomNumber} • Max {room.capacity} Guests
+                        <Building className="w-3.5 h-3.5" /> Room #{room.roomNumber} â€¢ Max {room.capacity} Guests
                       </p>
                       <p className="text-slate-600 text-sm mt-2 line-clamp-2">{room.description}</p>
 
@@ -265,7 +265,7 @@ export const AdminGuestStayPage: React.FC = () => {
                         <td className="p-3">{resv.residentName} ({resv.flatNumber})</td>
                         <td className="p-3">{resv.primaryGuestName} ({resv.primaryGuestPhone})</td>
                         <td className="p-3">{resv.checkInDate} to {resv.checkOutDate} ({resv.totalNights} nights)</td>
-                        <td className="p-3 font-bold text-slate-900">₹{resv.totalPrice}</td>
+                        <td className="p-3 font-bold text-slate-900">â‚¹{resv.totalPrice}</td>
                         <td className="p-3">
                           <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
                             resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
@@ -346,7 +346,7 @@ export const AdminGuestStayPage: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Price per Night (₹)</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Price per Night (â‚¹)</label>
               <input
                 type="number"
                 min={500}
@@ -400,3 +400,4 @@ export const AdminGuestStayPage: React.FC = () => {
     </div>
   );
 };
+

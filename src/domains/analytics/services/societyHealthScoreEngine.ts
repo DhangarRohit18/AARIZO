@@ -14,7 +14,7 @@ class SocietyHealthScoreEngine {
     // 1. Compliance & AMC Health Calculation (Weight: 20%)
     const totalAssets = assets.length || 1;
     const compliantAssets = assets.filter(
-      (a: AssetItem) => a.status === 'ACTIVE' || a.status === 'EXPIRING_SOON'
+      (a: AssetItem) => a.status === 'ACTIVE' || a.complianceStatus === 'EXPIRING_SOON'
     ).length;
     const complianceScore = Math.round((compliantAssets / totalAssets) * 100);
 

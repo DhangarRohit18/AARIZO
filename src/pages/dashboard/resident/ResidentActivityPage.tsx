@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   UserCheck, CreditCard, Wrench, Package, AlertCircle,
   CheckCircle2, Bell, Clock, Filter,
 } from 'lucide-react';
 
 const ALL_ACTIVITIES = [
-  { id: 1, text: 'Rajesh Singh checked in — Visitor pass used', time: '2 min ago', icon: UserCheck, color: '#3b82f6', category: 'visitors' },
+  { id: 1, text: 'Rajesh Singh checked in â€” Visitor pass used', time: '2 min ago', icon: UserCheck, color: '#3b82f6', category: 'visitors' },
   { id: 2, text: 'Water tank maintenance completed', time: '1 hr ago', icon: CheckCircle2, color: '#10b981', category: 'maintenance' },
   { id: 3, text: 'Society AGM Notice: 25 Sep at 6PM, Club House', time: '3 hrs ago', icon: AlertCircle, color: '#f59e0b', category: 'notices' },
-  { id: 4, text: 'Monthly maintenance levy auto-paid ₹2,400', time: 'Yesterday', icon: CreditCard, color: '#8b5cf6', category: 'payments' },
-  { id: 5, text: 'Plumbing repair request closed — Flat B-301', time: 'Yesterday', icon: Wrench, color: '#f97316', category: 'maintenance' },
-  { id: 6, text: 'Parcel arrived at gate: Amazon — Pending pickup', time: '2 days ago', icon: Package, color: '#06b6d4', category: 'parcels' },
+  { id: 4, text: 'Monthly maintenance levy auto-paid â‚¹2,400', time: 'Yesterday', icon: CreditCard, color: '#8b5cf6', category: 'payments' },
+  { id: 5, text: 'Plumbing repair request closed â€” Flat B-301', time: 'Yesterday', icon: Wrench, color: '#f97316', category: 'maintenance' },
+  { id: 6, text: 'Parcel arrived at gate: Amazon â€” Pending pickup', time: '2 days ago', icon: Package, color: '#06b6d4', category: 'parcels' },
   { id: 7, text: 'Gym booking confirmed: Saturday 7AM - 8AM', time: '2 days ago', icon: CheckCircle2, color: '#22c55e', category: 'amenities' },
-  { id: 8, text: 'Priya Sharma left — Visitor stay: 2hrs 30min', time: '3 days ago', icon: UserCheck, color: '#3b82f6', category: 'visitors' },
-  { id: 9, text: 'Power bill payment received: ₹1,850', time: '4 days ago', icon: CreditCard, color: '#8b5cf6', category: 'payments' },
+  { id: 8, text: 'Priya Sharma left â€” Visitor stay: 2hrs 30min', time: '3 days ago', icon: UserCheck, color: '#3b82f6', category: 'visitors' },
+  { id: 9, text: 'Power bill payment received: â‚¹1,850', time: '4 days ago', icon: CreditCard, color: '#8b5cf6', category: 'payments' },
   { id: 10, text: 'Emergency alert: Lift malfunction in Tower A (resolved)', time: '5 days ago', icon: AlertCircle, color: '#ef4444', category: 'notices' },
 ];
 
@@ -95,3 +95,4 @@ export const ResidentActivityPage: React.FC = () => {
     </div>
   );
 };
+

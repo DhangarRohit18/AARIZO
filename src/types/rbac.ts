@@ -1,11 +1,5 @@
-export type UserRole =
-  | 'RESIDENT'
-  | 'GUARD'
-  | 'SECRETARY'
-  | 'COMMITTEE'
-  | 'FACILITY_MANAGER'
-  | 'VENDOR'
-  | 'ADMIN';
+import type { UserRole } from '../domains/auth/types';
+export type { UserRole };
 
 export type Action =
   | 'complaint:create' | 'complaint:assign' | 'complaint:resolve' | 'complaint:approve' | 'complaint:delete' | 'complaint:view_own' | 'complaint:view_assigned' | 'complaint:view_all'
@@ -21,8 +15,10 @@ export type Action =
   | 'invoice:upload'
   | 'admin:manage_users' | 'admin:configure_society';
 
-export const RBAC_MATRIX: Record<UserRole, Action[]> = {
-  RESIDENT: [
+export type Permission = Action;
+
+export const RBAC_MATRIX: Record<string, Action[]> = {
+  resident: [
     'complaint:create', 'complaint:view_own', 'complaint:resolve', // verify_resolution
     'parcel:view_own',
     'attendance:view_linked', 'attendance:toggle_consent',
@@ -30,7 +26,7 @@ export const RBAC_MATRIX: Record<UserRole, Action[]> = {
     'renovation:request',
     'amc:view_public_amc'
   ],
-  GUARD: [
+  guard: [
     'parcel:receive', 'parcel:handover',
     'attendance:check_in', 'attendance:check_out',
     'move:start',
@@ -38,7 +34,7 @@ export const RBAC_MATRIX: Record<UserRole, Action[]> = {
     'patrol:log_checkpoint',
     'complaint:view_assigned'
   ],
-  SECRETARY: [
+  secretary: [
     'data:view_all',
     'complaint:approve', 'complaint:assign', 'complaint:view_all',
     'parcel:view_all',
@@ -48,21 +44,21 @@ export const RBAC_MATRIX: Record<UserRole, Action[]> = {
     'amc:create', 'amc:renew', 'amc:view',
     'staff:manage'
   ],
-  COMMITTEE: [
+  committee: [
     'data:view_all', 'data:view_reports',
     'governance:approve_budgets'
   ],
-  FACILITY_MANAGER: [
+  facility_manager: [
     'data:view_all',
     'complaint:assign', 'complaint:resolve', 'complaint:view_all',
     'amc:view',
     'staff:manage_shifts'
   ],
-  VENDOR: [
+  vendor: [
     'complaint:view_assigned', 'complaint:resolve',
     'invoice:upload'
   ],
-  ADMIN: [
+  admin: [
     'admin:manage_users', 'admin:configure_society', 'data:view_all'
   ]
 };
@@ -74,5 +70,9 @@ export interface RBACUser {
   email?: string;
   role: UserRole;
   societyId?: string;
+  flatNumber?: string;
+  flatDetails?: string;
 }
+
+
 

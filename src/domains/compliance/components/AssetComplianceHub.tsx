@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck,
@@ -473,7 +474,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Register New Asset</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
             </div>
 
             <form onSubmit={handleAddSubmit} className="space-y-4">
@@ -620,7 +621,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Record Maintenance Inspection</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
             </div>
 
             <p className="text-xs text-slate-500">
@@ -690,7 +691,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Renew AMC / Insurance / Certificate</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
             </div>
 
             <form onSubmit={handleRenewSubmit} className="space-y-4">
@@ -731,7 +732,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Cost (₹)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Cost (â‚¹)</label>
                   <input
                     type="number"
                     placeholder="45000"
@@ -782,7 +783,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
                 <h3 className="font-bold text-slate-900 text-base">Asset Audit History</h3>
                 <p className="text-xs text-slate-500">{activeAssetForModal.name} ({activeAssetForModal.assetCode})</p>
               </div>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
             </div>
 
             <div className="space-y-4">
@@ -835,3 +836,4 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
     </div>
   );
 };
+

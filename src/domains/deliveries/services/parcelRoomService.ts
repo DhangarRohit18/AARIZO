@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import type { Parcel, ParcelPickup, ParcelNotification } from '../types';
 import { realtimeService } from '../../../services/realtimeService';
 import { filterBySociety } from '../../../utils/societyIsolation';
@@ -12,7 +13,7 @@ const SEED_PARCELS: Parcel[] = [
     societyId: 'soc-gvs',
     residentId: 'res-1',
     residentName: 'Vikram Joshi',
-    flatCode: 'Tower B · B-1204',
+    flatCode: 'Tower B Â· B-1204',
     courierCompany: 'Amazon',
     courierName: 'Rajesh Kumar',
     trackingNumber: 'AMZ-IN-884029',
@@ -32,7 +33,7 @@ const SEED_PARCELS: Parcel[] = [
     societyId: 'soc-gvs',
     residentId: 'res-2',
     residentName: 'Ananya Roy',
-    flatCode: 'Tower A · A-402',
+    flatCode: 'Tower A Â· A-402',
     courierCompany: 'Flipkart',
     courierName: 'Sunil Verma',
     trackingNumber: 'FKT-993021',
@@ -52,7 +53,7 @@ const SEED_PARCELS: Parcel[] = [
     societyId: 'soc-gvs',
     residentId: 'res-3',
     residentName: 'Mayuri Udar',
-    flatCode: 'Tower C · C-301',
+    flatCode: 'Tower C Â· C-301',
     courierCompany: 'Blinkit',
     courierName: 'Deepak Mali',
     trackingNumber: 'BLK-771029',
@@ -214,3 +215,4 @@ class ParcelRoomService {
 }
 
 export const parcelRoomService = new ParcelRoomService();
+

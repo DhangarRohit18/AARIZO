@@ -1,5 +1,4 @@
-import { getDocs, query, where, Timestamp } from 'firebase/firestore';
-import { db } from '../../services/firebase/config';
+﻿
 import { complaintRepository } from './ComplaintRepository';
 import { slaPolicyRepository } from './SLAPolicyRepository';
 
@@ -72,3 +71,5 @@ export class SLAEscalationService {
 }
 
 export const slaEscalationService = new SLAEscalationService();
+
+

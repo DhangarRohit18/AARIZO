@@ -156,7 +156,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   };
 
-  const switchRole = (role: UserRole) => {
+  const switchRole = (_role: UserRole) => {
     // Note: For full Firebase Auth migration, this bypass feature must be removed or 
     // it must use custom Firebase emulation tokens. For now, it warns the user.
     console.warn("switchRole is deprecated in Firebase Auth mode. Please login via Phone Auth.");

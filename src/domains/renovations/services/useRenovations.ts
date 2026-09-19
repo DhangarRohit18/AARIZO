@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import { renovationRepository } from '../../../repositories/renovations/RenovationRepository';
 import { materialGatepassRepository } from '../../../repositories/renovations/MaterialGatepassRepository';
 import type { RenovationRequest, MaterialGatepass } from '../types';
@@ -10,7 +10,7 @@ import { orderBy, where } from 'firebase/firestore';
  */
 export function useRenovations(
   societyId: string, 
-  role: 'RESIDENT' | 'SECRETARY' | 'GUARD', 
+  role: 'resident' | 'secretary' | 'guard', 
   residentId?: string
 ) {
   const [renovations, setRenovations] = useState<RenovationRequest[]>([]);
@@ -25,11 +25,11 @@ export function useRenovations(
     let constraints: any[] = [orderBy('createdAt', 'desc')];
 
     // RESIDENT sees only their own requests
-    if (role === 'RESIDENT' && residentId) {
+    if (role === 'resident' && residentId) {
       constraints.push(where('residentId', '==', residentId));
     }
     // GUARD sees ONLY active/approved ones (hiding old/rejected/draft data)
-    else if (role === 'GUARD') {
+    else if (role === 'guard') {
       constraints.push(where('status', 'in', ['APPROVED', 'ACTIVE']));
     }
     // SECRETARY sees everything (default constraints)
@@ -82,3 +82,4 @@ export function useRenovations(
     loading
   };
 }
+

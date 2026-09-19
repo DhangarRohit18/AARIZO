@@ -2,18 +2,18 @@ import React from 'react';
 import { useComplaints } from '../../domains/complaints/services/useComplaints';
 import { useMoves } from '../../domains/moves/services/useMoves';
 import { useRenovations } from '../../domains/renovations/services/useRenovations';
-import { useCompliance } from '../../domains/compliance/services/useCompliance';
 import type { RBACUser } from '../../types/rbac';
-import { can } from '../../utils/permissions';
 
 export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
   const societyId = user.societyId!;
   const residentId = user.id;
 
   // Realtime hooks explicitly scoped for the specific Resident
-  const { complaints, loading: compLoading } = useComplaints(societyId, residentId);
+  const { complaints, loading: compLoading } = useComplaints(societyId);
+  const myComplaints = complaints.filter(c => c.residentId === residentId);
+  
   const { activeResidentMoves, loading: movesLoading } = useMoves(societyId, residentId);
-  const { activeRenovations, pendingApprovals: renPending, loading: renLoading } = useRenovations(societyId, 'RESIDENT', residentId);
+  const { activeRenovations, pendingApprovals: renPending, loading: renLoading } = useRenovations(societyId, 'resident', residentId);
   
   const loading = compLoading || movesLoading || renLoading;
 
@@ -28,7 +28,7 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Welcome back, {user.name}</h1>
-          <p className="text-gray-500">Flat {user.flatNumber}</p>
+          <p className="text-gray-500">Flat {user.flatDetails || 'N/A'}</p>
         </div>
       </div>
       
@@ -48,14 +48,14 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
 
       <section className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <span className="bg-red-100 text-red-800 p-1.5 rounded-lg text-sm">🎫</span>
+          <span className="bg-red-100 text-red-800 p-1.5 rounded-lg text-sm">ðŸŽ«</span>
           My Tickets & Complaints
         </h2>
-        {complaints.length === 0 ? (
+        {myComplaints.length === 0 ? (
           <p className="text-gray-500 text-sm">You have no active complaints.</p>
         ) : (
           <ul className="space-y-3">
-            {complaints.map(comp => (
+            {myComplaints.map(comp => (
               <li key={comp.id} className="p-3 border rounded flex justify-between items-center">
                 <div>
                   <p className="font-semibold">{comp.title}</p>
@@ -72,7 +72,7 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
 
       <section className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <span className="bg-blue-100 text-blue-800 p-1.5 rounded-lg text-sm">📦</span>
+          <span className="bg-blue-100 text-blue-800 p-1.5 rounded-lg text-sm">ðŸ“¦</span>
           My Move Requests
         </h2>
         {activeResidentMoves.length === 0 ? (
@@ -96,7 +96,7 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
 
       <section className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <span className="bg-orange-100 text-orange-800 p-1.5 rounded-lg text-sm">🔨</span>
+          <span className="bg-orange-100 text-orange-800 p-1.5 rounded-lg text-sm">ðŸ”¨</span>
           My Renovations
         </h2>
         {allResidentRenovations.length === 0 ? (
@@ -123,3 +123,5 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
     </div>
   );
 };
+
+

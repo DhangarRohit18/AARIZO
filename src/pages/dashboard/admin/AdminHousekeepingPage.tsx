@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { housekeepingService } from '../../../services/housekeepingService';
 import type { HousekeepingTask, CommonAreaCategory, GarbagePickupLog } from '../../../types/housekeeping';
@@ -170,7 +170,7 @@ export const AdminHousekeepingPage: React.FC = () => {
                   <span>{task.title}</span>
                   <span className="px-2 py-0.5 bg-rose-100 text-rose-800 text-[10px] rounded-full">{task.status}</span>
                 </div>
-                <p className="text-slate-500 mt-1">{task.areaLocation} • Assigned: {task.assignedStaffName}</p>
+                <p className="text-slate-500 mt-1">{task.areaLocation} â€¢ Assigned: {task.assignedStaffName}</p>
                 {task.missedReason && <p className="text-rose-700 italic mt-0.5">Reason: {task.missedReason}</p>}
               </div>
             ))}
@@ -300,7 +300,7 @@ export const AdminHousekeepingPage: React.FC = () => {
                     <td className="p-3">{log.scheduledTime}</td>
                     <td className="p-3">
                       {log.confirmedByResident ? (
-                        <span className="text-xs font-bold text-emerald-600">✅ Confirmed</span>
+                        <span className="text-xs font-bold text-emerald-600">âœ… Confirmed</span>
                       ) : (
                         <span className="text-xs text-slate-400">Unconfirmed</span>
                       )}
@@ -455,3 +455,4 @@ export const AdminHousekeepingPage: React.FC = () => {
     </div>
   );
 };
+

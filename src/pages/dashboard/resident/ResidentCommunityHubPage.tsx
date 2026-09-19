@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { amenityService } from '../../../services/amenityService';
 import type {
@@ -30,7 +30,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
   const { currentUser } = useAuth();
   const societyId = (currentUser as any)?.societyId || 'soc-1';
   const residentId = currentUser?.id || 'res-1';
-  const residentName = currentUser?.name || 'Resident';
+  const residentName = currentUser?.name || 'resident';
   const flatNumber = (currentUser as any)?.flatDetails || 'A-101';
 
   const [activeTab, setActiveTab] = useState<'ANNOUNCEMENTS' | 'EVENTS' | 'POLLS' | 'POSTS'>('ANNOUNCEMENTS');
@@ -392,7 +392,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900 text-sm">{post.authorName}</h4>
-                    <p className="text-xs text-slate-400">Flat {post.flatNumber} • {new Date(post.createdAt).toLocaleDateString()}</p>
+                    <p className="text-xs text-slate-400">Flat {post.flatNumber} â€¢ {new Date(post.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>
                 <span className="px-2.5 py-0.5 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full flex items-center gap-1">
@@ -604,3 +604,4 @@ export const ResidentCommunityHubPage: React.FC = () => {
     </div>
   );
 };
+

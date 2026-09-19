@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import { moveRepository } from '../../../repositories/moves/MoveRepository';
 import type { MoveRequest } from '../types';
 import { orderBy, where } from 'firebase/firestore';
@@ -70,3 +70,4 @@ export function useMoves(societyId: string, residentId?: string) {
     loading
   };
 }
+

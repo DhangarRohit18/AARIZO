@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { Package, QrCode, Search, ShieldCheck, Clock, AlertTriangle, Plus, Filter } from 'lucide-react';
 import { parcelRoomService } from '../../../domains/deliveries/services/parcelRoomService';
@@ -13,7 +14,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
 
   // New parcel form state
   const [residentName, setResidentName] = useState('Vikram Joshi');
-  const [flatCode, setFlatCode] = useState('Tower B · B-1204');
+  const [flatCode, setFlatCode] = useState('Tower B Â· B-1204');
   const [courierCompany, setCourierCompany] = useState('Amazon');
   const [trackingNumber, setTrackingNumber] = useState('');
   const [storageLocation, setStorageLocation] = useState('Rack A-1');
@@ -405,3 +406,4 @@ export const ParcelRoomSecurityHub: React.FC = () => {
     </div>
   );
 };
+

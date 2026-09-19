@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { amenityService } from '../../../services/amenityService';
 import type { SocietyAmenity, AmenityBooking } from '../../../types/amenity';
@@ -18,7 +18,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
   const { currentUser } = useAuth();
   const societyId = (currentUser as any)?.societyId || 'soc-1';
   const residentId = currentUser?.id || 'res-1';
-  const residentName = currentUser?.name || 'Resident';
+  const residentName = currentUser?.name || 'resident';
   const flatNumber = (currentUser as any)?.flatDetails || 'A-101';
 
   const [amenities, setAmenities] = useState<SocietyAmenity[]>([]);
@@ -254,7 +254,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
               <p><strong>Configured Hours:</strong> {selectedAmenity.openTime} to {selectedAmenity.closeTime}</p>
               <p><strong>Max Slot Capacity:</strong> {selectedAmenity.capacityPerSlot} Pax</p>
               {selectedAmenity.requiresApproval && (
-                <p className="text-amber-700 font-medium">⚠️ Note: Bookings for this facility require society admin approval.</p>
+                <p className="text-amber-700 font-medium">âš ï¸ Note: Bookings for this facility require society admin approval.</p>
               )}
             </div>
 
@@ -327,3 +327,4 @@ export const ResidentAmenityBookingPage: React.FC = () => {
     </div>
   );
 };
+

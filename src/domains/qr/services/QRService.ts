@@ -1,4 +1,4 @@
-import { QRTokenPayload, QREntityType, QRValidationResult, QRStatus, QRUsagePolicy } from '../types';
+import type { QREntityType, QRTokenPayload, QRValidationResult } from '../types/index';
 
 class QRService {
   /**
@@ -51,7 +51,7 @@ class QRService {
    */
   public async simulateBackendVerification(
     payload: QRTokenPayload, 
-    actorId: string, 
+    _actorId: string, 
     actorSocietyId: string
   ): Promise<QRValidationResult> {
     
@@ -93,3 +93,6 @@ class QRService {
 }
 
 export const qrService = new QRService();
+
+
+

@@ -1,11 +1,11 @@
-import React from 'react';
+﻿import React from 'react';
 import { UserCheck, QrCode, Clock } from 'lucide-react';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 
 export const ServiceProviderDashboard: React.FC = () => {
   const assignments = [
-    { id: 'sp-1', resident: 'Mayuri Udar (Tower C · 301)', role: 'Housekeeping / Maid', time: '08:00 AM - 11:00 AM', status: 'PRESENT' },
-    { id: 'sp-2', resident: 'Vikram Joshi (Tower A · 704)', role: 'Cook / Chef', time: '12:30 PM - 02:30 PM', status: 'SCHEDULED' },
+    { id: 'sp-1', resident: 'Mayuri Udar (Tower C Â· 301)', role: 'Housekeeping / Maid', time: '08:00 AM - 11:00 AM', status: 'PRESENT' },
+    { id: 'sp-2', resident: 'Vikram Joshi (Tower A Â· 704)', role: 'Cook / Chef', time: '12:30 PM - 02:30 PM', status: 'SCHEDULED' },
   ];
 
   return (
@@ -52,3 +52,4 @@ export const ServiceProviderDashboard: React.FC = () => {
     </div>
   );
 };
+

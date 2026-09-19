@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { MoveRenovationHub } from '../../../domains/move-management';
 
 export const AdminMoveRenovationPage: React.FC = () => {
@@ -10,3 +10,4 @@ export const AdminMoveRenovationPage: React.FC = () => {
 };
 
 export default AdminMoveRenovationPage;
+

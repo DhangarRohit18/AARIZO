@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { SocietyExpenseHub } from '../../../domains/expenses';
 
 export const AdminExpensePage: React.FC = () => {
@@ -10,3 +10,4 @@ export const AdminExpensePage: React.FC = () => {
 };
 
 export default AdminExpensePage;
+

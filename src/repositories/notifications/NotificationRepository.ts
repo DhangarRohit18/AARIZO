@@ -1,7 +1,7 @@
 import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { BaseRepository } from '../BaseRepository';
-import type { NotificationRecord } from '../../domains/notifications/types';
+import type { NotificationRecord } from '../../domains/notifications/types/index';
 
 export class NotificationRepository extends BaseRepository<NotificationRecord> {
   constructor() {
@@ -13,12 +13,12 @@ export class NotificationRepository extends BaseRepository<NotificationRecord> {
       toFirestore(record: NotificationRecord): any {
         const { id, ...data } = record;
         
-        let parsedSentAt = data.sentAt;
+        let parsedSentAt: any = data.sentAt;
         if (typeof data.sentAt === 'string' && data.sentAt.length > 0) {
           parsedSentAt = Timestamp.fromDate(new Date(data.sentAt));
         }
 
-        let parsedDeliveredAt = data.deliveredAt;
+        let parsedDeliveredAt: any = data.deliveredAt;
         if (typeof data.deliveredAt === 'string' && data.deliveredAt.length > 0) {
           parsedDeliveredAt = Timestamp.fromDate(new Date(data.deliveredAt));
         }
@@ -62,3 +62,4 @@ export class NotificationRepository extends BaseRepository<NotificationRecord> {
 }
 
 export const notificationRepository = new NotificationRepository();
+

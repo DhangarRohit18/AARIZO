@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   UserCheck, Car, Wrench, CreditCard, Store, Sparkles,
@@ -56,3 +56,4 @@ export const ResidentServicesPage: React.FC = () => {
     </div>
   );
 };
+

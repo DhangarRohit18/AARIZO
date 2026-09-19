@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { childSafetyService } from '../../../services/childSafetyService';
 import type { ChildProfile, ChildPickupQR, PickupLog, ChildSafetyAlert } from '../../../types/childSafety';
@@ -67,7 +67,7 @@ export const ChildGateScannerPage: React.FC = () => {
           <div className="flex items-start gap-3">
             <ShieldAlert className="w-8 h-8 text-white shrink-0 mt-0.5" />
             <div>
-              <h2 className="text-xl font-extrabold tracking-wide uppercase">🚨 CRITICAL MISSING CHILD LOCKDOWN ACTIVE</h2>
+              <h2 className="text-xl font-extrabold tracking-wide uppercase">ðŸš¨ CRITICAL MISSING CHILD LOCKDOWN ACTIVE</h2>
               <div className="mt-1 space-y-1 text-sm font-medium">
                 {activeAlerts.map(alert => (
                   <div key={alert.id} className="flex items-center gap-2">
@@ -173,7 +173,7 @@ export const ChildGateScannerPage: React.FC = () => {
                 )}
                 <div className="space-y-2 flex-1">
                   <h3 className="text-xl font-bold">
-                    {scanResult.allowed ? '✅ PICKUP AUTHORIZED & PERMITTED' : '⛔ PICKUP DENIED / BLOCKED'}
+                    {scanResult.allowed ? 'âœ… PICKUP AUTHORIZED & PERMITTED' : 'â›” PICKUP DENIED / BLOCKED'}
                   </h3>
                   <p className="text-sm font-medium">{scanResult.message}</p>
 
@@ -215,7 +215,7 @@ export const ChildGateScannerPage: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-slate-500">Caretaker: {log.pickupPersonName}</p>
-                    <p className="text-slate-400 text-[11px]">{new Date(log.timestamp).toLocaleString()} • {log.gateId}</p>
+                    <p className="text-slate-400 text-[11px]">{new Date(log.timestamp).toLocaleString()} â€¢ {log.gateId}</p>
                   </div>
                 ))
               )}
@@ -226,3 +226,4 @@ export const ChildGateScannerPage: React.FC = () => {
     </div>
   );
 };
+

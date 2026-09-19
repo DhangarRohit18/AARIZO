@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useRBAC } from '../hooks/useRBAC';
@@ -21,8 +21,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (allowedRoles && allowedRoles.length > 0) {
-    const normalizedAllowed = allowedRoles.map((r) => r.toUpperCase());
-    if (!normalizedAllowed.includes(activeRole)) {
+    const normalizedAllowed = allowedRoles.map((r) => r.toLowerCase());
+    if (!normalizedAllowed.includes(activeRole.toLowerCase())) {
       return <Navigate to="/unauthorized" replace />;
     }
   }
@@ -33,3 +33,5 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   return <Outlet />;
 };
+
+

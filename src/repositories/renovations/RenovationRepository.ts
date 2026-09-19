@@ -13,12 +13,12 @@ export class RenovationRepository extends BaseRepository<RenovationRequest> {
       toFirestore(request: RenovationRequest): any {
         const { id, ...data } = request;
         
-        let parsedStartDate = data.startDate;
+        let parsedStartDate: any = data.startDate;
         if (typeof data.startDate === 'string' && data.startDate.length > 0) {
           parsedStartDate = Timestamp.fromDate(new Date(data.startDate));
         }
 
-        let parsedEndDate = data.endDate;
+        let parsedEndDate: any = data.endDate;
         if (typeof data.endDate === 'string' && data.endDate.length > 0) {
           parsedEndDate = Timestamp.fromDate(new Date(data.endDate));
         }
@@ -38,6 +38,7 @@ export class RenovationRepository extends BaseRepository<RenovationRequest> {
         const startDate = data.startDate instanceof Timestamp ? data.startDate.toDate().toISOString() : data.startDate;
         const endDate = data.endDate instanceof Timestamp ? data.endDate.toDate().toISOString() : data.endDate;
         const createdAt = data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : data.createdAt;
+        const updatedAt = data.updatedAt instanceof Timestamp ? data.updatedAt.toDate().toISOString() : data.updatedAt;
 
         // Default approval object if missing
         const approval = data.approval || {
@@ -75,3 +76,4 @@ export class RenovationRepository extends BaseRepository<RenovationRequest> {
 }
 
 export const renovationRepository = new RenovationRepository();
+

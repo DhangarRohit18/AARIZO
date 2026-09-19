@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { guestStayService } from '../../../services/guestStayService';
 import type { GuestRoom, GuestReservation, GuestStaySettings } from '../../../types/guestStay';
@@ -16,7 +16,7 @@ export const ResidentGuestStayPage: React.FC = () => {
   const { currentUser } = useAuth();
   const societyId = (currentUser as any)?.societyId || 'soc-1';
   const residentId = currentUser?.id || 'res-1';
-  const residentName = currentUser?.name || 'Resident';
+  const residentName = currentUser?.name || 'resident';
   const flatNumber = (currentUser as any)?.flatDetails || 'A-101';
 
   const [settings, setSettings] = useState<GuestStaySettings | null>(null);
@@ -117,14 +117,14 @@ export const ResidentGuestStayPage: React.FC = () => {
                   <div className="h-44 w-full overflow-hidden relative">
                     <img src={room.imageUrl} alt={room.roomName} className="w-full h-full object-cover" />
                     <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-bold">
-                      ₹{room.pricePerNight} / Night
+                      â‚¹{room.pricePerNight} / Night
                     </div>
                   </div>
                 )}
                 <div className="p-5 space-y-2">
                   <h3 className="text-lg font-bold text-slate-900">{room.roomName}</h3>
                   <p className="text-xs text-slate-500 flex items-center gap-1">
-                    <Building className="w-3.5 h-3.5" /> Suite #{room.roomNumber} • Max {room.capacity} Pax
+                    <Building className="w-3.5 h-3.5" /> Suite #{room.roomNumber} â€¢ Max {room.capacity} Pax
                   </p>
                   <p className="text-slate-600 text-sm mt-2 line-clamp-2">{room.description}</p>
 
@@ -183,7 +183,7 @@ export const ResidentGuestStayPage: React.FC = () => {
                     <td className="p-3 font-medium">{resv.roomName} (#{resv.roomNumber})</td>
                     <td className="p-3">{resv.primaryGuestName} ({resv.primaryGuestPhone})</td>
                     <td className="p-3">{resv.checkInDate} to {resv.checkOutDate} ({resv.totalNights} nights)</td>
-                    <td className="p-3 font-bold text-slate-900">₹{resv.totalPrice}</td>
+                    <td className="p-3 font-bold text-slate-900">â‚¹{resv.totalPrice}</td>
                     <td className="p-3">
                       <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
                         resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
@@ -251,7 +251,7 @@ export const ResidentGuestStayPage: React.FC = () => {
         <Modal isOpen={!!selectedRoom} onClose={() => setSelectedRoom(null)} title={`Book ${selectedRoom.roomName}`}>
           <form onSubmit={handleBookRoom} className="space-y-4">
             <div className="bg-indigo-50 p-3 rounded-xl text-xs text-indigo-900 font-medium">
-              <strong>Rate:</strong> ₹{selectedRoom.pricePerNight} / Night • Max Capacity: {selectedRoom.capacity} Guests
+              <strong>Rate:</strong> â‚¹{selectedRoom.pricePerNight} / Night â€¢ Max Capacity: {selectedRoom.capacity} Guests
             </div>
 
             <div>
@@ -354,3 +354,4 @@ export const ResidentGuestStayPage: React.FC = () => {
     </div>
   );
 };
+

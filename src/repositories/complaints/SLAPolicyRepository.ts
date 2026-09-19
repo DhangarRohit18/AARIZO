@@ -1,4 +1,5 @@
-import { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
+﻿import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
+
 import { BaseRepository } from '../BaseRepository';
 import type { SLAPolicy } from '../../domains/complaints/types';
 
@@ -40,3 +41,5 @@ export class SLAPolicyRepository extends BaseRepository<SLAPolicy> {
 }
 
 export const slaPolicyRepository = new SLAPolicyRepository();
+
+

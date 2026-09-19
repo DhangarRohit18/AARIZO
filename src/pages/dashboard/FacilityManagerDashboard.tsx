@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   Wrench,
   Clock,
@@ -111,7 +111,7 @@ export const FacilityManagerDashboard: React.FC = () => {
                       {t.priority}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500">Assigned to: {t.assignedTo} • Ticket #{t.id}</p>
+                  <p className="text-xs text-slate-500">Assigned to: {t.assignedTo} â€¢ Ticket #{t.id}</p>
                 </div>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded bg-amber-100 text-amber-800">{t.status}</span>
               </div>
@@ -141,3 +141,4 @@ export const FacilityManagerDashboard: React.FC = () => {
     </div>
   );
 };
+

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import {
@@ -29,9 +29,9 @@ export const ResidentProfilePage: React.FC = () => {
             </span>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ color: '#fff', fontWeight: 800, fontSize: '1.125rem' }}>{currentUser?.name || 'Resident'}</div>
+            <div style={{ color: '#fff', fontWeight: 800, fontSize: '1.125rem' }}>{currentUser?.name || 'resident'}</div>
             <div style={{ color: '#a8a29e', fontSize: '0.8125rem', marginTop: '0.125rem' }}>
-              {currentUser?.flatDetails || 'Tower B · Flat 301'}
+              {currentUser?.flatDetails || 'Tower B Â· Flat 301'}
             </div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.5rem', background: 'rgba(16,185,129,0.15)', borderRadius: '2rem', padding: '0.25rem 0.75rem' }}>
               <Star size={12} style={{ color: '#34d399' }} />
@@ -90,3 +90,4 @@ export const ResidentProfilePage: React.FC = () => {
     </div>
   );
 };
+

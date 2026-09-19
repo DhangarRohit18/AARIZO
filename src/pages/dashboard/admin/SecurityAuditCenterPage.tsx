@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import {
   Shield,
   Terminal,
@@ -370,7 +370,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
                 color: 'bg-blue-50 text-blue-700 border-blue-200',
               },
               {
-                role: 'RESIDENT',
+                role: 'resident',
                 permissions: [
                   'create:visitor_pass',
                   'approve:visitor_pass',
@@ -535,3 +535,4 @@ export const SecurityAuditCenterPage: React.FC = () => {
     </div>
   );
 };
+

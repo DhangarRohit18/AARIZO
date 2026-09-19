@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { QRParkingHub } from '../../../domains/parking';
 
 export const ResidentParkingPage: React.FC = () => {
@@ -10,3 +10,4 @@ export const ResidentParkingPage: React.FC = () => {
 };
 
 export default ResidentParkingPage;
+

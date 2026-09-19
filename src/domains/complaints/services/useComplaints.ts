@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { complaintRepository } from '../../../repositories/complaints/ComplaintRepository';
 import type { Complaint } from '../types';
-import { where, orderBy } from 'firebase/firestore';
+import { orderBy } from 'firebase/firestore';
 
 export function useComplaints(societyId: string) {
   const [complaints, setComplaints] = useState<Complaint[]>([]);

@@ -1,4 +1,4 @@
-export type NotificationChannel = 'PUSH' | 'WHATSAPP' | 'SMS' | 'IN_APP';
+﻿export type NotificationChannel = 'PUSH' | 'WHATSAPP' | 'SMS' | 'IN_APP';
 export type NotificationStatus = 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
 
 // A standardized list of business events that can trigger notifications
@@ -45,3 +45,25 @@ export interface NotificationPayload {
   body: string;
   dataPayload?: Record<string, any>;
 }
+
+// Notifications Domain Types for CommunityOS
+
+export type NotificationCategory =
+  | 'visitor'
+  | 'payment'
+  | 'maintenance'
+  | 'announcement'
+  | 'security'
+  | 'system';
+
+export interface ResidentNotification {
+  id: string;
+  category: NotificationCategory;
+  title: string;
+  message: string;
+  timestamp: string;
+  isRead: boolean;
+  actionRoute?: string;
+  actionLabel?: string;
+}
+

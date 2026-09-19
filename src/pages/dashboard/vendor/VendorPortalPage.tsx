@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { SocietyServicesHub } from '../../../domains/services';
 
 export const VendorPortalPage: React.FC = () => {
@@ -10,3 +10,4 @@ export const VendorPortalPage: React.FC = () => {
 };
 
 export default VendorPortalPage;
+

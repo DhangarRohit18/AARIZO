@@ -1,5 +1,4 @@
 import { amcRepository } from './AMCRepository';
-import { query, where } from 'firebase/firestore';
 
 export class ComplianceReminderService {
   /**

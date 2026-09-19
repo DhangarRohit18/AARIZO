@@ -6,13 +6,13 @@ const STORAGE_KEY_COMPLAINTS = 'aarizo_complaints_v1';
 const STORAGE_KEY_POLICIES = 'aarizo_sla_policies_v1';
 
 const DEFAULT_POLICIES: SLAPolicy[] = [
-  { id: 'pol-1', societyId: 'soc-gvs', category: 'SECURITY', slaMinutes: 15, updatedBy: 'Admin' },
-  { id: 'pol-2', societyId: 'soc-gvs', category: 'LIFT', slaMinutes: 30, updatedBy: 'Admin' },
-  { id: 'pol-3', societyId: 'soc-gvs', category: 'PLUMBING', slaMinutes: 240, updatedBy: 'Admin' }, // 4 hours
-  { id: 'pol-4', societyId: 'soc-gvs', category: 'ELECTRICAL', slaMinutes: 120, updatedBy: 'Admin' }, // 2 hours
-  { id: 'pol-5', societyId: 'soc-gvs', category: 'HOUSEKEEPING', slaMinutes: 180, updatedBy: 'Admin' }, // 3 hours
-  { id: 'pol-6', societyId: 'soc-gvs', category: 'PARKING', slaMinutes: 60, updatedBy: 'Admin' },
-  { id: 'pol-7', societyId: 'soc-gvs', category: 'OTHER', slaMinutes: 1440, updatedBy: 'Admin' }, // 24 hours
+  { id: 'pol-1', societyId: 'soc-gvs', category: 'SECURITY', slaMinutes: 15, escalationLevels: ['STAFF', 'FACILITY_MANAGER', 'SOCIETY_ADMIN'], updatedBy: 'Admin' },
+  { id: 'pol-2', societyId: 'soc-gvs', category: 'LIFT', slaMinutes: 30, escalationLevels: ['STAFF', 'FACILITY_MANAGER', 'SOCIETY_ADMIN'], updatedBy: 'Admin' },
+  { id: 'pol-3', societyId: 'soc-gvs', category: 'PLUMBING', slaMinutes: 240, escalationLevels: ['STAFF', 'FACILITY_MANAGER', 'SOCIETY_ADMIN'], updatedBy: 'Admin' }, // 4 hours
+  { id: 'pol-4', societyId: 'soc-gvs', category: 'ELECTRICAL', slaMinutes: 120, escalationLevels: ['STAFF', 'FACILITY_MANAGER', 'SOCIETY_ADMIN'], updatedBy: 'Admin' }, // 2 hours
+  { id: 'pol-5', societyId: 'soc-gvs', category: 'HOUSEKEEPING', slaMinutes: 180, escalationLevels: ['STAFF', 'FACILITY_MANAGER', 'SOCIETY_ADMIN'], updatedBy: 'Admin' }, // 3 hours
+  { id: 'pol-6', societyId: 'soc-gvs', category: 'PARKING', slaMinutes: 60, escalationLevels: ['STAFF', 'FACILITY_MANAGER', 'SOCIETY_ADMIN'], updatedBy: 'Admin' },
+  { id: 'pol-7', societyId: 'soc-gvs', category: 'OTHER', slaMinutes: 1440, escalationLevels: ['STAFF', 'FACILITY_MANAGER', 'SOCIETY_ADMIN'], updatedBy: 'Admin' }, // 24 hours
 ];
 
 const SEED_COMPLAINTS: Complaint[] = [
@@ -97,7 +97,14 @@ class ComplaintSLAService {
     if (index !== -1) {
       list[index] = { ...list[index], slaMinutes, updatedBy };
     } else {
-      list.push({ id: `pol-${Date.now()}`, societyId, category, slaMinutes, updatedBy });
+      list.push({ 
+        id: `pol-${Date.now()}`, 
+        societyId, 
+        category, 
+        slaMinutes, 
+        escalationLevels: ['STAFF', 'FACILITY_MANAGER', 'SOCIETY_ADMIN'], 
+        updatedBy 
+      });
     }
 
     this.setStorage(STORAGE_KEY_POLICIES, list);

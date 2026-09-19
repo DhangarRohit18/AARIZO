@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Home, Plus } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Flat, BHKType, OccupancyStatus } from '../../../types/society';
@@ -218,3 +218,4 @@ export const FlatManagementPage: React.FC = () => {
     </div>
   );
 };
+

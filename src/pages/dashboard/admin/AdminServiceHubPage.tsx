@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { SocietyServicesHub } from '../../../domains/services';
 
 export const AdminServiceHubPage: React.FC = () => {
@@ -10,3 +10,4 @@ export const AdminServiceHubPage: React.FC = () => {
 };
 
 export default AdminServiceHubPage;
+

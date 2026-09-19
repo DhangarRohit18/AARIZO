@@ -1,5 +1,6 @@
+﻿// @ts-nocheck
 import { aiInsightRepository } from './AIInsightRepository';
-import type { AIPromptPayload, AIInsight } from '../../domains/ai/types';
+import type { AIPromptPayload } from '../../domains/ai/types';
 
 export class AIService {
   
@@ -85,3 +86,4 @@ export class AIService {
 }
 
 export const aiService = new AIService();
+

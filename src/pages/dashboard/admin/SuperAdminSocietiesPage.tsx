@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Building2, Plus, Power } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Society, SubscriptionTier } from '../../../types/society';
@@ -143,7 +143,7 @@ export const SuperAdminSocietiesPage: React.FC = () => {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Building2 size={24} color="#2563eb" />
-            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Super Admin — Multi-Society Directory</h1>
+            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Super Admin â€” Multi-Society Directory</h1>
           </div>
           <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
             Provision and manage society accounts, subscription tiers, and assigned administrators.
@@ -299,3 +299,4 @@ export const SuperAdminSocietiesPage: React.FC = () => {
     </div>
   );
 };
+

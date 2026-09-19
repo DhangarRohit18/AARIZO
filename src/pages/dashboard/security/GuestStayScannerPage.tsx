@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { guestStayService } from '../../../services/guestStayService';
 import type { GuestReservation } from '../../../types/guestStay';
@@ -165,7 +165,7 @@ export const GuestStayScannerPage: React.FC = () => {
                 activeReservations.filter(r => r.status === 'CHECKED_IN').map(resv => (
                   <div key={resv.id} className="p-3 bg-indigo-50/60 border border-indigo-200 rounded-xl text-xs space-y-1">
                     <div className="flex items-center justify-between font-bold text-slate-900">
-                      <span>Room #{resv.roomNumber} — {resv.primaryGuestName}</span>
+                      <span>Room #{resv.roomNumber} â€” {resv.primaryGuestName}</span>
                       <span className="px-2 py-0.5 bg-indigo-600 text-white text-[10px] rounded-full">CHECKED IN</span>
                     </div>
                     <p className="text-slate-500">Resident Host: {resv.residentName} ({resv.flatNumber})</p>
@@ -180,3 +180,4 @@ export const GuestStayScannerPage: React.FC = () => {
     </div>
   );
 };
+

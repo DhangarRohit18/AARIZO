@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckSquare, AlertCircle, Clock, TrendingUp, Users,
@@ -12,7 +12,7 @@ const METRIC_CARDS = [
   { label: 'AMC Expiring', value: '2', icon: TrendingUp, color: '#8b5cf6', bg: '#f5f3ff', path: '/admin/compliance', trend: 'Next 30 days' },
   { label: 'Staff Present', value: '18/23', icon: Users, color: '#10b981', bg: '#f0fdf4', path: '/admin/staff', trend: '78% attendance' },
   { label: 'Parking Violations', value: '4', icon: Car, color: '#f97316', bg: '#fff7ed', path: '/admin/parking', trend: 'This week' },
-  { label: 'Payments Due', value: '₹1.2L', icon: CreditCard, color: '#3b82f6', bg: '#eff6ff', path: '/admin/billing', trend: '14 residents' },
+  { label: 'Payments Due', value: 'â‚¹1.2L', icon: CreditCard, color: '#3b82f6', bg: '#eff6ff', path: '/admin/billing', trend: '14 residents' },
   { label: 'Active Outages', value: '1', icon: Zap, color: '#f59e0b', bg: '#fffbeb', path: '/admin/realtime', trend: 'Tower B power' },
 ];
 
@@ -112,3 +112,4 @@ export const AdminHomePage: React.FC = () => {
     </div>
   );
 };
+
