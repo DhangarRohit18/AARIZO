@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "112920074951",
+    "firebase_url": "https://mygate-987d9-default-rtdb.firebaseio.com",
+    "project_id": "mygate-987d9",
+    "storage_bucket": "mygate-987d9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112920074951:android:59f4e9cd07c7ab04c47ce2",
+        "android_client_info": {
+          "package_name": "com.aarizo.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE_OpfQPwehtSBWFrkK2PtqO12Yry8lkI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
