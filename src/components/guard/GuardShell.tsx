@@ -1,5 +1,4 @@
-﻿import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState } from 'react';
 import type {
   GuardVisitor,
   GateHistoryRecord,
@@ -24,13 +23,11 @@ import { GateHistory } from './history/GateHistory';
 import { GuardAlerts } from './alerts/GuardAlerts';
 import { GuardProfile } from './profile/GuardProfile';
 
-import { Shield, Users, Clock, Bell, UserCheck, KeyRound } from 'lucide-react';
 import './guard.css';
 
 export type GuardShellTab = 'home' | 'verify' | 'visitors' | 'inside' | 'history' | 'alerts' | 'more';
 
 export const GuardShell: React.FC = () => {
-  const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState<GuardShellTab>('home');
 
   // Guard domain local prototype state
@@ -222,45 +219,9 @@ export const GuardShell: React.FC = () => {
   };
 
   return (
-    <div className="guard-app-container">
-      {/* Top Guard Terminal Header */}
-      <header className="guard-header">
-        <div className="guard-header-left">
-          <img
-            src={
-              currentUser?.avatarUrl ||
-              'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80'
-            }
-            alt="Officer R. Singh"
-            className="guard-officer-avatar"
-          />
-          <div className="guard-terminal-info">
-            <h2 className="guard-terminal-title">{gate.name}</h2>
-            <p className="guard-officer-sub">{currentUser?.name || 'Officer R. Singh'} â€¢ On Duty</p>
-          </div>
-        </div>
-
-        <div className="guard-header-right">
-          <div
-            className={`gate-status-pill ${gate.status === 'open' ? 'gate-status-open' : 'gate-status-closed'}`}
-            onClick={handleToggleGateStatus}
-            title="Click to toggle gate status"
-          >
-            <span
-              style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                background: gate.status === 'open' ? '#34d399' : '#f87171',
-              }}
-            />
-            <span>{gate.status.toUpperCase()}</span>
-          </div>
-        </div>
-      </header>
-
+    <div style={{ minHeight: '100%', backgroundColor: '#f7f4ee' }}>
       {/* Main Guard Viewport */}
-      <main className="guard-main">{renderTabContent()}</main>
+      <main style={{ padding: '0' }}>{renderTabContent()}</main>
 
       {/* Decision Modal (Approve / Reject) */}
       {decisionModalMode && selectedVisitor && (
@@ -281,77 +242,6 @@ export const GuardShell: React.FC = () => {
           onCancel={() => setShowCheckInPanel(false)}
         />
       )}
-
-      {/* Guard Bottom Navigation */}
-      <nav className="guard-bottom-nav">
-        <button
-          className={`guard-nav-item ${activeTab === 'home' ? 'active' : ''}`}
-          onClick={() => {
-            setSelectedVisitor(null);
-            setActiveTab('home');
-          }}
-        >
-          <Shield size={20} />
-          <span>Home</span>
-        </button>
-
-        <button
-          className={`guard-nav-item ${activeTab === 'verify' ? 'active' : ''}`}
-          onClick={() => {
-            setSelectedVisitor(null);
-            setActiveTab('verify');
-          }}
-        >
-          <KeyRound size={20} />
-          <span>Verify</span>
-        </button>
-
-        <button
-          className={`guard-nav-item ${activeTab === 'visitors' ? 'active' : ''}`}
-          onClick={() => {
-            setSelectedVisitor(null);
-            setActiveTab('visitors');
-          }}
-        >
-          <Users size={20} />
-          <span>Visitors</span>
-        </button>
-
-        <button
-          className={`guard-nav-item ${activeTab === 'history' ? 'active' : ''}`}
-          onClick={() => {
-            setSelectedVisitor(null);
-            setActiveTab('history');
-          }}
-        >
-          <Clock size={20} />
-          <span>History</span>
-        </button>
-
-        <button
-          className={`guard-nav-item ${activeTab === 'alerts' ? 'active' : ''}`}
-          onClick={() => {
-            setSelectedVisitor(null);
-            setActiveTab('alerts');
-          }}
-        >
-          <Bell size={20} />
-          <span>Alerts</span>
-        </button>
-
-        <button
-          className={`guard-nav-item ${activeTab === 'more' ? 'active' : ''}`}
-          onClick={() => {
-            setSelectedVisitor(null);
-            setActiveTab('more');
-          }}
-        >
-          <UserCheck size={20} />
-          <span>Profile</span>
-        </button>
-      </nav>
     </div>
   );
 };
-
-

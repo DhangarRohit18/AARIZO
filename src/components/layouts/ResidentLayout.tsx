@@ -1,4 +1,4 @@
-﻿import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { MobileAppShell } from '../mobile/MobileAppShell';
 import { Home, Grid, Activity, Users, User, ShieldAlert, CreditCard, Ticket, Bell } from 'lucide-react';
 
@@ -7,8 +7,8 @@ const DRAWER_NAV = [
   { icon: Grid, label: 'Services', path: '/resident/services' },
   { icon: Activity, label: 'Activity', path: '/resident/activity' },
   { icon: Users, label: 'Community', path: '/resident/community' },
-  { icon: CreditCard, label: 'Payments', path: '/resident/payments' },
-  { icon: Ticket, label: 'Complaints', path: '/resident/complaints' },
+  { icon: CreditCard, label: 'Payments', path: '/resident/billing' },
+  { icon: Ticket, label: 'Complaints', path: '/resident/requests' },
   { icon: ShieldAlert, label: 'Emergency', path: '/resident/emergency' },
   { icon: User, label: 'Profile', path: '/resident/profile' },
 ];

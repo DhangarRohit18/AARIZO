@@ -1,8 +1,8 @@
-﻿import React from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckSquare, AlertCircle, Clock, TrendingUp, Users,
-  Car, CreditCard, Zap, BarChart3, ShieldAlert, ChevronRight,
+  Car, CreditCard, Zap, ShieldAlert, ChevronRight,
 } from 'lucide-react';
 
 const METRIC_CARDS = [
@@ -18,9 +18,9 @@ const METRIC_CARDS = [
 
 const QUICK_ADMIN = [
   { label: 'Residents', path: '/admin/residents', icon: Users, color: '#3b82f6' },
+  { label: 'Staff/Operators', path: '/admin/staff', icon: Users, color: '#f59e0b' },
   { label: 'Billing', path: '/admin/billing', icon: CreditCard, color: '#10b981' },
   { label: 'Security', path: '/admin/security-audit', icon: ShieldAlert, color: '#ef4444' },
-  { label: 'Analytics', path: '/admin/intelligence', icon: BarChart3, color: '#8b5cf6' },
 ];
 
 export const AdminHomePage: React.FC = () => {

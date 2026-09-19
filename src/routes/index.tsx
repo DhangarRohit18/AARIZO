@@ -117,7 +117,7 @@ export const AppRoutes: React.FC = () => {
       />
 
       {/* Shared / Notifications Route */}
-      <Route element={<ProtectedRoute allowedRoles={['resident', 'secretary', 'admin', 'guard', 'vendor', 'vendor', 'committee', 'facility_manager']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['resident', 'secretary', 'admin', 'guard', 'vendor', 'committee', 'facility_manager']} />}>
         <Route path="/notifications" element={<NotificationCenterPage />} />
       </Route>
 
@@ -177,6 +177,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="/admin/move-renovation" element={<AdminMoveRenovationPage />} />
           <Route path="/admin/expenses" element={<AdminExpensePage />} />
           <Route path="/admin/operations" element={<RealtimeOperationsHubPage />} />
+          <Route path="/admin/profile" element={<AdminHomePage />} />
           <Route path="/admin/*" element={<AdminHomePage />} />
         </Route>
       </Route>
@@ -194,6 +195,8 @@ export const AppRoutes: React.FC = () => {
           <Route path="/security" element={<SecurityTerminalPage />} />
           <Route path="/security/gate" element={<SecurityTerminalPage />} />
           <Route path="/security/verify" element={<SecurityTerminalPage />} />
+          <Route path="/security/activity" element={<SecurityTerminalPage />} />
+          <Route path="/security/profile" element={<SecurityTerminalPage />} />
           <Route path="/security/parking" element={<ParkingGateScannerPage />} />
           <Route path="/security/staff-scanner" element={<StaffGateTerminalPage />} />
           <Route path="/security/delivery-intelligence" element={<DeliveryIntelligencePage />} />
