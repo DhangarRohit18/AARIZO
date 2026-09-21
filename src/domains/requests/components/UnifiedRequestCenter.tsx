@@ -1,8 +1,7 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Plus,
   Search,
-  Filter,
   Paperclip,
   History,
 } from 'lucide-react';
@@ -55,7 +54,7 @@ export const UnifiedRequestCenter: React.FC = () => {
         societyId: 'soc-gvs',
         residentId: currentUser?.id || 'res-1',
         residentName: currentUser?.name || 'Vikram Joshi',
-        flatCode: currentUser?.flatDetails || 'Tower B Â· B-1204',
+        flatCode: currentUser?.flatDetails || 'Tower B · B-1204',
         title: newTitle,
         category: newCategory,
         description: newDescription,
@@ -128,19 +127,47 @@ export const UnifiedRequestCenter: React.FC = () => {
   });
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Unified Society Request Centre</h1>
-          <p className="text-sm text-slate-500">
-            NOCs, Tenant Registrations, Renovation Permits, Certificates & Society Approvals Pipeline
-          </p>
-        </div>
-        <div className="mt-3 md:mt-0 flex gap-2">
+    <div style={{ padding: '1rem', paddingBottom: '6rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+      {/* ── Deep Navy Header Banner (#083B56) ── */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.875rem',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div>
+            <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.1875rem', margin: 0, letterSpacing: '-0.02em' }}>
+              Unified Society Request Centre
+            </h1>
+            <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.75rem', margin: '0.25rem 0 0', lineHeight: 1.4 }}>
+              NOCs, Tenant Registrations, Renovation Permits & Approvals
+            </p>
+          </div>
+
           <button
             onClick={() => setShowSubmitModal(true)}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-sm"
+            style={{
+              background: 'var(--aarizo-blue, #176B91)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              borderRadius: '10px',
+              padding: '0.625rem 1rem',
+              fontWeight: 700,
+              fontSize: '0.8125rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.375rem',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              flexShrink: 0,
+            }}
           >
             <Plus size={16} /> Submit New Request / NOC
           </button>
@@ -148,23 +175,53 @@ export const UnifiedRequestCenter: React.FC = () => {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
-        <div className="relative flex-1 w-full">
-          <Search size={16} className="absolute left-3 top-3 text-slate-400" />
+      <div
+        style={{
+          background: '#ffffff',
+          padding: '0.875rem',
+          borderRadius: '14px',
+          border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+          boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.625rem',
+        }}
+      >
+        <div style={{ position: 'relative', width: '100%' }}>
+          <Search size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--aarizo-text-muted, #8B9AA5)' }} />
           <input
             type="text"
-            placeholder="Search request title, resident, or Request ID..."
+            placeholder="Search title, resident, or ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border rounded-xl text-xs border-slate-200 focus:outline-none focus:border-indigo-500"
+            style={{
+              width: '100%',
+              paddingLeft: '2.25rem',
+              paddingRight: '0.75rem',
+              height: '42px',
+              borderRadius: '10px',
+              fontSize: '0.8125rem',
+              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              outline: 'none',
+              background: 'var(--aarizo-pale-blue, #F4FAFE)',
+              color: 'var(--aarizo-text, #203746)',
+            }}
           />
         </div>
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <Filter size={16} className="text-slate-400" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="px-3 py-2 border rounded-xl text-xs border-slate-200 bg-white"
+            style={{
+              padding: '0.5rem',
+              borderRadius: '10px',
+              fontSize: '0.75rem',
+              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              background: '#ffffff',
+              color: 'var(--aarizo-text, #203746)',
+              height: '40px',
+              fontWeight: 600,
+            }}
           >
             <option value="ALL">All Categories</option>
             <option value="NOC">NOC Certificate</option>
@@ -178,7 +235,16 @@ export const UnifiedRequestCenter: React.FC = () => {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-3 py-2 border rounded-xl text-xs border-slate-200 bg-white"
+            style={{
+              padding: '0.5rem',
+              borderRadius: '10px',
+              fontSize: '0.75rem',
+              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              background: '#ffffff',
+              color: 'var(--aarizo-text, #203746)',
+              height: '40px',
+              fontWeight: 600,
+            }}
           >
             <option value="ALL">All Statuses</option>
             <option value="SUBMITTED">SUBMITTED</option>
@@ -319,13 +385,13 @@ export const UnifiedRequestCenter: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowSubmitModal(false)}
-                  className="px-4 py-2 border rounded-lg text-slate-600 font-semibold"
+                  style={{ padding: '0.625rem 1rem', border: '1px solid var(--aarizo-border, #DCE8EF)', borderRadius: '10px', background: '#FFFFFF', color: 'var(--aarizo-text-secondary, #657785)', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700"
+                  style={{ padding: '0.625rem 1.25rem', background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF', borderRadius: '10px', fontWeight: 700, border: 'none', cursor: 'pointer' }}
                 >
                   Submit Request
                 </button>
@@ -349,7 +415,7 @@ export const UnifiedRequestCenter: React.FC = () => {
                   onClick={() => setSelectedRequest(null)}
                   className="p-2 text-slate-400 hover:text-slate-600 font-bold"
                 >
-                  âœ•
+                  ✕
                 </button>
               </div>
 

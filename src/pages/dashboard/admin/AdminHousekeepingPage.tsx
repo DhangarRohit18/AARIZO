@@ -172,7 +172,7 @@ export const AdminHousekeepingPage: React.FC = () => {
                   <span>{task.title}</span>
                   <span className="px-2 py-0.5 bg-rose-100 text-rose-800 text-[10px] rounded-full">{task.status}</span>
                 </div>
-                <p className="text-slate-500 mt-1">{task.areaLocation} â€¢ Assigned: {task.assignedStaffName}</p>
+                <p className="text-slate-500 mt-1">{task.areaLocation} · Assigned: {task.assignedStaffName}</p>
                 {task.missedReason && <p className="text-rose-700 italic mt-0.5">Reason: {task.missedReason}</p>}
               </div>
             ))}

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Car,
   QrCode,
@@ -177,17 +177,28 @@ export const QRParkingHub: React.FC = () => {
   const levels = Array.from(new Set(slots.map((s) => s.level)));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.25rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
-              <Car size={24} />
+            <span style={{ padding: '6px', background: 'rgba(255,255,255,0.12)', color: 'var(--aarizo-sky, #83CBEA)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+              <Car size={22} />
             </span>
-            <h2 className="text-xl font-bold">QR Parking System & Enforcement Engine</h2>
+            <h2 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0, letterSpacing: '-0.02em' }}>
+              QR Parking System & Enforcement Engine
+            </h2>
           </div>
-          <p className="text-slate-400 text-sm">
+          <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.8125rem', margin: '4px 0 0' }}>
             6 Parking types, dynamic QR gate validation, visual map layouts & private violation warnings.
           </p>
         </div>
@@ -195,14 +206,38 @@ export const QRParkingHub: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setModalMode('REQUEST_PASS')}
-            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold flex items-center gap-2 shadow-lg transition-all"
+            style={{
+              background: 'var(--aarizo-blue, #176B91)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '10px',
+              padding: '0.625rem 1rem',
+              fontWeight: 600,
+              fontSize: '0.8125rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              cursor: 'pointer',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+            }}
           >
             <QrCode size={16} /> Request Temporary / Vacation Pass
           </button>
           {isAdmin && (
             <button
               onClick={() => setModalMode('ADD_SLOT')}
-              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-semibold flex items-center gap-2 shadow-lg transition-all"
+              style={{
+                background: '#3F8F58',
+                color: '#FFFFFF',
+                borderRadius: '10px',
+                padding: '0.625rem 1rem',
+                fontWeight: 600,
+                fontSize: '0.8125rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                cursor: 'pointer',
+              }}
             >
               <PlusCircle size={16} /> Create Parking Slot
             </button>
@@ -211,26 +246,37 @@ export const QRParkingHub: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 space-x-4 bg-white px-4 rounded-xl shadow-sm overflow-x-auto whitespace-nowrap">
+      <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid var(--aarizo-border, #E8F1F5)', padding: '0.375rem', display: 'flex', gap: '0.375rem', overflowX: 'auto', scrollbarWidth: 'none', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
         {[
           { key: 'MAP', label: 'Visual Parking Map', icon: Layers },
           { key: 'SLOTS', label: `Parking Slots (${slots.length})`, icon: Car },
           { key: 'VIOLATIONS', label: `Private Violations (${violations.length})`, icon: ShieldAlert },
-          { key: 'SECURITY_SCANNER', label: 'Gate Security QR Scanner', icon: QrCode },
+          ...(isSecurity || isAdmin ? [{ key: 'SECURITY_SCANNER', label: 'Gate Security QR Scanner', icon: QrCode }] : []),
         ].map((tab) => {
           const Icon = tab.icon;
+          const isActive = activeTab === tab.key;
           return (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`py-3.5 font-semibold text-xs md:text-sm flex items-center gap-2 border-b-2 transition-colors ${
-                activeTab === tab.key
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                padding: '0.5rem 0.875rem',
+                borderRadius: '8px',
+                border: 'none',
+                background: isActive ? 'var(--aarizo-blue-light, #EAF6FC)' : 'transparent',
+                color: isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #657785)',
+                fontWeight: isActive ? 700 : 500,
+                fontSize: '0.8125rem',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
+              }}
             >
-              <Icon size={16} />
-              {tab.label}
+              <Icon size={16} color={isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #657785)'} />
+              <span>{tab.label}</span>
             </button>
           );
         })}
@@ -367,8 +413,8 @@ export const QRParkingHub: React.FC = () => {
                     </span>
                   </div>
                   <div className="text-xs text-slate-500">
-                    Vehicle: <strong className="text-slate-800">{slot.assignedVehicleNumber || 'None'}</strong> Ã¢â‚¬Â¢ Flat:{' '}
-                    {slot.assignedFlatCode || 'N/A'} Ã¢â‚¬Â¢ Owner: {slot.assignedResidentName || 'N/A'}
+                    Vehicle: <strong className="text-slate-800">{slot.assignedVehicleNumber || 'None'}</strong> · Flat:{' '}
+                    {slot.assignedFlatCode || 'N/A'} · Owner: {slot.assignedResidentName || 'N/A'}
                   </div>
                 </div>
 
@@ -446,7 +492,7 @@ export const QRParkingHub: React.FC = () => {
 
                 <p className="text-xs text-slate-600">{v.privateNotes}</p>
                 <div className="text-[11px] text-slate-400">
-                  Reported by: {v.reportedBy} Ã¢â‚¬Â¢ Owner Flat: {v.flatCode || 'Unregistered'} ({v.residentName || 'Visitor'})
+                  Reported by: {v.reportedBy} · Owner Flat: {v.flatCode || 'Unregistered'} ({v.residentName || 'Visitor'})
                 </div>
               </div>
             ))}
@@ -502,7 +548,7 @@ export const QRParkingHub: React.FC = () => {
               {scanResult.reason && <p className="text-xs text-slate-700">{scanResult.reason}</p>}
               {scanResult.slot && (
                 <div className="text-xs text-slate-800 pt-1 font-medium">
-                  Allocated Slot: <strong>{scanResult.slot.slotCode}</strong> ({scanResult.slot.level}) Ã¢â‚¬Â¢ Flat:{' '}
+                  Allocated Slot: <strong>{scanResult.slot.slotCode}</strong> ({scanResult.slot.level}) · Flat:{' '}
                   {scanResult.slot.assignedFlatCode}
                 </div>
               )}
@@ -517,7 +563,7 @@ export const QRParkingHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Parking Slot</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onSubmit={handleAddSlotSubmit} className="space-y-4">
@@ -586,7 +632,7 @@ export const QRParkingHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Request Temporary / Vacation Pass</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onSubmit={handleRequestPassSubmit} className="space-y-4">
@@ -669,7 +715,7 @@ export const QRParkingHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Assign Slot {selectedSlot.slotCode}</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onSubmit={handleAssignSubmit} className="space-y-4">
@@ -735,7 +781,7 @@ export const QRParkingHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Report Parking Violation</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onSubmit={handleReportViolationSubmit} className="space-y-4">

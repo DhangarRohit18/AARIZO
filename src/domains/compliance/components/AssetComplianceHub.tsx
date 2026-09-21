@@ -201,17 +201,28 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.25rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+        className="relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
         <div className="space-y-1 z-10">
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
-              <ShieldCheck size={24} />
+            <span style={{ padding: '6px', background: 'rgba(255,255,255,0.12)', color: 'var(--aarizo-sky, #83CBEA)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+              <ShieldCheck size={22} />
             </span>
-            <h2 className="text-xl font-bold">Asset Compliance & AMC Management Engine</h2>
+            <h2 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0, letterSpacing: '-0.02em' }}>
+              Asset Compliance & AMC Management Engine
+            </h2>
           </div>
-          <p className="text-slate-400 text-sm">
+          <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.8125rem', margin: '4px 0 0' }}>
             Automated expiration tracking, inspection schedules, insurance alerts & audited renewals.
           </p>
         </div>
@@ -235,7 +246,19 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
                 });
                 setModalMode('ADD');
               }}
-              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold flex items-center gap-2 shadow-lg transition-all"
+              style={{
+                background: 'var(--aarizo-blue, #176B91)',
+                color: '#FFFFFF',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '10px',
+                padding: '0.625rem 1rem',
+                fontWeight: 600,
+                fontSize: '0.8125rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                cursor: 'pointer',
+              }}
             >
               <PlusCircle size={16} /> Register Asset
             </button>
@@ -474,7 +497,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Register New Asset</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
             </div>
 
             <form onSubmit={handleAddSubmit} className="space-y-4">
@@ -605,7 +628,8 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
+                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
+                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
                 >
                   Save & Register
                 </button>
@@ -621,7 +645,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Record Maintenance Inspection</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
             </div>
 
             <p className="text-xs text-slate-500">
@@ -691,7 +715,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Renew AMC / Insurance / Certificate</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
             </div>
 
             <form onSubmit={handleRenewSubmit} className="space-y-4">
@@ -732,7 +756,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Cost (â‚¹)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Cost (₹)</label>
                   <input
                     type="number"
                     placeholder="45000"
@@ -764,7 +788,8 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
+                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
+                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
                 >
                   Save & Renew
                 </button>
@@ -783,7 +808,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
                 <h3 className="font-bold text-slate-900 text-base">Asset Audit History</h3>
                 <p className="text-xs text-slate-500">{activeAssetForModal.name} ({activeAssetForModal.assetCode})</p>
               </div>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
             </div>
 
             <div className="space-y-4">

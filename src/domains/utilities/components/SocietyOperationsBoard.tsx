@@ -145,9 +145,12 @@ export const SocietyOperationsBoard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div
+        className="text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+      >
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
@@ -230,7 +233,7 @@ export const SocietyOperationsBoard: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 space-x-6 bg-white px-4 rounded-xl shadow-sm">
+      <div className="flex border-b border-slate-200 space-x-6 bg-white px-4 rounded-xl shadow-sm overflow-x-auto">
         {[
           { key: 'LIVE_BOARD', label: 'Live Status Board (9 Categories)', icon: Radio },
           { key: 'OUTAGE_HISTORY', label: `Outage & Downtime Audit Log (${outages.length})`, icon: History },
@@ -241,9 +244,9 @@ export const SocietyOperationsBoard: React.FC = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`py-3.5 font-semibold text-xs md:text-sm flex items-center gap-2 border-b-2 transition-colors ${
+              className={`py-3.5 font-semibold text-xs md:text-sm flex items-center gap-2 border-b-2 whitespace-nowrap transition-colors ${
                 activeTab === tab.key
-                  ? 'border-indigo-600 text-indigo-600'
+                  ? 'border-[#176B91] text-[#176B91]'
                   : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
@@ -420,7 +423,7 @@ export const SocietyOperationsBoard: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Update Status: {selectedUtility.name}</h3>
-              <button onClick={() => setIsUpdateModalOpen(false)} className="text-slate-400 hover:text-slate-600">âœ•</button>
+              <button onClick={() => setIsUpdateModalOpen(false)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
             </div>
 
             <form onSubmit={handleUpdateSubmit} className="space-y-4">
@@ -471,7 +474,8 @@ export const SocietyOperationsBoard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
+                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
+                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
                 >
                   Broadcast Live Update
                 </button>

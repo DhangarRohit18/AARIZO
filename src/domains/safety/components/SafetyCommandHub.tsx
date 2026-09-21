@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ShieldAlert,
   ShieldCheck,
@@ -179,51 +179,73 @@ export const SafetyCommandHub: React.FC = () => {
   const activeIncidents = incidents.filter((i) => i.status !== 'RESOLVED' && i.status !== 'CLOSED');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 pb-24">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.25rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-rose-500/20 text-rose-400 rounded-lg">
-              <ShieldAlert size={24} className="animate-pulse" />
+            <span style={{ padding: '6px', background: 'rgba(217, 83, 91, 0.2)', color: '#FF7B82', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+              <ShieldAlert size={22} className="animate-pulse" />
             </span>
-            <h2 className="text-xl font-bold">Safety Command Center & Emergency Dispatch</h2>
+            <h2 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0, letterSpacing: '-0.02em' }}>
+              Safety Command Center & Emergency Dispatch
+            </h2>
           </div>
-          <p className="text-slate-400 text-sm">
+          <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.8125rem', margin: '4px 0 0' }}>
             One-Tap Emergency SOS, real-time command console, child pickup authorization & guardian alerts.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           {activeIncidents.length > 0 && (
-            <span className="px-4 py-2 bg-rose-600 text-white text-xs font-extrabold rounded-xl shadow-lg animate-pulse flex items-center gap-1.5">
-              <Radio size={16} /> {activeIncidents.length} ACTIVE INCIDENTS
+            <span style={{ background: 'var(--aarizo-danger, #D9535B)', color: '#FFFFFF' }} className="px-3.5 py-1.5 text-xs font-extrabold rounded-xl shadow-md animate-pulse flex items-center gap-1.5">
+              <Radio size={14} /> {activeIncidents.length} ACTIVE INCIDENTS
             </span>
           )}
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 space-x-6 bg-white px-4 rounded-xl shadow-sm">
+      <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid var(--aarizo-border, #E8F1F5)', padding: '0.375rem', display: 'flex', gap: '0.375rem', overflowX: 'auto', scrollbarWidth: 'none', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
         {[
           { key: 'ONE_TAP_SOS', label: 'One-Tap Emergency SOS', icon: ShieldAlert },
-          { key: 'COMMAND_CONSOLE', label: `Command Console (${activeIncidents.length} Active)`, icon: Radio },
+          ...(isAdminOrSecurity ? [{ key: 'COMMAND_CONSOLE', label: `Command Console (${activeIncidents.length} Active)`, icon: Radio }] : []),
           { key: 'CHILD_SAFETY', label: 'Child Safety & Pickups', icon: Users },
-          { key: 'GATE_VERIFIER', label: 'Gate Child Verification', icon: QrCode },
+          ...(isAdminOrSecurity ? [{ key: 'GATE_VERIFIER', label: 'Gate Child Verification', icon: QrCode }] : []),
         ].map((tab) => {
           const Icon = tab.icon;
+          const isActive = activeTab === tab.key;
           return (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`py-3.5 font-semibold text-xs md:text-sm flex items-center gap-2 border-b-2 transition-colors ${
-                activeTab === tab.key
-                  ? 'border-rose-600 text-rose-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                padding: '0.5rem 0.875rem',
+                borderRadius: '8px',
+                border: 'none',
+                background: isActive ? 'var(--aarizo-blue-light, #EAF6FC)' : 'transparent',
+                color: isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #657785)',
+                fontWeight: isActive ? 700 : 500,
+                fontSize: '0.8125rem',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
+              }}
             >
-              <Icon size={16} />
-              {tab.label}
+              <Icon size={16} color={isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #657785)'} />
+              <span>{tab.label}</span>
             </button>
           );
         })}
@@ -296,7 +318,7 @@ export const SafetyCommandHub: React.FC = () => {
 
                 <div className="text-xs text-slate-600 space-y-1">
                   <div>
-                    Resident: <strong className="text-slate-900">{inc.residentName}</strong> ({inc.flatCode}) Ã¢â‚¬Â¢ Phone:{' '}
+                    Resident: <strong className="text-slate-900">{inc.residentName}</strong> ({inc.flatCode}) · Phone:{' '}
                     {inc.phone}
                   </div>
                   <div>Location: {inc.location}</div>
@@ -372,7 +394,7 @@ export const SafetyCommandHub: React.FC = () => {
                   <div>
                     <h4 className="font-bold text-slate-900 text-base">{child.childName}</h4>
                     <p className="text-xs text-slate-500">
-                      Flat {child.flatCode} Ã¢â‚¬Â¢ Guardian: <strong className="text-slate-800">{child.guardianName}</strong>
+                      Flat {child.flatCode} · Guardian: <strong className="text-slate-800">{child.guardianName}</strong>
                     </p>
                   </div>
                   <span className="font-mono text-xs text-indigo-600 font-bold bg-indigo-50 px-2.5 py-1 rounded-md">
@@ -484,7 +506,7 @@ export const SafetyCommandHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Assign Emergency Responder</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onSubmit={handleAssignSubmit} className="space-y-4">
@@ -536,7 +558,7 @@ export const SafetyCommandHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Child Profile</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onSubmit={handleAddChildSubmit} className="space-y-4">
@@ -601,7 +623,7 @@ export const SafetyCommandHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Authorized Pickup Person</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onSubmit={handleAddPickupSubmit} className="space-y-4">

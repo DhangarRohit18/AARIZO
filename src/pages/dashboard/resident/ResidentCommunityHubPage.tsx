@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { amenityService } from '../../../services/amenityService';
 import type {
@@ -135,121 +135,205 @@ export const ResidentCommunityHubPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
-      {/* Header */}
-      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+      {/* ── Deep Navy Header Banner (#083B56) ── */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
+        }}
+      >
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
-              <Sparkles className="w-5 h-5" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ padding: '6px', background: 'rgba(255,255,255,0.12)', color: 'var(--aarizo-sky, #83CBEA)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+              <Sparkles size={18} />
             </span>
-            <h1 className="text-2xl font-bold text-slate-900">Community & Discussion Hub</h1>
+            <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.1875rem', margin: 0, letterSpacing: '-0.02em' }}>
+              Community & Discussion Hub
+            </h1>
           </div>
-          <p className="text-slate-500 text-sm mt-1">
-            Stay updated with official announcements, upcoming society events, resident polls, and neighbor forums.
+          <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.75rem', margin: '0.375rem 0 0', lineHeight: 1.4 }}>
+            Official announcements, events, resident polls & neighborhood forums
           </p>
         </div>
-        <div className="flex items-center gap-2">
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           {activeTab === 'POSTS' && (
             <button
               onClick={() => setShowCreatePostModal(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+              style={{
+                background: 'var(--aarizo-blue, #176B91)',
+                color: '#FFFFFF',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                borderRadius: '10px',
+                padding: '0.5rem 0.875rem',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                cursor: 'pointer',
+              }}
             >
-              <Plus className="w-4 h-4" /> Create Post
+              <Plus size={14} /> Create Post
             </button>
           )}
           {activeTab === 'EVENTS' && (
             <button
               onClick={() => setShowCreateEventModal(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+              style={{
+                background: 'var(--aarizo-blue, #176B91)',
+                color: '#FFFFFF',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                borderRadius: '10px',
+                padding: '0.5rem 0.875rem',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                cursor: 'pointer',
+              }}
             >
-              <Plus className="w-4 h-4" /> Propose Event
+              <Plus size={14} /> Propose Event
             </button>
           )}
           {activeTab === 'POLLS' && (
             <button
               onClick={() => setShowCreatePollModal(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+              style={{
+                background: 'var(--aarizo-blue, #176B91)',
+                color: '#FFFFFF',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                borderRadius: '10px',
+                padding: '0.5rem 0.875rem',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                cursor: 'pointer',
+              }}
             >
-              <Plus className="w-4 h-4" /> Create Poll
+              <Plus size={14} /> Create Poll
             </button>
           )}
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-slate-200 bg-white px-4 pt-2 rounded-t-2xl space-x-2 overflow-x-auto">
-        <button
-          onClick={() => setActiveTab('ANNOUNCEMENTS' as any)}
-          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
-            activeTab === ('ANNOUNCEMENTS' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          <Megaphone className="w-4 h-4" /> Announcements ({announcements.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('EVENTS' as any)}
-          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
-            activeTab === ('EVENTS' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          <Calendar className="w-4 h-4" /> Events & RSVP ({events.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('POLLS' as any)}
-          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
-            activeTab === ('POLLS' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          <Vote className="w-4 h-4" /> Society Polls ({polls.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('POSTS' as any)}
-          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
-            activeTab === ('POSTS' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          <MessageSquare className="w-4 h-4" /> Neighbor Feed ({posts.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('DIRECTORY' as any)}
-          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
-            activeTab === ('DIRECTORY' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          <Users className="w-4 h-4" /> Directory & Skills
-        </button>
-        <button
-          onClick={() => setActiveTab('LOST_FOUND' as any)}
-          className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 whitespace-nowrap transition-colors ${
-            activeTab === ('LOST_FOUND' as any) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          <Tag className="w-4 h-4" /> Lost & Found
-        </button>
+      {/* Pill Tabs */}
+      <div
+        style={{
+          background: '#FFFFFF',
+          borderRadius: '12px',
+          border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+          padding: '0.375rem',
+          display: 'flex',
+          gap: '0.375rem',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)',
+        }}
+      >
+        {[
+          { key: 'ANNOUNCEMENTS', label: `Announcements (${announcements.length})`, icon: Megaphone },
+          { key: 'EVENTS', label: `Events & RSVP (${events.length})`, icon: Calendar },
+          { key: 'POLLS', label: `Polls (${polls.length})`, icon: Vote },
+          { key: 'POSTS', label: `Neighbor Feed (${posts.length})`, icon: MessageSquare },
+          { key: 'DIRECTORY', label: 'Directory & Skills', icon: Users },
+          { key: 'LOST_FOUND', label: 'Lost & Found', icon: Tag },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                padding: '0.5rem 0.875rem',
+                borderRadius: '8px',
+                border: 'none',
+                background: isActive ? 'var(--aarizo-light-blue, #EAF6FC)' : 'transparent',
+                color: isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #8B9AA5)',
+                fontWeight: isActive ? 700 : 500,
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Icon size={14} style={{ color: isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #8B9AA5)' }} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* TAB 1: ANNOUNCEMENTS */}
       {activeTab === 'ANNOUNCEMENTS' && (
-        <div className="space-y-4">
-          {announcements.map(ann => (
-            <div key={ann.id} className={`bg-white p-4 md:p-6 rounded-2xl border shadow-sm border-l-4 ${ann.isPinned ? 'border-l-indigo-600 bg-indigo-50/20' : 'border-slate-200 border-l-slate-300'}`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {ann.isPinned && <Pin className="w-4 h-4 text-indigo-600 fill-indigo-600" />}
-                  <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${
-                    ann.category === 'IMPORTANT' ? 'bg-rose-100 text-rose-800' :
-                    ann.category === 'MAINTENANCE' ? 'bg-amber-100 text-amber-800' :
-                    'bg-slate-100 text-slate-700'
-                  }`}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {announcements.map((ann) => (
+            <div
+              key={ann.id}
+              style={{
+                background: '#FFFFFF',
+                borderRadius: '14px',
+                border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                borderLeft: ann.isPinned ? '4px solid var(--aarizo-navy, #083B56)' : '4px solid var(--aarizo-blue, #176B91)',
+                padding: '1rem',
+                boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {ann.isPinned && <Pin size={14} style={{ color: 'var(--aarizo-navy, #083B56)', fill: 'var(--aarizo-navy, #083B56)' }} />}
+                  <span
+                    style={{
+                      fontSize: '0.6875rem',
+                      fontWeight: 700,
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '9999px',
+                      background:
+                        ann.category === 'IMPORTANT'
+                          ? 'var(--aarizo-danger-bg, #FFF0F1)'
+                          : ann.category === 'MAINTENANCE'
+                          ? 'var(--aarizo-warning-bg, #FFF8E8)'
+                          : 'var(--aarizo-light-blue, #EAF6FC)',
+                      color:
+                        ann.category === 'IMPORTANT'
+                          ? 'var(--aarizo-danger, #D9535B)'
+                          : ann.category === 'MAINTENANCE'
+                          ? 'var(--aarizo-warning, #D99A2B)'
+                          : 'var(--aarizo-blue, #176B91)',
+                    }}
+                  >
                     {ann.category}
                   </span>
-                  <span className="text-xs text-slate-400">By {ann.authorName}</span>
+                  <span style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>
+                    By {ann.authorName}
+                  </span>
                 </div>
-                <span className="text-xs text-slate-400">{new Date(ann.createdAt).toLocaleDateString()}</span>
+                <span style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>
+                  {new Date(ann.createdAt).toLocaleDateString()}
+                </span>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mt-2">{ann.title}</h3>
-              <p className="text-slate-600 text-sm mt-2 leading-relaxed">{ann.content}</p>
+              <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: '0 0 0.375rem 0' }}>
+                {ann.title}
+              </h3>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text-secondary, #657785)', margin: 0, lineHeight: 1.5 }}>
+                {ann.content}
+              </p>
             </div>
           ))}
         </div>
@@ -392,7 +476,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900 text-sm">{post.authorName}</h4>
-                    <p className="text-xs text-slate-400">Flat {post.flatNumber} â€¢ {new Date(post.createdAt).toLocaleDateString()}</p>
+                    <p className="text-xs text-slate-400">Flat {post.flatNumber} · {new Date(post.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>
                 <span className="px-2.5 py-0.5 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full flex items-center gap-1">

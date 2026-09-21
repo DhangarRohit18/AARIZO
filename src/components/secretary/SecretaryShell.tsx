@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Building2, Users, Bell, CreditCard, UserCheck, X, ShieldCheck } from 'lucide-react';
 import { SecretaryHome } from './home/SecretaryHome';
@@ -261,7 +261,7 @@ export const SecretaryShell: React.FC = () => {
           />
           <div className="secretary-title-box">
             <h2 className="secretary-society-name">Green Valley Society</h2>
-            <p className="secretary-user-title">Mayuri Udar â€¢ Secretary</p>
+            <p className="secretary-user-title">Mayuri Udar · Secretary</p>
           </div>
         </div>
 

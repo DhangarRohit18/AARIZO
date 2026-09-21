@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Building2, Plus, Power } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Society, SubscriptionTier } from '../../../types/society';
@@ -138,12 +138,12 @@ export const SuperAdminSocietiesPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+    <div style={{ padding: '1.5rem', paddingBottom: '6rem', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Building2 size={24} color="#2563eb" />
-            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Super Admin â€” Multi-Society Directory</h1>
+            <Building2 size={24} color="#176B91" />
+            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Super Admin — Multi-Society Directory</h1>
           </div>
           <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
             Provision and manage society accounts, subscription tiers, and assigned administrators.
@@ -156,7 +156,7 @@ export const SuperAdminSocietiesPage: React.FC = () => {
             alignItems: 'center',
             gap: '0.4rem',
             padding: '0.6rem 1.2rem',
-            background: '#2563eb',
+            background: 'var(--aarizo-blue, #176B91)',
             color: '#fff',
             borderRadius: '8px',
             border: 'none',

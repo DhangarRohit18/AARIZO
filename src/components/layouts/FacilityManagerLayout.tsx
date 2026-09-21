@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { MobileAppShell } from '../mobile/MobileAppShell';
 import { LayoutDashboard, Settings, Hammer, ClipboardList, Users, Bell, Wrench, CheckSquare } from 'lucide-react';
 
@@ -19,6 +19,7 @@ const BOTTOM_NAV = [
 ];
 
 export const FacilityManagerLayout = () => {
+  const navigate = useNavigate();
   return (
     <MobileAppShell
       roleTitle="Facility Manager"
@@ -26,6 +27,7 @@ export const FacilityManagerLayout = () => {
       accentColor="#176B91"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
+      onFabClick={() => navigate('/facility/maintenance')}
       topRightActions={
         <Link
           to="/notifications"

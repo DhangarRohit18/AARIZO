@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { MobileAppShell } from '../mobile/MobileAppShell';
 import { LayoutDashboard, CheckSquare, BarChart3, FileText, Bell, CheckCircle, User } from 'lucide-react';
 
@@ -18,6 +18,7 @@ const BOTTOM_NAV = [
 ];
 
 export const CommitteeLayout = () => {
+  const navigate = useNavigate();
   return (
     <MobileAppShell
       roleTitle="Committee"
@@ -25,6 +26,7 @@ export const CommitteeLayout = () => {
       accentColor="#176B91"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
+      onFabClick={() => navigate('/committee/approvals')}
       topRightActions={
         <Link
           to="/notifications"

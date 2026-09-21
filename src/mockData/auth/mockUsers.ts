@@ -1,4 +1,4 @@
-﻿import type { UserProfile, UserRole } from '../../domains/auth/types';
+import type { UserProfile, UserRole } from '../../domains/auth/types';
 
 export const MOCK_USERS: Record<UserRole, UserProfile> = {
   resident: {
@@ -12,7 +12,7 @@ export const MOCK_USERS: Record<UserRole, UserProfile> = {
     societyId: 'soc-gvs',
     societyName: 'Green Valley Society',
     flatNumber: 'B-1204',
-    flatDetails: 'Tower B Â· Flat 1204',
+    flatDetails: 'Tower B · Flat 1204',
     status: 'ACTIVE',
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
     designation: 'Flat Owner & Resident',
@@ -29,7 +29,7 @@ export const MOCK_USERS: Record<UserRole, UserProfile> = {
     societyId: 'soc-gvs',
     societyName: 'Green Valley Society',
     flatNumber: 'A-101',
-    flatDetails: 'Block A Â· Flat 101',
+    flatDetails: 'Block A · Flat 101',
     status: 'ACTIVE',
     avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=250&q=80',
     designation: 'Management Committee Secretary',
@@ -49,7 +49,7 @@ export const MOCK_USERS: Record<UserRole, UserProfile> = {
     status: 'ACTIVE',
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
     designation: 'Senior Gate Security Officer',
-    statusBadge: 'On Duty Â· Shift A',
+    statusBadge: 'On Duty · Shift A',
   },
   committee: {
     id: 'user-committee-01',
@@ -62,7 +62,7 @@ export const MOCK_USERS: Record<UserRole, UserProfile> = {
     societyId: 'soc-gvs',
     societyName: 'Green Valley Society',
     flatNumber: 'A-201',
-    flatDetails: 'Tower A Â· Flat 201',
+    flatDetails: 'Tower A · Flat 201',
     status: 'ACTIVE',
     avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=250&q=80',
     designation: 'Management Committee Member',

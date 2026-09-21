@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Wrench,
   Zap,
@@ -178,15 +178,26 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.25rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
-              <Wrench size={24} />
+            <span style={{ padding: '6px', background: 'rgba(255,255,255,0.12)', color: 'var(--aarizo-sky, #83CBEA)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+              <Wrench size={22} />
             </span>
-            <h2 className="text-xl font-bold">Society Services & Recurring Subscriptions</h2>
+            <h2 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0, letterSpacing: '-0.02em' }}>
+              Society Services & Recurring Subscriptions
+            </h2>
           </div>
-          <p className="text-slate-400 text-sm">
+          <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.8125rem', margin: '4px 0 0' }}>
             15 Service Categories, verified vendors, one-time & weekly/monthly recurring subscriptions.
           </p>
         </div>
@@ -195,7 +206,18 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           {isVendor && (
             <button
               onClick={() => setModalMode('ADD_ITEM')}
-              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold flex items-center gap-2 shadow-lg transition-all"
+              style={{
+                background: 'var(--aarizo-blue, #176B91)',
+                color: '#FFFFFF',
+                borderRadius: '10px',
+                padding: '0.625rem 1rem',
+                fontWeight: 600,
+                fontSize: '0.8125rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                cursor: 'pointer',
+              }}
             >
               <PlusCircle size={16} /> Add Catalog Service
             </button>
@@ -325,7 +347,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
 
                   <div className="pt-3 border-t flex items-center justify-between">
                     <div>
-                      <span className="text-base font-extrabold text-slate-900">Ã¢â€šÂ¹{item.price}</span>
+                      <span className="text-base font-extrabold text-slate-900">₹{item.price}</span>
                       <span className="text-[10px] text-slate-400"> / {item.unit}</span>
                     </div>
 
@@ -334,7 +356,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                         setSelectedItemForBook(item);
                         setModalMode('BOOK');
                       }}
-                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-sm"
+                      className="px-4 py-2 bg-[#176B91] hover:bg-[#125877] text-white text-xs font-semibold rounded-xl shadow-sm transition"
                     >
                       Book / Subscribe
                     </button>
@@ -369,7 +391,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                   </div>
 
                   <div className="text-xs text-slate-600">
-                    Vendor: <strong className="text-slate-800">{order.vendorName}</strong> Ã¢â‚¬Â¢ Date: {order.scheduledDate} Ã¢â‚¬Â¢ Amount: Ã¢â€šÂ¹{order.price}
+                    Vendor: <strong className="text-slate-800">{order.vendorName}</strong> · Date: {order.scheduledDate} · Amount: ₹{order.price}
                   </div>
 
                   <div className="flex items-center gap-2 text-xs">
@@ -455,7 +477,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                 <span className="flex items-center gap-1 text-amber-600 font-bold">
                   <Star size={14} className="fill-amber-500" /> {v.rating} ({v.ratingCount} reviews)
                 </span>
-                <span className="text-slate-400">Ã¢â‚¬Â¢</span>
+                <span className="text-slate-400">·</span>
                 <span className="font-mono text-slate-600">{v.category}</span>
               </div>
             </div>
@@ -474,7 +496,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
               <div key={v.id} className="py-4 flex justify-between items-center">
                 <div>
                   <h4 className="font-bold text-slate-900 text-sm">{v.businessName}</h4>
-                  <p className="text-xs text-slate-500">Category: {v.category} Ã¢â‚¬Â¢ Contact: {v.phone}</p>
+                  <p className="text-xs text-slate-500">Category: {v.category} · Contact: {v.phone}</p>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -508,7 +530,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Rate Service Experience</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onSubmit={handleRateSubmit} className="space-y-4">
@@ -522,7 +544,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                       onClick={() => setRatingVal(star)}
                       className={`text-xl ${ratingVal >= star ? 'opacity-100' : 'opacity-30'}`}
                     >
-                      Ã¢Ëœâ€¦
+                      ★
                     </button>
                   ))}
                 </div>
@@ -565,7 +587,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Book {selectedItemForBook.title}</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onSubmit={handleBookSubmit} className="space-y-4">
@@ -606,10 +628,10 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
               </div>
 
               <div className="flex justify-between items-center pt-3 border-t">
-                <span className="text-base font-extrabold text-slate-900">Total: Ã¢â€šÂ¹{selectedItemForBook.price}</span>
+                <span className="text-base font-extrabold text-slate-900">Total: ₹{selectedItemForBook.price}</span>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
+                  className="px-4 py-2 bg-[#176B91] hover:bg-[#125877] text-white text-xs font-semibold rounded-lg shadow-md transition"
                 >
                   Confirm & Dispatch Order
                 </button>
@@ -625,7 +647,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Service to Catalog</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">Ã¢Å“â€¢</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onSubmit={handleAddItemSubmit} className="space-y-4">
@@ -643,7 +665,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Price (Ã¢â€šÂ¹)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Price (₹)</label>
                   <input
                     type="number"
                     required

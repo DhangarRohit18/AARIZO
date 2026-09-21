@@ -99,7 +99,22 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   const navRight = bottomItems.slice(2, 4);
 
   return (
-    <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column', background: 'var(--aarizo-page, #F7FBFE)' }}>
+    <div
+      className="mobile-app-shell"
+      style={{
+        minHeight: '100dvh',
+        height: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'var(--aarizo-page, #F7FBFE)',
+        maxWidth: '480px',
+        margin: '0 auto',
+        position: 'relative',
+        boxShadow: '0 0 36px rgba(8, 59, 86, 0.08)',
+        borderLeft: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+        borderRight: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+      }}
+    >
       {/* ── Screenshot-Matched Deep Navy Header (#083B56) ── */}
       <header
         style={{
@@ -352,8 +367,10 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         style={{
           position: 'fixed',
           bottom: 0,
-          left: 0,
-          right: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '100%',
+          maxWidth: '480px',
           background: '#ffffff',
           borderTop: '1px solid var(--aarizo-border-soft, #E8F1F5)',
           display: 'flex',
@@ -364,6 +381,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
           zIndex: 100,
           boxShadow: '0 -4px 16px rgba(8, 59, 86, 0.05)',
           height: 'calc(62px + env(safe-area-inset-bottom, 0px))',
+          boxSizing: 'border-box',
         }}
       >
         {/* First 2 items on left */}
@@ -402,8 +420,23 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
           <div style={{ position: 'relative', width: 56, display: 'flex', justifyContent: 'center' }}>
             <button
               onClick={() => {
-                if (onFabClick) onFabClick();
-                else navigate('/resident/visitors');
+                if (onFabClick) {
+                  onFabClick();
+                } else if (location.pathname.startsWith('/security')) {
+                  navigate('/security/verify');
+                } else if (location.pathname.startsWith('/admin')) {
+                  navigate('/admin/requests');
+                } else if (location.pathname.startsWith('/committee')) {
+                  navigate('/committee/approvals');
+                } else if (location.pathname.startsWith('/facility')) {
+                  navigate('/facility/maintenance');
+                } else if (location.pathname.startsWith('/vendor')) {
+                  navigate('/vendor/portal');
+                } else if (location.pathname.startsWith('/super-admin')) {
+                  navigate('/super-admin/societies');
+                } else {
+                  navigate('/resident/visitors');
+                }
               }}
               aria-label="Create New Action"
               style={{

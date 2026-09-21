@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { childSafetyService } from '../../../services/childSafetyService';
 import type { ChildProfile, ChildPickupQR, PickupLog, ChildSafetyAlert } from '../../../types/childSafety';
@@ -173,7 +173,7 @@ export const ChildGateScannerPage: React.FC = () => {
                 )}
                 <div className="space-y-2 flex-1">
                   <h3 className="text-xl font-bold">
-                    {scanResult.allowed ? 'âœ… PICKUP AUTHORIZED & PERMITTED' : 'â›” PICKUP DENIED / BLOCKED'}
+                    {scanResult.allowed ? '✓ PICKUP AUTHORIZED & PERMITTED' : '✕ PICKUP DENIED / BLOCKED'}
                   </h3>
                   <p className="text-sm font-medium">{scanResult.message}</p>
 
@@ -215,7 +215,7 @@ export const ChildGateScannerPage: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-slate-500">Caretaker: {log.pickupPersonName}</p>
-                    <p className="text-slate-400 text-[11px]">{new Date(log.timestamp).toLocaleString()} â€¢ {log.gateId}</p>
+                    <p className="text-slate-400 text-[11px]">{new Date(log.timestamp).toLocaleString()} · {log.gateId}</p>
                   </div>
                 ))
               )}

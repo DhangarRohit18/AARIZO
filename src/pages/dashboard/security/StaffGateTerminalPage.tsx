@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   QrCode,
   CheckCircle,
@@ -213,7 +213,7 @@ export const StaffGateTerminalPage: React.FC = () => {
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-0.5">
                         <span>{w.phone}</span>
-                        <span>â€¢</span>
+                        <span>·</span>
                         <span>Flats: {w.assignedFlatCodes.join(', ') || 'None'}</span>
                       </div>
                     </div>

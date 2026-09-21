@@ -70,7 +70,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
       societyId: 'soc-gvs',
       residentId: currentUser?.id || 'res-1',
       residentName: currentUser?.name || 'Vikram Joshi',
-      flatCode: currentUser?.flatDetails || 'Tower B A B-1204',
+      flatCode: currentUser?.flatDetails || 'Tower B · B-1204',
       category,
       title,
       description,
@@ -114,27 +114,34 @@ export const ComplaintSLAEngineHub: React.FC = () => {
   });
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4">
+    <div className="p-3 md:p-6 pb-24 space-y-4 md:space-y-6 max-w-7xl mx-auto">
+      {/* Header Banner */}
+      <div
+        className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-white"
+        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+      >
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Helpdesk & Complaint SLA Escalation Engine</h1>
-          <p className="text-sm text-slate-500">
-            Persistent category SLA timers, automated 4-tier escalation (Staff ➔ FM ➔ Admin ➔ Committee), & post-service verification
+          <div className="flex items-center gap-2">
+            <Wrench className="w-6 h-6 text-sky-300" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-xl md:text-2xl font-extrabold text-white">Helpdesk & Complaint SLA Engine</h1>
+          </div>
+          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
+            Category SLA tracking, 4-tier automated escalation (Staff ➔ FM ➔ Admin ➔ Committee), & resident verification
           </p>
         </div>
-        <div className="mt-3 md:mt-0 flex gap-2">
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
           {(activeRole === 'secretary' || activeRole === 'facility_manager' || activeRole === 'admin') && (
             <button
               onClick={() => setShowPolicyModal(true)}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs flex items-center gap-2"
+              className="flex-1 md:flex-none px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-white/20 transition"
             >
               <Sliders size={15} /> Configure SLA Targets
             </button>
           )}
           <button
             onClick={() => setShowSubmitModal(true)}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-sm"
+            className="flex-1 md:flex-none px-5 py-2.5 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition"
+            style={{ background: 'var(--aarizo-blue, #176B91)', border: '1px solid rgba(255,255,255,0.2)' }}
           >
             <Plus size={16} /> File New Complaint
           </button>
@@ -328,7 +335,8 @@ export const ComplaintSLAEngineHub: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700"
+                  className="px-4 py-2 text-white rounded-lg font-bold shadow-sm transition"
+                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
                 >
                   Save Policy
                 </button>
@@ -458,7 +466,8 @@ export const ComplaintSLAEngineHub: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 shadow-md"
+                  className="px-4 py-2 text-white rounded-lg font-bold shadow-md transition"
+                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
                 >
                   Submit & Start SLA Timer
                 </button>

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import {
   Building2,
@@ -30,7 +30,7 @@ export const SecretaryProfile: React.FC = () => {
           {currentUser?.name || 'Mayuri Udar'}
         </h2>
         <p className="onboarding-desc" style={{ marginBottom: '0.75rem', fontSize: '0.84375rem' }}>
-          {currentUser?.designation || 'Management Committee Secretary'} Ã¢â‚¬Â¢ Green Valley Society
+          {currentUser?.designation || 'Management Committee Secretary'} · Green Valley Society
         </p>
 
         <span className="banner-role-tag" style={{ background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe' }}>

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { Shield, Clock, MapPin, LogOut, ChevronRight, CheckCircle2 } from 'lucide-react';
 import '../guard.css';
@@ -22,11 +22,11 @@ export const GuardProfile: React.FC = () => {
           {currentUser?.name || 'Officer R. Singh'}
         </h2>
         <p className="onboarding-desc" style={{ color: '#94a3b8', marginBottom: '0.75rem', fontSize: '0.84375rem' }}>
-          Senior Security Officer Ã¢â‚¬Â¢ Gate #1 Main Entrance
+          Senior Security Officer · Gate #1 Main Entrance
         </p>
 
         <span className="banner-role-tag" style={{ background: '#78350f', color: '#fef3c7', border: '1px solid #d97706' }}>
-          On Duty Ã¢â‚¬Â¢ Shift A (Morning)
+          On Duty · Shift A (Morning)
         </span>
       </div>
 
@@ -43,7 +43,7 @@ export const GuardProfile: React.FC = () => {
           </div>
           <div className="onboarding-feature-item">
             <Clock size={16} style={{ color: '#2563eb' }} />
-            <span>Active Shift: Morning Roster (06:00 AM Ã¢â‚¬â€œ 02:00 PM)</span>
+            <span>Active Shift: Morning Roster (06:00 AM – 02:00 PM)</span>
           </div>
           <div className="onboarding-feature-item">
             <MapPin size={16} style={{ color: '#2563eb' }} />

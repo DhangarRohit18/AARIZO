@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import { ArrowRight, AlertCircle, Shield, Home, Building2 } from 'lucide-react';
+import { ArrowRight, AlertCircle, Shield, Home, Building2, UserCheck, Wrench, Store, KeyRound } from 'lucide-react';
 import { MOCK_USERS } from '../../../mockData/auth/mockUsers';
+import type { UserRole } from '../../../domains/auth/types';
 import '../auth.css';
 
 export const LoginScreen: React.FC = () => {
@@ -19,24 +20,27 @@ export const LoginScreen: React.FC = () => {
   const [otpInput, setOtpInput] = useState<string>('');
   const [showOtpModal, setShowOtpModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
-  const [activeRole, setActiveRole] = useState<'resident' | 'secretary' | 'guard'>('resident');
+  const [activeRole, setActiveRole] = useState<UserRole>('resident');
 
-  const executeLogin = (role: 'resident' | 'secretary' | 'guard') => {
+  const executeLogin = (role: UserRole) => {
     loginAsRole(role);
     if (role === 'secretary') navigate('/admin');
     else if (role === 'guard') navigate('/security');
+    else if (role === 'committee') navigate('/committee');
+    else if (role === 'facility_manager') navigate('/facility');
+    else if (role === 'vendor') navigate('/vendor');
+    else if (role === 'admin') navigate('/super-admin');
     else navigate('/resident');
   };
 
-  const handleRoleSelect = (role: 'resident' | 'secretary' | 'guard') => {
+  const handleRoleSelect = (role: UserRole) => {
     setActiveRole(role);
     setPhoneNumber(MOCK_USERS[role]?.phone || '9876543210');
     setError(null);
   };
 
-  const handleRoleCardClick = (role: 'resident' | 'secretary' | 'guard') => {
+  const handleRoleCardClick = (role: UserRole) => {
     if (activeRole === role) {
-      // If already active, execute login immediately
       executeLogin(role);
     } else {
       handleRoleSelect(role);
@@ -70,7 +74,7 @@ export const LoginScreen: React.FC = () => {
         {/* Header Branding */}
         <div className="login-hero">
           <h1 className="login-hero-title">LOGIN</h1>
-          <p className="login-hero-desc">Enter your mobile number to access your society portal</p>
+          <p className="login-hero-desc">Select your role or enter mobile number to access your portal</p>
         </div>
 
         {/* Error Banner */}
@@ -120,6 +124,37 @@ export const LoginScreen: React.FC = () => {
           </div>
         </div>
 
+        {/* Extended Roles Strip */}
+        <div style={{ display: 'flex', gap: '0.375rem', marginBottom: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          {[
+            { role: 'admin' as UserRole, label: 'Super Admin', icon: KeyRound },
+            { role: 'committee' as UserRole, label: 'Committee', icon: UserCheck },
+            { role: 'facility_manager' as UserRole, label: 'Facility Mgr', icon: Wrench },
+            { role: 'vendor' as UserRole, label: 'Vendor', icon: Store },
+          ].map((item) => (
+            <button
+              key={item.role}
+              onClick={() => handleRoleCardClick(item.role)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.375rem 0.625rem',
+                borderRadius: '8px',
+                border: activeRole === item.role ? '1.5px solid var(--aarizo-blue, #176B91)' : '1px solid var(--aarizo-border, #E8F1F5)',
+                background: activeRole === item.role ? 'var(--aarizo-blue-light, #EAF6FC)' : '#ffffff',
+                color: activeRole === item.role ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #657785)',
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              <item.icon size={13} />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+
         {/* Phone Input Card */}
         <div style={{ background: '#ffffff', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', borderRadius: '16px', padding: '1.25rem', boxShadow: '0 2px 10px rgba(8, 59, 86, 0.05)' }}>
           <label style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--aarizo-text, #203746)', marginBottom: '0.5rem', display: 'block' }}>
@@ -143,7 +178,7 @@ export const LoginScreen: React.FC = () => {
               disabled={loading}
               className="btn-login-submit"
             >
-              <span>Continue as {activeRole === 'secretary' ? 'Secretary' : activeRole === 'guard' ? 'Security' : 'Resident'}</span>
+              <span>Continue as {MOCK_USERS[activeRole]?.roleLabel || activeRole}</span>
               <ArrowRight size={18} />
             </button>
 

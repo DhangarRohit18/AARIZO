@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Truck,
   Wrench,
@@ -183,17 +183,28 @@ export const MoveRenovationHub: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.25rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
-              <Truck size={24} />
+            <span style={{ padding: '6px', background: 'rgba(255,255,255,0.12)', color: 'var(--aarizo-sky, #83CBEA)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+              <Truck size={22} />
             </span>
-            <h2 className="text-xl font-bold">Move-In / Move-Out & Renovation Engine</h2>
+            <h2 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0, letterSpacing: '-0.02em' }}>
+              Move-In / Move-Out & Renovation Engine
+            </h2>
           </div>
-          <p className="text-slate-400 text-sm">
+          <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.8125rem', margin: '4px 0 0' }}>
             Lift reservations, contractor gatepasses, worker list verification & exit clearance checklists.
           </p>
         </div>
@@ -201,13 +212,36 @@ export const MoveRenovationHub: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setModalMode('CREATE_MOVE')}
-            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold flex items-center gap-2 shadow-lg transition-all"
+            style={{
+              background: 'var(--aarizo-blue, #176B91)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '10px',
+              padding: '0.625rem 1rem',
+              fontWeight: 600,
+              fontSize: '0.8125rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              cursor: 'pointer',
+            }}
           >
             <PlusCircle size={16} /> Request Move Slot
           </button>
           <button
             onClick={() => setModalMode('CREATE_RENOVATION')}
-            className="px-4 py-2.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-sm font-semibold flex items-center gap-2 shadow-lg transition-all"
+            style={{
+              background: '#D99A2B',
+              color: '#FFFFFF',
+              borderRadius: '10px',
+              padding: '0.625rem 1rem',
+              fontWeight: 600,
+              fontSize: '0.8125rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              cursor: 'pointer',
+            }}
           >
             <Wrench size={16} /> Renovation Permit
           </button>
@@ -215,9 +249,9 @@ export const MoveRenovationHub: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 space-x-6 bg-white px-4 rounded-xl shadow-sm">
+      <div className="flex border-b border-slate-200 space-x-6 bg-white px-4 rounded-xl shadow-sm overflow-x-auto">
         {[
-          { key: 'MOVES', label: `Move Requests (${moves.length})`, icon: Truck },
+          { key: 'MOVES', label: `Move-In / Move-Out (${moves.length})`, icon: Truck },
           { key: 'RENOVATIONS', label: `Renovation Permits (${renovations.length})`, icon: Wrench },
           { key: 'CALENDAR', label: 'Admin Activity Calendar', icon: Calendar },
           { key: 'SECURITY_SCANNER', label: 'Security Worker Verification', icon: QrCode },
@@ -227,9 +261,9 @@ export const MoveRenovationHub: React.FC = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`py-3.5 font-semibold text-xs md:text-sm flex items-center gap-2 border-b-2 transition-colors ${
+              className={`py-3.5 font-semibold text-xs md:text-sm flex items-center gap-2 border-b-2 whitespace-nowrap transition-colors ${
                 activeTab === tab.key
-                  ? 'border-indigo-600 text-indigo-600'
+                  ? 'border-[#176B91] text-[#176B91]'
                   : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
@@ -361,7 +395,7 @@ export const MoveRenovationHub: React.FC = () => {
                   <div>
                     <h4 className="font-bold text-slate-900 text-base">{permit.projectTitle}</h4>
                     <p className="text-xs text-slate-500">
-                      Flat {permit.flatNumber} â€¢ Contractor: <strong className="text-slate-800">{permit.contractorCompany}</strong>
+                      Flat {permit.flatNumber} · Contractor: <strong className="text-slate-800">{permit.contractorCompany}</strong>
                     </p>
                   </div>
 
@@ -486,7 +520,7 @@ export const MoveRenovationHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Schedule Move-In / Move-Out</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
             </div>
 
             <form onSubmit={handleCreateMove} className="space-y-4">
@@ -575,7 +609,8 @@ export const MoveRenovationHub: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
+                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
+                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
                 >
                   Submit Move Request
                 </button>
@@ -591,7 +626,7 @@ export const MoveRenovationHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Request Renovation Permit</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">âœ•</button>
+              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
             </div>
 
             <form onSubmit={handleCreateRenovation} className="space-y-4">

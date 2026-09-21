@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { safetyCommandService } from '../../../services/safetyCommandService';
 import type { EmergencyIncident } from '../../../types/safetyCommand';
@@ -77,90 +77,194 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
   const activeTriggered = incidents.filter(i => i.status === 'TRIGGERED' || i.status === 'ACKNOWLEDGED' || i.status === 'RESPONDING');
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div style={{ padding: '1rem', paddingBottom: '6rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
       {/* High Priority Active Alarm Header */}
       {incidents.some(i => i.status === 'TRIGGERED') && (
-        <div className="bg-rose-600 text-white p-5 rounded-2xl shadow-xl border-2 border-rose-400 animate-pulse flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Siren className="w-8 h-8 text-white shrink-0 animate-bounce" />
-            <div>
-              <h2 className="text-xl font-black uppercase tracking-wider">ðŸš¨ NEW UNACKNOWLEDGED SOS ALARM RECEIVED!</h2>
-              <p className="text-xs text-rose-100 font-medium">Immediate security gate response required. Check active incident list below.</p>
-            </div>
+        <div
+          style={{
+            background: 'var(--aarizo-danger, #D9535B)',
+            color: '#FFFFFF',
+            padding: '1rem 1.25rem',
+            borderRadius: '16px',
+            boxShadow: '0 4px 16px rgba(217, 83, 91, 0.3)',
+            border: '2px solid #ff8a90',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+          }}
+          className="animate-pulse"
+        >
+          <Siren size={28} style={{ color: '#FFFFFF', flexShrink: 0 }} />
+          <div>
+            <h2 style={{ fontSize: '0.9375rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>
+              🚨 NEW ACTIVE SOS PANIC ALARM!
+            </h2>
+            <p style={{ fontSize: '0.75rem', color: '#ffe4e6', margin: '0.25rem 0 0', fontWeight: 600 }}>
+              Immediate security gate dispatch required. Respond below.
+            </p>
           </div>
         </div>
       )}
 
       {/* Header */}
-      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
+        }}
+      >
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 bg-rose-50 text-rose-600 rounded-xl">
-              <ShieldAlert className="w-5 h-5" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ padding: '6px', background: 'rgba(255,255,255,0.12)', color: 'var(--aarizo-sky, #83CBEA)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+              <ShieldAlert size={20} />
             </span>
-            <h1 className="text-2xl font-bold text-slate-900">Security Gate Emergency Terminal</h1>
+            <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.1875rem', margin: 0, letterSpacing: '-0.02em' }}>
+              Security Gate Emergency Terminal
+            </h1>
           </div>
-          <p className="text-slate-500 text-sm mt-1">
-            Real-time SOS panic alarm monitoring, guard dispatch, and incident resolution portal.
+          <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.75rem', margin: '0.375rem 0 0' }}>
+            Real-time SOS panic monitoring, guard dispatch & incident resolution
           </p>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span
+            style={{
+              padding: '0.35rem 0.75rem',
+              borderRadius: '9999px',
+              fontSize: '0.6875rem',
+              fontWeight: 800,
+              background: activeTriggered.length > 0 ? 'var(--aarizo-danger, #D9535B)' : 'var(--aarizo-success, #3F8F58)',
+              color: '#FFFFFF',
+            }}
+          >
+            {activeTriggered.length} ACTIVE INCIDENTS
+          </span>
         </div>
       </div>
 
       {/* Active Emergencies Dashboard */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5 text-rose-600" /> Active Emergency Incidents ({activeTriggered.length})
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <h2 style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0, display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+          <AlertTriangle size={16} style={{ color: 'var(--aarizo-danger, #D9535B)' }} /> Active Emergency Incidents ({activeTriggered.length})
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {activeTriggered.length === 0 ? (
-            <div className="col-span-2 bg-white p-12 rounded-2xl border border-slate-200/80 text-center text-slate-400">
-              <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-2" />
-              All quiet. No active panic SOS alarms reported in the society.
+            <div
+              style={{
+                background: '#FFFFFF',
+                borderRadius: '16px',
+                border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                padding: '2.5rem 1rem',
+                textAlign: 'center',
+                boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+              }}
+            >
+              <CheckCircle2 size={36} style={{ color: 'var(--aarizo-success, #3F8F58)', margin: '0 auto 0.5rem' }} />
+              <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--aarizo-navy, #083B56)' }}>All Clear</div>
+              <p style={{ fontSize: '0.75rem', color: 'var(--aarizo-text-muted, #8B9AA5)', margin: '0.25rem 0 0' }}>
+                No active panic SOS alarms reported in the society.
+              </p>
             </div>
           ) : (
-            activeTriggered.map(inc => (
+            activeTriggered.map((inc) => (
               <div
                 key={inc.id}
-                className={`bg-white p-4 md:p-6 rounded-2xl border shadow-md flex flex-col justify-between space-y-4 ${
-                  inc.status === 'TRIGGERED' ? 'border-2 border-rose-500 bg-rose-50/30' : 'border-slate-200'
-                }`}
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: '16px',
+                  border: inc.status === 'TRIGGERED' ? '2px solid var(--aarizo-danger, #D9535B)' : '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                  padding: '1rem 1.25rem',
+                  boxShadow: '0 2px 10px rgba(8, 59, 86, 0.06)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
               >
                 <div>
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 bg-rose-100 text-rose-800 font-extrabold text-xs rounded-lg">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.6875rem', fontWeight: 800, fontFamily: 'monospace', padding: '0.2rem 0.5rem', borderRadius: '6px', background: 'var(--aarizo-light-blue, #EAF6FC)', color: 'var(--aarizo-blue, #176B91)' }}>
                       {inc.incidentNumber}
                     </span>
-                    <span className={`px-3 py-1 text-xs font-black rounded-full ${
-                      inc.status === 'TRIGGERED' ? 'bg-rose-600 text-white animate-pulse' :
-                      inc.status === 'ACKNOWLEDGED' ? 'bg-amber-500 text-white' : 'bg-indigo-600 text-white'
-                    }`}>
+                    <span
+                      style={{
+                        padding: '0.25rem 0.625rem',
+                        fontSize: '0.6875rem',
+                        fontWeight: 800,
+                        borderRadius: '9999px',
+                        background:
+                          inc.status === 'TRIGGERED'
+                            ? 'var(--aarizo-danger, #D9535B)'
+                            : inc.status === 'ACKNOWLEDGED'
+                            ? 'var(--aarizo-warning, #D99A2B)'
+                            : 'var(--aarizo-blue, #176B91)',
+                        color: '#FFFFFF',
+                      }}
+                    >
                       {inc.status}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-slate-900 mt-3">{inc.type.replace(/_/g, ' ')}</h3>
-                  <p className="text-xs font-semibold text-slate-600 flex items-center gap-1.5 mt-1">
-                    <MapPin className="w-4 h-4 text-rose-500" /> {inc.locationDetails} ({inc.tower})
+                  <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: '0 0 0.25rem 0' }}>
+                    {inc.type.replace(/_/g, ' ')}
+                  </h3>
+                  <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--aarizo-text-secondary, #657785)', display: 'flex', alignItems: 'center', gap: '0.25rem', margin: 0 }}>
+                    <MapPin size={14} style={{ color: 'var(--aarizo-danger, #D9535B)' }} /> {inc.locationDetails} ({inc.tower})
                   </p>
 
-                  <div className="mt-3 bg-slate-50 p-3 rounded-xl border text-xs text-slate-700 space-y-1">
-                    <p><strong>Reported By:</strong> {inc.reportedByName} (Flat {inc.flatNumber})</p>
-                    <p className="flex items-center gap-1 text-indigo-700 font-bold">
-                      <PhoneCall className="w-3.5 h-3.5" /> {inc.reportedByPhone}
-                    </p>
-                    {inc.description && <p className="italic text-slate-500 mt-1">"{inc.description}"</p>}
+                  <div
+                    style={{
+                      marginTop: '0.625rem',
+                      background: 'var(--aarizo-pale-blue, #F4FAFE)',
+                      padding: '0.75rem',
+                      borderRadius: '10px',
+                      border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                      fontSize: '0.75rem',
+                      color: 'var(--aarizo-text, #203746)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.25rem',
+                    }}
+                  >
+                    <div><strong>Reported By:</strong> {inc.reportedByName} (Flat {inc.flatNumber})</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700 }}>
+                      <PhoneCall size={13} /> {inc.reportedByPhone}
+                    </div>
+                    {inc.description && <div style={{ fontStyle: 'italic', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>"{inc.description}"</div>}
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="pt-3 border-t border-slate-100 flex flex-wrap gap-2">
+                <div style={{ display: 'flex', gap: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--aarizo-border-soft, #E8F1F5)' }}>
                   {inc.status === 'TRIGGERED' && (
                     <button
                       onClick={() => handleAcknowledge(inc.id)}
-                      className="flex-1 py-2 px-3 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1"
+                      style={{
+                        flex: 1,
+                        padding: '0.625rem',
+                        background: 'var(--aarizo-warning, #D99A2B)',
+                        color: '#FFFFFF',
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                        borderRadius: '10px',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.25rem',
+                        cursor: 'pointer',
+                      }}
                     >
-                      <CheckCircle2 className="w-4 h-4" /> Acknowledge Alarm
+                      <CheckCircle2 size={14} /> Acknowledge Alarm
                     </button>
                   )}
 
@@ -170,9 +274,23 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
                         setSelectedIncident(inc);
                         setShowRespondModal(true);
                       }}
-                      className="flex-1 py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1"
+                      style={{
+                        flex: 1,
+                        padding: '0.625rem',
+                        background: 'var(--aarizo-blue, #176B91)',
+                        color: '#FFFFFF',
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                        borderRadius: '10px',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.25rem',
+                        cursor: 'pointer',
+                      }}
                     >
-                      <Play className="w-4 h-4" /> Dispatch Responder
+                      <Play size={14} /> Dispatch Responder
                     </button>
                   )}
 
@@ -182,9 +300,23 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
                         setSelectedIncident(inc);
                         setShowResolveModal(true);
                       }}
-                      className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1"
+                      style={{
+                        width: '100%',
+                        padding: '0.625rem',
+                        background: 'var(--aarizo-success, #3F8F58)',
+                        color: '#FFFFFF',
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                        borderRadius: '10px',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.25rem',
+                        cursor: 'pointer',
+                      }}
                     >
-                      <CheckCircle2 className="w-4 h-4" /> Mark Incident Resolved
+                      <CheckCircle2 size={14} /> Mark Incident Resolved
                     </button>
                   )}
                 </div>
@@ -219,8 +351,8 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
               />
             </div>
             <div className="pt-4 flex justify-end gap-2">
-              <button type="button" onClick={() => setShowRespondModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-              <button type="submit" className="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg">Confirm Dispatch</button>
+              <button type="button" onClick={() => setShowRespondModal(false)} style={{ padding: '0.5rem 1rem', border: '1px solid var(--aarizo-border, #DCE8EF)', borderRadius: '10px', background: '#FFFFFF', color: 'var(--aarizo-text-secondary, #657785)', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              <button type="submit" style={{ padding: '0.5rem 1.25rem', background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF', borderRadius: '10px', fontWeight: 700, border: 'none', cursor: 'pointer' }}>Confirm Dispatch</button>
             </div>
           </form>
         </Modal>

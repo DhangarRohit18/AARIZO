@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { MobileAppShell } from '../mobile/MobileAppShell';
 import { Store, ShoppingBag, Users, Bell, User } from 'lucide-react';
 
@@ -15,6 +15,7 @@ const BOTTOM_NAV = [
 ];
 
 export const VendorLayout = () => {
+  const navigate = useNavigate();
   return (
     <MobileAppShell
       roleTitle="Vendor"
@@ -22,6 +23,7 @@ export const VendorLayout = () => {
       accentColor="#176B91"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
+      onFabClick={() => navigate('/vendor/portal')}
       topRightActions={
         <Link
           to="/notifications"

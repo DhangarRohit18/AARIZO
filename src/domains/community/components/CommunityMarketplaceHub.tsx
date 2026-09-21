@@ -159,26 +159,28 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24">
       {/* Header Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-5 rounded-2xl border border-slate-200 shadow-sm gap-4">
+      <div
+        className="flex flex-col md:flex-row justify-between items-start md:items-center p-5 md:p-6 rounded-2xl shadow-sm gap-4 text-white"
+        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+      >
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-slate-900">Community & Resident Marketplace Hub</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
-              CommunityOS Unified
-            </span>
+            <Store className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-xl md:text-2xl font-extrabold text-white">Community & Resident Marketplace</h1>
           </div>
-          <p className="text-slate-500 text-xs mt-1">
-            Buy, sell, borrow, or share items for FREE/REUSE. Connect with verified neighbors in the directory, carpool network, and lost & found.
+          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
+            Buy, sell, borrow, or share items for FREE/REUSE. Connect with verified neighbors in the directory & lost-found board.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           {activeTab === 'MARKETPLACE' && (
             <button
               onClick={() => setIsListingModalOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition"
+              className="flex-1 md:flex-none px-4 py-2.5 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition"
+              style={{ background: 'var(--aarizo-blue, #176B91)', border: '1px solid rgba(255,255,255,0.2)' }}
             >
               <Plus size={16} /> Create Marketplace Listing
             </button>
@@ -187,7 +189,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
           {activeTab === 'LOST_FOUND' && (
             <button
               onClick={() => setIsLostFoundModalOpen(true)}
-              className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition"
+              className="flex-1 md:flex-none px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition"
             >
               <Plus size={16} /> Report Lost / Found Item
             </button>
@@ -196,21 +198,22 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 space-x-6">
+      <div className="flex border-b border-slate-200 gap-2 md:gap-6 overflow-x-auto pb-1">
         {[
           { key: 'MARKETPLACE', label: 'Resident Marketplace', icon: Store },
-          { key: 'DIRECTORY', label: 'Neighbourhood Directory & Skills', icon: Users },
+          { key: 'DIRECTORY', label: 'Neighbour Directory', icon: Users },
           { key: 'LOST_FOUND', label: 'Lost & Found Board', icon: HelpCircle },
         ].map((tab) => {
           const Icon = tab.icon;
+          const isActive = activeTab === tab.key;
           return (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`pb-3 font-semibold text-sm flex items-center gap-2 border-b-2 transition-colors ${
-                activeTab === tab.key
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              className={`pb-2.5 font-bold text-xs md:text-sm flex items-center gap-2 border-b-2 transition whitespace-nowrap px-2 ${
+                isActive
+                  ? 'border-[#176B91] text-[#176B91]'
+                  : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
               <Icon size={16} />
@@ -292,31 +295,33 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                       alt={item.title}
                       className="w-full h-full object-cover"
                     />
-                    <span
-                      className={`absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase shadow-sm ${
-                        item.type === 'FREE_REUSE'
-                          ? 'bg-emerald-600 text-white'
-                          : item.type === 'BORROW'
-                          ? 'bg-amber-500 text-white'
-                          : item.type === 'BUY'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-indigo-600 text-white'
-                      }`}
-                    >
-                      {item.type === 'FREE_REUSE' ? '🎁 FREE / REUSE' : item.type}
-                    </span>
+                    <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none gap-1">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase shadow-sm ${
+                          item.type === 'FREE_REUSE'
+                            ? 'bg-emerald-600 text-white'
+                            : item.type === 'BORROW'
+                            ? 'bg-amber-500 text-white'
+                            : item.type === 'BUY'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-indigo-600 text-white'
+                        }`}
+                      >
+                        {item.type === 'FREE_REUSE' ? '🎁 FREE' : item.type}
+                      </span>
 
-                    <span
-                      className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase shadow-sm ${
-                        item.status === 'AVAILABLE'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : item.status === 'RESERVED'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-slate-900 text-white'
-                      }`}
-                    >
-                      {item.status}
-                    </span>
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase shadow-sm ${
+                          item.status === 'AVAILABLE'
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : item.status === 'RESERVED'
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-slate-900 text-white'
+                        }`}
+                      >
+                        {item.status}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Body */}
@@ -545,7 +550,8 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-xl"
+                  className="px-4 py-2 text-white font-bold text-xs rounded-xl shadow-sm transition"
+                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
                 >
                   Publish Listing
                 </button>

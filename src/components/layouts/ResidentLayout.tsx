@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { MobileAppShell } from '../mobile/MobileAppShell';
 import { Home, Grid, Users, User, ShieldAlert, CreditCard, Ticket, Bell } from 'lucide-react';
 
@@ -20,12 +20,14 @@ const BOTTOM_NAV = [
 ];
 
 export const ResidentLayout = () => {
+  const navigate = useNavigate();
   return (
     <MobileAppShell
       roleTitle="Resident"
       societyName="Green Valley Society"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
+      onFabClick={() => navigate('/resident/visitors')}
       topRightActions={
         <Link
           to="/notifications"

@@ -102,17 +102,18 @@ export const ResidentAmenityBookingPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="space-y-6 p-4 md:p-6 pb-24 max-w-6xl mx-auto">
       {/* Header */}
-      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div
+        className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
+        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+      >
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
-              <Sparkles className="w-5 h-5" />
-            </span>
-            <h1 className="text-2xl font-bold text-slate-900">Amenities & Clubhouse Booking</h1>
+            <Sparkles className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-xl md:text-2xl font-extrabold text-white">Amenities & Clubhouse Booking</h1>
           </div>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
             Reserve slots for swimming pool, gym, tennis courts, party hall, and community facilities.
           </p>
         </div>
@@ -121,7 +122,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
       {/* Amenities Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {amenities.map(amenity => (
-          <div key={amenity.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:border-indigo-200 transition-colors">
+          <div key={amenity.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:border-sky-200 transition-colors">
             <div>
               {amenity.imageUrl && (
                 <div className="h-44 w-full overflow-hidden relative">
@@ -134,7 +135,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
               <div className="p-5">
                 <h3 className="text-lg font-bold text-slate-900">{amenity.name}</h3>
                 <p className="text-slate-500 text-xs mt-1 flex items-center gap-1">
-                  <Building className="w-3.5 h-3.5 text-slate-400" /> {amenity.location}
+                  <Building className="w-3.5 h-3.5 text-[#176B91]" /> {amenity.location}
                 </p>
                 <p className="text-slate-600 text-sm mt-3 line-clamp-2">{amenity.description}</p>
 
@@ -142,7 +143,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
                   <div>
                     <span className="text-slate-400 block">Available Hours</span>
                     <span className="font-semibold text-slate-700 flex items-center gap-1 mt-0.5">
-                      <Clock className="w-3.5 h-3.5 text-indigo-500" /> {amenity.openTime} - {amenity.closeTime}
+                      <Clock className="w-3.5 h-3.5 text-[#176B91]" /> {amenity.openTime} - {amenity.closeTime}
                     </span>
                   </div>
                   <div>
@@ -168,7 +169,11 @@ export const ResidentAmenityBookingPage: React.FC = () => {
 
             <div className="p-5 pt-0">
               <button
-                className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-semibold text-sm rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                className="w-full py-2.5 px-4 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                style={{
+                  background: (!amenity.isBookable || !amenity.isActive) ? '#cbd5e1' : 'var(--aarizo-blue, #176B91)',
+                  cursor: (!amenity.isBookable || !amenity.isActive) ? 'not-allowed' : 'pointer'
+                }}
                 onClick={() => handleOpenBookingModal(amenity)}
                 disabled={!amenity.isBookable || !amenity.isActive}
               >
@@ -278,7 +283,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
               <p><strong>Configured Hours:</strong> {selectedAmenity.openTime} to {selectedAmenity.closeTime}</p>
               <p><strong>Max Slot Capacity:</strong> {selectedAmenity.capacityPerSlot} Pax</p>
               {selectedAmenity.requiresApproval && (
-                <p className="text-amber-700 font-medium">âš ï¸ Note: Bookings for this facility require society admin approval.</p>
+                <p className="text-amber-700 font-medium">⚠️ Note: Bookings for this facility require society admin approval.</p>
               )}
             </div>
 
@@ -343,7 +348,13 @@ export const ResidentAmenityBookingPage: React.FC = () => {
 
             <div className="pt-4 flex justify-end gap-2">
               <button type="button" onClick={() => setSelectedAmenity(null)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-              <button type="submit" className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-semibold rounded-lg">Confirm Booking</button>
+              <button
+                type="submit"
+                className="px-4 py-2 text-white font-bold text-sm rounded-lg shadow-sm transition"
+                style={{ background: 'var(--aarizo-blue, #176B91)' }}
+              >
+                Confirm Booking
+              </button>
             </div>
           </form>
         </Modal>

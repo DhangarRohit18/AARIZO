@@ -183,7 +183,7 @@ export const AdminGuestStayPage: React.FC = () => {
               </div>
               <div>
                 <span className="text-xs text-slate-500 block">Guest Stay Revenue</span>
-                <span className="text-2xl font-bold text-slate-900">â‚¹{totalRevenue.toLocaleString()}</span>
+                <span className="text-2xl font-bold text-slate-900">₹{totalRevenue.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -194,7 +194,7 @@ export const AdminGuestStayPage: React.FC = () => {
               <h2 className="text-lg font-bold text-slate-900">Society Guest Rooms Register</h2>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl shadow-sm flex items-center gap-2"
+                className="px-4 py-2.5 bg-[#176B91] hover:bg-[#125877] text-white font-semibold text-sm rounded-xl shadow-sm flex items-center gap-2 transition"
               >
                 <Plus className="w-4 h-4" /> Add Guest Suite
               </button>
@@ -208,14 +208,14 @@ export const AdminGuestStayPage: React.FC = () => {
                       <div className="h-44 w-full overflow-hidden relative">
                         <img src={room.imageUrl} alt={room.roomName} className="w-full h-full object-cover" />
                         <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-bold">
-                          â‚¹{room.pricePerNight} / Night
+                          ₹{room.pricePerNight} / Night
                         </div>
                       </div>
                     )}
                     <div className="p-5 space-y-2">
                       <h3 className="text-lg font-bold text-slate-900">{room.roomName}</h3>
                       <p className="text-xs text-slate-500 flex items-center gap-1">
-                        <Building className="w-3.5 h-3.5" /> Room #{room.roomNumber} â€¢ Max {room.capacity} Guests
+                        <Building className="w-3.5 h-3.5" /> Room #{room.roomNumber} · Max {room.capacity} Guests
                       </p>
                       <p className="text-slate-600 text-sm mt-2 line-clamp-2">{room.description}</p>
 
@@ -376,7 +376,7 @@ export const AdminGuestStayPage: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Price per Night (â‚¹)</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Price per Night (₹)</label>
               <input
                 type="number"
                 min={500}

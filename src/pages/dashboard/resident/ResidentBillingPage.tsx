@@ -109,15 +109,15 @@ export const ResidentBillingPage: React.FC = () => {
                   <tr>
                     <th className="p-3">Component</th>
                     <th className="p-3">Description</th>
-                    <th className="p-3 text-right">Amount (â‚¹)</th>
+                    <th className="p-3 text-right">Amount (₹)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700 text-slate-800 dark:text-slate-200">
                   {activeInvoice.lineItems.map((item) => (
                     <tr key={item.id}>
-                      <td className="p-3 font-semibold text-indigo-600 dark:text-indigo-400">{item.component}</td>
+                      <td className="p-3 font-semibold text-[#176B91] dark:text-sky-400">{item.component}</td>
                       <td className="p-3">{item.description}</td>
-                      <td className="p-3 text-right font-medium">â‚¹{item.amount.toLocaleString()}</td>
+                      <td className="p-3 text-right font-medium">₹{item.amount.toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -129,11 +129,11 @@ export const ResidentBillingPage: React.FC = () => {
           <div className="p-5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-sm">
               <div className="flex items-center gap-4 text-xs text-slate-500">
-                <span>Total Bill: <strong>â‚¹{activeInvoice.totalAmount.toLocaleString()}</strong></span>
-                <span>Paid So Far: <strong className="text-emerald-600">â‚¹{activeInvoice.paidAmount.toLocaleString()}</strong></span>
+                <span>Total Bill: <strong>₹{activeInvoice.totalAmount.toLocaleString()}</strong></span>
+                <span>Paid So Far: <strong className="text-emerald-600">₹{activeInvoice.paidAmount.toLocaleString()}</strong></span>
               </div>
               <div className="text-lg font-extrabold text-slate-900 dark:text-white">
-                Outstanding Dues: <span className="text-rose-600 dark:text-rose-400">â‚¹{activeInvoice.outstandingBalance.toLocaleString()}</span>
+                Outstanding Dues: <span className="text-rose-600 dark:text-rose-400">₹{activeInvoice.outstandingBalance.toLocaleString()}</span>
               </div>
             </div>
 

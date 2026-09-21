@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { MobileAppShell } from '../mobile/MobileAppShell';
 import {
   QrCode,
@@ -34,12 +34,14 @@ const BOTTOM_NAV = [
 ];
 
 export const SecurityLayout = () => {
+  const navigate = useNavigate();
   return (
     <MobileAppShell
       roleTitle="Security Guard"
       societyName="Green Valley Society"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
+      onFabClick={() => navigate('/security/verify')}
       topRightActions={
         <Link
           to="/security/emergency-command"

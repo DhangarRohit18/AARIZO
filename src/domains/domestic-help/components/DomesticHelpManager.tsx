@@ -73,7 +73,7 @@ export const DomesticHelpManager: React.FC = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
+    <div className="p-3 md:p-6 pb-24 space-y-4 md:space-y-6 max-w-7xl mx-auto">
       {/* Real-time Alert Banner */}
       {realtimeEntryAlert && (
         <div className="p-4 bg-emerald-600 text-white rounded-2xl shadow-lg flex justify-between items-center animate-bounce">
@@ -91,16 +91,22 @@ export const DomesticHelpManager: React.FC = () => {
       )}
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4">
+      <div
+        className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
+        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+      >
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Domestic Help & Household Staff Hub</h1>
-          <p className="text-sm text-slate-500">
-            Household worker linkages, consent management, QR gate check-in, & privacy-protected attendance logs
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-xl md:text-2xl font-extrabold text-white">Domestic Help & Household Staff</h1>
+          </div>
+          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
+            Household staff linkages, consent management, QR gate check-in, & attendance logs.
           </p>
         </div>
-        <div className="mt-3 md:mt-0 flex gap-2">
-          <span className="px-3 py-1 bg-emerald-50 text-emerald-700 font-bold rounded-full text-xs flex items-center gap-1">
-            <ShieldCheck size={14} /> Verified Staff Network
+        <div className="flex gap-2">
+          <span className="px-3 py-1.5 bg-white/10 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 border border-white/20">
+            <ShieldCheck size={14} className="text-emerald-300" /> Verified Staff Network
           </span>
         </div>
       </div>
@@ -109,7 +115,7 @@ export const DomesticHelpManager: React.FC = () => {
       {(activeRole === 'guard' || activeRole === 'secretary' || activeRole === 'admin') && (
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
           <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-            <QrCode className="text-indigo-600" size={20} /> Security Gate Terminal â€” Scan Domestic Staff Pass
+            <QrCode className="text-[#176B91]" size={20} /> Security Gate Terminal — Scan Domestic Staff Pass
           </h3>
 
           <div className="flex flex-col md:flex-row gap-3 items-center">
@@ -118,9 +124,9 @@ export const DomesticHelpManager: React.FC = () => {
               onChange={(e) => setSelectedWorkerId(e.target.value)}
               className="p-2.5 border rounded-xl text-xs border-slate-300 font-semibold flex-1 w-full"
             >
-              <option value="DW-101">Sunita Devi (Maid) â€¢ PASS-9042</option>
-              <option value="DW-102">Ramesh Kumar (Driver) â€¢ PASS-8812</option>
-              <option value="DW-103">Rekha Sharma (Cook) â€¢ PASS-7741</option>
+              <option value="DW-101">Sunita Devi (Maid) · PASS-9042</option>
+              <option value="DW-102">Ramesh Kumar (Driver) · PASS-8812</option>
+              <option value="DW-103">Rekha Sharma (Cook) · PASS-7741</option>
             </select>
 
             <button
@@ -167,7 +173,7 @@ export const DomesticHelpManager: React.FC = () => {
                         {worker.workerType}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">Pass ID: {worker.passCode} â€¢ Phone: {worker.phone}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Pass ID: {worker.passCode} · Phone: {worker.phone}</p>
                     <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1 mt-1">
                       <CheckCircle size={12} /> Resident Consent Granted
                     </span>
@@ -210,7 +216,7 @@ export const DomesticHelpManager: React.FC = () => {
                   <img src={w.avatarUrl} alt={w.name} className="w-9 h-9 rounded-full object-cover" />
                   <div>
                     <span className="font-bold text-slate-800">{w.name}</span> ({w.workerType})
-                    <p className="text-slate-500 text-[10px]">Pass: {w.passCode} â€¢ Status: {w.overallStatus}</p>
+                    <p className="text-slate-500 text-[10px]">Pass: {w.passCode} · Status: {w.overallStatus}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

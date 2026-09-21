@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   UserCheck,
   Home,
@@ -17,7 +17,7 @@ export const DomesticWorkerDashboard: React.FC = () => {
             Domestic Staff Pass
           </span>
           <h1 className="text-2xl font-extrabold mt-2">Sunita Devi</h1>
-          <p className="text-emerald-100 text-xs mt-1">ID: DW-9042 â€¢ Society: Green Valley Society</p>
+          <p className="text-emerald-100 text-xs mt-1">ID: DW-9042 · Society: Green Valley Society</p>
         </div>
         <div className="flex flex-col items-end gap-2">
           <button
@@ -64,7 +64,7 @@ export const DomesticWorkerDashboard: React.FC = () => {
             <div key={i} className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center">
               <div>
                 <h4 className="font-bold text-slate-800 text-sm">{h.flat}</h4>
-                <p className="text-xs text-slate-500">{h.owner} â€¢ {h.time}</p>
+                <p className="text-xs text-slate-500">{h.owner} · {h.time}</p>
               </div>
               <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
                 h.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-800' :

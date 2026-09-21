@@ -218,25 +218,25 @@ export const BillingManagementPage: React.FC = () => {
         <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
           <span className="text-xs font-medium text-slate-500">Total Billed</span>
           <div className="text-xl font-bold text-slate-900 dark:text-white mt-1">
-            â‚¹{analytics.totalBilled.toLocaleString()}
+            ₹{analytics.totalBilled.toLocaleString()}
           </div>
         </div>
         <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
           <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Total Collected</span>
           <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
-            â‚¹{analytics.totalCollected.toLocaleString()}
+            ₹{analytics.totalCollected.toLocaleString()}
           </div>
         </div>
         <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
           <span className="text-xs font-medium text-amber-600 dark:text-amber-400">Outstanding Balance</span>
           <div className="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">
-            â‚¹{analytics.totalOutstanding.toLocaleString()}
+            ₹{analytics.totalOutstanding.toLocaleString()}
           </div>
         </div>
         <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
           <span className="text-xs font-medium text-rose-600 dark:text-rose-400">Overdue Total</span>
           <div className="text-xl font-bold text-rose-600 dark:text-rose-400 mt-1">
-            â‚¹{analytics.totalOverdue.toLocaleString()}
+            ₹{analytics.totalOverdue.toLocaleString()}
           </div>
         </div>
         <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -575,7 +575,7 @@ export const BillingManagementPage: React.FC = () => {
             </h3>
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-semibold mb-1">Amount Received (â‚¹) *</label>
+                <label className="block font-semibold mb-1">Amount Received (₹) *</label>
                 <input
                   type="number"
                   required
@@ -653,7 +653,7 @@ export const BillingManagementPage: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block font-semibold mb-1">Amount (â‚¹) *</label>
+                <label className="block font-semibold mb-1">Amount (₹) *</label>
                 <input
                   type="number"
                   required

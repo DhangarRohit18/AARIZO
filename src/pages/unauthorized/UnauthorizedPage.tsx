@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { ShieldAlert, ArrowLeft, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -34,7 +34,7 @@ export const UnauthorizedPage: React.FC = () => {
       >
         <ShieldAlert size={32} />
       </div>
-      <h2 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>403 â€” Access Denied</h2>
+      <h2 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>403 — Access Denied</h2>
       <p style={{ margin: '0 0 1.5rem 0', color: '#64748b', maxWidth: '400px' }}>
         You do not have permission to access this page under your current role (
         <strong>{currentUser?.role || 'Guest'}</strong>).

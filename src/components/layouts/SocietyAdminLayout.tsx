@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { MobileAppShell } from '../mobile/MobileAppShell';
 import {
   LayoutDashboard,
@@ -48,12 +48,14 @@ const BOTTOM_NAV = [
 ];
 
 export const SocietyAdminLayout = () => {
+  const navigate = useNavigate();
   return (
     <MobileAppShell
       roleTitle="Secretary"
       societyName="Green Valley Society"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
+      onFabClick={() => navigate('/admin/requests')}
       topRightActions={
         <Link
           to="/notifications"

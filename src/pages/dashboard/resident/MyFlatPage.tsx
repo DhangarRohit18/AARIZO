@@ -84,14 +84,14 @@ export const MyFlatPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+    <div style={{ padding: '1rem', paddingBottom: '6rem', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif' }}>
       {/* Header */}
-      <header style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)', padding: '1.5rem', borderRadius: '16px', color: '#fff' }}>
+      <header style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)', padding: '1.5rem', borderRadius: '16px', color: '#FFFFFF' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Home size={28} color="var(--aarizo-sky, #83CBEA)" />
           <div>
-            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Tower B · Flat 1204</h1>
-            <p style={{ margin: '0.2rem 0 0 0', color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.85rem' }}>Green Valley Society • 3 BHK Owner Occupied</p>
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: '#FFFFFF' }}>Tower B · Flat 1204</h1>
+            <p style={{ margin: '0.2rem 0 0 0', color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.85rem' }}>Green Valley Society · 3 BHK Owner Occupied</p>
           </div>
         </div>
       </header>
@@ -111,7 +111,7 @@ export const MyFlatPage: React.FC = () => {
               gap: '0.35rem',
               padding: '0.45rem 0.85rem',
               background: 'var(--aarizo-blue, #176B91)',
-              color: '#fff',
+              color: '#FFFFFF',
               borderRadius: '8px',
               border: 'none',
               fontWeight: 600,
@@ -131,7 +131,7 @@ export const MyFlatPage: React.FC = () => {
               </div>
               <div>
                 <div style={{ fontWeight: 600, color: 'var(--aarizo-text-dark, #203746)' }}>{fam.name}</div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{fam.relationship} {fam.phone ? `â€¢ ${fam.phone}` : ''}</div>
+                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{fam.relationship} {fam.phone ? `· ${fam.phone}` : ''}</div>
               </div>
             </div>
           ))}
@@ -142,7 +142,7 @@ export const MyFlatPage: React.FC = () => {
       <section style={{ marginBottom: '2rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Car size={20} color="#2563eb" />
+            <Car size={20} color="var(--aarizo-blue, #176B91)" />
             <h3 style={{ margin: 0, color: '#0f172a' }}>Vehicles & Parking Slots ({vehicles.length})</h3>
           </div>
           <button
@@ -152,8 +152,8 @@ export const MyFlatPage: React.FC = () => {
               alignItems: 'center',
               gap: '0.35rem',
               padding: '0.45rem 0.85rem',
-              background: '#2563eb',
-              color: '#fff',
+              background: 'var(--aarizo-blue, #176B91)',
+              color: '#FFFFFF',
               borderRadius: '8px',
               border: 'none',
               fontWeight: 600,
@@ -173,7 +173,7 @@ export const MyFlatPage: React.FC = () => {
                 <StatusBadge label={veh.vehicleType} variant="info" size="sm" />
               </div>
               <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                Slot: <strong>{veh.parkingSlotNumber}</strong> {veh.rfidTagCode ? `â€¢ Tag: ${veh.rfidTagCode}` : ''}
+                Slot: <strong>{veh.parkingSlotNumber}</strong> {veh.rfidTagCode ? `· Tag: ${veh.rfidTagCode}` : ''}
               </div>
             </div>
           ))}
@@ -183,7 +183,7 @@ export const MyFlatPage: React.FC = () => {
       {/* Grid Section 3: Household Staff / Domestic Help */}
       <section style={{ marginBottom: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-          <UserCheck size={20} color="#2563eb" />
+          <UserCheck size={20} color="var(--aarizo-blue, #176B91)" />
           <h3 style={{ margin: 0, color: '#0f172a' }}>Assigned Household Staff ({domesticWorkers.length})</h3>
         </div>
 
@@ -192,7 +192,7 @@ export const MyFlatPage: React.FC = () => {
             <div key={dw.id} style={{ padding: '1rem', background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>{dw.name}</div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{dw.workRole} â€¢ Code: {dw.passCode}</div>
+                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{dw.workRole} · Code: {dw.passCode}</div>
               </div>
               <StatusBadge
                 label={dw.status === 'INSIDE' ? 'INSIDE COMPLEX' : 'OUTSIDE'}
@@ -242,7 +242,7 @@ export const MyFlatPage: React.FC = () => {
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
             <button type="button" onClick={() => setIsFamilyModalOpen(false)} style={{ flex: 1, padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}>Cancel</button>
-            <button type="submit" style={{ flex: 1, padding: '0.6rem', borderRadius: '8px', border: 'none', background: '#2563eb', color: '#fff', fontWeight: 600 }}>Save Member</button>
+            <button type="submit" style={{ flex: 1, padding: '0.6rem', borderRadius: '8px', border: 'none', background: 'var(--aarizo-blue, #176B91)', color: '#fff', fontWeight: 600 }}>Save Member</button>
           </div>
         </Form>
       </Modal>
@@ -283,7 +283,7 @@ export const MyFlatPage: React.FC = () => {
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
             <button type="button" onClick={() => setIsVehicleModalOpen(false)} style={{ flex: 1, padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}>Cancel</button>
-            <button type="submit" style={{ flex: 1, padding: '0.6rem', borderRadius: '8px', border: 'none', background: '#2563eb', color: '#fff', fontWeight: 600 }}>Register Vehicle</button>
+            <button type="submit" style={{ flex: 1, padding: '0.6rem', borderRadius: '8px', border: 'none', background: 'var(--aarizo-blue, #176B91)', color: '#fff', fontWeight: 600 }}>Register Vehicle</button>
           </div>
         </Form>
       </Modal>
