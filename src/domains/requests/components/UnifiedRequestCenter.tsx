@@ -4,6 +4,7 @@ import {
   Search,
   Paperclip,
   History,
+  X,
 } from 'lucide-react';
 import { societyRequestService } from '../services/societyRequestService';
 import type { SocietyRequest, SocietyRequestCategory, SocietyRequestStatus, RequestDocument } from '../types';
@@ -111,8 +112,12 @@ export const UnifiedRequestCenter: React.FC = () => {
 
   const filteredRequests = requests.filter((r) => {
     // If resident role, filter only resident's requests
-    if (activeRole === 'resident' && r.residentId !== (currentUser?.id || 'res-1')) {
-      return false;
+    if (activeRole === 'resident') {
+      const myIds = [currentUser?.id, 'user-resident-01', 'res-1'].filter(Boolean);
+      const isMine = myIds.includes(r.residentId) || r.residentName === (currentUser?.name || 'Rajesh Kumar');
+      if (!isMine) {
+        return false;
+      }
     }
 
     const matchesSearch =
@@ -188,15 +193,15 @@ export const UnifiedRequestCenter: React.FC = () => {
         }}
       >
         <div style={{ position: 'relative', width: '100%' }}>
-          <Search size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--aarizo-text-muted, #8B9AA5)' }} />
+          <Search size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--aarizo-text-muted, #8B9AA5)', pointerEvents: 'none' }} />
           <input
             type="text"
-            placeholder="Search title, resident, or ID..."
+            placeholder="Search request title, resident, or Request ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
               width: '100%',
-              paddingLeft: '2.25rem',
+              paddingLeft: '2.5rem',
               paddingRight: '0.75rem',
               height: '42px',
               borderRadius: '10px',
@@ -260,8 +265,15 @@ export const UnifiedRequestCenter: React.FC = () => {
       {/* Requests Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {filteredRequests.length === 0 ? (
-          <div className="col-span-3 text-center py-12 bg-white rounded-xl border border-slate-200 text-slate-400">
-            No society requests match the filter criteria.
+          <div className="col-span-3 text-center py-10 px-4 bg-white rounded-2xl border border-slate-200 text-slate-400 space-y-3 shadow-sm">
+            <p className="text-xs text-slate-500 m-0">No society requests match the filter criteria.</p>
+            <button
+              onClick={() => setShowSubmitModal(true)}
+              style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
+              className="px-4 py-2 text-xs font-bold rounded-xl shadow-sm hover:brightness-110 transition-all inline-flex items-center gap-1.5"
+            >
+              <Plus size={14} /> Submit New Request / NOC
+            </button>
           </div>
         ) : (
           filteredRequests.map((req) => (
@@ -309,10 +321,23 @@ export const UnifiedRequestCenter: React.FC = () => {
 
       {/* Submit Modal */}
       {showSubmitModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-lg w-full shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-slate-900">Submit New Society Request / NOC</h3>
-            <form onSubmit={handleCreateRequest} className="space-y-3 text-xs">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden my-auto border border-slate-200 flex flex-col max-h-[90vh]">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/75 flex-shrink-0">
+              <h3 className="text-base font-bold text-slate-900 m-0">Submit New Request / NOC</h3>
+              <button
+                type="button"
+                onClick={() => setShowSubmitModal(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleCreateRequest} id="societyRequestForm" className="p-5 space-y-3.5 text-xs overflow-y-auto flex-1">
               <div>
                 <label className="block font-semibold mb-1 text-slate-700">Request Title</label>
                 <input
@@ -320,7 +345,7 @@ export const UnifiedRequestCenter: React.FC = () => {
                   placeholder="e.g. Balcony Grill Expansion Permission"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full p-2 border rounded-lg border-slate-300"
+                  className="w-full p-2.5 border rounded-xl border-slate-300 focus:outline-none focus:border-[#176B91]"
                   required
                 />
               </div>
@@ -331,7 +356,7 @@ export const UnifiedRequestCenter: React.FC = () => {
                   <select
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value as any)}
-                    className="w-full p-2 border rounded-lg border-slate-300"
+                    className="w-full p-2.5 border rounded-xl border-slate-300 bg-white font-medium"
                   >
                     <option value="NOC">No Objection Certificate (NOC)</option>
                     <option value="TENANT_REGISTRATION">Tenant Registration</option>
@@ -348,7 +373,7 @@ export const UnifiedRequestCenter: React.FC = () => {
                   <select
                     value={newPriority}
                     onChange={(e) => setNewPriority(e.target.value as any)}
-                    className="w-full p-2 border rounded-lg border-slate-300"
+                    className="w-full p-2.5 border rounded-xl border-slate-300 bg-white font-medium"
                   >
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
@@ -365,7 +390,7 @@ export const UnifiedRequestCenter: React.FC = () => {
                   placeholder="Provide complete explanation for committee review..."
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
-                  className="w-full p-2 border rounded-lg border-slate-300"
+                  className="w-full p-2.5 border rounded-xl border-slate-300 focus:outline-none focus:border-[#176B91]"
                   required
                 />
               </div>
@@ -377,26 +402,30 @@ export const UnifiedRequestCenter: React.FC = () => {
                   placeholder="e.g. Registered_Agreement.pdf or Architectural_Plan.pdf"
                   value={newFileName}
                   onChange={(e) => setNewFileName(e.target.value)}
-                  className="w-full p-2 border rounded-lg border-slate-300"
+                  className="w-full p-2.5 border rounded-xl border-slate-300 font-mono text-xs"
                 />
               </div>
-
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowSubmitModal(false)}
-                  style={{ padding: '0.625rem 1rem', border: '1px solid var(--aarizo-border, #DCE8EF)', borderRadius: '10px', background: '#FFFFFF', color: 'var(--aarizo-text-secondary, #657785)', fontWeight: 600, cursor: 'pointer' }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  style={{ padding: '0.625rem 1.25rem', background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF', borderRadius: '10px', fontWeight: 700, border: 'none', cursor: 'pointer' }}
-                >
-                  Submit Request
-                </button>
-              </div>
             </form>
+
+            {/* Modal Footer */}
+            <div className="flex justify-end items-center gap-2 px-5 py-3 border-t border-slate-100 bg-slate-50/75 flex-shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowSubmitModal(false)}
+                style={{ background: '#F1F5F9', color: '#334155' }}
+                className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 hover:bg-slate-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="societyRequestForm"
+                style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
+                className="px-5 py-2 text-xs font-bold rounded-xl shadow-md hover:brightness-110 transition-all"
+              >
+                Submit Request
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -413,9 +442,10 @@ export const UnifiedRequestCenter: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setSelectedRequest(null)}
-                  className="p-2 text-slate-400 hover:text-slate-600 font-bold"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                  title="Close"
                 >
-                  ✕
+                  <X size={18} />
                 </button>
               </div>
 

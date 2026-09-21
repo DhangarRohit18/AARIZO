@@ -12,9 +12,9 @@ import { logAudit } from './societyService';
 import { billingInvoiceRepository, billingCycleRepository, paymentTransactionRepository } from '../repositories/billing/BillingRepository';
 
 const STORAGE_KEYS = {
-  CYCLES: 'communityos_billing_cycles_v6',
-  INVOICES: 'communityos_billing_invoices_v6',
-  TRANSACTIONS: 'communityos_billing_transactions_v6',
+  CYCLES: 'communityos_billing_cycles_v7',
+  INVOICES: 'communityos_billing_invoices_v7',
+  TRANSACTIONS: 'communityos_billing_transactions_v7',
 };
 
 const SEED_CYCLES: BillingCycle[] = [
@@ -120,6 +120,36 @@ const SEED_INVOICES: SocietyInvoice[] = [
 
 const SEED_TRANSACTIONS: PaymentTransaction[] = [
   {
+    id: 'txn-100',
+    invoiceId: 'inv-100-aug',
+    invoiceNumber: 'INV-2026-08-1204',
+    societyId: 'soc-gvs',
+    flatCode: 'B-1204',
+    residentName: 'Rajesh Kumar',
+    transactionId: 'TXN-88291044',
+    amount: 5600,
+    paymentMethod: 'ONLINE_GATEWAY',
+    status: 'SUCCESS',
+    gatewayReference: 'pay_rzp_aug_1204_live',
+    gatewayResponseNotes: 'August 2026 Maintenance Paid in Full via NetBanking',
+    paymentDate: '2026-08-18 02:45 PM',
+  },
+  {
+    id: 'txn-099',
+    invoiceId: 'inv-099-jul',
+    invoiceNumber: 'INV-2026-07-1204',
+    societyId: 'soc-gvs',
+    flatCode: 'B-1204',
+    residentName: 'Rajesh Kumar',
+    transactionId: 'TXN-66401923',
+    amount: 5600,
+    paymentMethod: 'UPI',
+    status: 'SUCCESS',
+    gatewayReference: 'upi_gvs_jul_1204',
+    gatewayResponseNotes: 'July 2026 Maintenance Paid via GPay UPI',
+    paymentDate: '2026-07-20 11:15 AM',
+  },
+  {
     id: 'txn-101',
     invoiceId: 'inv-102',
     invoiceNumber: 'INV-2026-09-0301',
@@ -151,6 +181,15 @@ const SEED_TRANSACTIONS: PaymentTransaction[] = [
   },
 ];
 
+const cleanEncoding = (val: string): string => {
+  return val
+    .replace(/â‚¹/g, '₹')
+    .replace(/Ã¢Å“â€¢/g, '✕')
+    .replace(/Ã¢/g, '')
+    .replace(/â€“/g, '–')
+    .replace(/â€”/g, '—');
+};
+
 function getItem<T>(key: string, defaultValue: T): T {
   try {
     const raw = localStorage.getItem(key);
@@ -158,7 +197,7 @@ function getItem<T>(key: string, defaultValue: T): T {
       localStorage.setItem(key, JSON.stringify(defaultValue));
       return defaultValue;
     }
-    return JSON.parse(raw);
+    return JSON.parse(cleanEncoding(raw));
   } catch {
     return defaultValue;
   }

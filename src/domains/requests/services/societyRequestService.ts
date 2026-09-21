@@ -2,14 +2,14 @@ import type { SocietyRequest, SocietyRequestStatus, RequestDocument, RequestAudi
 import { realtimeService } from '../../../services/realtimeService';
 import { filterBySociety } from '../../../utils/societyIsolation';
 
-const STORAGE_KEY = 'aarizo_society_requests_v1';
+const STORAGE_KEY = 'aarizo_society_requests_v3';
 
 const SEED_REQUESTS: SocietyRequest[] = [
   {
     id: 'REQ-2026-101',
     societyId: 'soc-gvs',
-    residentId: 'res-1',
-    residentName: 'Vikram Joshi',
+    residentId: 'user-resident-01',
+    residentName: 'Rajesh Kumar',
     flatCode: 'Tower B · B-1204',
     title: 'Balcony Grill Expansion & Interior Renovation Permission',
     category: 'RENOVATION_PERMISSION',
@@ -23,15 +23,42 @@ const SEED_REQUESTS: SocietyRequest[] = [
     targetCompletionDate: new Date(Date.now() + 86400000 * 2).toISOString(),
     isSlaBreached: false,
     documents: [
-      { id: 'doc-1', fileName: 'Architect_Layout_Plan.pdf', fileUrl: '/docs/plan.pdf', uploadedBy: 'Vikram Joshi', uploadedAt: '2026-09-12 10:30' },
-      { id: 'doc-2', fileName: 'Contractor_ID_Proof.pdf', fileUrl: '/docs/id.pdf', uploadedBy: 'Vikram Joshi', uploadedAt: '2026-09-12 10:31' }
+      { id: 'doc-1', fileName: 'Architect_Layout_Plan.pdf', fileUrl: '/docs/plan.pdf', uploadedBy: 'Rajesh Kumar', uploadedAt: '2026-09-12 10:30' },
+      { id: 'doc-2', fileName: 'Contractor_ID_Proof.pdf', fileUrl: '/docs/id.pdf', uploadedBy: 'Rajesh Kumar', uploadedAt: '2026-09-12 10:31' }
     ],
     history: [
-      { id: 'h-1', timestamp: '2026-09-12 10:30', actorId: 'res-1', actorName: 'Vikram Joshi', actorRole: 'RESIDENT', action: 'Request Submitted', toStatus: 'SUBMITTED', notes: 'Initial submission' },
+      { id: 'h-1', timestamp: '2026-09-12 10:30', actorId: 'user-resident-01', actorName: 'Rajesh Kumar', actorRole: 'RESIDENT', action: 'Request Submitted', toStatus: 'SUBMITTED', notes: 'Initial submission' },
       { id: 'h-2', timestamp: '2026-09-13 09:15', actorId: 'admin-1', actorName: 'Secretary Mayuri', actorRole: 'SOCIETY_ADMIN', action: 'Moved to Under Review', fromStatus: 'SUBMITTED', toStatus: 'UNDER_REVIEW', notes: 'Forwarded to Committee for architectural structural check' }
     ],
     createdAt: '2026-09-12T10:30:00.000Z',
     updatedAt: '2026-09-13T09:15:00.000Z',
+  },
+  {
+    id: 'REQ-2026-104',
+    societyId: 'soc-gvs',
+    residentId: 'user-resident-01',
+    residentName: 'Rajesh Kumar',
+    flatCode: 'Tower B · B-1204',
+    title: 'Vehicle Parking Allocation NOC for Second Four-Wheeler',
+    category: 'PARKING_REQUEST',
+    description: 'NOC application for designated visitor parking bay allotment for holiday duration.',
+    status: 'APPROVED',
+    priority: 'MEDIUM',
+    assignedOfficerName: 'Secretary Mayuri',
+    requiresCommitteeApproval: false,
+    committeeApproved: true,
+    slaHours: 24,
+    targetCompletionDate: new Date(Date.now() - 3600000 * 5).toISOString(),
+    isSlaBreached: false,
+    documents: [
+      { id: 'doc-6', fileName: 'Vehicle_RC_Copy.pdf', fileUrl: '/docs/rc.pdf', uploadedBy: 'Rajesh Kumar', uploadedAt: '2026-09-14 11:00' }
+    ],
+    history: [
+      { id: 'h-7', timestamp: '2026-09-14 11:00', actorId: 'user-resident-01', actorName: 'Rajesh Kumar', actorRole: 'RESIDENT', action: 'Request Submitted', toStatus: 'SUBMITTED' },
+      { id: 'h-8', timestamp: '2026-09-15 14:20', actorId: 'admin-1', actorName: 'Secretary Mayuri', actorRole: 'SOCIETY_ADMIN', action: 'Request Approved', fromStatus: 'SUBMITTED', toStatus: 'APPROVED', notes: 'Verified and granted parking permit.' }
+    ],
+    createdAt: '2026-09-14T11:00:00.000Z',
+    updatedAt: '2026-09-15T14:20:00.000Z',
   },
   {
     id: 'REQ-2026-102',
@@ -94,7 +121,14 @@ class SocietyRequestService {
   private getStorage(): SocietyRequest[] {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
-      return data ? JSON.parse(data) : SEED_REQUESTS;
+      if (!data) return SEED_REQUESTS;
+      const clean = data
+        .replace(/â‚¹/g, '₹')
+        .replace(/Ã¢Å“â€¢/g, '✕')
+        .replace(/Ã¢/g, '')
+        .replace(/â€“/g, '–')
+        .replace(/â€”/g, '—');
+      return JSON.parse(clean);
     } catch {
       return SEED_REQUESTS;
     }

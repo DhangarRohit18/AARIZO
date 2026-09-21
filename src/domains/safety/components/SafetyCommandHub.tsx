@@ -13,6 +13,7 @@ import {
   QrCode,
   UserPlus,
   Lock,
+  X,
 } from 'lucide-react';
 import { safetyCommandEngine } from '../services/safetyCommandEngine';
 import type { EmergencyIncidentItem, IncidentStatus, EmergencyCategory, ChildProfileItem, PickupRecord, AuthorizedPickupPerson } from '../types/index';
@@ -284,7 +285,15 @@ export const SafetyCommandHub: React.FC = () => {
                   <p className="text-xs text-slate-500">{sos.desc}</p>
                 </div>
 
-                <button className="w-full py-2 bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs rounded-xl shadow-md flex items-center justify-center gap-1">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTriggerSOS(sos.category);
+                  }}
+                  style={{ background: '#E11D48', color: '#FFFFFF' }}
+                  className="w-full py-2.5 text-white font-extrabold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 hover:brightness-110 active:scale-95 transition-all mt-3"
+                >
                   <Radio size={14} className="animate-pulse" /> TAP TO DISPATCH SOS
                 </button>
               </div>
@@ -508,7 +517,14 @@ export const SafetyCommandHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Assign Emergency Responder</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button
+                type="button"
+                onClick={() => setModalMode(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleAssignSubmit} className="space-y-4">
@@ -538,13 +554,15 @@ export const SafetyCommandHub: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setModalMode(null)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
+                  style={{ background: '#F1F5F9', color: '#334155' }}
+                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-200 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-blue-500"
+                  style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
+                  className="px-5 py-2 text-xs font-bold rounded-lg shadow-md hover:brightness-110 transition-all"
                 >
                   Dispatch Responder
                 </button>
@@ -560,7 +578,14 @@ export const SafetyCommandHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Child Profile</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button
+                type="button"
+                onClick={() => setModalMode(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleAddChildSubmit} className="space-y-4">
@@ -603,14 +628,15 @@ export const SafetyCommandHub: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setModalMode(null)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
+                  style={{ background: '#F1F5F9', color: '#334155' }}
+                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-200 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
-                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
+                  className="px-5 py-2 text-white text-xs font-bold rounded-lg shadow-md hover:brightness-110 transition-all"
+                  style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
                 >
                   Save Profile
                 </button>
@@ -626,7 +652,14 @@ export const SafetyCommandHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Authorized Pickup Person</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button
+                type="button"
+                onClick={() => setModalMode(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleAddPickupSubmit} className="space-y-4">
@@ -669,14 +702,15 @@ export const SafetyCommandHub: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setModalMode(null)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
+                  style={{ background: '#F1F5F9', color: '#334155' }}
+                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-200 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
-                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
+                  className="px-5 py-2 text-white text-xs font-bold rounded-lg shadow-md hover:brightness-110 transition-all"
+                  style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
                 >
                   Save Authorized Person
                 </button>

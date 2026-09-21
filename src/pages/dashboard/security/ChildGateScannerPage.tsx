@@ -173,7 +173,7 @@ export const ChildGateScannerPage: React.FC = () => {
                 )}
                 <div className="space-y-2 flex-1">
                   <h3 className="text-xl font-bold">
-                    {scanResult.allowed ? '✓ PICKUP AUTHORIZED & PERMITTED' : '✕ PICKUP DENIED / BLOCKED'}
+                    {scanResult.allowed ? 'PICKUP AUTHORIZED & PERMITTED' : 'PICKUP DENIED / BLOCKED'}
                   </h3>
                   <p className="text-sm font-medium">{scanResult.message}</p>
 

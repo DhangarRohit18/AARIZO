@@ -11,6 +11,7 @@ import {
   BarChart,
   Search,
   Filter,
+  X,
 } from 'lucide-react';
 import { vendorPerformanceEngine } from '../services/vendorPerformanceEngine';
 import type { VendorScorecard, VendorStatus } from '../types';
@@ -420,10 +421,12 @@ export const VendorPerformanceHub: React.FC = () => {
                 <p className="text-xs text-slate-500">{activeVendor.category} • Rep: {activeVendor.contactPerson} ({activeVendor.phone})</p>
               </div>
               <button
+                type="button"
                 onClick={() => setActiveVendor(null)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-base"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
               >
-                ✕
+                <X size={18} />
               </button>
             </div>
 

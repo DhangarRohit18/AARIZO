@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   Building2,
   RefreshCw,
+  X,
 } from 'lucide-react';
 import { societyServicesEngine } from '../services/societyServicesEngine';
 import type { ServiceCategory, VendorPartner, ServiceItem, ServiceBookingOrder, RecurringScheduleType, OrderStatus } from '../types';
@@ -530,7 +531,14 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Rate Service Experience</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button
+                type="button"
+                onClick={() => setModalMode(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleRateSubmit} className="space-y-4">
@@ -565,13 +573,15 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                 <button
                   type="button"
                   onClick={() => setModalMode(null)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
+                  style={{ background: '#F1F5F9', color: '#334155' }}
+                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-200 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
+                  style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
+                  className="px-5 py-2 text-xs font-bold rounded-lg shadow-md hover:brightness-110 transition-all"
                 >
                   Submit Rating
                 </button>
@@ -587,7 +597,14 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Book {selectedItemForBook.title}</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button
+                type="button"
+                onClick={() => setModalMode(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleBookSubmit} className="space-y-4">
@@ -631,7 +648,8 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                 <span className="text-base font-extrabold text-slate-900">Total: ₹{selectedItemForBook.price}</span>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#176B91] hover:bg-[#125877] text-white text-xs font-semibold rounded-lg shadow-md transition"
+                  style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
+                  className="px-5 py-2.5 text-xs font-bold rounded-xl shadow-md hover:brightness-110 transition-all"
                 >
                   Confirm & Dispatch Order
                 </button>
@@ -647,7 +665,14 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Add Service to Catalog</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button
+                type="button"
+                onClick={() => setModalMode(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleAddItemSubmit} className="space-y-4">
@@ -692,13 +717,15 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                 <button
                   type="button"
                   onClick={() => setModalMode(null)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
+                  style={{ background: '#F1F5F9', color: '#334155' }}
+                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-200 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
+                  style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
+                  className="px-5 py-2 text-xs font-bold rounded-lg shadow-md hover:brightness-110 transition-all"
                 >
                   Save Service
                 </button>

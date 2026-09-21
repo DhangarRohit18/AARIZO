@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, MapPin, User, CheckCircle } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, MapPin, User, CheckCircle, X } from 'lucide-react';
 import type { MaintenanceCalendarEvent } from '../../types/maintenance';
 import { StatusBadge } from '../ui/StatusBadge';
 
@@ -159,10 +159,12 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({ events
                 Maintenance Task Details
               </h3>
               <button
+                type="button"
                 onClick={() => setSelectedEvent(null)}
-                className="text-slate-400 hover:text-slate-600 text-lg font-bold"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                title="Close"
               >
-                ✕
+                <X size={18} />
               </button>
             </div>
 

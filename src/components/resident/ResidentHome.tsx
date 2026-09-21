@@ -19,6 +19,7 @@ import {
   AlertCircle,
   TrendingUp,
   CheckCircle2,
+  X,
 } from 'lucide-react';
 import { ResidentParcelWidget } from '../../domains/deliveries/components/ResidentParcelWidget';
 import { Skeleton, EmptyState, ErrorState } from '../common';
@@ -165,11 +166,12 @@ export const ResidentHome: React.FC = () => {
             </div>
           </div>
           <button
+            type="button"
             onClick={() => setAlertDismissed(true)}
-            style={{ color: 'var(--aarizo-text-muted, #8B9AA5)', background: 'none', padding: '0.25rem', cursor: 'pointer' }}
+            style={{ color: 'var(--aarizo-text-muted, #8B9AA5)', background: 'none', border: 'none', padding: '0.25rem', cursor: 'pointer' }}
             aria-label="Dismiss"
           >
-            ✕
+            <X size={16} />
           </button>
         </div>
       )}

@@ -10,6 +10,7 @@ import {
   RefreshCw,
   CheckSquare,
   Square,
+  X,
 } from 'lucide-react';
 import { moveRenovationService } from '../services/moveRenovationService';
 import type { MoveEvent, MoveType } from '../types';
@@ -520,7 +521,14 @@ export const MoveRenovationHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Schedule Move-In / Move-Out</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
+              <button
+                type="button"
+                onClick={() => setModalMode(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleCreateMove} className="space-y-4">
@@ -626,7 +634,14 @@ export const MoveRenovationHub: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-lg">Request Renovation Permit</h3>
-              <button onClick={() => setModalMode(null)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
+              <button
+                type="button"
+                onClick={() => setModalMode(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleCreateRenovation} className="space-y-4">

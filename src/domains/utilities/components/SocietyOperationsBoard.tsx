@@ -17,6 +17,7 @@ import {
   History,
   Radio,
   Cpu,
+  X,
 } from 'lucide-react';
 import { societyOperationsService } from '../services/societyOperationsService';
 import type { UtilityItem, OutageHistoryRecord, SocietyOperationsSummary, UtilityCategory, OperationsStatus } from '../types';
@@ -423,7 +424,14 @@ export const SocietyOperationsBoard: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Update Status: {selectedUtility.name}</h3>
-              <button onClick={() => setIsUpdateModalOpen(false)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
+              <button
+                type="button"
+                onClick={() => setIsUpdateModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleUpdateSubmit} className="space-y-4">

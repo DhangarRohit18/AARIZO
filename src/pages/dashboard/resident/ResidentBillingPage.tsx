@@ -8,6 +8,8 @@ import { DataTable } from '../../../components/ui/DataTable';
 import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 import { MockCheckoutModal } from '../../../domains/payments/MockCheckoutModal';
 
+const formatINR = (amt: number): string => `₹${Number(amt || 0).toLocaleString('en-IN')}`;
+
 export const ResidentBillingPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
   const currentResident = {
@@ -93,9 +95,10 @@ export const ResidentBillingPage: React.FC = () => {
               />
               <button
                 onClick={() => setReceiptInvoice(activeInvoice)}
-                className="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs flex items-center gap-1.5 transition-colors"
+                style={{ background: '#F1F5F9', color: '#1E293B' }}
+                className="px-3.5 py-2 font-semibold rounded-xl text-xs flex items-center gap-1.5 border border-slate-200 hover:bg-slate-200 transition-colors shadow-sm"
               >
-                <FileText className="w-4 h-4" /> Download Receipt
+                <FileText className="w-4 h-4 text-indigo-600" /> Download Receipt
               </button>
             </div>
           </div>
@@ -117,7 +120,7 @@ export const ResidentBillingPage: React.FC = () => {
                     <tr key={item.id}>
                       <td className="p-3 font-semibold text-[#176B91] dark:text-sky-400">{item.component}</td>
                       <td className="p-3">{item.description}</td>
-                      <td className="p-3 text-right font-medium">₹{item.amount.toLocaleString()}</td>
+                      <td className="p-3 text-right font-semibold text-slate-900 dark:text-white">{formatINR(item.amount)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -129,11 +132,11 @@ export const ResidentBillingPage: React.FC = () => {
           <div className="p-5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-sm">
               <div className="flex items-center gap-4 text-xs text-slate-500">
-                <span>Total Bill: <strong>₹{activeInvoice.totalAmount.toLocaleString()}</strong></span>
-                <span>Paid So Far: <strong className="text-emerald-600">₹{activeInvoice.paidAmount.toLocaleString()}</strong></span>
+                <span>Total Bill: <strong className="text-slate-900 dark:text-white">{formatINR(activeInvoice.totalAmount)}</strong></span>
+                <span>Paid So Far: <strong className="text-emerald-600">{formatINR(activeInvoice.paidAmount)}</strong></span>
               </div>
               <div className="text-lg font-extrabold text-slate-900 dark:text-white">
-                Outstanding Dues: <span className="text-rose-600 dark:text-rose-400">₹{activeInvoice.outstandingBalance.toLocaleString()}</span>
+                Outstanding Dues: <span className="text-rose-600 dark:text-rose-400 font-black">{formatINR(activeInvoice.outstandingBalance)}</span>
               </div>
             </div>
 
@@ -143,7 +146,8 @@ export const ResidentBillingPage: React.FC = () => {
                   setCheckoutInvoice(activeInvoice);
                   setPaymentAmount(activeInvoice.outstandingBalance);
                 }}
-                className="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-colors shadow-md"
+                style={{ background: '#059669', color: '#FFFFFF' }}
+                className="w-full sm:w-auto px-6 py-3 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md hover:brightness-110 active:scale-95"
               >
                 <CreditCard className="w-4 h-4" /> PAY ONLINE VIA GATEWAY
               </button>
@@ -168,7 +172,7 @@ export const ResidentBillingPage: React.FC = () => {
               { key: 'transactionId', header: 'Txn ID', render: (t: PaymentTransaction) => <span className="font-semibold text-indigo-600 dark:text-indigo-400">{t.transactionId}</span> },
               { key: 'paymentDate', header: 'Date' },
               { key: 'paymentMethod', header: 'Method', render: (t: PaymentTransaction) => <span className="font-medium">{t.paymentMethod}</span> },
-              { key: 'amount', header: 'Amount (₹)', render: (t: PaymentTransaction) => <span className="font-bold">₹{t.amount.toLocaleString()}</span> },
+              { key: 'amount', header: 'Amount (₹)', render: (t: PaymentTransaction) => <span className="font-bold text-slate-900 dark:text-white">{formatINR(t.amount)}</span> },
               {
                 key: 'status',
                 header: 'Status',
@@ -185,7 +189,7 @@ export const ResidentBillingPage: React.FC = () => {
             pageSize={10}
             mobileRender={(t: PaymentTransaction) => (
               <MobileDataCard
-                title={`Payment ₹${t.amount.toLocaleString()}`}
+                title={`Payment ${formatINR(t.amount)}`}
                 subtitle={`Txn #${t.transactionId} • ${t.paymentDate}`}
                 status={
                   <StatusBadge

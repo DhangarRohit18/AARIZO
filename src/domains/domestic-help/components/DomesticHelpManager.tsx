@@ -7,6 +7,7 @@ import {
   UserX,
   Bell,
   Lock,
+  X,
 } from 'lucide-react';
 import { domesticHelpService } from '../services/domesticHelpService';
 import type { DomesticWorker, HouseholdAssignment, AttendanceRecord } from '../types';
@@ -144,7 +145,14 @@ export const DomesticHelpManager: React.FC = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-5 md:p-6 shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">Link Household Staff to My Flat</h3>
-              <button onClick={() => setShowLinkModal(false)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
+              <button
+                type="button"
+                onClick={() => setShowLinkModal(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleLinkWorker} className="space-y-4">
