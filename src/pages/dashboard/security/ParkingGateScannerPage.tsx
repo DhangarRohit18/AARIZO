@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Car, Camera, CheckCircle2, XCircle } from 'lucide-react';
 import { parkingService } from '../../../services/parkingService';
 import type { ParkingSlot, ParkingQRValidationResult } from '../../../types/parking';
@@ -58,7 +58,7 @@ export const ParkingGateScannerPage: React.FC = () => {
           />
           <button
             onClick={() => handleValidate(inputCode)}
-            style={{ padding: '0.75rem 1.25rem', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+            style={{ padding: '0.75rem 1.25rem', background: 'var(--aarizo-blue, #176B91)', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
           >
             Verify
           </button>
@@ -71,9 +71,9 @@ export const ParkingGateScannerPage: React.FC = () => {
             alignItems: 'center',
             gap: '0.5rem',
             padding: '0.65rem 1.25rem',
-            background: '#eff6ff',
-            color: '#1d4ed8',
-            border: '1px solid #bfdbfe',
+            background: '#F0F9FF',
+            color: 'var(--aarizo-blue, #176B91)',
+            border: '1px solid #BAE6FD',
             borderRadius: '8px',
             fontWeight: 600,
             cursor: 'pointer',

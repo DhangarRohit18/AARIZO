@@ -409,7 +409,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
       {/* Submit Ticket Modal */}
       {showSubmitModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-md w-full shadow-2xl space-y-4">
+          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-bold text-slate-900">Log New Complaint / Issue</h3>
             <form onSubmit={handleCreateComplaint} className="space-y-3 text-xs">
               <div>
@@ -484,7 +484,8 @@ export const ComplaintSLAEngineHub: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowSubmitModal(false)}
-                  className="px-4 py-2 border rounded-lg text-slate-600 font-semibold"
+                  style={{ background: '#F1F5F9', border: '1px solid #CBD5E1', color: '#475569' }}
+                  className="px-4 py-2 rounded-lg font-semibold hover:bg-slate-200 transition"
                 >
                   Cancel
                 </button>

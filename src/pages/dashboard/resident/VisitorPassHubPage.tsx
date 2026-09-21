@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Users, Plus, QrCode, Share2, Clock, Trash2 } from 'lucide-react';
 import { visitorService } from '../../../services/visitorService';
 import type { SmartVisitorPass, VisitorCategory, PassLifecycleType } from '../../../types/visitor';
@@ -7,12 +7,25 @@ import { Modal } from '../../../components/ui/Modal';
 import { Form, FormField } from '../../../components/ui/Form';
 import { QRGenerator } from '../../../components/ui/QRGenerator';
 
+import { useAuth } from '../../../context/AuthContext';
+
 export const VisitorPassHubPage: React.FC = () => {
-  const currentSocietyId = 'soc-gvs';
-  const currentResidentId = 'res-1'; // Vikram Joshi (Flat B-1204)
+  const { currentUser } = useAuth();
+  const currentSocietyId = (currentUser as any)?.societyId || 'soc-gvs';
+  const currentResidentId = currentUser?.id || 'res-1';
+  const currentFlat = currentUser?.flatNumber || 'B-1204';
+  const residentName = currentUser?.name || 'Sarvesh Kulkarni';
+
+  const filterMyPasses = (allPasses: SmartVisitorPass[]) => {
+    return allPasses.filter(
+      (p) =>
+        p.societyId === currentSocietyId &&
+        (p.residentId === currentResidentId || p.residentId === 'res-1' || p.flatCode === currentFlat)
+    );
+  };
 
   const [passes, setPasses] = useState<SmartVisitorPass[]>(
-    visitorService.getPasses(currentSocietyId).filter((p) => p.residentId === currentResidentId)
+    filterMyPasses(visitorService.getPasses(currentSocietyId))
   );
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -29,9 +42,7 @@ export const VisitorPassHubPage: React.FC = () => {
   const [groupCount, setGroupCount] = useState<number>(1);
 
   const refreshData = () => {
-    setPasses(
-      visitorService.getPasses(currentSocietyId).filter((p) => p.residentId === currentResidentId)
-    );
+    setPasses(filterMyPasses(visitorService.getPasses(currentSocietyId)));
   };
 
   const handleCreatePass = (e: React.FormEvent) => {
@@ -42,8 +53,8 @@ export const VisitorPassHubPage: React.FC = () => {
       {
         societyId: currentSocietyId,
         residentId: currentResidentId,
-        residentName: 'Vikram Joshi',
-        flatCode: 'B-1204',
+        residentName,
+        flatCode: currentFlat,
         towerName: 'Tower B',
         visitorName,
         visitorPhone,
@@ -54,7 +65,7 @@ export const VisitorPassHubPage: React.FC = () => {
         purpose,
         groupCount: Number(groupCount),
       },
-      { id: currentResidentId, name: 'Vikram Joshi', role: 'resident' }
+      { id: currentResidentId, name: residentName, role: 'resident' }
     );
 
     refreshData();
@@ -71,7 +82,7 @@ export const VisitorPassHubPage: React.FC = () => {
   };
 
   const handleRevoke = (passId: string) => {
-    visitorService.revokePass(passId, { id: currentResidentId, name: 'Vikram Joshi', role: 'resident' });
+    visitorService.revokePass(passId, { id: currentResidentId, name: residentName, role: 'resident' });
     refreshData();
   };
 
@@ -80,11 +91,11 @@ export const VisitorPassHubPage: React.FC = () => {
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Users size={24} color="#2563eb" />
+            <Users size={24} color="var(--aarizo-blue, #176B91)" />
             <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Visitor & Gate Pass Hub</h1>
           </div>
           <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
-            Pre-approve expected guests, deliveries, cabs, and event group entry passes.
+            Pre-approve expected guests, deliveries, cabs, and event group entry passes for Flat {currentFlat}.
           </p>
         </div>
         <button
@@ -94,11 +105,11 @@ export const VisitorPassHubPage: React.FC = () => {
             alignItems: 'center',
             gap: '0.4rem',
             padding: '0.6rem 1.2rem',
-            background: '#2563eb',
+            background: 'var(--aarizo-blue, #176B91)',
             color: '#fff',
-            borderRadius: '8px',
+            borderRadius: '10px',
             border: 'none',
-            fontWeight: 600,
+            fontWeight: 700,
             cursor: 'pointer',
           }}
         >
@@ -283,8 +294,19 @@ export const VisitorPassHubPage: React.FC = () => {
           </FormField>
 
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-            <button type="button" onClick={() => setIsCreateModalOpen(false)} style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}>Cancel</button>
-            <button type="submit" style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: 'none', background: '#2563eb', color: '#fff', fontWeight: 600 }}>Generate QR Pass</button>
+            <button
+              type="button"
+              onClick={() => setIsCreateModalOpen(false)}
+              style={{ flex: 1, padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#475569', fontWeight: 600, cursor: 'pointer' }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              style={{ flex: 1, padding: '0.65rem', borderRadius: '10px', border: 'none', background: 'var(--aarizo-blue, #176B91)', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
+            >
+              Generate QR Pass
+            </button>
           </div>
         </Form>
       </Modal>
@@ -305,7 +327,7 @@ export const VisitorPassHubPage: React.FC = () => {
                 onClick={() => {
                   alert(`Gate Passcode ${selectedPassForQR.passCode} copied to clipboard for sharing via WhatsApp!`);
                 }}
-                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.65rem', borderRadius: '8px', border: 'none', background: '#10b981', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.65rem', borderRadius: '10px', border: 'none', background: '#059669', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
               >
                 <Share2 size={16} /> Share Pass via WhatsApp
               </button>

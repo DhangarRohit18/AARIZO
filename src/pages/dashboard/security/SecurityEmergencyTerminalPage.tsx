@@ -15,7 +15,7 @@ import {
 
 export const SecurityEmergencyTerminalPage: React.FC = () => {
   const { currentUser } = useAuth();
-  const societyId = (currentUser as any)?.societyId || 'soc-1';
+  const societyId = (currentUser as any)?.societyId || 'soc-gvs';
   const guardName = currentUser?.name || 'Security Guard Ramesh';
 
   const [incidents, setIncidents] = useState<EmergencyIncident[]>([]);
@@ -374,8 +374,21 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
               />
             </div>
             <div className="pt-4 flex justify-end gap-2">
-              <button type="button" onClick={() => setShowResolveModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-              <button type="submit" className="px-4 py-2 bg-emerald-600 text-white font-bold text-sm rounded-lg">Mark Incident Resolved</button>
+              <button
+                type="button"
+                onClick={() => setShowResolveModal(false)}
+                style={{ background: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1' }}
+                className="px-4 py-2 text-sm font-semibold rounded-lg hover:bg-slate-200 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                style={{ background: '#059669', color: '#FFFFFF' }}
+                className="px-4 py-2 font-bold text-sm rounded-lg hover:opacity-95 transition shadow-sm"
+              >
+                Mark Incident Resolved
+              </button>
             </div>
           </form>
         </Modal>

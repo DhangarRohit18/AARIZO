@@ -200,9 +200,9 @@ export const SecurityTerminalPage: React.FC = () => {
             />
             <button
               onClick={() => handleValidateCode(codeInput)}
-              style={{ padding: '0.75rem 1rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', fontSize: '0.8125rem', minHeight: 48, whiteSpace: 'nowrap' }}
+              style={{ padding: '0.75rem 1.25rem', background: 'var(--aarizo-blue, #176B91)', color: '#fff', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', fontSize: '0.8125rem', minHeight: 48, whiteSpace: 'nowrap' }}
             >
-              Verify
+              Verify Code
             </button>
           </div>
         </section>

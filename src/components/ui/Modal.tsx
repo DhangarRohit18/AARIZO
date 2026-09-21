@@ -51,6 +51,9 @@ export const Modal: React.FC<ModalProps> = ({
         style={{
           width: '100%',
           maxWidth,
+          maxHeight: '90vh',
+          display: 'flex',
+          flexDirection: 'column',
           backgroundColor: '#ffffff',
           borderRadius: '16px',
           boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
@@ -67,6 +70,7 @@ export const Modal: React.FC<ModalProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              flexShrink: 0,
             }}
           >
             <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 600, color: '#0f172a' }}>
@@ -74,20 +78,24 @@ export const Modal: React.FC<ModalProps> = ({
             </h3>
             <button
               onClick={onClose}
+              aria-label="Close modal"
               style={{
-                background: 'transparent',
+                background: '#f1f5f9',
                 border: 'none',
-                color: '#94a3b8',
+                color: '#64748b',
                 cursor: 'pointer',
-                padding: '0.25rem',
-                borderRadius: '6px',
+                padding: '0.375rem',
+                borderRadius: '8px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           </div>
         )}
-        <div style={{ padding: '1.5rem' }}>{children}</div>
+        <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>{children}</div>
       </div>
     </div>
   );

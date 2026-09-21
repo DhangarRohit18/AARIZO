@@ -12,7 +12,7 @@ import {
 
 export const GuestStayScannerPage: React.FC = () => {
   const { currentUser } = useAuth();
-  const societyId = (currentUser as any)?.societyId || 'soc-1';
+  const societyId = (currentUser as any)?.societyId || 'soc-gvs';
 
   const [qrInput, setQrInput] = useState('');
   const [activeReservations, setActiveReservations] = useState<GuestReservation[]>([]);
@@ -59,7 +59,7 @@ export const GuestStayScannerPage: React.FC = () => {
             <h1 className="text-2xl font-bold text-slate-900">Guest Accommodation Gate Scanner</h1>
           </div>
           <p className="text-slate-500 text-sm mt-1">
-            Scan Guest Access QR passes, verify guest ID proof against room assignment, and log check-in/check-out entry.
+            Scan and verify Guest Room QR passes, auto check-in pre-booked visitors, and issue access cards.
           </p>
         </div>
       </div>
@@ -71,12 +71,16 @@ export const GuestStayScannerPage: React.FC = () => {
           <div className="bg-slate-900 text-white p-4 md:p-6 rounded-2xl shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold flex items-center gap-2">
-                <QrCode className="w-5 h-5 text-indigo-400" /> Guest Pass QR Scanner Terminal
+                <QrCode className="w-5 h-5 text-indigo-400" /> Guest Stay Terminal Scanner
               </h2>
-              <span className="px-2.5 py-1 bg-indigo-500/20 text-indigo-300 text-xs font-semibold rounded-full border border-indigo-500/30">
-                Gate Terminal Ready
+              <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-semibold rounded-full border border-emerald-500/30">
+                Active Gate Terminal
               </span>
             </div>
+
+            <p className="text-xs text-slate-400">
+              Scan barcode/QR code from visitor's mobile or input booking pass token.
+            </p>
 
             <form
               onSubmit={e => {
@@ -94,7 +98,8 @@ export const GuestStayScannerPage: React.FC = () => {
               />
               <button
                 type="submit"
-                className="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all shadow flex items-center gap-1.5"
+                style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
+                className="px-5 py-3 text-white text-sm font-bold rounded-xl transition-all shadow flex items-center gap-1.5 hover:opacity-95"
               >
                 Scan Pass
               </button>

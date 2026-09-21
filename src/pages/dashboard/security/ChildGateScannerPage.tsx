@@ -12,7 +12,7 @@ import {
 
 export const ChildGateScannerPage: React.FC = () => {
   const { currentUser } = useAuth();
-  const societyId = (currentUser as any)?.societyId || 'soc-1';
+  const societyId = (currentUser as any)?.societyId || 'soc-gvs';
 
   const [qrInput, setQrInput] = useState('');
 
@@ -67,7 +67,7 @@ export const ChildGateScannerPage: React.FC = () => {
           <div className="flex items-start gap-3">
             <ShieldAlert className="w-8 h-8 text-white shrink-0 mt-0.5" />
             <div>
-              <h2 className="text-xl font-extrabold tracking-wide uppercase">ðŸš¨ CRITICAL MISSING CHILD LOCKDOWN ACTIVE</h2>
+              <h2 className="text-xl font-extrabold tracking-wide uppercase">🚨 CRITICAL MISSING CHILD LOCKDOWN ACTIVE</h2>
               <div className="mt-1 space-y-1 text-sm font-medium">
                 {activeAlerts.map(alert => (
                   <div key={alert.id} className="flex items-center gap-2">
@@ -135,7 +135,8 @@ export const ChildGateScannerPage: React.FC = () => {
               />
               <button
                 type="submit"
-                className="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all shadow flex items-center gap-1.5"
+                style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
+                className="px-5 py-3 text-white text-sm font-bold rounded-xl transition-all shadow flex items-center gap-1.5 hover:opacity-95"
               >
                 Scan Pass
               </button>

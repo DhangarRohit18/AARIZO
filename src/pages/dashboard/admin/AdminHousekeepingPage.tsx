@@ -132,7 +132,8 @@ export const AdminHousekeepingPage: React.FC = () => {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl shadow-sm flex items-center gap-2"
+          style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
+          className="px-4 py-2.5 font-semibold text-sm rounded-xl shadow-sm flex items-center gap-2 hover:opacity-95 transition"
         >
           <Plus className="w-4 h-4" /> Create Operational Task
         </button>
@@ -184,25 +185,22 @@ export const AdminHousekeepingPage: React.FC = () => {
       <div className="flex border-b border-slate-200 bg-white px-4 pt-2 rounded-t-2xl">
         <button
           onClick={() => setActiveTab('ALL')}
-          className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors ${
-            activeTab === 'ALL' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500'
-          }`}
+          style={{ color: activeTab === 'ALL' ? 'var(--aarizo-blue, #176B91)' : '#64748b', borderColor: activeTab === 'ALL' ? 'var(--aarizo-blue, #176B91)' : 'transparent' }}
+          className="px-4 py-3 font-semibold text-sm border-b-2 transition-colors"
         >
           All Operational Tasks ({tasks.length})
         </button>
         <button
           onClick={() => setActiveTab('MISSED_LATE')}
-          className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors ${
-            activeTab === 'MISSED_LATE' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500'
-          }`}
+          style={{ color: activeTab === 'MISSED_LATE' ? 'var(--aarizo-blue, #176B91)' : '#64748b', borderColor: activeTab === 'MISSED_LATE' ? 'var(--aarizo-blue, #176B91)' : 'transparent' }}
+          className="px-4 py-3 font-semibold text-sm border-b-2 transition-colors"
         >
           Missed & Late Tasks ({missedOrLateTasks.length})
         </button>
         <button
           onClick={() => setActiveTab('GARBAGE')}
-          className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors ${
-            activeTab === 'GARBAGE' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500'
-          }`}
+          style={{ color: activeTab === 'GARBAGE' ? 'var(--aarizo-blue, #176B91)' : '#64748b', borderColor: activeTab === 'GARBAGE' ? 'var(--aarizo-blue, #176B91)' : 'transparent' }}
+          className="px-4 py-3 font-semibold text-sm border-b-2 transition-colors"
         >
           Garbage Pickup Logs ({garbageLogs.length})
         </button>
@@ -269,7 +267,8 @@ export const AdminHousekeepingPage: React.FC = () => {
               <div className="p-5 pt-0">
                 <button
                   onClick={() => setSelectedTask(task)}
-                  className="w-full py-2 border border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-semibold text-xs rounded-xl"
+                  style={{ background: '#F0F9FF', color: 'var(--aarizo-blue, #176B91)', border: '1px solid #BAE6FD' }}
+                  className="w-full py-2 font-semibold text-xs rounded-xl hover:bg-sky-100 transition"
                 >
                   View Details & Inspect Proof
                 </button>
@@ -361,9 +360,20 @@ export const AdminHousekeepingPage: React.FC = () => {
             )}
 
             <div className="pt-4 flex justify-end gap-2">
-              <button type="button" onClick={() => setSelectedTask(null)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Close</button>
+              <button
+                type="button"
+                onClick={() => setSelectedTask(null)}
+                style={{ background: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1' }}
+                className="px-4 py-2 text-sm font-semibold rounded-lg hover:bg-slate-200 transition"
+              >
+                Close
+              </button>
               {selectedTask.status !== 'VERIFIED' && (
-                <button onClick={() => handleVerifyTask(selectedTask.id)} className="px-4 py-2 bg-emerald-600 text-white font-bold text-sm rounded-lg flex items-center gap-1">
+                <button
+                  onClick={() => handleVerifyTask(selectedTask.id)}
+                  style={{ background: '#059669', color: '#FFFFFF' }}
+                  className="px-4 py-2 font-bold text-sm rounded-lg flex items-center gap-1 hover:opacity-95 transition"
+                >
                   <CheckCircle2 className="w-4 h-4" /> Verify Photo Proof & Close Task
                 </button>
               )}
@@ -468,8 +478,21 @@ export const AdminHousekeepingPage: React.FC = () => {
           </div>
 
           <div className="pt-4 flex justify-end gap-2">
-            <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg">Create Task</button>
+            <button
+              type="button"
+              onClick={() => setShowCreateModal(false)}
+              style={{ background: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1' }}
+              className="px-4 py-2 text-sm font-semibold rounded-lg hover:bg-slate-200 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
+              className="px-4 py-2 font-bold text-sm rounded-lg hover:opacity-95 transition"
+            >
+              Create Task
+            </button>
           </div>
         </form>
       </Modal>

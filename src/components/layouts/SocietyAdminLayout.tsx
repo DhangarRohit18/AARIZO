@@ -18,12 +18,17 @@ import {
   Radio,
   Layers,
   HardHat,
+  ShieldCheck,
+  Baby,
 } from 'lucide-react';
 
 const DRAWER_NAV = [
   { label: 'Admin Overview', path: '/admin', icon: LayoutDashboard },
   { label: 'Residents Directory', path: '/admin/residents', icon: Users },
-  { label: 'Complaints', path: '/admin/requests', icon: CheckSquare },
+  { label: 'Complaints & NOCs', path: '/admin/requests', icon: CheckSquare },
+  { label: 'Housekeeping Ops', path: '/admin/housekeeping', icon: Sparkles },
+  { label: 'Child Safety Desk', path: '/admin/child-safety', icon: Baby },
+  { label: 'Safety Command', path: '/admin/safety-command', icon: ShieldCheck },
   { label: 'Maintenance Ops', path: '/admin/maintenance', icon: Wrench },
   { label: 'Amenities', path: '/admin/amenities', icon: Sparkles },
   { label: 'Staff Management', path: '/admin/staff', icon: HardHat },

@@ -18,10 +18,10 @@ import {
 
 export const ResidentAmenityBookingPage: React.FC = () => {
   const { currentUser } = useAuth();
-  const societyId = (currentUser as any)?.societyId || 'soc-1';
-  const residentId = currentUser?.id || 'res-1';
-  const residentName = currentUser?.name || 'resident';
-  const flatNumber = (currentUser as any)?.flatDetails || 'A-101';
+  const societyId = (currentUser as any)?.societyId || 'soc-gvs';
+  const residentId = currentUser?.id || 'user-resident-01';
+  const residentName = currentUser?.name || 'Sarvesh Kulkarni';
+  const flatNumber = (currentUser as any)?.flatNumber || (currentUser as any)?.flatDetails || 'B-1204';
 
   const [amenities, setAmenities] = useState<SocietyAmenity[]>([]);
   const [userBookings, setUserBookings] = useState<AmenityBooking[]>([]);
@@ -347,7 +347,14 @@ export const ResidentAmenityBookingPage: React.FC = () => {
             </div>
 
             <div className="pt-4 flex justify-end gap-2">
-              <button type="button" onClick={() => setSelectedAmenity(null)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
+              <button
+                type="button"
+                onClick={() => setSelectedAmenity(null)}
+                style={{ background: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1' }}
+                className="px-4 py-2 text-sm font-semibold rounded-lg hover:bg-slate-200 transition"
+              >
+                Cancel
+              </button>
               <button
                 type="submit"
                 className="px-4 py-2 text-white font-bold text-sm rounded-lg shadow-sm transition"

@@ -123,6 +123,72 @@ const SEED_CHILDREN: Omit<ChildProfile, 'societyId'>[] = [
     ],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'child-3',
+    flatNumber: 'B-1204',
+    fullName: 'Rhea Kulkarni',
+    dateOfBirth: '2019-03-12',
+    gender: 'FEMALE',
+    photoUrl: 'https://images.unsplash.com/photo-1543332164-6e82f355badc?auto=format&fit=crop&w=400&q=80',
+    medicalNotes: 'No known allergies. Blood Group O+.',
+    status: 'SAFE',
+    guardians: [
+      {
+        id: 'g-5',
+        name: 'Sarvesh Kulkarni',
+        relationship: 'Father',
+        phone: '+91 98765 43210',
+        email: 'sarvesh@greenvalley.com',
+        isPrimary: true
+      },
+      {
+        id: 'g-6',
+        name: 'Sneha Kulkarni',
+        relationship: 'Mother',
+        phone: '+91 98765 43219',
+        email: 'sneha.k@example.com',
+        isPrimary: false
+      }
+    ],
+    emergencyContacts: [
+      {
+        id: 'ec-3',
+        name: 'Anand Kulkarni',
+        relationship: 'Grandfather',
+        phone: '+91 98200 44556'
+      }
+    ],
+    authorizedPickups: [
+      {
+        id: 'app-5',
+        childId: 'child-3',
+        name: 'Radha Bai',
+        phone: '+91 98199 88776',
+        relationship: 'Trusted Family Maid / Nanny',
+        idProofType: 'Aadhaar Card',
+        idProofNumber: 'XXXX-XXXX-9901',
+        photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+        status: 'ACTIVE',
+        validUntil: '2027-12-31',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'app-6',
+        childId: 'child-3',
+        name: 'Santosh Yadav',
+        phone: '+91 98333 22110',
+        relationship: 'School Bus Driver (Route 12)',
+        idProofType: 'Commercial Driving License',
+        idProofNumber: 'DL-MH02-2018-9182',
+        photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+        status: 'ACTIVE',
+        validUntil: '2026-12-31',
+        createdAt: new Date().toISOString()
+      }
+    ],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   }
 ];
 
@@ -132,13 +198,23 @@ class ChildSafetyService {
     const raw = localStorage.getItem(CHILDREN_STORAGE_KEY);
     let items: ChildProfile[] = raw ? JSON.parse(raw) : [];
 
-    const societyItems = items.filter(c => c.societyId === societyId);
+    let societyItems = items.filter(c => c.societyId === societyId);
     if (societyItems.length === 0) {
       const seeded = SEED_CHILDREN.map(c => ({ ...c, societyId }));
       items = [...items, ...seeded];
       localStorage.setItem(CHILDREN_STORAGE_KEY, JSON.stringify(items));
       return seeded;
     }
+
+    // Ensure B-1204 exists for Resident demo
+    const hasB1204 = societyItems.some(c => c.flatNumber === 'B-1204');
+    if (!hasB1204) {
+      const b1204Child = { ...SEED_CHILDREN.find(c => c.flatNumber === 'B-1204')!, societyId };
+      items.push(b1204Child);
+      localStorage.setItem(CHILDREN_STORAGE_KEY, JSON.stringify(items));
+      societyItems.push(b1204Child);
+    }
+
     return societyItems;
   }
 

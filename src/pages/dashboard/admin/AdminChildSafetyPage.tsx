@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { childSafetyService } from '../../../services/childSafetyService';
 import type { ChildProfile, PickupLog, ChildSafetyAlert } from '../../../types/childSafety';
@@ -16,7 +16,7 @@ import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const AdminChildSafetyPage: React.FC = () => {
   const { currentUser } = useAuth();
-  const societyId = (currentUser as any)?.societyId || 'soc-1';
+  const societyId = (currentUser as any)?.societyId || 'soc-gvs';
 
   const [children, setChildren] = useState<ChildProfile[]>([]);
   const [pickupLogs, setPickupLogs] = useState<PickupLog[]>([]);
