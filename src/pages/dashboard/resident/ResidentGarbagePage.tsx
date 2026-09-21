@@ -13,7 +13,9 @@ import {
 export const ResidentGarbagePage: React.FC = () => {
   const { currentUser } = useAuth();
   const societyId = (currentUser as any)?.societyId || 'soc-1';
-  const flatNumber = (currentUser as any)?.flatDetails || 'A-101';
+  const flatNumber = (currentUser as any)?.flatDetails
+    ? String((currentUser as any).flatDetails).replace(/Â·|â€¢|Ã¢â‚¬Â¢/g, '·')
+    : 'Tower B · Flat 1204';
   const tower = 'Tower A';
   const floor = '1st Floor';
 

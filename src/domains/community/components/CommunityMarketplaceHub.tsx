@@ -9,6 +9,7 @@ import {
   HelpCircle,
   UserCheck,
   Sparkles,
+  MessageSquare,
 } from 'lucide-react';
 import { communityMarketplaceEngine } from '../services/communityMarketplaceEngine';
 import type {
@@ -344,40 +345,48 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                 </div>
 
                 {/* Footer Controls & Seller Lifecycle */}
-                <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex flex-wrap justify-between items-center gap-2">
-                  <div className="flex gap-1">
+                <div className="p-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between gap-2">
+                  <div className="bg-slate-200/60 p-0.5 rounded-lg inline-flex items-center gap-0.5">
                     <button
                       onClick={() => handleUpdateStatus(item.id, 'AVAILABLE')}
-                      className={`px-2 py-1 text-[10px] font-bold rounded ${
-                        item.status === 'AVAILABLE' ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                      className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition ${
+                        item.status === 'AVAILABLE' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       Available
                     </button>
                     <button
                       onClick={() => handleUpdateStatus(item.id, 'RESERVED')}
-                      className={`px-2 py-1 text-[10px] font-bold rounded ${
-                        item.status === 'RESERVED' ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-700'
+                      className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition ${
+                        item.status === 'RESERVED' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       Reserved
                     </button>
                     <button
                       onClick={() => handleUpdateStatus(item.id, 'SOLD')}
-                      className={`px-2 py-1 text-[10px] font-bold rounded ${
-                        item.status === 'SOLD' ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-700'
+                      className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition ${
+                        item.status === 'SOLD' ? 'bg-slate-800 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       Sold
                     </button>
                   </div>
 
+                  <button
+                    onClick={() => alert(`Contacting ${item.sellerName} (${item.sellerFlat}). Phone: +91 98223 11223`)}
+                    className="px-3 py-1 text-white font-bold text-[11px] rounded-lg shadow-sm flex items-center gap-1 hover:opacity-95"
+                    style={{ background: 'var(--aarizo-blue, #176B91)' }}
+                  >
+                    <MessageSquare size={13} /> Chat
+                  </button>
+
                   {userRole !== 'RESIDENT' && (
                     <button
                       onClick={() => handleModerate(item.id, !item.isModerated)}
                       className="text-[10px] font-bold text-rose-600 hover:underline"
                     >
-                      {item.isModerated ? 'Unmoderate' : 'Moderate'}
+                      {item.isModerated ? 'Restore' : 'Delist'}
                     </button>
                   )}
                 </div>
