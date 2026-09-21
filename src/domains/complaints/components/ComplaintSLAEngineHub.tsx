@@ -48,20 +48,27 @@ export const ComplaintSLAEngineHub: React.FC = () => {
   const [feedbackNotes, setFeedbackNotes] = useState('');
 
   const loadData = () => {
-    // We still load policies and analytics from local mock service for now
-    // as per incremental migration rules (only migrating complaints CRUD)
     setSlaPolicies(complaintSLAService.getSLAPolicies('soc-gvs'));
     setAnalytics(complaintSLAService.getSLAAnalytics('soc-gvs'));
+    const initialList = complaintSLAService.getAllComplaints('soc-gvs');
+    setComplaints((prev) => (prev && prev.length > 0 ? prev : initialList));
   };
 
   useEffect(() => {
     loadData();
 
-    const unsubscribe = subscribeToComplaints('soc-gvs', (list) => {
-      setComplaints(list);
-    });
-
-    return () => unsubscribe();
+    try {
+      const unsubscribe = subscribeToComplaints('soc-gvs', (list) => {
+        if (list && list.length > 0) {
+          setComplaints(list);
+        } else {
+          setComplaints(complaintSLAService.getAllComplaints('soc-gvs'));
+        }
+      });
+      return () => unsubscribe();
+    } catch {
+      setComplaints(complaintSLAService.getAllComplaints('soc-gvs'));
+    }
   }, []);
 
   const handleCreateComplaint = async (e: React.FormEvent) => {
@@ -224,7 +231,23 @@ export const ComplaintSLAEngineHub: React.FC = () => {
 
       {/* Tickets List */}
       <div className="space-y-3">
-        {filtered.map((c) => (
+        {filtered.length === 0 ? (
+          <div className="p-8 bg-white rounded-2xl border border-dashed border-slate-300 text-center space-y-3">
+            <Wrench size={36} className="mx-auto text-[#176B91]" />
+            <h4 className="font-bold text-slate-800 text-sm">No Active Maintenance Tickets</h4>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              Everything in your community is currently operating within SLA standards. If you notice any issue, tap below to open a ticket.
+            </p>
+            <button
+              onClick={() => setShowSubmitModal(true)}
+              className="px-4 py-2 text-white font-bold rounded-xl text-xs inline-flex items-center gap-1.5 shadow-md hover:opacity-95"
+              style={{ background: 'var(--aarizo-blue, #176B91)' }}
+            >
+              <Plus size={15} /> File New Complaint
+            </button>
+          </div>
+        ) : (
+          filtered.map((c) => (
           <div
             key={c.id}
             className={`p-5 rounded-2xl border bg-white shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${
@@ -289,8 +312,9 @@ export const ComplaintSLAEngineHub: React.FC = () => {
               </div>
             </div>
           </div>
-        ))}
-      </div>
+        ))
+      )}
+    </div>
 
       {/* Policy Config Modal */}
       {showPolicyModal && (

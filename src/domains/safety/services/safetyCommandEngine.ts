@@ -1,9 +1,29 @@
 import type { EmergencyIncidentItem, EmergencyCategory, ChildProfileItem, PickupRecord, AuthorizedPickupPerson } from '../types/index';
 import { realTimeSync } from '../../../services/realTimeSync';
 
-const STORAGE_KEY_INCIDENTS = 'aarizo_emergency_incidents_v2';
-const STORAGE_KEY_CHILDREN = 'aarizo_child_profiles_v2';
-const STORAGE_KEY_PICKUPS = 'aarizo_pickup_records_v2';
+const cleanEncoding = (str: string): string => {
+  return str
+    .replace(/Ã¢â‚¬Â¢/g, '·')
+    .replace(/Ã¢â‚¬â€œ/g, '–')
+    .replace(/â€¢/g, '·')
+    .replace(/Â·/g, '·')
+    .replace(/Ã¢â€šÂ¹/g, '₹')
+    .replace(/â‚¹/g, '₹')
+    .replace(/â€”/g, '—')
+    .replace(/Ã¢Å“â€¢/g, '✕')
+    .replace(/âœ•/g, '✕');
+};
+
+const STORAGE_KEY_INCIDENTS = 'aarizo_emergency_incidents_v3';
+const STORAGE_KEY_CHILDREN = 'aarizo_child_profiles_v3';
+const STORAGE_KEY_PICKUPS = 'aarizo_pickup_records_v3';
+
+// Cleanup legacy corrupted keys from previous versions
+try {
+  localStorage.removeItem('aarizo_emergency_incidents_v2');
+  localStorage.removeItem('aarizo_child_profiles_v2');
+  localStorage.removeItem('aarizo_pickup_records_v2');
+} catch {}
 
 const INITIAL_INCIDENTS: EmergencyIncidentItem[] = [
   {
@@ -64,7 +84,8 @@ class SafetyCommandEngine {
       return INITIAL_INCIDENTS;
     }
     try {
-      return JSON.parse(raw);
+      const sanitized = cleanEncoding(raw);
+      return JSON.parse(sanitized);
     } catch {
       return INITIAL_INCIDENTS;
     }
@@ -82,7 +103,8 @@ class SafetyCommandEngine {
       return INITIAL_CHILDREN;
     }
     try {
-      return JSON.parse(raw);
+      const sanitized = cleanEncoding(raw);
+      return JSON.parse(sanitized);
     } catch {
       return INITIAL_CHILDREN;
     }
@@ -97,7 +119,8 @@ class SafetyCommandEngine {
     const raw = localStorage.getItem(STORAGE_KEY_PICKUPS);
     if (!raw) return [];
     try {
-      return JSON.parse(raw);
+      const sanitized = cleanEncoding(raw);
+      return JSON.parse(sanitized);
     } catch {
       return [];
     }

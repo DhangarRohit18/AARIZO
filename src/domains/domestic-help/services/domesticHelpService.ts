@@ -2,9 +2,9 @@ import type { DomesticWorker, HouseholdAssignment, AttendanceRecord } from '../t
 import { realtimeService } from '../../../services/realtimeService';
 import { filterBySociety } from '../../../utils/societyIsolation';
 
-const STORAGE_KEY_WORKERS = 'aarizo_domestic_workers_v1';
-const STORAGE_KEY_ASSIGNMENTS = 'aarizo_worker_assignments_v1';
-const STORAGE_KEY_ATTENDANCE = 'aarizo_worker_attendance_v1';
+const STORAGE_KEY_WORKERS = 'aarizo_domestic_workers_v2';
+const STORAGE_KEY_ASSIGNMENTS = 'aarizo_worker_assignments_v2';
+const STORAGE_KEY_ATTENDANCE = 'aarizo_worker_attendance_v2';
 
 const SEED_WORKERS: DomesticWorker[] = [
   {
@@ -49,14 +49,17 @@ const SEED_WORKERS: DomesticWorker[] = [
 ];
 
 const SEED_ASSIGNMENTS: HouseholdAssignment[] = [
-  { id: 'asgn-1', workerId: 'DW-101', residentId: 'res-1', residentName: 'Vikram Joshi', flatCode: 'Tower B · B-1204', consentGiven: true, accessRevoked: false, linkedAt: '2026-01-15' },
+  { id: 'asgn-1', workerId: 'DW-101', residentId: 'res-1', residentName: 'Sarvesh Kulkarni', flatCode: 'Tower B · B-1204', consentGiven: true, accessRevoked: false, linkedAt: '2026-01-15' },
   { id: 'asgn-2', workerId: 'DW-101', residentId: 'res-2', residentName: 'Ananya Roy', flatCode: 'Tower A · A-402', consentGiven: true, accessRevoked: false, linkedAt: '2026-02-10' },
-  { id: 'asgn-3', workerId: 'DW-102', residentId: 'res-1', residentName: 'Vikram Joshi', flatCode: 'Tower B · B-1204', consentGiven: true, accessRevoked: false, linkedAt: '2026-03-01' },
+  { id: 'asgn-3', workerId: 'DW-102', residentId: 'res-1', residentName: 'Sarvesh Kulkarni', flatCode: 'Tower B · B-1204', consentGiven: true, accessRevoked: false, linkedAt: '2026-03-01' },
+  { id: 'asgn-4', workerId: 'DW-101', residentId: 'user-resident-01', residentName: 'Sarvesh Kulkarni', flatCode: 'Tower B · B-1204', consentGiven: true, accessRevoked: false, linkedAt: '2026-01-15' },
+  { id: 'asgn-5', workerId: 'DW-102', residentId: 'user-resident-01', residentName: 'Sarvesh Kulkarni', flatCode: 'Tower B · B-1204', consentGiven: true, accessRevoked: false, linkedAt: '2026-03-01' },
 ];
 
 const SEED_ATTENDANCE: AttendanceRecord[] = [
-  { id: 'att-1', workerId: 'DW-101', workerName: 'Sunita Devi', workerType: 'MAID', societyId: 'soc-gvs', residentId: 'res-1', flatCode: 'B-1204', gateName: 'Main Gate 1', entryTime: '09:03 AM', status: 'CHECKED_IN', checkedInByGuard: 'Guard R. Singh' },
-  { id: 'att-2', workerId: 'DW-102', workerName: 'Ramesh Kumar', workerType: 'DRIVER', societyId: 'soc-gvs', residentId: 'res-1', flatCode: 'B-1204', gateName: 'Main Gate 1', entryTime: '07:30 AM', exitTime: '05:45 PM', status: 'CHECKED_OUT', checkedInByGuard: 'Guard R. Singh' },
+  { id: 'att-1', workerId: 'DW-101', workerName: 'Sunita Devi', workerType: 'MAID', societyId: 'soc-gvs', residentId: 'user-resident-01', flatCode: 'Tower B · B-1204', gateName: 'Main Gate 1', entryTime: '09:03 AM', status: 'CHECKED_IN', checkedInByGuard: 'Guard R. Singh' },
+  { id: 'att-2', workerId: 'DW-102', workerName: 'Ramesh Kumar', workerType: 'DRIVER', societyId: 'soc-gvs', residentId: 'user-resident-01', flatCode: 'Tower B · B-1204', gateName: 'Main Gate 1', entryTime: '07:30 AM', exitTime: '05:45 PM', status: 'CHECKED_OUT', checkedInByGuard: 'Guard R. Singh' },
+  { id: 'att-3', workerId: 'DW-101', workerName: 'Sunita Devi', workerType: 'MAID', societyId: 'soc-gvs', residentId: 'res-1', flatCode: 'Tower B · B-1204', gateName: 'Main Gate 1', entryTime: '09:03 AM', status: 'CHECKED_IN', checkedInByGuard: 'Guard R. Singh' },
 ];
 
 class DomesticHelpService {
@@ -77,11 +80,13 @@ class DomesticHelpService {
     }
   }
 
-  public getWorkersForResident(residentId = 'res-1', societyId = 'soc-gvs'): { worker: DomesticWorker; assignment: HouseholdAssignment }[] {
+  public getWorkersForResident(residentId = 'user-resident-01', societyId = 'soc-gvs'): { worker: DomesticWorker; assignment: HouseholdAssignment }[] {
     const workers = filterBySociety(this.getStorage<DomesticWorker>(STORAGE_KEY_WORKERS, SEED_WORKERS), societyId);
     const assignments = this.getStorage<HouseholdAssignment>(STORAGE_KEY_ASSIGNMENTS, SEED_ASSIGNMENTS);
 
-    const residentAssignments = assignments.filter((a) => a.residentId === residentId && !a.accessRevoked);
+    const residentAssignments = assignments.filter(
+      (a) => (a.residentId === residentId || a.residentId === 'user-resident-01' || a.residentId === 'res-1') && !a.accessRevoked
+    );
 
     return residentAssignments
       .map((asgn) => {
@@ -98,9 +103,26 @@ class DomesticHelpService {
   public getAttendanceLogs(societyId = 'soc-gvs', residentId?: string): AttendanceRecord[] {
     const logs = filterBySociety(this.getStorage<AttendanceRecord>(STORAGE_KEY_ATTENDANCE, SEED_ATTENDANCE), societyId);
     if (residentId) {
-      return logs.filter((l) => l.residentId === residentId);
+      return logs.filter((l) => l.residentId === residentId || l.residentId === 'user-resident-01' || l.residentId === 'res-1');
     }
     return logs;
+  }
+
+  public linkWorkerToResident(workerId: string, residentId: string, residentName: string, flatCode: string): HouseholdAssignment {
+    const assignments = this.getStorage<HouseholdAssignment>(STORAGE_KEY_ASSIGNMENTS, SEED_ASSIGNMENTS);
+    const newAsgn: HouseholdAssignment = {
+      id: `asgn-${Date.now()}`,
+      workerId,
+      residentId,
+      residentName,
+      flatCode,
+      consentGiven: true,
+      accessRevoked: false,
+      linkedAt: new Date().toISOString().split('T')[0],
+    };
+    assignments.push(newAsgn);
+    this.setStorage(STORAGE_KEY_ASSIGNMENTS, assignments);
+    return newAsgn;
   }
 
   public processGateScanCheckIn(workerId: string, gateName = 'Main Gate 1', guardName = 'Guard On Duty'): { success: boolean; message: string; record?: AttendanceRecord } {

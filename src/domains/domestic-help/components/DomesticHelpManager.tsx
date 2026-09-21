@@ -72,6 +72,24 @@ export const DomesticHelpManager: React.FC = () => {
     loadData();
   };
 
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [workerToLink, setWorkerToLink] = useState('DW-101');
+
+  const handleLinkWorker = (e: React.FormEvent) => {
+    e.preventDefault();
+    const targetWorker = domesticHelpService.getAllWorkersForAdmin('soc-gvs').find(w => w.id === workerToLink);
+    if (targetWorker) {
+      domesticHelpService.linkWorkerToResident(
+        workerToLink,
+        currentUser?.id || 'user-resident-01',
+        currentUser?.name || 'Sarvesh Kulkarni',
+        currentUser?.flatDetails || 'Tower B · B-1204'
+      );
+      setShowLinkModal(false);
+      loadData();
+    }
+  };
+
   return (
     <div className="p-3 md:p-6 pb-24 space-y-4 md:space-y-6 max-w-7xl mx-auto">
       {/* Real-time Alert Banner */}
@@ -104,12 +122,70 @@ export const DomesticHelpManager: React.FC = () => {
             Household staff linkages, consent management, QR gate check-in, & attendance logs.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {activeRole === 'resident' && (
+            <button
+              onClick={() => setShowLinkModal(true)}
+              className="px-4 py-2 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md hover:opacity-95 transition"
+              style={{ background: 'var(--aarizo-blue, #176B91)', border: '1px solid rgba(255,255,255,0.25)' }}
+            >
+              + Link Household Staff
+            </button>
+          )}
           <span className="px-3 py-1.5 bg-white/10 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 border border-white/20">
             <ShieldCheck size={14} className="text-emerald-300" /> Verified Staff Network
           </span>
         </div>
       </div>
+
+      {/* Modal: Link Household Staff */}
+      {showLinkModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-5 md:p-6 shadow-2xl space-y-4">
+            <div className="flex justify-between items-center border-b pb-3">
+              <h3 className="font-bold text-slate-900 text-base">Link Household Staff to My Flat</h3>
+              <button onClick={() => setShowLinkModal(false)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
+            </div>
+
+            <form onSubmit={handleLinkWorker} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Select Society-Verified Worker</label>
+                <select
+                  value={workerToLink}
+                  onChange={(e) => setWorkerToLink(e.target.value)}
+                  className="w-full p-2.5 border rounded-xl text-xs font-semibold text-slate-800 bg-white"
+                >
+                  <option value="DW-101">Sunita Devi · Maid (PASS-9042)</option>
+                  <option value="DW-102">Ramesh Kumar · Driver (PASS-8812)</option>
+                  <option value="DW-103">Rekha Sharma · Cook (PASS-7741)</option>
+                </select>
+              </div>
+
+              <div className="p-3 bg-sky-50 border border-sky-100 rounded-xl text-xs text-sky-800 space-y-1">
+                <p className="font-bold">Security Consent Policy:</p>
+                <p>Linking grants gate check-in authorization for your flat. You will receive live notification alerts whenever this staff member checks in or out at any society gate.</p>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t">
+                <button
+                  type="button"
+                  onClick={() => setShowLinkModal(false)}
+                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
+                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
+                >
+                  Confirm Linkage & Grant Consent
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Security Gate QR Terminal View */}
       {(activeRole === 'guard' || activeRole === 'secretary' || activeRole === 'admin') && (
@@ -157,45 +233,60 @@ export const DomesticHelpManager: React.FC = () => {
         <div className="space-y-4">
           <h3 className="text-lg font-bold text-slate-800">My Household Linked Staff ({residentWorkers.length})</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {residentWorkers.map(({ worker, assignment }) => (
-              <div key={worker.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={worker.avatarUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80'}
-                    alt={worker.name}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-emerald-500"
-                  />
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-slate-900 text-sm">{worker.name}</h4>
-                      <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">
-                        {worker.workerType}
+          {residentWorkers.length === 0 ? (
+            <div className="p-8 bg-white rounded-2xl border border-dashed border-slate-300 text-center space-y-3">
+              <ShieldCheck size={36} className="mx-auto text-[#176B91]" />
+              <h4 className="font-bold text-slate-800 text-sm">No Household Staff Linked Yet</h4>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">Link your maids, drivers, or cooks to receive real-time gate entry notifications and grant pre-authorized society gatepass access.</p>
+              <button
+                onClick={() => setShowLinkModal(true)}
+                className="px-4 py-2 text-white font-bold rounded-xl text-xs inline-flex items-center gap-1.5 shadow-md hover:opacity-95"
+                style={{ background: 'var(--aarizo-blue, #176B91)' }}
+              >
+                + Link Household Staff
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {residentWorkers.map(({ worker, assignment }) => (
+                <div key={worker.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={worker.avatarUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80'}
+                      alt={worker.name}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-emerald-500"
+                    />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-slate-900 text-sm">{worker.name}</h4>
+                        <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">
+                          {worker.workerType}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">Pass ID: {worker.passCode} · Phone: {worker.phone}</p>
+                      <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1 mt-1">
+                        <CheckCircle size={12} /> Resident Consent Granted
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">Pass ID: {worker.passCode} · Phone: {worker.phone}</p>
-                    <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1 mt-1">
-                      <CheckCircle size={12} /> Resident Consent Granted
+                  </div>
+
+                  <div className="flex flex-col items-end gap-2">
+                    <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full ${
+                      worker.overallStatus === 'CHECKED_IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {worker.overallStatus}
                     </span>
+                    <button
+                      onClick={() => handleRevokeConsent(assignment.id)}
+                      className="text-[11px] text-rose-600 hover:text-rose-800 font-semibold"
+                    >
+                      Revoke Consent
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex flex-col items-end gap-2">
-                  <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full ${
-                    worker.overallStatus === 'CHECKED_IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'
-                  }`}>
-                    {worker.overallStatus}
-                  </span>
-                  <button
-                    onClick={() => handleRevokeConsent(assignment.id)}
-                    className="text-[11px] text-rose-600 hover:text-rose-800 font-semibold"
-                  >
-                    Revoke Consent
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

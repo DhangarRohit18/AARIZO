@@ -381,7 +381,8 @@ export const SafetyCommandHub: React.FC = () => {
             </div>
             <button
               onClick={() => setModalMode('ADD_CHILD')}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5"
+              className="px-4 py-2 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-md hover:opacity-95"
+              style={{ background: 'var(--aarizo-blue, #176B91)' }}
             >
               <UserPlus size={15} /> Add Child Profile
             </button>
@@ -410,7 +411,7 @@ export const SafetyCommandHub: React.FC = () => {
                         setSelectedIncident(null);
                         setModalMode('ADD_PICKUP');
                       }}
-                      className="text-xs text-indigo-600 font-bold hover:underline"
+                      className="px-2.5 py-1 bg-sky-50 border border-sky-200 text-[#176B91] font-bold text-xs rounded-lg hover:bg-sky-100 transition inline-flex items-center gap-1"
                     >
                       + Add Authorized Person
                     </button>
@@ -472,7 +473,8 @@ export const SafetyCommandHub: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
+              className="w-full py-3 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2 hover:opacity-95"
+              style={{ background: 'var(--aarizo-blue, #176B91)' }}
             >
               <ShieldCheck size={16} /> Verify Guardian Authorization
             </button>
@@ -607,7 +609,8 @@ export const SafetyCommandHub: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
+                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
+                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
                 >
                   Save Profile
                 </button>
@@ -672,7 +675,8 @@ export const SafetyCommandHub: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-indigo-500"
+                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
+                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
                 >
                   Save Authorized Person
                 </button>
