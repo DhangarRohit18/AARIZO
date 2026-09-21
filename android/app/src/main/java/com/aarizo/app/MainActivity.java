@@ -1,4 +1,4 @@
-package com.communityos.app;
+package com.aarizo.app;
 
 import com.getcapacitor.BridgeActivity;
 

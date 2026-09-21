@@ -30,12 +30,12 @@ import {
 import './resident.css';
 
 const QUICK_ACTIONS = [
-  { id: 'visitors', label: 'Visitors', icon: UserCheck, path: '/resident/visitors', color: '#3b82f6', bg: '#eff6ff' },
-  { id: 'parking', label: 'Parking', icon: Car, path: '/resident/parking', color: '#8b5cf6', bg: '#f5f3ff' },
-  { id: 'pay', label: 'Pay', icon: CreditCard, path: '/resident/billing', color: '#10b981', bg: '#f0fdf4' },
-  { id: 'complaint', label: 'Complaint', icon: MessageSquare, path: '/resident/requests', color: '#f59e0b', bg: '#fffbeb' },
-  { id: 'parcel', label: 'Parcel', icon: Package, path: '/resident/visitors', color: '#06b6d4', bg: '#ecfeff' },
-  { id: 'sos', label: 'SOS', icon: ShieldAlert, path: '/resident/emergency', color: '#ef4444', bg: '#fef2f2' },
+  { id: 'visitors', label: 'Visitors', icon: UserCheck, path: '/resident/visitors', color: '#0284c7', bg: '#f0f9ff' },
+  { id: 'parking', label: 'Parking', icon: Car, path: '/resident/parking', color: '#0369a1', bg: '#e0f2fe' },
+  { id: 'pay', label: 'Pay', icon: CreditCard, path: '/resident/billing', color: '#16a34a', bg: '#f0fdf4' },
+  { id: 'complaint', label: 'Complaint', icon: MessageSquare, path: '/resident/requests', color: '#d97706', bg: '#fffbeb' },
+  { id: 'parcel', label: 'Parcel', icon: Package, path: '/resident/visitors', color: '#0284c7', bg: '#f0f9ff' },
+  { id: 'sos', label: 'SOS', icon: ShieldAlert, path: '/resident/emergency', color: '#dc2626', bg: '#fef2f2' },
 ];
 
 const SOCIETY_STATUS = [
@@ -47,10 +47,10 @@ const SOCIETY_STATUS = [
 ];
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
-  good: { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e' },
-  normal: { bg: '#f0f9ff', text: '#0369a1', dot: '#3b82f6' },
-  warning: { bg: '#fffbeb', text: '#b45309', dot: '#f59e0b' },
-  alert: { bg: '#fef2f2', text: '#b91c1c', dot: '#ef4444' },
+  good: { bg: '#f0fdf4', text: '#16a34a', dot: '#22c55e' },
+  normal: { bg: '#f0f9ff', text: '#0284c7', dot: '#38bdf8' },
+  warning: { bg: '#fffbeb', text: '#d97706', dot: '#f59e0b' },
+  alert: { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444' },
 };
 
 const PENDING_ACTIONS = [
@@ -61,7 +61,7 @@ const PENDING_ACTIONS = [
 
 const RECENT_ACTIVITY = [
   { id: 1, text: 'Rajesh Singh checked in — Visitor pass used', time: '2 min ago', icon: UserCheck, color: '#3b82f6' },
-  { id: 2, text: 'Water tank cleaned — Maintenance complete', time: '1 hr ago', icon: CheckCircle2, color: '#10b981' },
+  { id: 2, text: 'Water tank cleaned — Maintenance complete', time: '1 hr ago', icon: CheckCircle2, color: '#0284c7' },
   { id: 3, text: 'Notice: Society AGM on 25 Sep at 6PM', time: '3 hrs ago', icon: AlertCircle, color: '#f59e0b' },
   { id: 4, text: 'Monthly levy auto-paid ₹2,400', time: 'Yesterday', icon: CreditCard, color: '#8b5cf6' },
 ];
@@ -119,26 +119,26 @@ export const ResidentHome: React.FC = () => {
   const firstName = currentUser?.name?.split(' ')[0] || 'Resident';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0', backgroundColor: '#f7f4ee', minHeight: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0', backgroundColor: '#f8fafc', minHeight: '100%' }}>
 
       {/* ── Greeting Banner ── */}
       <div
         style={{
-          background: 'linear-gradient(135deg, #1c1917 0%, #292524 100%)',
+          background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
           padding: '1.25rem 1rem 1.5rem',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
         {/* Subtle background accent */}
-        <div style={{ position: 'absolute', top: -20, right: -20, width: 120, height: 120, borderRadius: '50%', background: 'rgba(16,185,129,0.07)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: -40, left: -10, width: 100, height: 100, borderRadius: '50%', background: 'rgba(16,185,129,0.04)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: -20, right: -20, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -40, left: -10, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
 
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <div>
-            <p style={{ color: '#a8a29e', fontSize: '0.75rem', marginBottom: '0.125rem' }}>{getGreeting()},</p>
-            <h1 style={{ color: '#fff', fontWeight: 800, fontSize: '1.25rem', lineHeight: 1.2, marginBottom: '0.25rem' }}>{firstName}</h1>
-            <p style={{ color: '#78716c', fontSize: '0.6875rem' }}>
+            <p style={{ color: '#e0f2fe', fontSize: '0.75rem', marginBottom: '0.125rem', fontWeight: 500 }}>{getGreeting()},</p>
+            <h1 style={{ color: '#ffffff', fontWeight: 800, fontSize: '1.25rem', lineHeight: 1.2, marginBottom: '0.25rem' }}>{firstName}</h1>
+            <p style={{ color: '#bae6fd', fontSize: '0.6875rem', fontWeight: 500 }}>
               {currentUser?.flatDetails || 'Tower B · Flat 301 · Green Valley'}
             </p>
           </div>
@@ -150,17 +150,17 @@ export const ResidentHome: React.FC = () => {
               width: 40,
               height: 40,
               borderRadius: '50%',
-              background: 'rgba(255,255,255,0.08)',
+              background: 'rgba(255,255,255,0.15)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#d6d3d1',
+              color: '#ffffff',
               minHeight: 44,
               minWidth: 44,
             }}
           >
             <Bell size={20} />
-            <span style={{ position: 'absolute', top: '8px', right: '8px', width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', border: '1.5px solid #1c1917' }} />
+            <span style={{ position: 'absolute', top: '8px', right: '8px', width: '8px', height: '8px', background: '#38bdf8', borderRadius: '50%', border: '1.5px solid #0284c7' }} />
           </button>
         </div>
       </div>
@@ -225,10 +225,10 @@ export const ResidentHome: React.FC = () => {
                     padding: '0.875rem 0.5rem',
                     borderRadius: '0.875rem',
                     background: isSOS ? '#fef2f2' : '#ffffff',
-                    border: isSOS ? '1.5px solid #fecaca' : '1px solid #e8e2d8',
+                    border: isSOS ? '1px solid #fecaca' : '1px solid #e2e8f0',
                     cursor: 'pointer',
                     minHeight: 80,
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                     transition: 'transform 0.1s',
                     WebkitTapHighlightColor: 'transparent',
                   }}
@@ -276,10 +276,10 @@ export const ResidentHome: React.FC = () => {
                     padding: '0.75rem 0.875rem',
                     borderRadius: '0.875rem',
                     background: '#ffffff',
-                    border: '1px solid #e8e2d8',
+                    border: '1px solid #e2e8f0',
                     minWidth: 88,
                     flexShrink: 0,
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                   }}
                 >
                   <Icon size={20} style={{ color: colors.text }} />
@@ -312,25 +312,23 @@ export const ResidentHome: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.75rem',
-                    padding: '0.875rem',
+                    padding: '0.875rem 1rem',
                     borderRadius: '0.875rem',
                     background: '#ffffff',
-                    border: action.urgent ? '1.5px solid #fde68a' : '1px solid #e8e2d8',
+                    border: '1px solid #e2e8f0',
                     cursor: 'pointer',
                     textAlign: 'left',
                     width: '100%',
                     minHeight: 52,
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
                   }}
                   aria-label={action.label}
                 >
-                  {action.urgent && (
-                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', flexShrink: 0 }} />
-                  )}
-                  <span style={{ flex: 1, fontSize: '0.8125rem', fontWeight: 600, color: '#292524', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: action.urgent ? '#f59e0b' : '#3b82f6', flexShrink: 0 }} />
+                  <span style={{ flex: 1, fontSize: '0.8125rem', fontWeight: 600, color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {action.label}
                   </span>
-                  <ChevronRight size={16} style={{ color: '#a8a29e', flexShrink: 0 }} />
+                  <ChevronRight size={16} style={{ color: '#94a3b8', flexShrink: 0 }} />
                 </button>
               ))}
             </div>
@@ -345,7 +343,7 @@ export const ResidentHome: React.FC = () => {
             </h2>
             <button
               onClick={() => navigate('/resident/activity')}
-              style={{ fontSize: '0.6875rem', color: '#10b981', fontWeight: 700, background: 'none', display: 'flex', alignItems: 'center', gap: '2px', minHeight: 32 }}
+              style={{ fontSize: '0.6875rem', color: '#0284c7', fontWeight: 700, background: 'none', display: 'flex', alignItems: 'center', gap: '2px', minHeight: 32 }}
             >
               See all <ChevronRight size={12} />
             </button>
@@ -354,9 +352,9 @@ export const ResidentHome: React.FC = () => {
             style={{
               background: '#ffffff',
               borderRadius: '1rem',
-              border: '1px solid #e8e2d8',
+              border: '1px solid #e2e8f0',
               overflow: 'hidden',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
             }}
           >
             {RECENT_ACTIVITY.map((item, index) => {
@@ -406,7 +404,7 @@ export const ResidentHome: React.FC = () => {
             <h2 style={{ fontWeight: 700, fontSize: '0.75rem', color: '#78716c', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Announcements
             </h2>
-            <button onClick={() => navigate('/resident/community')} style={{ fontSize: '0.6875rem', color: '#10b981', fontWeight: 700, background: 'none', display: 'flex', alignItems: 'center', gap: '2px', minHeight: 32 }}>
+            <button onClick={() => navigate('/resident/community')} style={{ fontSize: '0.6875rem', color: '#0284c7', fontWeight: 700, background: 'none', display: 'flex', alignItems: 'center', gap: '2px', minHeight: 32 }}>
               See all <ChevronRight size={12} />
             </button>
           </div>
@@ -417,7 +415,7 @@ export const ResidentHome: React.FC = () => {
                 style={{ background: '#fff', borderRadius: '0.875rem', border: '1px solid #e8e2d8', padding: '0.875rem', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                  <TrendingUp size={14} style={{ color: '#10b981', flexShrink: 0, marginTop: 2 }} />
+                  <TrendingUp size={14} style={{ color: '#0284c7', flexShrink: 0, marginTop: 2 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: '#1c1917', marginBottom: '0.25rem' }}>
                       {'title' in ann ? (ann as { title: string }).title : String(ann)}

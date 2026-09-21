@@ -1,14 +1,14 @@
-/* CommunityOS Neutral Design Tokens System */
+/* CommunityOS Professional Light Blue & White Design Tokens System */
 :root {
   /* Pure White + Light Blue Theme Palette */
-  --color-primary: #2563eb;            /* Primary Royal Blue */
-  --color-primary-hover: #1d4ed8;      /* Darker Blue Hover */
+  --color-primary: #0284c7;            /* Primary Sky Blue */
+  --color-primary-hover: #0369a1;      /* Deep Sky Blue Hover */
   --color-secondary: #64748b;          /* Slate Neutral */
-  --color-accent: #3b82f6;             /* Vibrant Blue Accent */
+  --color-accent: #e0f2fe;             /* Soft Light Blue Accent */
 
-  --color-background: #f7fbff;         /* Crisp Light Blue / White Tint Background */
+  --color-background: #f8fafc;         /* Crisp Light Blue / White Tint Background */
   --color-surface: #ffffff;            /* Pure White Surface */
-  --color-surface-subtle: #eaf5ff;     /* Primary Light Blue Container Surface */
+  --color-surface-subtle: #f0f9ff;     /* Ice Light Blue Container Surface */
 
   --color-border: #cbd5e1;             /* Standard Border */
   --color-border-subtle: #e2e8f0;      /* Hairline / Subtle Border */

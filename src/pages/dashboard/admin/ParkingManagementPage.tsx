@@ -1,13 +1,12 @@
-﻿import React from 'react';
+import React from 'react';
 import { QRParkingHub } from '../../../domains/parking';
 
 export const ParkingManagementPage: React.FC = () => {
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
+    <div style={{ minHeight: '100%', background: '#f7f8fa', padding: '1.5rem' }}>
       <QRParkingHub />
     </div>
   );
 };
 
 export default ParkingManagementPage;
-

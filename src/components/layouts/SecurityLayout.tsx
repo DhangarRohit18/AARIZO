@@ -38,7 +38,7 @@ export const SecurityLayout = () => {
   return (
     <MobileAppShell
       roleTitle="Security Guard"
-      accentColor="#ef4444"
+      accentColor="#0369a1"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
       topRightActions={

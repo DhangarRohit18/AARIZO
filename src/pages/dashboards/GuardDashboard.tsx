@@ -2,78 +2,225 @@ import React from 'react';
 import { useMoves } from '../../domains/moves/services/useMoves';
 import { useRenovations } from '../../domains/renovations/services/useRenovations';
 import type { RBACUser } from '../../types/rbac';
+import { Truck, HardHat, Users, Clock, CheckCircle2 } from 'lucide-react';
+
+const styles = {
+  page: {
+    minHeight: '100%',
+    background: '#f7f8fa',
+    padding: '0 0 1.5rem',
+  } as React.CSSProperties,
+  header: {
+    background: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)',
+    padding: '1.25rem 1rem 1.5rem',
+    color: '#fff',
+    position: 'relative' as const,
+    overflow: 'hidden',
+  } as React.CSSProperties,
+  headerTitle: {
+    color: '#fff',
+    fontWeight: 800,
+    fontSize: '1.25rem',
+    letterSpacing: '-0.02em',
+    margin: 0,
+  } as React.CSSProperties,
+  headerSub: {
+    color: '#fca5a5',
+    fontSize: '0.8125rem',
+    marginTop: '0.25rem',
+  } as React.CSSProperties,
+  content: { padding: '1rem' } as React.CSSProperties,
+  section: {
+    background: '#fff',
+    borderRadius: '1rem',
+    border: '1px solid #e5e7eb',
+    overflow: 'hidden',
+    marginBottom: '1rem',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+  } as React.CSSProperties,
+  sectionHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.625rem',
+    padding: '1rem',
+    borderBottom: '1px solid #f1f5f9',
+  } as React.CSSProperties,
+  sectionTitle: {
+    fontWeight: 700,
+    fontSize: '0.9375rem',
+    color: '#111827',
+    margin: 0,
+  } as React.CSSProperties,
+  iconBox: (color: string, bg: string) => ({
+    width: 32, height: 32, borderRadius: 8,
+    background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
+    color,
+  } as React.CSSProperties),
+  listItem: (last: boolean) => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '0.875rem 1rem',
+    borderBottom: last ? 'none' : '1px solid #f1f5f9',
+  } as React.CSSProperties),
+  badge: (color: string, bg: string) => ({
+    padding: '0.25rem 0.625rem',
+    borderRadius: 20,
+    fontSize: '0.6875rem',
+    fontWeight: 700,
+    color, background: bg,
+    flexShrink: 0,
+  } as React.CSSProperties),
+  emptyText: {
+    padding: '1.25rem 1rem',
+    textAlign: 'center' as const,
+    color: '#9ca3af',
+    fontSize: '0.875rem',
+  } as React.CSSProperties,
+  loadingText: {
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    gap: '0.5rem', padding: '3rem 1rem',
+    color: '#6b7280', fontSize: '0.9375rem',
+  } as React.CSSProperties,
+};
 
 export const GuardDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
   const societyId = user.societyId!;
-  
-  // Realtime hooks explicitly scoped for the Guard's visibility
   const { todaysMoves, loading: movesLoading } = useMoves(societyId);
   const { activeRenovations, loading: renLoading } = useRenovations(societyId, 'guard');
 
   if (movesLoading || renLoading) {
-    return <div className="p-4">Loading Live Gate Data...</div>;
+    return (
+      <div style={styles.loadingText}>
+        <span style={{ width: 18, height: 18, border: '2px solid #e5e7eb', borderTopColor: '#dc2626', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
+        Loading Live Gate Data...
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
   }
 
   return (
-    <div className="p-4 max-w-4xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">Gate Security Hub</h1>
-      
-      <section className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <span className="bg-blue-100 text-blue-800 p-1.5 rounded-lg text-sm">ðŸšš</span>
-          Today's Scheduled Moves
-        </h2>
-        {todaysMoves.length === 0 ? (
-          <p className="text-gray-500 text-sm">No moves scheduled for today.</p>
-        ) : (
-          <ul className="space-y-3">
-            {todaysMoves.map(move => (
-              <li key={move.id} className="p-3 border rounded flex justify-between items-center">
-                <div>
-                  <p className="font-semibold">{move.residentName} (Flat {move.flatCode})</p>
-                  <p className="text-sm text-gray-600">{move.type} - Vendor: {move.vendor.companyName}</p>
-                </div>
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
-                  {move.status}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+    <div style={styles.page}>
+      {/* Header */}
+      <div style={styles.header}>
+        <div style={{ position: 'absolute', top: -20, right: -20, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ width: 42, height: 42, borderRadius: 12, background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <CheckCircle2 size={22} color="#fff" />
+          </div>
+          <div>
+            <h1 style={styles.headerTitle}>Gate Security Hub</h1>
+            <p style={styles.headerSub}>Welcome, {user.name}</p>
+          </div>
+        </div>
 
-      <section className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <span className="bg-orange-100 text-orange-800 p-1.5 rounded-lg text-sm">ðŸš§</span>
-          Active Renovations
-        </h2>
-        {activeRenovations.length === 0 ? (
-          <p className="text-gray-500 text-sm">No active renovations inside the premises.</p>
-        ) : (
-          <ul className="space-y-3">
-            {activeRenovations.map(ren => (
-              <li key={ren.id} className="p-3 border rounded">
-                <p className="font-semibold">Flat {ren.flatCode}</p>
-                <p className="text-sm text-gray-600">Contractor: {ren.contractor.companyName}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  Allowed: {ren.rules.allowedHoursStart} - {ren.rules.allowedHoursEnd} 
-                  {ren.rules.allowWeekends ? ' (Weekends OK)' : ' (No Weekends)'}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-      
-      {/* 
-        Placeholder for Visitors & Deliveries
-        To be wired up when those modules are complete.
-      */}
-      <section className="bg-gray-50 p-4 rounded-xl border border-gray-200 border-dashed">
-         <h2 className="text-lg font-bold text-gray-400 mb-2">Visitors & Deliveries</h2>
-         <p className="text-sm text-gray-400">Live streams pending module completion.</p>
-      </section>
+        {/* Stats row */}
+        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+          {[
+            { label: "Today's Moves", value: todaysMoves.length },
+            { label: 'Active Renos', value: activeRenovations.length },
+          ].map(({ label, value }) => (
+            <div key={label} style={{ flex: 1, background: 'rgba(255,255,255,0.12)', borderRadius: 12, padding: '0.75rem', border: '1px solid rgba(255,255,255,0.15)' }}>
+              <div style={{ color: '#fca5a5', fontSize: '1.5rem', fontWeight: 800 }}>{value}</div>
+              <div style={{ color: '#fecaca', fontSize: '0.6875rem', fontWeight: 600, marginTop: 2 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={styles.content}>
+        {/* Today's Moves */}
+        <div style={styles.section}>
+          <div style={styles.sectionHeader}>
+            <div style={styles.iconBox('#dc2626', '#fef2f2')}>
+              <Truck size={16} />
+            </div>
+            <h2 style={styles.sectionTitle}>Today's Scheduled Moves</h2>
+            {todaysMoves.length > 0 && (
+              <span style={{ marginLeft: 'auto', ...styles.badge('#dc2626', '#fee2e2') }}>{todaysMoves.length}</span>
+            )}
+          </div>
+
+          {todaysMoves.length === 0 ? (
+            <div style={styles.emptyText}>
+              <CheckCircle2 size={24} color="#10b981" style={{ margin: '0 auto 0.5rem' }} />
+              <div>No moves scheduled for today</div>
+            </div>
+          ) : (
+            todaysMoves.map((move, i) => (
+              <div key={move.id} style={styles.listItem(i === todaysMoves.length - 1)}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Truck size={16} color="#dc2626" />
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.875rem', color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {move.residentName} · Flat {move.flatCode}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: 2 }}>
+                      {move.type} · Vendor: {move.vendor.companyName}
+                    </div>
+                  </div>
+                </div>
+                <span style={styles.badge('#b45309', '#fffbeb')}>{move.status}</span>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Active Renovations */}
+        <div style={styles.section}>
+          <div style={styles.sectionHeader}>
+            <div style={styles.iconBox('#d97706', '#fffbeb')}>
+              <HardHat size={16} />
+            </div>
+            <h2 style={styles.sectionTitle}>Active Renovations</h2>
+            {activeRenovations.length > 0 && (
+              <span style={{ marginLeft: 'auto', ...styles.badge('#d97706', '#fef3c7') }}>{activeRenovations.length}</span>
+            )}
+          </div>
+
+          {activeRenovations.length === 0 ? (
+            <div style={styles.emptyText}>
+              <CheckCircle2 size={24} color="#10b981" style={{ margin: '0 auto 0.5rem' }} />
+              <div>No active renovations inside the premises</div>
+            </div>
+          ) : (
+            activeRenovations.map((ren, i) => (
+              <div key={ren.id} style={styles.listItem(i === activeRenovations.length - 1)}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <HardHat size={16} color="#d97706" />
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.875rem', color: '#111827' }}>Flat {ren.flatCode}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: 2 }}>
+                      {ren.contractor.companyName} · {ren.rules.allowedHoursStart}–{ren.rules.allowedHoursEnd}
+                    </div>
+                  </div>
+                </div>
+                <span style={styles.badge(ren.rules.allowWeekends ? '#15803d' : '#dc2626', ren.rules.allowWeekends ? '#f0fdf4' : '#fef2f2')}>
+                  {ren.rules.allowWeekends ? 'Wknds OK' : 'No Wknds'}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Visitors & Deliveries Placeholder */}
+        <div style={{ ...styles.section, border: '1.5px dashed #e5e7eb', background: '#fafafa' }}>
+          <div style={styles.sectionHeader}>
+            <div style={styles.iconBox('#6b7280', '#f3f4f6')}>
+              <Users size={16} />
+            </div>
+            <h2 style={{ ...styles.sectionTitle, color: '#9ca3af' }}>Visitors & Deliveries</h2>
+          </div>
+          <div style={{ ...styles.emptyText, paddingBottom: '1.5rem' }}>
+            <Clock size={24} color="#d1d5db" style={{ margin: '0 auto 0.5rem' }} />
+            <div style={{ color: '#d1d5db' }}>Live streams available via the Security tab</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
-

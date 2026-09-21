@@ -9,6 +9,7 @@ import type { ConfirmationResult } from 'firebase/auth';
 import { auth, db } from '../services/firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 import type { UserProfile, UserRole } from '../domains/auth/types';
+import { MOCK_USERS } from '../mockData/auth/mockUsers';
 
 export type AuthStatus = 
   | 'INITIALIZING'
@@ -29,6 +30,7 @@ interface AuthContextProps {
   setPhoneNumber: (phone: string) => void;
   submitLogin: (appVerifier: RecaptchaVerifier) => Promise<void>;
   verifyOtp: (code: string) => Promise<void>;
+  loginAsRole: (role: UserRole) => void;
   logout: () => Promise<void>;
   setError: (err: string | null) => void;
 }
@@ -151,8 +153,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginAsRole = (role: UserRole) => {
+    const user = MOCK_USERS[role] || MOCK_USERS.resident;
+    setCurrentUser(user);
+    setStatus('AUTHENTICATED');
+  };
+
   const logout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.warn("Firebase signout error:", e);
+    }
     setCurrentUser(null);
     setStatus('UNAUTHENTICATED');
   };
@@ -170,6 +182,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setPhoneNumber,
         submitLogin,
         verifyOtp,
+        loginAsRole,
         logout,
         setError,
       }}

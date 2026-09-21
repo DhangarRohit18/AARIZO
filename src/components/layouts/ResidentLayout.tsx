@@ -25,7 +25,7 @@ export const ResidentLayout = () => {
   return (
     <MobileAppShell
       roleTitle="Resident"
-      accentColor="#10b981"
+      accentColor="#4f46e5"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
       topRightActions={
@@ -34,7 +34,7 @@ export const ResidentLayout = () => {
           aria-label="Notifications"
           style={{
             position: 'relative',
-            color: '#a8a29e',
+            color: 'rgba(255, 255, 255, 0.9)',
             display: 'flex',
             minHeight: 44,
             minWidth: 44,
@@ -46,13 +46,13 @@ export const ResidentLayout = () => {
           <span
             style={{
               position: 'absolute',
-              top: '6px',
-              right: '6px',
+              top: '8px',
+              right: '8px',
               width: '8px',
               height: '8px',
-              background: '#10b981',
+              background: '#38bdf8',
               borderRadius: '50%',
-              border: '1.5px solid #1c1917',
+              border: '1.5px solid #0284c7',
             }}
           />
         </Link>

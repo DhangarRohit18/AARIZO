@@ -22,8 +22,8 @@ export const App: React.FC = () => {
                 width: '100%',
                 maxWidth: '100vw',
                 overflowX: 'hidden',
-                backgroundColor: '#f7f4ee',
-                color: '#1c1917',
+                backgroundColor: '#f8fafc',
+                color: '#0f172a',
               }}
             >
               <AppRoutes />

@@ -57,7 +57,7 @@ export const SocietyAdminLayout = () => {
   return (
     <MobileAppShell
       roleTitle="Secretary"
-      accentColor="#8b5cf6"
+      accentColor="#0284c7"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
       topRightActions={

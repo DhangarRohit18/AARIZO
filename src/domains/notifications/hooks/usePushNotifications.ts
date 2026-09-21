@@ -20,20 +20,28 @@ export function usePushNotifications() {
 
     const init = async () => {
       try {
+        if (typeof window === 'undefined' || !(window as any).Capacitor?.isNativePlatform?.()) {
+          return;
+        }
+
         const { PushNotifications } = await import('@capacitor/push-notifications');
 
-        // Request permission
+        // Request permission safely
         const permResult = await PushNotifications.requestPermissions();
         if (permResult.receive !== 'granted') return;
 
-        // Register with APNs / FCM
-        await PushNotifications.register();
+        // Register with APNs / FCM inside safe try-catch
+        try {
+          await PushNotifications.register();
+        } catch (regErr) {
+          console.warn('[AARIZO Push] Push registration skipped or not configured:', regErr);
+          return;
+        }
 
         // Handle token registration
         const tokenListener = await PushNotifications.addListener(
           'registration',
           (token) => {
-            // In production: send token.value to your backend
             console.debug('[AARIZO Push] Device token:', token.value);
           }
         );
@@ -53,7 +61,6 @@ export function usePushNotifications() {
             const data = action.notification.data as Record<string, string> | undefined;
             if (!data?.screen) return;
 
-            // Map notification screen to route
             const SCREEN_ROUTES: Record<string, string> = {
               visitor_arrival: '/resident/visitors',
               visitor_approval: '/resident/visitors',
@@ -65,11 +72,9 @@ export function usePushNotifications() {
               worker_entry: '/resident/domestic-help',
               child_pickup: '/resident/child-safety',
               amenity_booking: '/resident/amenities',
-              // Security routes
               security_visitor: '/security',
               security_parcel: '/security/delivery-intelligence',
               security_emergency: '/security/emergency-command',
-              // Admin routes
               admin_approval: '/admin/residents',
               admin_complaint: '/admin/requests',
               admin_sla: '/admin/intelligence',
@@ -80,13 +85,13 @@ export function usePushNotifications() {
           }
         );
 
-        cleanup = async () => {
-          await tokenListener.remove();
-          await receivedListener.remove();
-          await actionListener.remove();
+        cleanup = () => {
+          tokenListener.remove().catch(() => {});
+          receivedListener.remove().catch(() => {});
+          actionListener.remove().catch(() => {});
         };
-      } catch {
-        // Running in browser — push notifications not available, silently skip
+      } catch (err) {
+        console.warn('[AARIZO Push] Push notification setup failed:', err);
       }
     };
 
