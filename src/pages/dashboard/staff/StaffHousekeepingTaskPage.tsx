@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { housekeepingService } from '../../../services/housekeepingService';
 import type { HousekeepingTask, ChecklistItem } from '../../../types/housekeeping';
@@ -60,21 +60,23 @@ export const StaffHousekeepingTaskPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
-      {/* Header */}
-      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+      {/* ── Aarizo Header ── */}
+      <div style={{
+        background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)',
+        padding: '1.25rem 1rem 1.5rem',
+        display: 'flex', alignItems: 'flex-start', gap: '0.75rem',
+      }}>
+        <div style={{ width: 40, height: 40, borderRadius: '12px', background: 'rgba(131,203,234,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Sparkles size={20} color="#83CBEA" />
+        </div>
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
-              <Sparkles className="w-5 h-5" />
-            </span>
-            <h1 className="text-2xl font-bold text-slate-900">Staff Housekeeping Execution Portal</h1>
-          </div>
-          <p className="text-slate-500 text-sm mt-1">
-            View daily operational assignments, mark checklists, attach photo proof, and record completion timestamps.
-          </p>
+          <p style={{ color: '#83CBEA', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.25rem' }}>Staff Portal</p>
+          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.125rem', margin: 0 }}>Housekeeping Execution</h1>
+          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.8125rem', marginTop: '0.25rem' }}>Mark checklists, attach proof &amp; log task completions</p>
         </div>
       </div>
+      <div className="space-y-4 p-4 md:p-6">
 
       {/* Task List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -109,9 +111,9 @@ export const StaffHousekeepingTaskPage: React.FC = () => {
             <div>
               <button
                 onClick={() => handleOpenExecuteModal(task)}
-                className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5"
+                style={{ width: '100%', padding: '0.6rem', background: '#176B91', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '0.8125rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
               >
-                <CheckSquare className="w-4 h-4" /> Execute Checklist & Submit Proof
+                <CheckSquare className="w-4 h-4" /> Execute Checklist &amp; Submit Proof
               </button>
             </div>
           </div>
@@ -169,14 +171,15 @@ export const StaffHousekeepingTaskPage: React.FC = () => {
             </div>
 
             <div className="pt-4 flex justify-end gap-2">
-              <button type="button" onClick={() => setSelectedTask(null)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-              <button type="submit" className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl">
-                Submit Task Completion
+              <button type="button" onClick={() => setSelectedTask(null)} style={{ padding: '0.6rem 1rem', borderRadius: '8px', border: '1.5px solid #DCE8EF', background: '#fff', fontWeight: 600, cursor: 'pointer', color: '#083B56', fontSize: '0.875rem' }}>Cancel</button>
+              <button type="submit" style={{ padding: '0.6rem 1.25rem', borderRadius: '10px', border: 'none', background: '#059669', color: '#fff', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer' }}>
+                Submit Completion
               </button>
             </div>
           </form>
         </Modal>
       )}
+      </div>
     </div>
   );
 };
