@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 interface MobileDataCardProps {
   title: React.ReactNode;
@@ -21,18 +21,18 @@ export const MobileDataCard: React.FC<MobileDataCardProps> = ({
     <div
       onClick={onClick}
       style={{
-        background: '#fff',
-        borderRadius: '0.75rem',
-        border: '1px solid #e2e8f0',
+        background: '#ffffff',
+        borderRadius: '16px',
+        border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
         padding: '1rem',
         marginBottom: '0.75rem',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+        boxShadow: '0 2px 10px rgba(8, 59, 86, 0.05)',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
         <div>
-          <div style={{ fontWeight: 600, fontSize: '0.9375rem', color: '#0f172a' }}>{title}</div>
-          {subtitle && <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.125rem' }}>{subtitle}</div>}
+          <div style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--aarizo-text, #203746)' }}>{title}</div>
+          {subtitle && <div style={{ fontSize: '0.75rem', color: 'var(--aarizo-text-secondary, #657785)', marginTop: '0.125rem' }}>{subtitle}</div>}
         </div>
         {status && <div>{status}</div>}
       </div>
@@ -41,10 +41,10 @@ export const MobileDataCard: React.FC<MobileDataCardProps> = ({
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.75rem' }}>
           {attributes.map((attr, idx) => (
             <div key={idx} style={{ flex: '1 1 45%' }}>
-              <div style={{ fontSize: '0.6875rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.025em' }}>
+              <div style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #8B9AA5)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 {attr.label}
               </div>
-              <div style={{ fontSize: '0.8125rem', color: '#334155', fontWeight: 500 }}>
+              <div style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text, #203746)', fontWeight: 600 }}>
                 {attr.value}
               </div>
             </div>
@@ -53,7 +53,7 @@ export const MobileDataCard: React.FC<MobileDataCardProps> = ({
       )}
 
       {actions && (
-        <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+        <div style={{ marginTop: '0.875rem', paddingTop: '0.75rem', borderTop: '1px solid var(--aarizo-border-soft, #E8F1F5)', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
           {actions}
         </div>
       )}

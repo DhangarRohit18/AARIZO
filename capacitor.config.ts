@@ -4,7 +4,7 @@ const config: CapacitorConfig = {
   appId: 'com.aarizo.app',
   appName: 'AARIZO',
   webDir: 'dist',
-  backgroundColor: '#1c1917',
+  backgroundColor: '#083B56',
   server: {
     androidScheme: 'https',
     cleartext: false,
@@ -17,7 +17,7 @@ const config: CapacitorConfig = {
   plugins: {
     StatusBar: {
       style: 'Dark',
-      backgroundColor: '#1c1917',
+      backgroundColor: '#083B56',
       overlaysWebView: false,
     },
     PushNotifications: {
@@ -25,7 +25,7 @@ const config: CapacitorConfig = {
     },
     SplashScreen: {
       launchShowDuration: 2000,
-      backgroundColor: '#1c1917',
+      backgroundColor: '#083B56',
       showSpinner: false,
     },
   },

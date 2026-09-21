@@ -29,7 +29,6 @@ const DRAWER_NAV = [
 const BOTTOM_NAV = [
   { label: 'Gate', path: '/security', icon: QrCode },
   { label: 'Scan', path: '/security/verify', icon: Scan },
-  { label: 'Activity', path: '/security/activity', icon: Activity },
   { label: 'Emergency', path: '/security/emergency-command', icon: ShieldAlert },
   { label: 'Profile', path: '/security/profile', icon: User },
 ];
@@ -38,7 +37,7 @@ export const SecurityLayout = () => {
   return (
     <MobileAppShell
       roleTitle="Security Guard"
-      accentColor="#0369a1"
+      societyName="Green Valley Society"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
       topRightActions={
@@ -46,16 +45,18 @@ export const SecurityLayout = () => {
           to="/security/emergency-command"
           aria-label="Emergency Alerts"
           style={{
-            position: 'relative',
+            width: 38,
+            height: 38,
+            borderRadius: '50%',
+            background: 'rgba(239, 68, 68, 0.2)',
             color: '#ef4444',
             display: 'flex',
-            minHeight: 44,
-            minWidth: 44,
             alignItems: 'center',
             justifyContent: 'center',
+            textDecoration: 'none',
           }}
         >
-          <Bell size={20} />
+          <Bell size={18} />
         </Link>
       }
     >

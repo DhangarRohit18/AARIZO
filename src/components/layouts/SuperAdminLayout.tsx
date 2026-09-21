@@ -1,6 +1,6 @@
-﻿import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { MobileAppShell } from '../mobile/MobileAppShell';
-import { Settings, Building2, Users, Shield, Bell, User } from 'lucide-react';
+import { Building2, Users, Shield, Bell, User } from 'lucide-react';
 
 const DRAWER_NAV = [
   { label: 'Super Admin', path: '/super-admin', icon: Shield },
@@ -11,7 +11,6 @@ const BOTTOM_NAV = [
   { label: 'Home', path: '/super-admin', icon: Shield },
   { label: 'Societies', path: '/super-admin/societies', icon: Building2 },
   { label: 'Users', path: '/super-admin/users', icon: Users },
-  { label: 'Monitoring', path: '/super-admin/monitoring', icon: Settings },
   { label: 'Profile', path: '/super-admin/profile', icon: User },
 ];
 
@@ -19,12 +18,27 @@ export const SuperAdminLayout = () => {
   return (
     <MobileAppShell
       roleTitle="System Admin"
-      accentColor="#1d4ed8"
+      societyName="AARIZO Platform"
+      accentColor="#176B91"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
       topRightActions={
-        <Link to="/notifications" aria-label="Notifications" style={{ color: '#a8a29e', minHeight: 44, minWidth: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Bell size={20} />
+        <Link
+          to="/notifications"
+          aria-label="Notifications"
+          style={{
+            width: 38,
+            height: 38,
+            borderRadius: '50%',
+            background: 'rgba(255, 255, 255, 0.12)',
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textDecoration: 'none',
+          }}
+        >
+          <Bell size={18} />
         </Link>
       }
     >

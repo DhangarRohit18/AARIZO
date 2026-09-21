@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Home, Users, Car, UserCheck, Plus } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { FamilyMember, Vehicle, DomesticWorker } from '../../../types/society';
@@ -86,12 +86,12 @@ export const MyFlatPage: React.FC = () => {
   return (
     <div style={{ padding: '1.5rem', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif' }}>
       {/* Header */}
-      <header style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, #1e293b, #0f172a)', padding: '1.5rem', borderRadius: '16px', color: '#fff' }}>
+      <header style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)', padding: '1.5rem', borderRadius: '16px', color: '#fff' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-          <Home size={28} color="#60a5fa" />
+          <Home size={28} color="var(--aarizo-sky, #83CBEA)" />
           <div>
-            <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Tower B Â· Flat 1204</h1>
-            <p style={{ margin: '0.2rem 0 0 0', color: '#94a3b8', fontSize: '0.85rem' }}>Green Valley Society â€¢ 3 BHK Owner Occupied</p>
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Tower B · Flat 1204</h1>
+            <p style={{ margin: '0.2rem 0 0 0', color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.85rem' }}>Green Valley Society • 3 BHK Owner Occupied</p>
           </div>
         </div>
       </header>
@@ -100,8 +100,8 @@ export const MyFlatPage: React.FC = () => {
       <section style={{ marginBottom: '2rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Users size={20} color="#2563eb" />
-            <h3 style={{ margin: 0, color: '#0f172a' }}>Registered Family Members ({familyMembers.length})</h3>
+            <Users size={20} color="var(--aarizo-blue, #176B91)" />
+            <h3 style={{ margin: 0, color: 'var(--aarizo-text-dark, #203746)' }}>Registered Family Members ({familyMembers.length})</h3>
           </div>
           <button
             onClick={() => setIsFamilyModalOpen(true)}
@@ -110,7 +110,7 @@ export const MyFlatPage: React.FC = () => {
               alignItems: 'center',
               gap: '0.35rem',
               padding: '0.45rem 0.85rem',
-              background: '#2563eb',
+              background: 'var(--aarizo-blue, #176B91)',
               color: '#fff',
               borderRadius: '8px',
               border: 'none',
@@ -125,12 +125,12 @@ export const MyFlatPage: React.FC = () => {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
           {familyMembers.map((fam) => (
-            <div key={fam.id} style={{ padding: '1rem', background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
+            <div key={fam.id} style={{ padding: '1rem', background: '#fff', borderRadius: '12px', border: '1px solid var(--aarizo-border, #E8F1F5)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--aarizo-blue-light, #EAF6FC)', color: 'var(--aarizo-blue, #176B91)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
                 {fam.name.charAt(0)}
               </div>
               <div>
-                <div style={{ fontWeight: 600, color: '#0f172a' }}>{fam.name}</div>
+                <div style={{ fontWeight: 600, color: 'var(--aarizo-text-dark, #203746)' }}>{fam.name}</div>
                 <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{fam.relationship} {fam.phone ? `â€¢ ${fam.phone}` : ''}</div>
               </div>
             </div>

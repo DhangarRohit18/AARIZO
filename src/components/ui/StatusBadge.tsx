@@ -18,17 +18,17 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   const getColors = () => {
     switch (variant) {
       case 'success':
-        return { bg: '#ecfdf5', color: '#047857', border: '#a7f3d0' };
+        return { bg: 'var(--aarizo-success-bg, #EDF8F0)', color: 'var(--aarizo-success, #3F8F58)', border: '#c3e6cb' };
       case 'warning':
-        return { bg: '#fffbeb', color: '#b45309', border: '#fde68a' };
+        return { bg: 'var(--aarizo-warning-bg, #FFF8E8)', color: 'var(--aarizo-warning, #D99A2B)', border: '#fce3b8' };
       case 'danger':
-        return { bg: '#fef2f2', color: '#b91c1c', border: '#fecaca' };
+        return { bg: 'var(--aarizo-danger-bg, #FFF0F1)', color: 'var(--aarizo-danger, #D9535B)', border: '#fbc5c8' };
       case 'info':
-        return { bg: '#eff6ff', color: '#1d4ed8', border: '#bfdbfe' };
+        return { bg: 'var(--aarizo-info-bg, #EAF6FC)', color: 'var(--aarizo-info, #176B91)', border: 'var(--aarizo-border, #DCE8EF)' };
       case 'purple':
-        return { bg: '#f5f3ff', color: '#6d28d9', border: '#ddd6fe' };
+        return { bg: '#F4FAFE', color: 'var(--aarizo-blue, #176B91)', border: '#d0e5f2' };
       default:
-        return { bg: '#f1f5f9', color: '#475569', border: '#cbd5e1' };
+        return { bg: 'var(--aarizo-pale-blue, #F4FAFE)', color: 'var(--aarizo-text-secondary, #657785)', border: 'var(--aarizo-border, #DCE8EF)' };
     }
   };
 
@@ -40,14 +40,15 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
         display: 'inline-flex',
         alignItems: 'center',
         gap: '0.35rem',
-        padding: size === 'sm' ? '0.15rem 0.5rem' : '0.25rem 0.75rem',
-        fontSize: size === 'sm' ? '0.75rem' : '0.85rem',
-        fontWeight: 600,
+        padding: size === 'sm' ? '0.15rem 0.5rem' : '0.2rem 0.65rem',
+        fontSize: size === 'sm' ? '0.6875rem' : '0.75rem',
+        fontWeight: 700,
         borderRadius: '9999px',
         backgroundColor: style.bg,
         color: style.color,
         border: `1px solid ${style.border}`,
         whiteSpace: 'nowrap',
+        letterSpacing: '0.02em',
       }}
     >
       {icon}

@@ -1,208 +1,231 @@
-﻿import { useState } from 'react';
-import { Users, CheckCircle, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Search, Building2, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { societyService } from '../../../services/societyService';
 import type { Resident } from '../../../types/society';
-import { DataTable } from '../../../components/ui/DataTable';
-import type { Column } from '../../../components/ui/DataTable';
-import { StatusBadge } from '../../../components/ui/StatusBadge';
-import { FilterBar } from '../../../components/ui/FilterBar';
-import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const ResidentManagementPage = () => {
+  const navigate = useNavigate();
   const currentSocietyId = 'soc-gvs';
-  const [residents, setResidents] = useState<Resident[]>(societyService.getResidents(currentSocietyId));
-  const [statusFilter, setStatusFilter] = useState<string>('ALL');
-
-  const refreshData = () => {
-    setResidents(societyService.getResidents(currentSocietyId));
-  };
-
-  const handleApprove = (id: string) => {
-    societyService.updateResidentApproval(id, 'APPROVED', {
-      id: 'sec-admin-1',
-      name: 'Mayuri Udar',
-      role: 'SOCIETY_ADMIN',
-    });
-    refreshData();
-  };
-
-  const handleReject = (id: string) => {
-    societyService.updateResidentApproval(id, 'REJECTED', {
-      id: 'sec-admin-1',
-      name: 'Mayuri Udar',
-      role: 'SOCIETY_ADMIN',
-    });
-    refreshData();
-  };
+  const [residents] = useState<Resident[]>(societyService.getResidents(currentSocietyId));
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedWing, setSelectedWing] = useState('ALL');
 
   const filteredResidents = residents.filter((r) => {
-    if (statusFilter === 'ALL') return true;
-    return r.approvalStatus === statusFilter;
+    const matchesWing = selectedWing === 'ALL' || r.flatCode.toUpperCase().includes(selectedWing);
+    const matchesSearch =
+      r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.flatCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.phone.includes(searchQuery);
+    return matchesWing && matchesSearch;
   });
 
-  const columns: Column<Resident>[] = [
-    {
-      key: 'name',
-      header: 'Resident Name',
-      sortable: true,
-      render: (r) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <img
-            src={r.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}
-            alt={r.name}
-            style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }}
-          />
-          <div>
-            <div style={{ fontWeight: 600, color: '#0f172a' }}>{r.name}</div>
-            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{r.email} • {r.phone}</div>
-          </div>
-        </div>
-      ),
-    },
-    { key: 'flatCode', header: 'Flat', sortable: true },
-    {
-      key: 'role',
-      header: 'Occupancy Role',
-      render: (r) => (
-        <StatusBadge label={r.role} variant={r.role === 'OWNER' ? 'info' : 'purple'} />
-      ),
-    },
-    {
-      key: 'approvalStatus',
-      header: 'Approval Status',
-      render: (r) => (
-        <StatusBadge
-          label={r.approvalStatus}
-          variant={r.approvalStatus === 'APPROVED' ? 'success' : r.approvalStatus === 'PENDING' ? 'warning' : 'danger'}
-        />
-      ),
-    },
-    {
-      key: 'actions',
-      header: 'Actions',
-      render: (r) =>
-        r.approvalStatus === 'PENDING' ? (
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button
-              onClick={() => handleApprove(r.id)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.25rem',
-                padding: '0.35rem 0.65rem',
-                borderRadius: '6px',
-                border: 'none',
-                background: '#10b981',
-                color: '#fff',
-                fontWeight: 600,
-                fontSize: '0.75rem',
-                cursor: 'pointer',
-              }}
-            >
-              <CheckCircle size={14} /> Approve
-            </button>
-            <button
-              onClick={() => handleReject(r.id)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.25rem',
-                padding: '0.35rem 0.65rem',
-                borderRadius: '6px',
-                border: 'none',
-                background: '#ef4444',
-                color: '#fff',
-                fontWeight: 600,
-                fontSize: '0.75rem',
-                cursor: 'pointer',
-              }}
-            >
-              <XCircle size={14} /> Reject
-            </button>
-          </div>
-        ) : (
-          <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Processed</span>
-        ),
-    },
-  ];
-
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', paddingBottom: '1rem' }}>
+      {/* ── Subheader with Back Button & Breadcrumbs ── */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.875rem',
+          padding: '1rem 1rem 0.75rem',
+          background: 'var(--aarizo-card-blue, #F4FAFE)',
+          borderBottom: '1px solid var(--aarizo-border, #DCE8EF)',
+        }}
+      >
+        <button
+          onClick={() => navigate(-1)}
+          aria-label="Back"
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: '#ffffff',
+            border: '1px solid var(--aarizo-border, #DCE8EF)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--aarizo-navy, #083B56)',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}
+        >
+          <ArrowLeft size={18} />
+        </button>
         <div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Users style={{ color: '#8b5cf6' }} size={26} /> Resident Approvals
+          <h2 style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: 0, letterSpacing: '-0.02em' }}>
+            Residents
           </h2>
-          <p style={{ color: '#64748b', margin: '0.25rem 0 0 0' }}>Manage flat ownership and tenant verifications.</p>
+          <p style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-secondary, #657785)', margin: 0 }}>
+            Green Valley Society · {residents.length} residents
+          </p>
         </div>
       </div>
 
-      <FilterBar
-        options={[
-          { label: 'All Residents', id: 'ALL' },
-          { label: 'Pending Approval', id: 'PENDING' },
-          { label: 'Approved', id: 'APPROVED' },
-          { label: 'Rejected', id: 'REJECTED' },
-        ]}
-        activeFilter={statusFilter}
-        onFilterChange={setStatusFilter}
-      />
+      {/* ── Search Bar & Filter Strip ── */}
+      <div style={{ padding: '1rem 1rem 0.5rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.625rem',
+            background: '#ffffff',
+            border: '1px solid var(--aarizo-border, #DCE8EF)',
+            borderRadius: '12px',
+            padding: '0 0.875rem',
+            height: '46px',
+            boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)',
+          }}
+        >
+          <Search size={18} color="var(--aarizo-text-secondary, #657785)" />
+          <input
+            type="text"
+            placeholder="Search by name, flat, wing, or building..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              flex: 1,
+              border: 'none',
+              outline: 'none',
+              fontSize: '0.8125rem',
+              color: 'var(--aarizo-text, #203746)',
+              background: 'transparent',
+              minHeight: 'auto',
+            }}
+          />
+        </div>
 
-      <div style={{ marginTop: '1rem' }}>
-        <DataTable
-          columns={columns}
-          data={filteredResidents}
-          keyExtractor={(item) => item.id}
-          pageSize={12}
-          emptyMessage="No residents found."
-          mobileRender={(r) => (
-            <MobileDataCard
-              title={
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <img
-                    src={r.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}
-                    alt={r.name}
-                    style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }}
-                  />
-                  <span>{r.name}</span>
+        {/* Wings Filter Pills */}
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', overflowX: 'auto', scrollbarWidth: 'none' }}>
+          {['ALL', 'A', 'B', 'C'].map((wing) => (
+            <button
+              key={wing}
+              onClick={() => setSelectedWing(wing)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                background: selectedWing === wing ? 'var(--aarizo-blue, #176B91)' : '#ffffff',
+                border: '1px solid var(--aarizo-border, #DCE8EF)',
+                borderRadius: '10px',
+                padding: '0.4rem 0.75rem',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: selectedWing === wing ? '#ffffff' : 'var(--aarizo-text, #203746)',
+                cursor: 'pointer',
+              }}
+            >
+              <Building2 size={14} color={selectedWing === wing ? '#ffffff' : 'var(--aarizo-blue, #176B91)'} />
+              <span>{wing === 'ALL' ? 'All Wings' : `Wing ${wing}`}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Count Heading ── */}
+      <div style={{ padding: '0.5rem 1rem 0.25rem' }}>
+        <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--aarizo-text-secondary, #657785)' }}>
+          {filteredResidents.length} residents found
+        </span>
+      </div>
+
+      {/* ── Resident Cards (Exact Match to Screenshot) ── */}
+      <div style={{ padding: '0.25rem 1rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        {filteredResidents.map((r) => (
+          <div
+            key={r.id}
+            style={{
+              background: '#ffffff',
+              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              borderRadius: '16px',
+              padding: '0.875rem 1rem',
+              boxShadow: '0 2px 10px rgba(8, 59, 86, 0.05)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.625rem',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                {/* Initial Avatar Circle */}
+                <div
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: '50%',
+                    background: 'var(--aarizo-pale-blue, #F4FAFE)',
+                    border: '1px solid var(--aarizo-border, #DCE8EF)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--aarizo-navy, #083B56)',
+                    fontWeight: 800,
+                    fontSize: '1rem',
+                    flexShrink: 0,
+                  }}
+                >
+                  {r.name.charAt(0).toUpperCase()}
                 </div>
-              }
-              subtitle={r.email}
-              status={
-                <StatusBadge
-                  label={r.approvalStatus}
-                  variant={r.approvalStatus === 'APPROVED' ? 'success' : r.approvalStatus === 'PENDING' ? 'warning' : 'danger'}
-                />
-              }
-              attributes={[
-                { label: 'Flat', value: r.flatCode },
-                { label: 'Role', value: r.role },
-                { label: 'Phone', value: r.phone }
-              ]}
-              actions={
-                r.approvalStatus === 'PENDING' ? (
-                  <>
-                    <button
-                      onClick={() => handleReject(r.id)}
-                      aria-label="Reject Resident"
-                      style={{ padding: '0.5rem 1rem', background: '#fef2f2', color: '#ef4444', borderRadius: '0.5rem', border: 'none', fontWeight: 600, fontSize: '0.8125rem' }}
-                    >
-                      Reject
-                    </button>
-                    <button
-                      onClick={() => handleApprove(r.id)}
-                      aria-label="Approve Resident"
-                      style={{ padding: '0.5rem 1rem', background: '#10b981', color: '#fff', borderRadius: '0.5rem', border: 'none', fontWeight: 600, fontSize: '0.8125rem' }}
-                    >
-                      Approve
-                    </button>
-                  </>
-                ) : null
-              }
-            />
-          )}
-        />
+                <div>
+                  <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--aarizo-text, #203746)' }}>
+                    {r.name}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--aarizo-text-secondary, #657785)', marginTop: '0.125rem' }}>
+                    ⌂ {r.flatCode} · Floor 1
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--aarizo-text-secondary, #657785)' }}>
+                    🏢 Wing A
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--aarizo-text-secondary, #657785)' }}>
+                    📞 {r.phone}
+                  </div>
+                </div>
+              </div>
+
+              {/* Status & View Button */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem' }}>
+                <span
+                  style={{
+                    fontSize: '0.625rem',
+                    fontWeight: 700,
+                    color: 'var(--aarizo-text-secondary, #657785)',
+                    background: 'var(--aarizo-pale-blue, #F4FAFE)',
+                    border: '1px solid var(--aarizo-border, #DCE8EF)',
+                    padding: '0.2rem 0.5rem',
+                    borderRadius: '9999px',
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  CURRENTLY_RESIDING
+                </span>
+
+                <button
+                  onClick={() => alert(`Resident Profile: ${r.name} (${r.flatCode})`)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '8px',
+                    background: 'var(--aarizo-light-blue, #EAF6FC)',
+                    border: '1px solid var(--aarizo-border, #DCE8EF)',
+                    color: 'var(--aarizo-navy, #083B56)',
+                    fontWeight: 700,
+                    fontSize: '0.75rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Eye size={13} color="var(--aarizo-blue, #176B91)" />
+                  <span>View</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
+
+export default ResidentManagementPage;

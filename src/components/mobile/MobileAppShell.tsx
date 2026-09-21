@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, LogOut, X, ChevronRight, Bell } from 'lucide-react';
+import { Menu, LogOut, X, ChevronRight, Bell, ChevronDown, Plus } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { App } from '@capacitor/app';
@@ -14,19 +14,24 @@ export interface NavItem {
 export interface MobileAppShellProps {
   children: React.ReactNode;
   roleTitle: string;
-  accentColor: string;
+  societyName?: string;
+  accentColor?: string;
   drawerItems: NavItem[];
   bottomItems: NavItem[];
   topRightActions?: React.ReactNode;
+  onFabClick?: () => void;
+  showFab?: boolean;
 }
 
 export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   children,
   roleTitle,
-  accentColor,
+  societyName = 'Green Valley Society',
   drawerItems,
   bottomItems,
   topRightActions,
+  onFabClick,
+  showFab = true,
 }) => {
   const { currentUser, logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -46,7 +51,14 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         const handleBackButton = async () => {
           if (drawerOpen) {
             setDrawerOpen(false);
-          } else if (window.history.length > 2 && location.pathname !== '/' && !location.pathname.endsWith('/dashboard') && !location.pathname.endsWith('/admin') && !location.pathname.endsWith('/resident') && !location.pathname.endsWith('/security')) {
+          } else if (
+            window.history.length > 2 &&
+            location.pathname !== '/' &&
+            !location.pathname.endsWith('/dashboard') &&
+            !location.pathname.endsWith('/admin') &&
+            !location.pathname.endsWith('/resident') &&
+            !location.pathname.endsWith('/security')
+          ) {
             navigate(-1);
           } else {
             App.exitApp();
@@ -57,14 +69,16 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
     } catch (e) {
       // Ignored for non-native environments
     }
-    
+
     return () => {
       if (listenerPromise) {
-        listenerPromise.then((handle: any) => {
-          if (handle && typeof handle.remove === 'function') {
-            handle.remove();
-          }
-        }).catch(() => {});
+        listenerPromise
+          .then((handle: any) => {
+            if (handle && typeof handle.remove === 'function') {
+              handle.remove();
+            }
+          })
+          .catch(() => {});
       }
     };
   }, [drawerOpen, location.pathname, navigate]);
@@ -75,83 +89,243 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
     } else {
       document.body.style.overflow = '';
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [drawerOpen]);
 
+  // Primary navigation items (first 4 items surrounding center FAB)
+  const navLeft = bottomItems.slice(0, 2);
+  const navRight = bottomItems.slice(2, 4);
+
   return (
-    <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column', background: '#f8fafc' }}>
-      <header style={{
-        padding: '0 1rem',
-        paddingTop: 'env(safe-area-inset-top, 0px)',
-        height: 'calc(58px + env(safe-area-inset-top, 0px))',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: '#ffffff',
-        borderBottom: '1px solid #e2e8f0',
-        zIndex: 10,
-        flexShrink: 0
-      }}>
+    <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column', background: 'var(--aarizo-page, #F7FBFE)' }}>
+      {/* ── Screenshot-Matched Deep Navy Header (#083B56) ── */}
+      <header
+        style={{
+          padding: '0 1rem',
+          paddingTop: 'env(safe-area-inset-top, 0px)',
+          height: 'calc(60px + env(safe-area-inset-top, 0px))',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'var(--aarizo-navy, #083B56)',
+          zIndex: 10,
+          flexShrink: 0,
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {/* Avatar button that triggers drawer */}
           <button
             onClick={() => setDrawerOpen(true)}
             aria-label="Open Navigation Drawer"
-            style={{ color: '#0f172a', minHeight: 44, minWidth: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '0.625rem', cursor: 'pointer' }}
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
           >
             <Menu size={20} />
           </button>
+
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-              <span style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.03em' }}>AARIZO</span>
-              <span style={{ fontSize: '0.625rem', padding: '0.125rem 0.375rem', borderRadius: '0.375rem', background: `${accentColor}15`, color: accentColor, fontWeight: 700, letterSpacing: '0.04em' }}>
-                {roleTitle}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#ffffff' }}>
+              <span style={{ fontSize: '0.9375rem', fontWeight: 700, letterSpacing: '-0.01em' }}>
+                {currentUser?.societyName || societyName}
               </span>
+              <ChevronDown size={14} style={{ opacity: 0.8 }} />
             </div>
+            <p style={{ fontSize: '0.6875rem', color: 'rgba(255, 255, 255, 0.72)', margin: 0, fontWeight: 500 }}>
+              {roleTitle}
+            </p>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.375rem', alignItems: 'center' }}>
+
+        {/* Top Right Actions: Notification + Logout */}
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           {topRightActions || (
-            <button aria-label="Notifications" style={{ color: '#475569', minHeight: 40, minWidth: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '0.5rem' }}>
-               <Bell size={18} />
+            <button
+              onClick={() => navigate('/notifications')}
+              aria-label="Notifications"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.12)',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <Bell size={18} />
             </button>
           )}
-          <button onClick={logout} aria-label="Sign Out" title="Sign Out" style={{ color: '#64748b', minHeight: 40, minWidth: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '0.5rem', cursor: 'pointer' }}>
+          <button
+            onClick={logout}
+            aria-label="Sign Out"
+            title="Sign Out"
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.12)',
+              color: 'rgba(255, 255, 255, 0.85)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
             <LogOut size={16} />
           </button>
         </div>
       </header>
 
+      {/* ── Slide-out Drawer ── */}
       {drawerOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex' }}>
-          <button aria-label="Close Drawer Overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(2px)', border: 'none', width: '100%', cursor: 'default' }} onClick={() => setDrawerOpen(false)} />
-          <div className="animate-slide-right" style={{ position: 'relative', width: '82vw', maxWidth: '300px', height: '100%', background: '#ffffff', borderRight: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', zIndex: 1, boxShadow: '4px 0 20px rgba(0,0,0,0.12)' }}>
-            {/* Drawer Header */}
-            <div style={{ padding: '1.25rem 1rem', paddingTop: 'calc(1.25rem + env(safe-area-inset-top, 0px))', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <button
+            aria-label="Close Drawer Overlay"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'rgba(8, 59, 86, 0.5)',
+              backdropFilter: 'blur(2px)',
+              border: 'none',
+              width: '100%',
+              cursor: 'default',
+            }}
+            onClick={() => setDrawerOpen(false)}
+          />
+          <div
+            className="animate-slide-right"
+            style={{
+              position: 'relative',
+              width: '82vw',
+              maxWidth: '300px',
+              height: '100%',
+              background: '#ffffff',
+              borderRight: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              display: 'flex',
+              flexDirection: 'column',
+              zIndex: 1,
+              boxShadow: '4px 0 24px rgba(8, 59, 86, 0.12)',
+            }}
+          >
+            {/* Drawer Header (#083B56) */}
+            <div
+              style={{
+                padding: '1.25rem 1rem',
+                paddingTop: 'calc(1.25rem + env(safe-area-inset-top, 0px))',
+                background: 'var(--aarizo-navy, #083B56)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ width: 40, height: 40, borderRadius: '0.625rem', background: accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: '1.125rem' }}>
+                <div
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: '50%',
+                    background: 'var(--aarizo-blue, #176B91)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    fontWeight: 800,
+                    fontSize: '1.125rem',
+                  }}
+                >
                   {(currentUser?.name || roleTitle).charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <div style={{ color: '#f8fafc', fontWeight: 700, fontSize: '0.875rem' }}>{currentUser?.name || roleTitle}</div>
-                  <div style={{ color: '#94a3b8', fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{roleTitle}</div>
+                  <div style={{ color: '#ffffff', fontWeight: 700, fontSize: '0.9375rem' }}>
+                    {currentUser?.name || roleTitle}
+                  </div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '0.6875rem', fontWeight: 500 }}>
+                    {roleTitle}
+                  </div>
                 </div>
               </div>
-              <button onClick={() => setDrawerOpen(false)} aria-label="Close Drawer" style={{ color: '#94a3b8', minHeight: 36, minWidth: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1e293b', border: '1px solid #334155', borderRadius: '0.5rem', cursor: 'pointer' }}>
+              <button
+                onClick={() => setDrawerOpen(false)}
+                aria-label="Close Drawer"
+                style={{
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  minHeight: 36,
+                  minWidth: 36,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  cursor: 'pointer',
+                }}
+              >
                 <X size={18} />
               </button>
             </div>
+
             {/* Nav Items */}
             <nav style={{ flex: 1, overflowY: 'auto', padding: '0.75rem 0.625rem' }}>
               {drawerItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
                 return (
-                  <Link key={item.path} to={item.path} onClick={() => setDrawerOpen(false)} aria-label={item.label} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 0.875rem', borderRadius: '0.75rem', marginBottom: '0.25rem', fontWeight: 600, fontSize: '0.875rem', textDecoration: 'none', minHeight: 48, background: active ? `${accentColor}15` : 'transparent', color: active ? accentColor : '#374151', transition: 'background 0.15s' }}>
-                    <div style={{ width: 32, height: 32, borderRadius: 8, background: active ? `${accentColor}20` : '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Icon size={16} style={{ color: active ? accentColor : '#6b7280' }} />
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setDrawerOpen(false)}
+                    aria-label={item.label}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      padding: '0.75rem 0.875rem',
+                      borderRadius: '0.75rem',
+                      marginBottom: '0.25rem',
+                      fontWeight: active ? 700 : 500,
+                      fontSize: '0.875rem',
+                      textDecoration: 'none',
+                      minHeight: 46,
+                      background: active ? 'var(--aarizo-light-blue, #EAF6FC)' : 'transparent',
+                      color: active ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text, #203746)',
+                      transition: 'background 0.15s',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: 8,
+                        background: active ? 'rgba(23, 107, 145, 0.15)' : 'var(--aarizo-pale-blue, #F4FAFE)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Icon size={16} style={{ color: active ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #8B9AA5)' }} />
                     </div>
-                    <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
-                    {active && <ChevronRight size={14} style={{ color: accentColor }} />}
+                    <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {item.label}
+                    </span>
+                    {active && <ChevronRight size={14} style={{ color: 'var(--aarizo-blue, #176B91)' }} />}
                   </Link>
                 );
               })}
@@ -160,19 +334,125 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         </div>
       )}
 
-      <main style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingBottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))', background: 'inherit' }}>
+      {/* ── Main Content Area ── */}
+      <main
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          paddingBottom: 'calc(4.75rem + env(safe-area-inset-bottom, 0px))',
+          background: 'var(--aarizo-page, #F7FBFE)',
+        }}
+      >
         {children}
       </main>
 
-      <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#ffffff', borderTop: '1px solid #e2e8f0', display: 'flex', alignItems: 'stretch', justifyContent: 'space-around', paddingTop: '0.375rem', paddingBottom: 'calc(0.375rem + env(safe-area-inset-bottom, 0px))', zIndex: 100, boxShadow: '0 -2px 10px rgba(0,0,0,0.03)' }}>
-        {bottomItems.slice(0, 5).map((item) => {
+      {/* ── Screenshot-Matched Bottom Navigation with Center FAB ── */}
+      <nav
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: '#ffffff',
+          borderTop: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          paddingTop: '0.25rem',
+          paddingBottom: 'calc(0.25rem + env(safe-area-inset-bottom, 0px))',
+          zIndex: 100,
+          boxShadow: '0 -4px 16px rgba(8, 59, 86, 0.05)',
+          height: 'calc(62px + env(safe-area-inset-bottom, 0px))',
+        }}
+      >
+        {/* First 2 items on left */}
+        {navLeft.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
           return (
-            <Link key={item.path} to={item.path} aria-label={item.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', padding: '0.375rem 0.5rem 0.5rem', fontSize: '0.6875rem', fontWeight: active ? 700 : 500, textDecoration: 'none', borderRadius: '0.75rem', minWidth: 56, flex: 1, color: active ? accentColor : '#64748b', position: 'relative' }}>
-              {active && <span style={{ position: 'absolute', top: '-0.375rem', left: '50%', transform: 'translateX(-50%)', width: 24, height: 3, borderRadius: '0 0 3px 3px', background: accentColor }} />}
+            <Link
+              key={item.path}
+              to={item.path}
+              aria-label={item.label}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '2px',
+                padding: '0.25rem 0.5rem',
+                fontSize: '0.6875rem',
+                fontWeight: active ? 700 : 500,
+                textDecoration: 'none',
+                minWidth: 54,
+                flex: 1,
+                color: active ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #8B9AA5)',
+              }}
+            >
               <Icon size={20} strokeWidth={active ? 2.25 : 1.75} />
-              <span style={{ textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>{item.label}</span>
+              <span style={{ textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+
+        {/* Center Floating Action Button (FAB) */}
+        {showFab && (
+          <div style={{ position: 'relative', width: 56, display: 'flex', justifyContent: 'center' }}>
+            <button
+              onClick={() => {
+                if (onFabClick) onFabClick();
+                else navigate('/resident/visitors');
+              }}
+              aria-label="Create New Action"
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: '50%',
+                background: 'var(--aarizo-navy, #083B56)',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 6px 16px rgba(8, 59, 86, 0.28)',
+                border: '3px solid #ffffff',
+                cursor: 'pointer',
+                transform: 'translateY(-14px)',
+              }}
+            >
+              <Plus size={22} strokeWidth={2.5} />
+            </button>
+          </div>
+        )}
+
+        {/* Next 2 items on right */}
+        {navRight.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.path);
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              aria-label={item.label}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '2px',
+                padding: '0.25rem 0.5rem',
+                fontSize: '0.6875rem',
+                fontWeight: active ? 700 : 500,
+                textDecoration: 'none',
+                minWidth: 54,
+                flex: 1,
+                color: active ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #8B9AA5)',
+              }}
+            >
+              <Icon size={20} strokeWidth={active ? 2.25 : 1.75} />
+              <span style={{ textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+                {item.label}
+              </span>
             </Link>
           );
         })}

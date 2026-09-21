@@ -1,34 +1,74 @@
-/* CommunityOS Professional Light Blue & White Design Tokens System */
+/* ============================================================
+   AARIZO Master Design Tokens — Canonical Blue + White Mobile Theme
+   Matches the Primary Reference Screenshots
+   ============================================================ */
+
 :root {
-  /* Pure White + Light Blue Theme Palette */
-  --color-primary: #0284c7;            /* Primary Sky Blue */
-  --color-primary-hover: #0369a1;      /* Deep Sky Blue Hover */
-  --color-secondary: #64748b;          /* Slate Neutral */
-  --color-accent: #e0f2fe;             /* Soft Light Blue Accent */
+  /* ── 1. Canonical Color System ── */
+  --aarizo-navy: #083B56;
+  --aarizo-navy-dark: #062F45;
+  --aarizo-blue: #176B91;
+  --aarizo-blue-deep: #0E5578;
+  --aarizo-sky: #83CBEA;
+  --aarizo-light-blue: #EAF6FC;
+  --aarizo-pale-blue: #F4FAFE;
+  --aarizo-page: #F7FBFE;
+  --aarizo-white: #FFFFFF;
 
-  --color-background: #f8fafc;         /* Crisp Light Blue / White Tint Background */
-  --color-surface: #ffffff;            /* Pure White Surface */
-  --color-surface-subtle: #f0f9ff;     /* Ice Light Blue Container Surface */
+  --aarizo-text: #203746;
+  --aarizo-text-secondary: #657785;
+  --aarizo-text-muted: #8B9AA5;
 
-  --color-border: #cbd5e1;             /* Standard Border */
-  --color-border-subtle: #e2e8f0;      /* Hairline / Subtle Border */
+  --aarizo-border: #DCE8EF;
+  --aarizo-border-soft: #E8F1F5;
 
-  --color-text: #0f172a;               /* High-Contrast Body Text */
-  --color-text-muted: #475569;         /* Secondary Label Text */
-  --color-text-subtle: #94a3b8;        /* Micro Text / Captions */
-  --color-text-inverse: #ffffff;       /* Inverse White Text */
+  --aarizo-success: #3F8F58;
+  --aarizo-success-bg: #EDF8F0;
 
-  /* Functional Status Feedback Colors */
-  --color-success: #16a34a;            /* Success Green */
-  --color-success-bg: #f0fdf4;
-  --color-warning: #d97706;            /* Warning Amber */
-  --color-warning-bg: #fffbeb;
-  --color-danger: #dc2626;             /* Danger Red */
-  --color-danger-bg: #fef2f2;
-  --color-info: #0284c7;               /* Sky Blue Info */
-  --color-info-bg: #eaf5ff;
+  --aarizo-warning: #D99A2B;
+  --aarizo-warning-bg: #FFF8E8;
 
-  /* Typography Scale */
+  --aarizo-danger: #D9535B;
+  --aarizo-danger-bg: #FFF0F1;
+
+  --aarizo-info: #176B91;
+  --aarizo-info-bg: #EAF6FC;
+
+  /* ── 2. Semantic Aliases ── */
+  --color-primary: var(--aarizo-blue);
+  --color-primary-hover: var(--aarizo-blue-deep);
+  --color-background: var(--aarizo-page);
+  --color-surface: var(--aarizo-white);
+  --color-surface-subtle: var(--aarizo-light-blue);
+  --color-surface-card: var(--aarizo-white);
+  --color-surface-section: var(--aarizo-pale-blue);
+
+  --color-border: var(--aarizo-border);
+  --color-border-subtle: var(--aarizo-border-soft);
+
+  --color-text: var(--aarizo-text);
+  --color-text-muted: var(--aarizo-text-secondary);
+  --color-text-subtle: var(--aarizo-text-muted);
+  --color-text-inverse: var(--aarizo-white);
+
+  --color-success: var(--aarizo-success);
+  --color-success-bg: var(--aarizo-success-bg);
+  --color-warning: var(--aarizo-warning);
+  --color-warning-bg: var(--aarizo-warning-bg);
+  --color-danger: var(--aarizo-danger);
+  --color-danger-bg: var(--aarizo-danger-bg);
+  --color-info: var(--aarizo-info);
+  --color-info-bg: var(--aarizo-info-bg);
+
+  /* Legacy variable backward compatibility */
+  --color-bg-app: var(--aarizo-page);
+  --color-text-primary: var(--aarizo-text);
+  --color-text-secondary: var(--aarizo-text-secondary);
+  --brand-blue: var(--aarizo-blue);
+  --brand-blue-dark: var(--aarizo-navy);
+  --brand-blue-light: var(--aarizo-light-blue);
+
+  /* ── 3. Typography Scale ── */
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
@@ -49,7 +89,7 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.625;
 
-  /* Spacing Scale */
+  /* ── 4. Spacing Scale ── */
   --space-1: 0.25rem;  /* 4px */
   --space-2: 0.5rem;   /* 8px */
   --space-3: 0.75rem;  /* 12px */
@@ -60,32 +100,26 @@
   --space-10: 2.5rem;  /* 40px */
   --space-12: 3rem;    /* 48px */
 
-  /* Border Radii */
+  /* ── 5. Border Radii ── */
   --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Shadows / Elevation */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.09), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  /* ── 6. Shadows / Elevation (Soft Blue/Navy Tint) ── */
+  --shadow-sm: 0 1px 4px rgba(8, 59, 86, 0.04);
+  --shadow-card: 0 2px 10px rgba(8, 59, 86, 0.05);
+  --shadow-fab: 0 6px 18px rgba(8, 59, 86, 0.16);
+  --shadow-modal: 0 20px 40px rgba(8, 59, 86, 0.18);
 
-  /* Layout Dimensions & Boundaries */
-  --outer-toolbar-height: 48px;
-  --header-height: 56px;
+  /* ── 7. Layout Dimensions ── */
+  --header-height: 58px;
   --mobile-nav-height: 64px;
-  --sidebar-width: 260px;
-  --sidebar-collapsed-width: 72px;
+  --bottom-nav-height: 64px;
 
-  --viewport-mobile: 375px;
-  --viewport-tablet: 768px;
-  --viewport-desktop: 1440px;
-
-  /* Transitions */
+  /* ── 8. Transitions ── */
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 250ms ease-in-out;
 }

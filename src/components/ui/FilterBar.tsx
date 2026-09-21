@@ -22,13 +22,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({ options, activeFilter, onF
             key={opt.id}
             onClick={() => onFilterChange(opt.id)}
             style={{
-              padding: '0.4rem 0.85rem',
+              padding: '0.35rem 0.875rem',
               borderRadius: '9999px',
-              border: isActive ? '1px solid #2563eb' : '1px solid #cbd5e1',
-              backgroundColor: isActive ? '#eff6ff' : '#ffffff',
-              color: isActive ? '#1d4ed8' : '#64748b',
-              fontWeight: isActive ? 600 : 500,
-              fontSize: '0.8rem',
+              border: isActive ? '1px solid var(--aarizo-blue, #176B91)' : '1px solid var(--aarizo-border, #DCE8EF)',
+              backgroundColor: isActive ? 'var(--aarizo-light-blue, #EAF6FC)' : '#ffffff',
+              color: isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-secondary, #657785)',
+              fontWeight: isActive ? 700 : 500,
+              fontSize: '0.8125rem',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
               display: 'flex',
@@ -41,11 +41,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({ options, activeFilter, onF
             {opt.count !== undefined && (
               <span
                 style={{
-                  backgroundColor: isActive ? '#bfdbfe' : '#f1f5f9',
-                  color: isActive ? '#1e40af' : '#475569',
+                  backgroundColor: isActive ? 'var(--aarizo-sky, #83CBEA)' : 'var(--aarizo-pale-blue, #F4FAFE)',
+                  color: isActive ? 'var(--aarizo-navy, #083B56)' : 'var(--aarizo-text-muted, #8B9AA5)',
                   borderRadius: '9999px',
                   padding: '0.1rem 0.4rem',
-                  fontSize: '0.7rem',
+                  fontSize: '0.6875rem',
                   fontWeight: 700,
                 }}
               >

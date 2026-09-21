@@ -1,11 +1,10 @@
 import { Outlet, Link } from 'react-router-dom';
 import { MobileAppShell } from '../mobile/MobileAppShell';
-import { Home, Grid, Activity, Users, User, ShieldAlert, CreditCard, Ticket, Bell } from 'lucide-react';
+import { Home, Grid, Users, User, ShieldAlert, CreditCard, Ticket, Bell } from 'lucide-react';
 
 const DRAWER_NAV = [
   { icon: Home, label: 'Dashboard', path: '/resident' },
   { icon: Grid, label: 'Services', path: '/resident/services' },
-  { icon: Activity, label: 'Activity', path: '/resident/activity' },
   { icon: Users, label: 'Community', path: '/resident/community' },
   { icon: CreditCard, label: 'Payments', path: '/resident/billing' },
   { icon: Ticket, label: 'Complaints', path: '/resident/requests' },
@@ -16,7 +15,6 @@ const DRAWER_NAV = [
 const BOTTOM_NAV = [
   { icon: Home, label: 'Home', path: '/resident' },
   { icon: Grid, label: 'Services', path: '/resident/services' },
-  { icon: Activity, label: 'Activity', path: '/resident/activity' },
   { icon: Users, label: 'Community', path: '/resident/community' },
   { icon: User, label: 'Profile', path: '/resident/profile' },
 ];
@@ -25,36 +23,26 @@ export const ResidentLayout = () => {
   return (
     <MobileAppShell
       roleTitle="Resident"
-      accentColor="#4f46e5"
+      societyName="Green Valley Society"
       drawerItems={DRAWER_NAV}
       bottomItems={BOTTOM_NAV}
       topRightActions={
         <Link
-          to="/resident/notifications"
+          to="/notifications"
           aria-label="Notifications"
           style={{
-            position: 'relative',
-            color: 'rgba(255, 255, 255, 0.9)',
+            width: 38,
+            height: 38,
+            borderRadius: '50%',
+            background: 'rgba(255, 255, 255, 0.12)',
+            color: '#ffffff',
             display: 'flex',
-            minHeight: 44,
-            minWidth: 44,
             alignItems: 'center',
             justifyContent: 'center',
+            textDecoration: 'none',
           }}
         >
-          <Bell size={20} />
-          <span
-            style={{
-              position: 'absolute',
-              top: '8px',
-              right: '8px',
-              width: '8px',
-              height: '8px',
-              background: '#38bdf8',
-              borderRadius: '50%',
-              border: '1.5px solid #0284c7',
-            }}
-          />
+          <Bell size={18} />
         </Link>
       }
     >

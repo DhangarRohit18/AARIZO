@@ -3,7 +3,7 @@ import { CommunityMarketplaceHub } from '../../../domains/community';
 
 export const ResidentMarketplacePage: React.FC = () => {
   return (
-    <div style={{ minHeight: '100%', background: '#f7f8fa' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
       <CommunityMarketplaceHub userRole="RESIDENT" initialTab="MARKETPLACE" />
     </div>
   );
