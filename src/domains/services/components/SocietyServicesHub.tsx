@@ -227,25 +227,36 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 space-x-6 bg-white px-4 rounded-xl shadow-sm">
+      <div style={{ display: 'flex', gap: '0.4rem', overflowX: 'auto', paddingBottom: '0.25rem', borderBottom: '1px solid #DCE8EF' }}>
         {[
-          { key: 'MARKETPLACE', label: 'Browse 15 Categories', icon: Wrench },
-          { key: 'MY_ORDERS', label: `My Orders & Recurring (${orders.length})`, icon: Clock },
+          { key: 'MARKETPLACE', label: '15 Categories', icon: Wrench },
+          { key: 'MY_ORDERS', label: `My Orders (${orders.length})`, icon: Clock },
           { key: 'VENDOR_DIRECTORY', label: `Verified Vendors (${vendors.length})`, icon: ShieldCheck },
-          ...(isAdmin ? [{ key: 'ADMIN_APPROVALS', label: 'Admin Vendor Governance', icon: Building2 }] : []),
+          ...(isAdmin ? [{ key: 'ADMIN_APPROVALS', label: 'Governance', icon: Building2 }] : []),
         ].map((tab) => {
           const Icon = tab.icon;
+          const active = activeTab === tab.key;
           return (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`py-3.5 font-semibold text-xs md:text-sm flex items-center gap-2 border-b-2 transition-colors ${
-                activeTab === tab.key
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.5rem 0.75rem',
+                borderRadius: '10px',
+                border: active ? 'none' : '1px solid #DCE8EF',
+                background: active ? 'var(--aarizo-navy, #083B56)' : '#ffffff',
+                color: active ? '#ffffff' : '#657785',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                boxShadow: active ? '0 2px 6px rgba(8, 59, 86, 0.2)' : 'none',
+              }}
             >
-              <Icon size={16} />
+              <Icon size={14} />
               {tab.label}
             </button>
           );
@@ -254,16 +265,22 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
 
       {/* Tab 1: MARKETPLACE */}
       {activeTab === 'MARKETPLACE' && (
-        <div className="space-y-6">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', overflowX: 'auto', paddingBottom: '0.35rem' }}>
             <button
               onClick={() => setSelectedCategory('ALL')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                selectedCategory === 'ALL'
-                  ? 'bg-indigo-600 text-white shadow-md'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
-              }`}
+              style={{
+                padding: '0.35rem 0.75rem',
+                borderRadius: '20px',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                whiteSpace: 'nowrap',
+                border: selectedCategory === 'ALL' ? 'none' : '1px solid #DCE8EF',
+                background: selectedCategory === 'ALL' ? 'var(--aarizo-blue, #176B91)' : '#ffffff',
+                color: selectedCategory === 'ALL' ? '#ffffff' : '#657785',
+                cursor: 'pointer',
+              }}
             >
               All Services
             </button>
@@ -291,13 +308,22 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition-all ${
-                    selectedCategory === cat
-                      ? 'bg-indigo-600 text-white shadow-md'
-                      : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
-                  }`}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.3rem',
+                    padding: '0.35rem 0.65rem',
+                    borderRadius: '20px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    whiteSpace: 'nowrap',
+                    border: selectedCategory === cat ? 'none' : '1px solid #DCE8EF',
+                    background: selectedCategory === cat ? 'var(--aarizo-blue, #176B91)' : '#ffffff',
+                    color: selectedCategory === cat ? '#ffffff' : '#657785',
+                    cursor: 'pointer',
+                  }}
                 >
-                  <Icon size={14} />
+                  <Icon size={12} />
                   {cat.replace('_', ' ')}
                 </button>
               );
@@ -593,65 +619,87 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
 
       {/* Book Modal */}
       {modalMode === 'BOOK' && selectedItemForBook && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
-            <div className="flex justify-between items-center border-b pb-3">
-              <h3 className="font-bold text-slate-900 text-base">Book {selectedItemForBook.title}</h3>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(8, 59, 86, 0.6)', backdropFilter: 'blur(4px)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div style={{ background: '#ffffff', borderRadius: '20px', maxWidth: '420px', width: '100%', padding: '1.5rem', boxShadow: '0 20px 40px rgba(8, 59, 86, 0.2)', border: '1px solid #DCE8EF' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
+              <div>
+                <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--aarizo-blue, #176B91)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Service Booking</span>
+                <h3 style={{ margin: 0, fontWeight: 800, color: '#083B56', fontSize: '1.125rem' }}>{selectedItemForBook.title}</h3>
+              </div>
               <button
                 type="button"
                 onClick={() => setModalMode(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                style={{ background: '#F1F5F9', border: 'none', borderRadius: '8px', padding: '0.35rem', cursor: 'pointer', color: '#64748B', display: 'flex', alignItems: 'center' }}
                 title="Close"
               >
                 <X size={18} />
               </button>
             </div>
 
-            <form onSubmit={handleBookSubmit} className="space-y-4">
+            <form onSubmit={handleBookSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Booking / Subscription Schedule</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#203746', marginBottom: '0.35rem' }}>
+                  Booking / Subscription Schedule
+                </label>
                 <select
                   value={bookForm.recurringSchedule}
                   onChange={(e) => setBookForm({ ...bookForm, recurringSchedule: e.target.value as any })}
-                  className="w-full px-3 py-2 border rounded-lg text-xs bg-white font-bold"
+                  style={{ width: '100%', padding: '0.55rem 0.75rem', border: '1px solid #DCE8EF', borderRadius: '10px', fontSize: '0.75rem', background: '#ffffff', color: '#203746', fontWeight: 600 }}
                 >
-                  <option value="ONE_TIME">ONE-TIME BOOKING</option>
-                  <option value="WEEKLY">WEEKLY RECURRING (Maid, Laundry, Car Wash)</option>
-                  <option value="MONTHLY">MONTHLY RECURRING (Pest Control, Pool Cleaning)</option>
-                  <option value="CUSTOM_SCHEDULE">CUSTOM SCHEDULE</option>
+                  <option value="ONE_TIME">One-Time Booking</option>
+                  <option value="WEEKLY">Weekly Recurring (Maid, Laundry, Car Wash)</option>
+                  <option value="MONTHLY">Monthly Recurring (Pest Control, Maintenance)</option>
+                  <option value="CUSTOM_SCHEDULE">Custom Schedule</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Scheduled Start Date</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#203746', marginBottom: '0.35rem' }}>
+                  Scheduled Start Date
+                </label>
                 <input
                   type="date"
                   required
                   value={bookForm.scheduledDate}
                   onChange={(e) => setBookForm({ ...bookForm, scheduledDate: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-xs"
+                  style={{ width: '100%', padding: '0.55rem 0.75rem', border: '1px solid #DCE8EF', borderRadius: '10px', fontSize: '0.75rem', background: '#ffffff', color: '#203746' }}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Custom Notes / Preferred Time</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#203746', marginBottom: '0.35rem' }}>
+                  Custom Notes / Preferred Time
+                </label>
                 <textarea
                   rows={2}
                   placeholder="e.g. Please arrive between 10 AM and 11 AM."
                   value={bookForm.customNotes}
                   onChange={(e) => setBookForm({ ...bookForm, customNotes: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-xs"
+                  style={{ width: '100%', padding: '0.55rem 0.75rem', border: '1px solid #DCE8EF', borderRadius: '10px', fontSize: '0.75rem', background: '#ffffff', color: '#203746', outline: 'none' }}
                 />
               </div>
 
-              <div className="flex justify-between items-center pt-3 border-t">
-                <span className="text-base font-extrabold text-slate-900">Total: ₹{selectedItemForBook.price}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1px solid #E2E8F0', marginTop: '0.5rem' }}>
+                <div>
+                  <span style={{ fontSize: '0.6875rem', color: '#657785', display: 'block' }}>Total Estimate</span>
+                  <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56' }}>₹{selectedItemForBook.price}</span>
+                </div>
                 <button
                   type="submit"
-                  style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
-                  className="px-5 py-2.5 text-xs font-bold rounded-xl shadow-md hover:brightness-110 transition-all"
+                  style={{
+                    background: 'var(--aarizo-blue, #176B91)',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '0.625rem 1.25rem',
+                    fontSize: '0.8125rem',
+                    fontWeight: 700,
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(23, 107, 145, 0.25)',
+                    transition: 'all 0.2s',
+                  }}
                 >
-                  Confirm & Dispatch Order
+                  Confirm &amp; Dispatch Order
                 </button>
               </div>
             </form>

@@ -1,26 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Wrench,
-  Clock,
   Calendar,
   Trash2,
   Zap,
   UserCheck,
   Settings,
+  CheckSquare,
 } from 'lucide-react';
 import { AssetComplianceHub } from '../../domains/compliance';
 import { StaffShiftHub } from '../../domains/staff';
 import { SocietyOperationsBoard } from '../../domains/utilities';
 
 export const FacilityManagerDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'maintenance' | 'shifts' | 'amc' | 'cleaning' | 'utilities'>('maintenance');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const getInitialTab = (): 'maintenance' | 'shifts' | 'amc' | 'cleaning' | 'utilities' => {
+    if (location.pathname.includes('/shifts') || location.pathname.includes('/tasks')) return 'shifts';
+    if (location.pathname.includes('/amc')) return 'amc';
+    if (location.pathname.includes('/cleaning')) return 'cleaning';
+    if (location.pathname.includes('/utilities')) return 'utilities';
+    return 'maintenance';
+  };
+
+  const [activeTab, setActiveTab] = useState<'maintenance' | 'shifts' | 'amc' | 'cleaning' | 'utilities'>(getInitialTab);
+
+  useEffect(() => {
+    setActiveTab(getInitialTab());
+  }, [location.pathname]);
 
   const tabs = [
-    { key: 'maintenance', label: 'Maintenance', icon: Wrench },
-    { key: 'shifts', label: 'Staff Shifts', icon: Clock },
-    { key: 'amc', label: 'AMC Contracts', icon: Calendar },
-    { key: 'cleaning', label: 'Housekeeping', icon: Trash2 },
-    { key: 'utilities', label: 'Utilities', icon: Zap },
+    { key: 'maintenance', label: 'Maintenance', icon: Wrench, path: '/facility/maintenance' },
+    { key: 'shifts', label: 'Tasks & Shifts', icon: CheckSquare, path: '/facility/tasks' },
+    { key: 'amc', label: 'AMC Contracts', icon: Calendar, path: '/facility/amc' },
+    { key: 'cleaning', label: 'Housekeeping', icon: Trash2, path: '/facility/cleaning' },
+    { key: 'utilities', label: 'Utilities', icon: Zap, path: '/facility/utilities' },
   ] as const;
 
   const stats = [
@@ -92,7 +108,10 @@ export const FacilityManagerDashboard: React.FC = () => {
             return (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => {
+                  setActiveTab(tab.key);
+                  navigate(tab.path);
+                }}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '0.35rem',
                   padding: '0.55rem 0.875rem',

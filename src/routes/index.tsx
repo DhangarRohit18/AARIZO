@@ -253,6 +253,7 @@ export const AppRoutes: React.FC = () => {
       <Route element={<ProtectedRoute allowedRoles={['facility_manager', 'secretary', 'admin']} />}>
         <Route element={<FacilityManagerLayout />}>
           <Route path="/facility" element={<FacilityManagerDashboard />} />
+          <Route path="/facility/tasks" element={<FacilityManagerDashboard />} />
           <Route path="/facility/maintenance" element={<FacilityManagerDashboard />} />
           <Route path="/facility/shifts" element={<FacilityManagerDashboard />} />
           <Route path="/facility/amc" element={<FacilityManagerDashboard />} />

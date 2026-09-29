@@ -115,75 +115,65 @@ export const StaffShiftHub: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Metrics Banner */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today's Staff</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-slate-900">{metrics.todaysTotalStaff}</span>
-            <Users size={20} className="text-slate-400" />
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">On Duty</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-emerald-600">{metrics.onDutyCount}</span>
-            <UserCheck size={20} className="text-emerald-500" />
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Absent</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-rose-600">{metrics.absentCount}</span>
-            <UserX size={20} className="text-rose-500" />
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Replacement Req.</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-amber-600">{metrics.replacementRequiredCount}</span>
-            <AlertTriangle size={20} className="text-amber-500" />
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Tasks</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-indigo-600">{metrics.pendingTasksCount}</span>
-            <Clock size={20} className="text-indigo-500" />
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tasks Completed</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-emerald-600">{metrics.completedTasksCount}</span>
-            <CheckCircle2 size={20} className="text-emerald-500" />
-          </div>
-        </div>
+      {/* Metrics Banner - Responsive Neat Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+        {[
+          { label: "Today's Staff", value: metrics.todaysTotalStaff, color: '#083B56', bg: '#F4FAFE', icon: Users },
+          { label: 'On Duty', value: metrics.onDutyCount, color: '#059669', bg: '#ECFDF5', icon: UserCheck },
+          { label: 'Absent', value: metrics.absentCount, color: '#DC2626', bg: '#FEF2F2', icon: UserX },
+          { label: 'Replace Req.', value: metrics.replacementRequiredCount, color: '#D97706', bg: '#FFFBEB', icon: AlertTriangle },
+          { label: 'Pending Tasks', value: metrics.pendingTasksCount, color: '#176B91', bg: '#EAF6FC', icon: Clock },
+          { label: 'Completed', value: metrics.completedTasksCount, color: '#059669', bg: '#ECFDF5', icon: CheckCircle2 },
+        ].map((m, idx) => {
+          const IconComponent = m.icon;
+          return (
+            <div
+              key={idx}
+              style={{
+                background: '#ffffff',
+                border: '1px solid #DCE8EF',
+                borderRadius: '12px',
+                padding: '0.625rem 0.5rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                <span style={{ fontSize: '0.65rem', fontWeight: 600, color: '#657785', textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.1 }}>
+                  {m.label}
+                </span>
+                <div style={{ width: 22, height: 22, borderRadius: '6px', background: m.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IconComponent size={12} color={m.color} />
+                </div>
+              </div>
+              <span style={{ fontSize: '1.25rem', fontWeight: 800, color: m.color, lineHeight: 1 }}>
+                {m.value}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Control Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search staff, task, phone..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border rounded-lg text-xs"
-            />
-          </div>
+      {/* Control Bar - Neat & Responsive */}
+      <div style={{ background: '#ffffff', border: '1px solid #DCE8EF', borderRadius: '14px', padding: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+        <div style={{ position: 'relative', width: '100%' }}>
+          <Search size={15} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#8B9AA5' }} />
+          <input
+            type="text"
+            placeholder="Search staff, task, phone..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ width: '100%', paddingLeft: '2rem', paddingRight: '0.75rem', paddingTop: '0.45rem', paddingBottom: '0.45rem', border: '1px solid #DCE8EF', borderRadius: '10px', fontSize: '0.75rem', outline: 'none' }}
+          />
+        </div>
 
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
           <select
             value={selectedRole}
             onChange={(e) => setSelectedRole(e.target.value)}
-            className="px-3 py-2 border rounded-lg text-xs font-semibold bg-white text-slate-700"
+            style={{ width: '100%', padding: '0.45rem 0.5rem', border: '1px solid #DCE8EF', borderRadius: '10px', fontSize: '0.72rem', fontWeight: 600, background: '#ffffff', color: '#203746' }}
           >
             <option value="ALL">All Staff Roles</option>
             <option value="GUARD">Security Guard</option>
@@ -196,7 +186,7 @@ export const StaffShiftHub: React.FC = () => {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-2 border rounded-lg text-xs font-semibold bg-white text-slate-700"
+            style={{ width: '100%', padding: '0.45rem 0.5rem', border: '1px solid #DCE8EF', borderRadius: '10px', fontSize: '0.72rem', fontWeight: 600, background: '#ffffff', color: '#203746' }}
           >
             <option value="ALL">All Statuses</option>
             <option value="SCHEDULED">Scheduled</option>
@@ -220,88 +210,126 @@ export const StaffShiftHub: React.FC = () => {
             });
             setModalMode('CREATE');
           }}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md"
+          style={{ width: '100%', padding: '0.55rem', background: 'var(--aarizo-blue, #176B91)', color: '#ffffff', border: 'none', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', cursor: 'pointer', boxShadow: '0 2px 6px rgba(23, 107, 145, 0.2)' }}
         >
           <PlusCircle size={15} /> Schedule Shift & Assign Task
         </button>
       </div>
 
-      {/* Roster Directory */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm divide-y divide-slate-100">
+      {/* Roster Directory - Neat Cards */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {filteredShifts.length === 0 ? (
-          <div className="p-12 text-center text-slate-400">
-            <Users size={36} className="mx-auto mb-2 text-slate-300" />
-            <p className="font-medium text-slate-600">No shift records found for this filter.</p>
+          <div style={{ background: '#ffffff', border: '1px solid #DCE8EF', borderRadius: '14px', padding: '2rem', textAlign: 'center', color: '#8B9AA5' }}>
+            <Users size={32} style={{ margin: '0 auto 0.5rem', color: '#CBD5E1' }} />
+            <p style={{ margin: 0, fontWeight: 600, fontSize: '0.8125rem', color: '#475569' }}>No shift records found for this filter.</p>
           </div>
         ) : (
           filteredShifts.map((shift) => (
-            <div key={shift.id} className="p-5 hover:bg-slate-50/80 transition-colors flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div className="space-y-1.5 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold bg-slate-100 text-slate-800 rounded">
+            <div
+              key={shift.id}
+              style={{
+                background: '#ffffff',
+                border: '1px solid #DCE8EF',
+                borderRadius: '14px',
+                padding: '0.875rem',
+                boxShadow: '0 2px 6px rgba(8, 59, 86, 0.04)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.625rem',
+              }}
+            >
+              {/* Header row: Role badge, Name, Status */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span style={{ fontSize: '0.625rem', fontWeight: 800, textTransform: 'uppercase', padding: '0.15rem 0.45rem', borderRadius: '6px', background: '#F1F5F9', color: '#334155' }}>
                     {shift.staffRole}
                   </span>
-                  <h4 className="font-bold text-slate-900 text-base">{shift.staffName}</h4>
-                  <span className="text-xs text-slate-400">({shift.phone})</span>
+                  <span style={{ fontWeight: 800, color: '#083B56', fontSize: '0.875rem' }}>
+                    {shift.staffName}
+                  </span>
+                  <span style={{ fontSize: '0.7rem', color: '#8B9AA5' }}>
+                    {shift.phone}
+                  </span>
+                </div>
 
-                  <span
-                    className={`px-2.5 py-0.5 text-xs font-bold rounded-full ${
+                <span
+                  style={{
+                    fontSize: '0.6875rem',
+                    fontWeight: 700,
+                    padding: '0.15rem 0.55rem',
+                    borderRadius: '20px',
+                    background:
                       shift.status === 'ON_DUTY'
-                        ? 'bg-emerald-100 text-emerald-800'
+                        ? '#ECFDF5'
                         : shift.status === 'ABSENT'
-                        ? 'bg-rose-100 text-rose-800 animate-pulse'
+                        ? '#FEF2F2'
                         : shift.status === 'REPLACED'
-                        ? 'bg-purple-100 text-purple-800'
-                        : 'bg-slate-100 text-slate-700'
-                    }`}
-                  >
-                    {shift.status}
-                  </span>
-                </div>
+                        ? '#FAF5FF'
+                        : '#F8FAFC',
+                    color:
+                      shift.status === 'ON_DUTY'
+                        ? '#059669'
+                        : shift.status === 'ABSENT'
+                        ? '#DC2626'
+                        : shift.status === 'REPLACED'
+                        ? '#7C3AED'
+                        : '#64748B',
+                  }}
+                >
+                  {shift.status}
+                </span>
+              </div>
 
-                <div className="flex flex-wrap items-center gap-x-4 text-xs text-slate-500">
-                  <span>
-                    Shift: <strong className="text-slate-800">{shift.shiftType}</strong> ({shift.startTime} - {shift.endTime})
+              {/* Shift info chips */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', fontSize: '0.7rem', color: '#657785' }}>
+                <span style={{ background: '#F4FAFE', border: '1px solid #E2E8F0', padding: '0.15rem 0.45rem', borderRadius: '6px' }}>
+                  Shift: <strong style={{ color: '#083B56' }}>{shift.shiftType}</strong> ({shift.startTime} - {shift.endTime})
+                </span>
+                {shift.attendanceCheckInTime && (
+                  <span style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', color: '#065F46', padding: '0.15rem 0.45rem', borderRadius: '6px', fontWeight: 600 }}>
+                    In: {shift.attendanceCheckInTime}
                   </span>
-                  {shift.attendanceCheckInTime && (
-                    <span className="text-emerald-700 font-semibold">In at: {shift.attendanceCheckInTime}</span>
-                  )}
-                  {shift.overtimeHours > 0 && (
-                    <span className="text-indigo-600 font-semibold">OT: {shift.overtimeHours} hrs</span>
-                  )}
-                </div>
-
-                {shift.assignedTask && (
-                  <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200/60 text-xs flex items-center justify-between gap-2">
-                    <span className="text-slate-700 font-medium">Task: {shift.assignedTask}</span>
-                    {shift.isTaskCompleted ? (
-                      <span className="text-emerald-600 font-bold flex items-center gap-1">
-                        <CheckCircle2 size={13} /> COMPLETED
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => handleCompleteTask(shift.id)}
-                        className="text-xs text-indigo-600 font-bold hover:underline"
-                      >
-                        Mark Completed
-                      </button>
-                    )}
-                  </div>
                 )}
-
-                {shift.replacementWorkerName && (
-                  <div className="text-xs text-purple-700 font-semibold">
-                    Replacement Worker: {shift.replacementWorkerName}
-                  </div>
+                {shift.overtimeHours > 0 && (
+                  <span style={{ background: '#EEF2FF', border: '1px solid #C7D2FE', color: '#4338CA', padding: '0.15rem 0.45rem', borderRadius: '6px', fontWeight: 600 }}>
+                    OT: {shift.overtimeHours} hrs
+                  </span>
                 )}
               </div>
 
-              {/* Actions */}
-              <div className="flex flex-wrap items-center gap-2">
+              {/* Assigned Task Strip */}
+              {shift.assignedTask && (
+                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '0.5rem 0.625rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.72rem', color: '#334155', fontWeight: 600 }}>
+                    Task: {shift.assignedTask}
+                  </span>
+                  {shift.isTaskCompleted ? (
+                    <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#059669', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                      <CheckCircle2 size={13} /> Completed
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => handleCompleteTask(shift.id)}
+                      style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--aarizo-blue, #176B91)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                    >
+                      Mark Completed
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {shift.replacementWorkerName && (
+                <div style={{ fontSize: '0.7rem', color: '#7C3AED', fontWeight: 600 }}>
+                  Replacement: {shift.replacementWorkerName}
+                </div>
+              )}
+
+              {/* Actions Footer */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.4rem', borderTop: '1px solid #F1F5F9', paddingTop: '0.5rem', flexWrap: 'wrap' }}>
                 {shift.status !== 'ON_DUTY' && (
                   <button
                     onClick={() => handleStatusChange(shift.id, 'ON_DUTY')}
-                    className="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-semibold rounded-lg"
+                    style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#059669', background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '0.3rem 0.65rem', borderRadius: '8px', cursor: 'pointer' }}
                   >
                     Check In
                   </button>
@@ -310,7 +338,7 @@ export const StaffShiftHub: React.FC = () => {
                 {shift.status !== 'ABSENT' && (
                   <button
                     onClick={() => handleStatusChange(shift.id, 'ABSENT')}
-                    className="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-semibold rounded-lg"
+                    style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#DC2626', background: '#FEF2F2', border: '1px solid #FECACA', padding: '0.3rem 0.65rem', borderRadius: '8px', cursor: 'pointer' }}
                   >
                     Mark Absent
                   </button>
@@ -323,7 +351,7 @@ export const StaffShiftHub: React.FC = () => {
                       setReplacementName('');
                       setModalMode('REPLACE');
                     }}
-                    className="px-3 py-1.5 bg-amber-50 text-amber-800 hover:bg-amber-100 text-xs font-semibold rounded-lg"
+                    style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#D97706', background: '#FFFBEB', border: '1px solid #FDE68A', padding: '0.3rem 0.65rem', borderRadius: '8px', cursor: 'pointer' }}
                   >
                     Assign Replacement
                   </button>
@@ -334,9 +362,10 @@ export const StaffShiftHub: React.FC = () => {
                     setActiveShiftForModal(shift);
                     setModalMode('HISTORY');
                   }}
-                  className="p-1.5 text-slate-400 hover:text-slate-700"
+                  title="Shift Audit History"
+                  style={{ background: 'none', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '0.3rem 0.45rem', color: '#64748B', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                 >
-                  <History size={16} />
+                  <History size={14} />
                 </button>
               </div>
             </div>
