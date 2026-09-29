@@ -1,0 +1,520 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  resident
+  guard
+  secretary
+  committee
+  facility_manager
+  vendor
+  admin
+}
+
+enum EntityStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING
+  ARCHIVED
+}
+
+enum PassType {
+  GUEST
+  DELIVERY
+  CAB
+  SERVICE
+  FREQUENT
+}
+
+enum PassStatus {
+  PENDING
+  APPROVED
+  CHECKED_IN
+  CHECKED_OUT
+  EXPIRED
+  CANCELLED
+  REJECTED
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  PARTIALLY_PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  EMERGENCY
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  REOPENED
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model Society {
+  id              String         @id @default(uuid())
+  name            String
+  code            String         @unique
+  city            String
+  address         String
+  pincode         String?
+  totalTowers     Int            @default(0) @map("total_towers")
+  totalFlats      Int            @default(0) @map("total_flats")
+  establishedYear Int?           @map("established_year")
+  gateCount       Int            @default(1) @map("gate_count")
+  amenitiesCount  Int            @default(0) @map("amenities_count")
+  status          EntityStatus   @default(ACTIVE)
+  settings        Json?          @default("{}")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  towers          Tower[]
+  flats           Flat[]
+  users           User[]
+  residents       Resident[]
+  staff           Staff[]
+  domesticWorkers DomesticWorker[]
+  vendors         Vendor[]
+  visitorPasses   VisitorPass[]
+  parcels         Parcel[]
+  amenities       Amenity[]
+  maintenanceTickets MaintenanceTicket[]
+  billingCycles   BillingCycle[]
+  billingInvoices BillingInvoice[]
+  parkingSlots    ParkingSlot[]
+  emergencyIncidents EmergencyIncident[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+
+  @@map("societies")
+}
+
+model Tower {
+  id          String       @id @default(uuid())
+  societyId   String       @map("society_id")
+  name        String
+  blockCode   String?      @map("block_code")
+  totalFloors Int          @default(1) @map("total_floors")
+  totalUnits  Int          @default(0) @map("total_units")
+  hasElevator Boolean      @default(true) @map("has_elevator")
+  status      EntityStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  society     Society      @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  flats       Flat[]
+
+  @@map("towers")
+}
+
+model Flat {
+  id               String       @id @default(uuid())
+  societyId        String       @map("society_id")
+  towerId          String       @map("tower_id")
+  flatNumber       String       @map("flat_number")
+  floorNumber      Int          @default(0) @map("floor_number")
+  intercomExtension String?    @map("intercom_extension")
+  bhkType          String?      @map("bhk_type")
+  carpetAreaSqft   Decimal?     @map("carpet_area_sqft") @db.Decimal(10, 2)
+  occupancyStatus  String       @default("VACANT") @map("occupancy_status")
+  status           EntityStatus @default(ACTIVE)
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  society          Society      @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  tower            Tower        @relation(fields: [towerId], references: [id], onDelete: Cascade)
+  residents        Resident[]
+  users            User[]
+  parkingSlots     ParkingSlot[]
+  billingInvoices  BillingInvoice[]
+  visitorPasses    VisitorPass[]
+  parcels          Parcel[]
+
+  @@unique([towerId, flatNumber])
+  @@map("flats")
+}
+
+model User {
+  id          String       @id
+  societyId   String?      @map("society_id")
+  flatId      String?      @map("flat_id")
+  name        String
+  email       String?      @unique
+  phone       String
+  role        UserRole     @default(resident)
+  flatNumber  String?      @map("flat_number")
+  flatDetails String?      @map("flat_details")
+  designation String?
+  avatarUrl   String?      @map("avatar_url")
+  fcmToken    String?      @map("fcm_token")
+  status      EntityStatus @default(ACTIVE)
+  preferences Json?        @default("{\"theme\": \"dark\", \"notifications\": true}")
+  metadata    Json?        @default("{}")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  society     Society?     @relation(fields: [societyId], references: [id], onDelete: SetNull)
+  flat        Flat?        @relation(fields: [flatId], references: [id], onDelete: SetNull)
+  residents   Resident[]
+  staff       Staff[]
+  vendors     Vendor[]
+  notifications Notification[]
+  auditLogs   AuditLog[]
+
+  @@map("users")
+}
+
+model Resident {
+  id                    String       @id @default(uuid())
+  societyId             String       @map("society_id")
+  userId                String?      @map("user_id")
+  flatId                String       @map("flat_id")
+  name                  String
+  phone                 String
+  email                 String?
+  residentType          String       @default("OWNER") @map("resident_type")
+  moveInDate            DateTime?    @map("move_in_date") @db.Date
+  emergencyContactName  String?      @map("emergency_contact_name")
+  emergencyContactPhone String?      @map("emergency_contact_phone")
+  isVerified            Boolean      @default(false) @map("is_verified")
+  status                EntityStatus @default(ACTIVE)
+  createdAt             DateTime     @default(now()) @map("created_at")
+  updatedAt             DateTime     @updatedAt @map("updated_at")
+
+  society               Society      @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  user                  User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  flat                  Flat         @relation(fields: [flatId], references: [id], onDelete: Cascade)
+  familyMembers         FamilyMember[]
+  vehicles              Vehicle[]
+  visitorPasses         VisitorPass[]
+  parcels               Parcel[]
+  billingInvoices       BillingInvoice[]
+  maintenanceTickets    MaintenanceTicket[]
+
+  @@map("residents")
+}
+
+model FamilyMember {
+  id           String    @id @default(uuid())
+  residentId   String    @map("resident_id")
+  name         String
+  relationship String
+  phone        String?
+  age          Int?
+  hasAppAccess Boolean   @default(false) @map("has_app_access")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  resident     Resident  @relation(fields: [residentId], references: [id], onDelete: Cascade)
+
+  @@map("family_members")
+}
+
+model Vehicle {
+  id            String    @id @default(uuid())
+  residentId    String    @map("resident_id")
+  vehicleNumber String    @map("vehicle_number")
+  vehicleType   String    @map("vehicle_type")
+  makeModel     String?   @map("make_model")
+  color         String?
+  parkingSlotId String?   @map("parking_slot_id")
+  rfidTag       String?   @map("rfid_tag")
+  isVerified    Boolean   @default(true) @map("is_verified")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  resident      Resident  @relation(fields: [residentId], references: [id], onDelete: Cascade)
+
+  @@map("vehicles")
+}
+
+model Staff {
+  id               String       @id @default(uuid())
+  societyId        String       @map("society_id")
+  userId           String?      @map("user_id")
+  name             String
+  roleCategory     String       @map("role_category")
+  phone            String
+  shiftTimings     String?      @map("shift_timings")
+  isPoliceVerified Boolean      @default(false) @map("is_police_verified")
+  status           EntityStatus @default(ACTIVE)
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  society          Society      @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  user             User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("staff")
+}
+
+model DomesticWorker {
+  id               String    @id @default(uuid())
+  societyId        String    @map("society_id")
+  name             String
+  profession       String
+  phone            String
+  passcode         String?
+  rating           Decimal?  @default(5.0) @db.Decimal(2, 1)
+  associatedFlats  String[]  @default([]) @map("associated_flats")
+  currentStatus    String    @default("OUTSIDE") @map("current_status")
+  isPoliceVerified Boolean   @default(false) @map("is_police_verified")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  society          Society   @relation(fields: [societyId], references: [id], onDelete: Cascade)
+
+  @@map("domestic_workers")
+}
+
+model Vendor {
+  id            String       @id @default(uuid())
+  societyId     String       @map("society_id")
+  userId        String?      @map("user_id")
+  businessName  String       @map("business_name")
+  contactPerson String       @map("contact_person")
+  serviceType   String       @map("service_type")
+  phone         String
+  email         String?
+  gstNumber     String?      @map("gst_number")
+  rating        Decimal?     @default(4.8) @db.Decimal(2, 1)
+  status        EntityStatus @default(ACTIVE)
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  society       Society      @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  user          User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("vendors")
+}
+
+model VisitorPass {
+  id            String     @id @default(uuid())
+  societyId     String     @map("society_id")
+  residentId    String?    @map("resident_id")
+  flatId        String?    @map("flat_id")
+  visitorName   String     @map("visitor_name")
+  phone         String
+  passType      PassType   @default(GUEST) @map("pass_type")
+  vehicleNumber String?    @map("vehicle_number")
+  purpose       String?
+  status        PassStatus @default(PENDING)
+  qrCodeHash    String?    @map("qr_code_hash")
+  validFrom     DateTime   @map("valid_from")
+  validTo       DateTime   @map("valid_to")
+  checkInTime   DateTime?  @map("check_in_time")
+  checkOutTime  DateTime?  @map("check_out_time")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+
+  society       Society    @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  resident      Resident?  @relation(fields: [residentId], references: [id], onDelete: SetNull)
+  flat          Flat?      @relation(fields: [flatId], references: [id], onDelete: SetNull)
+
+  @@map("visitor_passes")
+}
+
+model Parcel {
+  id                  String    @id @default(uuid())
+  societyId           String    @map("society_id")
+  residentId          String    @map("resident_id")
+  flatId              String    @map("flat_id")
+  courierCompany      String    @map("courier_company")
+  deliveryPartnerName String?   @map("delivery_partner_name")
+  trackingNumber      String?   @map("tracking_number")
+  arrivalTime         DateTime  @default(now()) @map("arrival_time")
+  pickedUpAt          DateTime? @map("picked_up_at")
+  pickupCode          String    @map("pickup_code")
+  status              String    @default("AT_GATE")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  society             Society   @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  resident            Resident  @relation(fields: [residentId], references: [id], onDelete: Cascade)
+  flat                Flat      @relation(fields: [flatId], references: [id], onDelete: Cascade)
+
+  @@map("parcels")
+}
+
+model BillingCycle {
+  id                   String           @id @default(uuid())
+  societyId            String           @map("society_id")
+  cycleName            String           @map("cycle_name")
+  monthYear            String           @map("month_year")
+  billingDate          DateTime         @map("billing_date") @db.Date
+  dueDate              DateTime         @map("due_date") @db.Date
+  lateFeeAmount        Decimal?         @default(0.00) @map("late_fee_amount") @db.Decimal(10, 2)
+  totalBilledAmount    Decimal?         @default(0.00) @map("total_billed_amount") @db.Decimal(12, 2)
+  totalCollectedAmount Decimal?         @default(0.00) @map("total_collected_amount") @db.Decimal(12, 2)
+  createdAt            DateTime         @default(now()) @map("created_at")
+  updatedAt            DateTime         @updatedAt @map("updated_at")
+
+  society              Society          @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  invoices             BillingInvoice[]
+
+  @@map("billing_cycles")
+}
+
+model BillingInvoice {
+  id                String          @id @default(uuid())
+  societyId         String          @map("society_id")
+  cycleId           String?         @map("cycle_id")
+  residentId        String          @map("resident_id")
+  flatId            String          @map("flat_id")
+  invoiceNumber     String          @unique @map("invoice_number")
+  maintenanceAmount Decimal         @map("maintenance_amount") @db.Decimal(10, 2)
+  utilityAmount     Decimal?        @default(0.00) @map("utility_amount") @db.Decimal(10, 2)
+  sinkingFund       Decimal?        @default(0.00) @map("sinking_fund") @db.Decimal(10, 2)
+  lateFee           Decimal?        @default(0.00) @map("late_fee") @db.Decimal(10, 2)
+  totalAmount       Decimal         @map("total_amount") @db.Decimal(10, 2)
+  paidAmount        Decimal?        @default(0.00) @map("paid_amount") @db.Decimal(10, 2)
+  dueDate           DateTime        @map("due_date") @db.Date
+  status            InvoiceStatus   @default(PENDING)
+  paymentMode       String?         @map("payment_mode")
+  paidAt            DateTime?       @map("paid_at")
+  breakdown         Json?           @default("{}")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+
+  society           Society         @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  cycle             BillingCycle?   @relation(fields: [cycleId], references: [id], onDelete: SetNull)
+  resident          Resident        @relation(fields: [residentId], references: [id], onDelete: Cascade)
+  flat              Flat            @relation(fields: [flatId], references: [id], onDelete: Cascade)
+
+  @@map("billing_invoices")
+}
+
+model Amenity {
+  id                  String       @id @default(uuid())
+  societyId           String       @map("society_id")
+  name                String
+  category            String?
+  capacityPerSlot     Int          @default(10) @map("capacity_per_slot")
+  slotDurationMinutes Int          @default(60) @map("slot_duration_minutes")
+  hourlyCharge        Decimal?     @default(0.00) @map("hourly_charge") @db.Decimal(10, 2)
+  requiresApproval    Boolean      @default(false) @map("requires_approval")
+  status              EntityStatus @default(ACTIVE)
+  rulesText           String?      @map("rules_text")
+  createdAt           DateTime     @default(now()) @map("created_at")
+  updatedAt           DateTime     @updatedAt @map("updated_at")
+
+  society             Society      @relation(fields: [societyId], references: [id], onDelete: Cascade)
+
+  @@map("amenities")
+}
+
+model MaintenanceTicket {
+  id                String         @id @default(uuid())
+  societyId         String         @map("society_id")
+  residentId        String?        @map("resident_id")
+  flatId            String?        @map("flat_id")
+  category          String
+  title             String
+  description       String
+  priority          TicketPriority @default(MEDIUM)
+  status            TicketStatus   @default(OPEN)
+  assignedStaffName String?        @map("assigned_staff_name")
+  feedbackNotes     String?        @map("feedback_notes")
+  rating            Int?
+  resolvedAt        DateTime?      @map("resolved_at")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  society           Society        @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  resident          Resident?      @relation(fields: [residentId], references: [id], onDelete: SetNull)
+
+  @@map("maintenance_tickets")
+}
+
+model ParkingSlot {
+  id             String       @id @default(uuid())
+  societyId      String       @map("society_id")
+  slotNumber     String       @map("slot_number")
+  towerBlock     String?      @map("tower_block")
+  slotType       String       @default("RESIDENT") @map("slot_type")
+  allocatedFlatId String?     @map("allocated_flat_id")
+  isOccupied     Boolean      @default(false) @map("is_occupied")
+  status         EntityStatus @default(ACTIVE)
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  society        Society      @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  flat           Flat?        @relation(fields: [allocatedFlatId], references: [id], onDelete: SetNull)
+
+  @@map("parking_slots")
+}
+
+model EmergencyIncident {
+  id             String           @id @default(uuid())
+  societyId      String           @map("society_id")
+  incidentType   String           @map("incident_type")
+  severity       IncidentSeverity @default(HIGH)
+  location       String
+  description    String?
+  dispatchStatus String           @default("DISPATCHED") @map("dispatch_status")
+  resolvedAt     DateTime?        @map("resolved_at")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+
+  society        Society          @relation(fields: [societyId], references: [id], onDelete: Cascade)
+
+  @@map("emergency_incidents")
+}
+
+model Notification {
+  id          String    @id @default(uuid())
+  societyId   String    @map("society_id")
+  recipientId String    @map("recipient_id")
+  title       String
+  body        String
+  category    String    @default("GENERAL")
+  data        Json?     @default("{}")
+  isRead      Boolean   @default(false) @map("is_read")
+  readAt      DateTime? @map("read_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  society     Society   @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  recipient   User      @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id         String    @id @default(uuid())
+  societyId  String    @map("society_id")
+  actorId    String?   @map("actor_id")
+  actorName  String?   @map("actor_name")
+  role       UserRole?
+  action     String
+  entityName String    @map("entity_name")
+  entityId   String?   @map("entity_id")
+  metadata   Json?     @default("{}")
+  ipAddress  String?   @map("ip_address")
+  timestamp  DateTime  @default(now())
+
+  society    Society   @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  actor      User?     @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}

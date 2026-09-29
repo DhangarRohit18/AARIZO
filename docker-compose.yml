@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: aarizo_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: aarizo_community
+      POSTGRES_USER: aarizo_admin
+      POSTGRES_PASSWORD: aarizo_secure_password_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/postgres/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./scripts/postgres/02_rls_policies.sql:/docker-entrypoint-initdb.d/02_rls_policies.sql
+      - ./scripts/postgres/03_seed.sql:/docker-entrypoint-initdb.d/03_seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aarizo_admin -d aarizo_community"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Complete Application Server (React Frontend + Node.js/Prisma Backend)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aarizo_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      DATABASE_URL: postgresql://aarizo_admin:aarizo_secure_password_2026@postgres:5432/aarizo_community?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # 3. Database Web GUI
+  pgweb:
+    image: sosedoff/pgweb
+    container_name: aarizo_pgweb
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      DATABASE_URL: postgres://aarizo_admin:aarizo_secure_password_2026@postgres:5432/aarizo_community?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+    driver: local
