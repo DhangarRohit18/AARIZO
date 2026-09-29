@@ -85,74 +85,64 @@ export const LoginScreen: React.FC = () => {
           </div>
         )}
 
-        {/* Role Selector Grid */}
-        <div className="role-selector-grid">
-          <div
-            className={`role-card ${activeRole === 'resident' ? 'selected' : ''}`}
-            onClick={() => handleRoleCardClick('resident')}
-            title="Click to select or enter as Resident"
-            style={{ cursor: 'pointer' }}
-          >
-            <div className="role-icon-box">
-              <Home size={20} />
-            </div>
-            <span className="role-name">Resident</span>
+        {/* Role Selector Grid - Unified, Neat, and Modern */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>
+              Choose Portal Role
+            </span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--aarizo-blue, #176B91)', background: 'var(--aarizo-light-blue, #EAF6FC)', padding: '0.15rem 0.5rem', borderRadius: '6px' }}>
+              {MOCK_USERS[activeRole]?.roleLabel || activeRole}
+            </span>
           </div>
 
-          <div
-            className={`role-card ${activeRole === 'secretary' ? 'selected' : ''}`}
-            onClick={() => handleRoleCardClick('secretary')}
-            title="Click to select or enter as Secretary"
-            style={{ cursor: 'pointer' }}
-          >
-            <div className="role-icon-box">
-              <Building2 size={20} />
-            </div>
-            <span className="role-name">Secretary</span>
+          {/* Primary Top Tier Roles */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem', marginBottom: '0.625rem' }}>
+            {[
+              { role: 'resident' as UserRole, label: 'Resident', icon: Home, desc: 'Flat Access' },
+              { role: 'secretary' as UserRole, label: 'Secretary', icon: Building2, desc: 'Society Admin' },
+              { role: 'guard' as UserRole, label: 'Security', icon: Shield, desc: 'Gate Control' },
+            ].map((item) => {
+              const isSelected = activeRole === item.role;
+              return (
+                <button
+                  type="button"
+                  key={item.role}
+                  onClick={() => handleRoleCardClick(item.role)}
+                  className={`role-card-modern ${isSelected ? 'active' : ''}`}
+                >
+                  <div className={`role-card-icon-wrap ${isSelected ? 'active' : ''}`}>
+                    <item.icon size={20} />
+                  </div>
+                  <span className="role-card-title">{item.label}</span>
+                  <span className="role-card-subtitle">{item.desc}</span>
+                </button>
+              );
+            })}
           </div>
 
-          <div
-            className={`role-card ${activeRole === 'guard' ? 'selected' : ''}`}
-            onClick={() => handleRoleCardClick('guard')}
-            title="Click to select or enter as Security Guard"
-            style={{ cursor: 'pointer' }}
-          >
-            <div className="role-icon-box">
-              <Shield size={20} />
-            </div>
-            <span className="role-name">Security</span>
+          {/* Secondary Roles Grid - Neatly aligned 4-column pill tabs */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+            {[
+              { role: 'admin' as UserRole, label: 'Admin', icon: KeyRound },
+              { role: 'committee' as UserRole, label: 'Committee', icon: UserCheck },
+              { role: 'facility_manager' as UserRole, label: 'Facility', icon: Wrench },
+              { role: 'vendor' as UserRole, label: 'Vendor', icon: Store },
+            ].map((item) => {
+              const isSelected = activeRole === item.role;
+              return (
+                <button
+                  type="button"
+                  key={item.role}
+                  onClick={() => handleRoleCardClick(item.role)}
+                  className={`role-pill-btn ${isSelected ? 'active' : ''}`}
+                >
+                  <item.icon size={13} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
           </div>
-        </div>
-
-        {/* Extended Roles Strip */}
-        <div style={{ display: 'flex', gap: '0.375rem', marginBottom: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-          {[
-            { role: 'admin' as UserRole, label: 'Super Admin', icon: KeyRound },
-            { role: 'committee' as UserRole, label: 'Committee', icon: UserCheck },
-            { role: 'facility_manager' as UserRole, label: 'Facility Mgr', icon: Wrench },
-            { role: 'vendor' as UserRole, label: 'Vendor', icon: Store },
-          ].map((item) => (
-            <button
-              key={item.role}
-              onClick={() => handleRoleCardClick(item.role)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                padding: '0.375rem 0.625rem',
-                borderRadius: '8px',
-                border: activeRole === item.role ? '1.5px solid var(--aarizo-blue, #176B91)' : '1px solid var(--aarizo-border, #E8F1F5)',
-                background: activeRole === item.role ? 'var(--aarizo-blue-light, #EAF6FC)' : '#ffffff',
-                color: activeRole === item.role ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #657785)',
-                fontSize: '0.6875rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              <item.icon size={13} />
-              <span>{item.label}</span>
-            </button>
-          ))}
         </div>
 
         {/* Phone Input Card */}

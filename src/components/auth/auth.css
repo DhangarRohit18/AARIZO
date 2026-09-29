@@ -249,51 +249,99 @@
   margin-bottom: 1.5rem;
 }
 
-.role-card {
+.role-card-modern {
   background: #ffffff;
   border: 1.5px solid var(--aarizo-border, #DCE8EF);
-  border-radius: 14px;
-  padding: 0.875rem 0.625rem;
+  border-radius: 16px;
+  padding: 0.875rem 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 6px rgba(8, 59, 86, 0.04);
+  outline: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(8, 59, 86, 0.04);
 }
 
-.role-card:hover {
+.role-card-modern:hover {
   border-color: var(--aarizo-blue, #176B91);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(23, 107, 145, 0.12);
 }
 
-.role-card.selected {
+.role-card-modern.active {
   border-color: var(--aarizo-blue, #176B91);
-  background: var(--aarizo-light-blue, #EAF6FC);
-  box-shadow: 0 4px 14px rgba(23, 107, 145, 0.15);
+  background: linear-gradient(180deg, #F0F9FE 0%, #FFFFFF 100%);
+  box-shadow: 0 6px 18px rgba(23, 107, 145, 0.18);
+  transform: translateY(-2px);
 }
 
-.role-icon-box {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+.role-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: var(--aarizo-pale-blue, #F4FAFE);
-  color: var(--aarizo-navy, #083B56);
+  color: var(--aarizo-blue, #176B91);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 0.5rem;
+  transition: all 0.25s ease;
+  border: 1px solid var(--aarizo-border-soft, #E8F1F5);
 }
 
-.role-card.selected .role-icon-box {
+.role-card-icon-wrap.active {
   background: var(--aarizo-blue, #176B91);
   color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 10px rgba(23, 107, 145, 0.3);
 }
 
-.role-name {
+.role-card-title {
   font-size: 0.8125rem;
   font-weight: 700;
   color: var(--aarizo-text, #203746);
+  line-height: 1.2;
+}
+
+.role-card-subtitle {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--aarizo-text-muted, #8B9AA5);
+  margin-top: 0.15rem;
+}
+
+.role-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.35rem;
+  border-radius: 10px;
+  border: 1px solid var(--aarizo-border, #DCE8EF);
+  background: #ffffff;
+  color: var(--aarizo-text-secondary, #657785);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(8, 59, 86, 0.03);
+}
+
+.role-pill-btn:hover {
+  border-color: var(--aarizo-blue, #176B91);
+  color: var(--aarizo-blue, #176B91);
+  background: var(--aarizo-light-blue, #EAF6FC);
+}
+
+.role-pill-btn.active {
+  border-color: var(--aarizo-blue, #176B91);
+  background: var(--aarizo-blue, #176B91);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(23, 107, 145, 0.25);
 }
 
 .phone-input-row {
