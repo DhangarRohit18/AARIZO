@@ -40,62 +40,84 @@ export const FacilityManagerDashboard: React.FC = () => {
   ] as const;
 
   const stats = [
-    { label: 'Open Tickets', value: '7', color: '#D97706', bg: '#FFFBEB', icon: Wrench },
-    { label: 'Staff On Duty', value: '18/20', color: '#059669', bg: '#ECFDF5', icon: UserCheck },
-    { label: 'Active AMCs', value: '12', color: '#7C3AED', bg: '#F5F3FF', icon: Calendar },
-    { label: 'Utility Status', value: 'OK', color: '#176B91', bg: '#EBF5FA', icon: Zap },
+    { label: 'Open Tickets', value: '7', tab: 'maintenance' as const, path: '/facility/maintenance', color: '#D97706', bg: '#FFFBEB', icon: Wrench },
+    { label: 'Staff On Duty', value: '18/20', tab: 'shifts' as const, path: '/facility/shifts', color: '#059669', bg: '#ECFDF5', icon: UserCheck },
+    { label: 'Active AMCs', value: '12', tab: 'amc' as const, path: '/facility/amc', color: '#7C3AED', bg: '#F5F3FF', icon: Calendar },
+    { label: 'Utility Status', value: 'OK', tab: 'utilities' as const, path: '/facility/utilities', color: '#176B91', bg: '#EBF5FA', icon: Zap },
   ];
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
-      {/* ── Aarizo Header ── */}
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '0.75rem 0.5rem 5rem' }}>
+      {/* ── Compact Aarizo Header Banner ── */}
       <div style={{
         background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)',
-        padding: '1.25rem 1rem 1.5rem',
-        display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+        padding: '0.875rem 1rem',
+        borderRadius: '14px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: '0.75rem',
+        boxShadow: '0 4px 14px rgba(8,59,86,0.08)',
       }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.25rem' }}>
-            <Settings size={14} color="#83CBEA" />
-            <p style={{ color: '#83CBEA', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.15rem' }}>
+            <Settings size={13} color="#83CBEA" />
+            <p style={{ color: '#83CBEA', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>
               Facility Operations
             </p>
           </div>
-          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0 }}>
-            Facility Manager Dashboard
+          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.125rem', margin: 0, letterSpacing: '-0.01em' }}>
+            Facility Manager
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.8125rem', marginTop: '0.25rem' }}>
-            Maintenance, staff shifts, AMC contracts &amp; utilities
+          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.75rem', margin: '0.15rem 0 0' }}>
+            Maintenance, shifts, AMC &amp; utilities
           </p>
         </div>
         <span style={{
           background: 'rgba(255,183,77,0.2)', borderRadius: '20px',
-          padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem',
-          fontSize: '0.75rem', fontWeight: 700, color: '#FBD38D', flexShrink: 0,
+          padding: '0.3rem 0.65rem', display: 'flex', alignItems: 'center', gap: '0.35rem',
+          fontSize: '0.72rem', fontWeight: 700, color: '#FBD38D', flexShrink: 0,
         }}>
-          <Wrench size={13} /> FM Access
+          <Wrench size={12} /> FM Access
         </span>
       </div>
 
-      <div style={{ padding: '1rem' }}>
-        {/* ── Stat Cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
+      <div>
+        {/* ── Interactive 4-Card Stat Counters Grid ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.625rem', marginBottom: '0.75rem' }}>
           {stats.map((s, i) => {
             const Icon = s.icon;
+            const isSelected = activeTab === s.tab;
             return (
-              <div key={i} style={{
-                background: '#ffffff', borderRadius: '14px', border: '1px solid #DCE8EF',
-                padding: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-                boxShadow: '0 2px 8px rgba(8,59,86,0.06)',
-              }}>
-                <div style={{ width: 40, height: 40, borderRadius: '12px', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon size={20} color={s.color} />
+              <button
+                key={i}
+                type="button"
+                onClick={() => {
+                  setActiveTab(s.tab);
+                  navigate(s.path);
+                }}
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '12px',
+                  border: isSelected ? `2px solid ${s.color}` : '1px solid #DCE8EF',
+                  padding: '0.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.625rem',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  boxShadow: isSelected ? '0 2px 10px rgba(8,59,86,0.12)' : '0 2px 6px rgba(8,59,86,0.03)',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div style={{ width: 36, height: 36, borderRadius: '10px', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={18} color={s.color} />
                 </div>
-                <div>
+                <div style={{ minWidth: 0, flex: 1 }}>
                   <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>{s.value}</div>
-                  <div style={{ fontSize: '0.7rem', color: '#657785', lineHeight: 1.3 }}>{s.label}</div>
+                  <div style={{ fontSize: '0.6875rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.label}</div>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>

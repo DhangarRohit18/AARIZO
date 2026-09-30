@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, LogOut, X, ChevronRight, Bell, ChevronDown, Plus } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -37,6 +37,17 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const mainRef = useRef<HTMLElement | null>(null);
+
+  // Automatically scroll main viewport to top on route navigation
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+    }
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname]);
 
   const isActive = (path: string) => {
     if (path === '/' && location.pathname !== '/') return false;
@@ -351,6 +362,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
 
       {/* ── Main Content Area ── */}
       <main
+        ref={mainRef}
         style={{
           flex: 1,
           overflowY: 'auto',

@@ -41,38 +41,86 @@ export const SecretaryHome: React.FC<SecretaryHomeProps> = ({
   return (
     <div>
       {/* Executive Intelligence Dashboard Banner */}
-      <div className="bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 text-white rounded-xl p-4 shadow-md flex items-center justify-between mb-4 border border-indigo-800/40">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-indigo-500/20 rounded-lg text-indigo-300">
-            <BarChart3 size={24} />
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)',
+          borderRadius: '14px',
+          padding: '0.875rem 1rem',
+          color: '#ffffff',
+          marginBottom: '0.875rem',
+          boxShadow: '0 4px 14px rgba(8,59,86,0.08)',
+          border: '1px solid rgba(131,203,234,0.2)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.5rem' }}>
+          <div style={{ width: 34, height: 34, borderRadius: '10px', background: 'rgba(131,203,234,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#83CBEA', flexShrink: 0 }}>
+            <BarChart3 size={18} />
           </div>
-          <div>
-            <div className="text-xs font-semibold text-indigo-300 uppercase tracking-wider">Executive Analytics</div>
-            <div className="text-base font-bold">Society Intelligence Dashboard</div>
-            <p className="text-xs text-slate-300">15 Real-time KPIs, 7 Analytics graphs, Date Range filters</p>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#83CBEA', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Executive Analytics</div>
+            <div style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#ffffff' }}>Society Intelligence Dashboard</div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div style={{ display: 'flex', gap: '0.35rem', overflowX: 'auto', paddingBottom: '0.15rem', scrollbarWidth: 'none' }}>
           <a
             href="/admin/intelligence"
-            className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1"
+            style={{
+              padding: '0.35rem 0.65rem',
+              background: '#176B91',
+              color: '#ffffff',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              borderRadius: '8px',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
           >
             <span>Analytics Hub</span>
-            <ArrowRight size={14} />
+            <ArrowRight size={12} />
           </a>
           <a
             href="/admin/security-audit"
-            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg shadow transition flex items-center gap-1 border border-slate-700"
+            style={{
+              padding: '0.35rem 0.65rem',
+              background: 'rgba(255,255,255,0.12)',
+              color: '#ffffff',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              borderRadius: '8px',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
           >
-            <span>Security & Audit</span>
-            <ArrowRight size={14} />
+            <span>Security &amp; Audit</span>
+            <ArrowRight size={12} />
           </a>
           <a
             href="/admin/realtime"
-            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1"
+            style={{
+              padding: '0.35rem 0.65rem',
+              background: 'rgba(5,150,105,0.8)',
+              color: '#ffffff',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              borderRadius: '8px',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
           >
             <span>Realtime Hub</span>
-            <ArrowRight size={14} />
+            <ArrowRight size={12} />
           </a>
         </div>
       </div>

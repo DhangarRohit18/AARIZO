@@ -18,42 +18,45 @@ export const VendorDashboard: React.FC = () => {
   ] as const;
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
-      {/* ── Aarizo Header ── */}
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '0.75rem 0.5rem 5rem' }}>
+      {/* ── Compact Aarizo Header ── */}
       <div style={{
         background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)',
-        padding: '1.25rem 1rem 1.5rem',
+        padding: '0.875rem 1rem',
+        borderRadius: '14px',
+        marginBottom: '0.75rem',
+        boxShadow: '0 4px 14px rgba(8,59,86,0.08)',
       }}>
-        <p style={{ color: '#83CBEA', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.25rem' }}>
+        <p style={{ color: '#83CBEA', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', margin: '0 0 0.15rem' }}>
           Vendor Portal
         </p>
-        <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0 }}>
+        <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.125rem', margin: 0, letterSpacing: '-0.01em' }}>
           Delivery &amp; Supply Dispatch
         </h1>
-        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.8125rem', marginTop: '0.25rem' }}>
+        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.75rem', margin: '0.15rem 0 0' }}>
           Manage society deliveries and gate dispatch
         </p>
       </div>
 
-      <div style={{ padding: '1rem' }}>
+      <div>
         {/* ── Stat Cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-          <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #DCE8EF', padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', boxShadow: '0 2px 8px rgba(8,59,86,0.06)' }}>
-            <div style={{ width: 40, height: 40, borderRadius: '12px', background: '#EBF5FA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Truck size={20} color="#176B91" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.625rem', marginBottom: '0.75rem' }}>
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.625rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
+            <div style={{ width: 36, height: 36, borderRadius: '10px', background: '#EBF5FA', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Truck size={18} color="#176B91" />
             </div>
-            <div>
-              <div style={{ fontSize: '1.375rem', fontWeight: 800, color: '#083B56' }}>5</div>
-              <div style={{ fontSize: '0.75rem', color: '#657785' }}>Active Today</div>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>5</div>
+              <div style={{ fontSize: '0.6875rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem' }}>Active Today</div>
             </div>
           </div>
-          <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #DCE8EF', padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', boxShadow: '0 2px 8px rgba(8,59,86,0.06)' }}>
-            <div style={{ width: 40, height: 40, borderRadius: '12px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CheckCircle2 size={20} color="#059669" />
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.625rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
+            <div style={{ width: 36, height: 36, borderRadius: '10px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <CheckCircle2 size={18} color="#059669" />
             </div>
-            <div>
-              <div style={{ fontSize: '1.375rem', fontWeight: 800, color: '#083B56' }}>18</div>
-              <div style={{ fontSize: '0.75rem', color: '#657785' }}>Completed Week</div>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>18</div>
+              <div style={{ fontSize: '0.6875rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem' }}>Completed Week</div>
             </div>
           </div>
         </div>

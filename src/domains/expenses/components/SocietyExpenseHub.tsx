@@ -225,101 +225,118 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
         </div>
       </div>
 
-      {/* Overview Cards */}
+      {/* Overview KPI Stat Cards */}
       {summary && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Allocated Budget</p>
-                <h3 className="text-2xl font-bold text-slate-900 mt-1">{formatCurrency(summary.totalBudget)}</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.625rem' }}>
+          {/* Card 1: Total Allocated Budget */}
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.875rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#657785', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>Allocated Budget</p>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56', marginTop: '0.2rem', lineHeight: 1.1 }}>{formatCurrency(summary.totalBudget)}</div>
               </div>
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-                <Building size={20} />
+              <div style={{ width: 36, height: 36, borderRadius: '10px', background: '#EBF5FA', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Building size={18} color="#176B91" />
               </div>
             </div>
-            <p className="text-[11px] text-slate-400 mt-2">Fiscal Period: Sept 2026</p>
+            <p style={{ fontSize: '0.6875rem', color: '#8B9AA5', margin: '0.35rem 0 0', fontWeight: 500 }}>Sept 2026 Fiscal</p>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Actual Expenses</p>
-                <h3 className="text-2xl font-bold text-slate-900 mt-1">{formatCurrency(summary.totalActual)}</h3>
+          {/* Card 2: Actual Expenses */}
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.875rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#657785', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>Actual Expenses</p>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56', marginTop: '0.2rem', lineHeight: 1.1 }}>{formatCurrency(summary.totalActual)}</div>
               </div>
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                <DollarSign size={20} />
-              </div>
-            </div>
-            <div className="flex items-center gap-1 mt-2 text-xs font-semibold text-slate-600">
-              <span>{Math.round((summary.totalActual / (summary.totalBudget || 1)) * 100)}% of Budget utilized</span>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Net Variance</p>
-                <h3
-                  className={`text-2xl font-bold mt-1 ${
-                    summary.isOverBudget ? 'text-rose-600' : 'text-emerald-600'
-                  }`}
-                >
-                  {summary.totalVariance >= 0 ? '+' : ''}
-                  {formatCurrency(summary.totalVariance)}
-                </h3>
-              </div>
-              <div
-                className={`p-3 rounded-xl ${
-                  summary.isOverBudget ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'
-                }`}
-              >
-                {summary.isOverBudget ? <ArrowUpRight size={20} /> : <ArrowDownRight size={20} />}
+              <div style={{ width: 36, height: 36, borderRadius: '10px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <DollarSign size={18} color="#059669" />
               </div>
             </div>
-            <p className="text-[11px] text-slate-500 mt-2 font-medium">
-              {summary.isOverBudget ? '⚠️ Budget limit exceeded' : '✓ Under budget margin'}
+            <p style={{ fontSize: '0.6875rem', color: '#059669', margin: '0.35rem 0 0', fontWeight: 700 }}>
+              {Math.round((summary.totalActual / (summary.totalBudget || 1)) * 100)}% Utilized
             </p>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Pending Claims</p>
-                <h3 className="text-2xl font-bold text-amber-600 mt-1">
-                  {expenses.filter((e) => e.status === 'PENDING_APPROVAL').length}
-                </h3>
+          {/* Card 3: Net Variance */}
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.875rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#657785', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>Net Variance</p>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: summary.isOverBudget ? '#E11D48' : '#059669', marginTop: '0.2rem', lineHeight: 1.1 }}>
+                  {summary.totalVariance >= 0 ? '+' : ''}{formatCurrency(summary.totalVariance)}
+                </div>
               </div>
-              <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
-                <AlertTriangle size={20} />
+              <div style={{ width: 36, height: 36, borderRadius: '10px', background: summary.isOverBudget ? '#FFF0F1' : '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                {summary.isOverBudget ? <ArrowUpRight size={18} color="#E11D48" /> : <ArrowDownRight size={18} color="#059669" />}
               </div>
             </div>
-            <p className="text-[11px] text-slate-400 mt-2">Requires Committee review</p>
+            <p style={{ fontSize: '0.6875rem', color: summary.isOverBudget ? '#E11D48' : '#059669', margin: '0.35rem 0 0', fontWeight: 600 }}>
+              {summary.isOverBudget ? '⚠️ Exceeded' : '✓ Under Budget'}
+            </p>
+          </div>
+
+          {/* Card 4: Pending Claims */}
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.875rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#657785', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>Pending Claims</p>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#D97706', marginTop: '0.2rem', lineHeight: 1.1 }}>
+                  {expenses.filter((e) => e.status === 'PENDING_APPROVAL').length}
+                </div>
+              </div>
+              <div style={{ width: 36, height: 36, borderRadius: '10px', background: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <AlertTriangle size={18} color="#D97706" />
+              </div>
+            </div>
+            <p style={{ fontSize: '0.6875rem', color: '#D97706', margin: '0.35rem 0 0', fontWeight: 600 }}>Requires Review</p>
           </div>
         </div>
       )}
 
-      {/* Tabs Bar */}
-      <div className="flex border-b border-slate-200 space-x-6">
+      {/* Tabs Bar - Scrollable Pills */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.35rem',
+          overflowX: 'auto',
+          paddingBottom: '0.5rem',
+          scrollbarWidth: 'none',
+        }}
+      >
         {[
           { key: 'OVERVIEW', label: 'Budget vs Actual', icon: PieChartIcon },
-          { key: 'EXPENSES', label: 'Expense Audit Records', icon: FileText },
-          { key: 'BUDGET', label: 'Budget Breakdown', icon: Layers },
-          { key: 'ANALYTICS', label: 'Vendor & Monthly Analysis', icon: TrendingUp },
+          { key: 'EXPENSES', label: 'Expense Audit', icon: FileText },
+          { key: 'BUDGET', label: 'Breakdown', icon: Layers },
+          { key: 'ANALYTICS', label: 'Analytics', icon: TrendingUp },
         ].map((tab) => {
           const Icon = tab.icon;
+          const active = activeTab === tab.key;
           return (
             <button
               key={tab.key}
+              type="button"
               onClick={() => setActiveTab(tab.key as any)}
-              className={`pb-3 font-semibold text-sm flex items-center gap-2 border-b-2 transition-colors ${
-                activeTab === tab.key
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.55rem 0.875rem',
+                borderRadius: '10px',
+                background: active ? '#083B56' : '#ffffff',
+                color: active ? '#ffffff' : '#657785',
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
+                boxShadow: active ? '0 2px 8px rgba(8,59,86,0.25)' : '0 1px 3px rgba(8,59,86,0.08)',
+                border: active ? 'none' : '1px solid #DCE8EF',
+                flexShrink: 0,
+              }}
             >
-              <Icon size={16} />
-              {tab.label}
+              <Icon size={14} />
+              <span>{tab.label}</span>
             </button>
           );
         })}

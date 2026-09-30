@@ -5,6 +5,10 @@ import {
   Paperclip,
   History,
   X,
+  FileText,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 import { societyRequestService } from '../services/societyRequestService';
 import type { SocietyRequest, SocietyRequestCategory, SocietyRequestStatus, RequestDocument } from '../types';
@@ -135,52 +139,116 @@ export const UnifiedRequestCenter: React.FC = () => {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
+  // Calculate live request metrics for KPI counters
+  const totalCount = requests.length;
+  const underReviewCount = requests.filter((r) => r.status === 'UNDER_REVIEW' || r.status === 'SUBMITTED').length;
+  const approvedCount = requests.filter((r) => r.status === 'APPROVED' || r.status === 'COMPLETED').length;
+  const inProgressCount = requests.filter((r) => r.status === 'IN_PROGRESS').length;
+
+  const requestStats = [
+    { label: 'Total Requests', count: totalCount, statusFilter: 'ALL', color: '#176B91', bg: '#EBF5FA', icon: FileText },
+    { label: 'Under Review', count: underReviewCount, statusFilter: 'UNDER_REVIEW', color: '#D97706', bg: '#FFFBEB', icon: Clock },
+    { label: 'Approved / Done', count: approvedCount, statusFilter: 'APPROVED', color: '#059669', bg: '#ECFDF5', icon: CheckCircle2 },
+    { label: 'In Progress', count: inProgressCount, statusFilter: 'IN_PROGRESS', color: '#7C3AED', bg: '#F5F3FF', icon: AlertCircle },
+  ];
+
   return (
-    <div style={{ padding: '1rem', paddingBottom: '6rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
-      {/* ── Deep Navy Header Banner (#083B56) ── */}
+    <div style={{ padding: '0.875rem 0.5rem 6rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+      {/* ── Compact Navy Header Banner (#083B56) ── */}
       <div
         style={{
           background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
-          borderRadius: '16px',
-          padding: '1.25rem',
+          borderRadius: '14px',
+          padding: '1rem',
           color: '#FFFFFF',
-          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+          boxShadow: '0 4px 14px rgba(8, 59, 86, 0.08)',
           display: 'flex',
-          flexDirection: 'column',
-          gap: '0.875rem',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
-          <div>
-            <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.1875rem', margin: 0, letterSpacing: '-0.02em' }}>
-              Unified Society Request Centre
-            </h1>
-            <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.75rem', margin: '0.25rem 0 0', lineHeight: 1.4 }}>
-              NOCs, Tenant Registrations, Renovation Permits & Approvals
-            </p>
-          </div>
-
-          <button
-            onClick={() => setShowSubmitModal(true)}
-            style={{
-              background: 'var(--aarizo-blue, #176B91)',
-              color: '#FFFFFF',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              borderRadius: '10px',
-              padding: '0.625rem 1rem',
-              fontWeight: 700,
-              fontSize: '0.8125rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.375rem',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              flexShrink: 0,
-            }}
-          >
-            <Plus size={16} /> Submit New Request / NOC
-          </button>
+        <div>
+          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.125rem', margin: 0, letterSpacing: '-0.01em' }}>
+            Unified Society Request Centre
+          </h1>
+          <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.72rem', margin: '0.15rem 0 0', lineHeight: 1.3 }}>
+            NOCs, Tenant Registrations, Permits &amp; Approvals
+          </p>
         </div>
+
+        <button
+          onClick={() => setShowSubmitModal(true)}
+          style={{
+            background: 'var(--aarizo-blue, #176B91)',
+            color: '#FFFFFF',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
+            borderRadius: '10px',
+            padding: '0.5rem 0.875rem',
+            fontWeight: 700,
+            fontSize: '0.78125rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+            cursor: 'pointer',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+            flexShrink: 0,
+          }}
+        >
+          <Plus size={15} /> New Request / NOC
+        </button>
+      </div>
+
+      {/* ── 4-Card KPI Stat Counters Grid ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.625rem' }}>
+        {requestStats.map((st) => {
+          const Icon = st.icon;
+          const isSelected = filterStatus === st.statusFilter;
+          return (
+            <button
+              key={st.label}
+              type="button"
+              onClick={() => setFilterStatus(st.statusFilter)}
+              style={{
+                background: '#ffffff',
+                borderRadius: '12px',
+                border: isSelected ? `2px solid ${st.color}` : '1px solid #DCE8EF',
+                padding: '0.75rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.625rem',
+                textAlign: 'left',
+                cursor: 'pointer',
+                boxShadow: isSelected ? '0 2px 10px rgba(8,59,86,0.12)' : '0 2px 6px rgba(8,59,86,0.03)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: '10px',
+                  background: st.bg,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Icon size={18} color={st.color} />
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>
+                  {st.count}
+                </div>
+                <div style={{ fontSize: '0.6875rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {st.label}
+                </div>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       {/* Filter & Search Bar */}

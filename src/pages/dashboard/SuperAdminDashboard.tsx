@@ -69,73 +69,77 @@ export const SuperAdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
-      {/* ── Aarizo Page Header ── */}
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '0.75rem 0.5rem 5rem' }}>
+      {/* ── Compact Aarizo Page Header ── */}
       <div style={{
         background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)',
-        padding: '1.25rem 1rem 1.5rem',
+        padding: '0.875rem 1rem',
+        borderRadius: '14px',
         display: 'flex',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'space-between',
         gap: '0.75rem',
+        marginBottom: '0.75rem',
+        boxShadow: '0 4px 14px rgba(8,59,86,0.08)',
       }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-            <Globe size={16} color="#83CBEA" />
-            <p style={{ color: '#83CBEA', fontSize: '0.75rem', margin: 0, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.15rem' }}>
+            <Globe size={14} color="#83CBEA" />
+            <p style={{ color: '#83CBEA', fontSize: '0.7rem', margin: 0, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Platform Administration
             </p>
           </div>
-          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0 }}>
+          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.125rem', margin: 0, letterSpacing: '-0.01em' }}>
             Super Admin Portal
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.8125rem', marginTop: '0.25rem' }}>
-            Global multi-tenant society management &amp; platform health
+          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.75rem', margin: '0.15rem 0 0' }}>
+            Multi-tenant society management &amp; health
           </p>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.4rem',
-            padding: '0.55rem 1rem',
+            display: 'flex', alignItems: 'center', gap: '0.35rem',
+            padding: '0.5rem 0.875rem',
             background: '#176B91',
             color: '#fff',
             borderRadius: '10px',
             border: 'none',
             fontWeight: 700,
-            fontSize: '0.8125rem',
+            fontSize: '0.78125rem',
             cursor: 'pointer',
             whiteSpace: 'nowrap',
             flexShrink: 0,
+            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
           }}
         >
-          <Plus size={16} /> New Society
+          <Plus size={15} /> New Society
         </button>
       </div>
 
-      <div style={{ padding: '1rem' }}>
+      <div>
         {/* ── Stat Cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.625rem', marginBottom: '0.75rem' }}>
           {statCards.map((card, i) => {
             const Icon = card.icon;
             const value = card.valueKey === 'societies' ? String(societies.length) : (card.value ?? '');
             return (
               <div key={i} style={{
                 background: '#ffffff',
-                borderRadius: '14px',
+                borderRadius: '12px',
                 border: '1px solid #DCE8EF',
-                padding: '1rem',
+                padding: '0.75rem',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.75rem',
-                boxShadow: '0 2px 8px rgba(8,59,86,0.06)',
+                gap: '0.625rem',
+                boxShadow: '0 2px 6px rgba(8,59,86,0.03)',
               }}>
-                <div style={{ width: 42, height: 42, borderRadius: '12px', background: card.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon size={22} color={card.color} />
+                <div style={{ width: 36, height: 36, borderRadius: '10px', background: card.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={18} color={card.color} />
                 </div>
-                <div>
-                  <div style={{ fontSize: '1.375rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>{value}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#657785', marginTop: '0.125rem', lineHeight: 1.3 }}>{card.label}</div>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>{value}</div>
+                  <div style={{ fontSize: '0.6875rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.label}</div>
                 </div>
               </div>
             );
