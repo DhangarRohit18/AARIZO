@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   FileCheck,
   DollarSign,
@@ -11,14 +12,29 @@ import { UnifiedRequestCenter } from '../../domains/requests/components/UnifiedR
 import { SocietyExpenseHub } from '../../domains/expenses';
 
 export const CommitteeDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'approvals' | 'financials' | 'compliance' | 'health' | 'governance'>('approvals');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const getInitialTab = (): 'approvals' | 'financials' | 'compliance' | 'health' | 'governance' => {
+    if (location.pathname.includes('/financials')) return 'financials';
+    if (location.pathname.includes('/compliance')) return 'compliance';
+    if (location.pathname.includes('/health')) return 'health';
+    if (location.pathname.includes('/governance')) return 'governance';
+    return 'approvals';
+  };
+
+  const [activeTab, setActiveTab] = useState<'approvals' | 'financials' | 'compliance' | 'health' | 'governance'>(getInitialTab);
+
+  useEffect(() => {
+    setActiveTab(getInitialTab());
+  }, [location.pathname]);
 
   const tabs = [
-    { key: 'approvals', label: 'Approvals', icon: FileCheck },
-    { key: 'financials', label: 'Financials', icon: DollarSign },
-    { key: 'compliance', label: 'Compliance', icon: ShieldCheck },
-    { key: 'health', label: 'Health', icon: Activity },
-    { key: 'governance', label: 'Governance', icon: BookOpen },
+    { key: 'approvals', label: 'Approvals', icon: FileCheck, path: '/committee/approvals' },
+    { key: 'financials', label: 'Financials', icon: DollarSign, path: '/committee/financials' },
+    { key: 'compliance', label: 'Compliance', icon: ShieldCheck, path: '/committee/compliance' },
+    { key: 'health', label: 'Health', icon: Activity, path: '/committee/health' },
+    { key: 'governance', label: 'Governance', icon: BookOpen, path: '/committee/governance' },
   ] as const;
 
   const stats = [
@@ -90,7 +106,10 @@ export const CommitteeDashboard: React.FC = () => {
             return (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => {
+                  setActiveTab(tab.key);
+                  navigate(tab.path);
+                }}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '0.35rem',
                   padding: '0.55rem 0.875rem',

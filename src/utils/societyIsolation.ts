@@ -8,8 +8,8 @@ export function filterBySociety<T extends SocietyScopedEntity>(
   currentSocietyId?: string,
   userRole?: string
 ): T[] {
-  // Super Admins can see all data across societies if no filter specified
-  if (userRole === 'SUPER_ADMIN' && (!currentSocietyId || currentSocietyId === 'ALL')) {
+  // Platform Admin can see all data across societies if no filter specified
+  if (userRole === 'admin' && (!currentSocietyId || currentSocietyId === 'ALL')) {
     return items;
   }
   

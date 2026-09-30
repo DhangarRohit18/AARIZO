@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Truck, CheckCircle2, Clock, Package, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Truck, CheckCircle2, Clock, Package, ArrowRight, History } from 'lucide-react';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 
 export const VendorDashboard: React.FC = () => {
@@ -12,8 +12,8 @@ export const VendorDashboard: React.FC = () => {
   ];
 
   const tabs = [
-    { key: 'deliveries', label: 'Active Dispatches' },
-    { key: 'history', label: 'Delivery History' },
+    { key: 'deliveries', label: 'Active Dispatches', icon: Truck },
+    { key: 'history', label: 'Delivery History', icon: History },
   ] as const;
 
   return (
@@ -76,23 +76,30 @@ export const VendorDashboard: React.FC = () => {
         </div>
 
         {/* ── Tabs ── */}
-        <div style={{ display: 'flex', background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '4px', gap: '4px', marginBottom: '1rem' }}>
-          {tabs.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setActiveTab(t.key)}
-              style={{
-                flex: 1, padding: '0.55rem 0.75rem',
-                borderRadius: '9px', border: 'none',
-                background: activeTab === t.key ? '#083B56' : 'transparent',
-                color: activeTab === t.key ? '#fff' : '#657785',
-                fontWeight: 700, fontSize: '0.8125rem',
-                cursor: 'pointer', transition: 'all 0.2s',
-              }}
-            >
-              {t.label}
-            </button>
-          ))}
+        <div style={{ display: 'flex', gap: '0.35rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
+          {tabs.map((t) => {
+            const Icon = t.icon;
+            const active = activeTab === t.key;
+            return (
+              <button
+                key={t.key}
+                onClick={() => setActiveTab(t.key)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.35rem',
+                  padding: '0.55rem 0.875rem',
+                  borderRadius: '10px', border: active ? 'none' : '1px solid #DCE8EF',
+                  background: active ? '#083B56' : '#ffffff',
+                  color: active ? '#ffffff' : '#657785',
+                  fontWeight: 700, fontSize: '0.8rem',
+                  cursor: 'pointer', transition: 'all 0.2s',
+                  whiteSpace: 'nowrap',
+                  boxShadow: active ? '0 2px 8px rgba(8,59,86,0.25)' : '0 1px 3px rgba(8,59,86,0.08)',
+                }}
+              >
+                <Icon size={14} /> {t.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* ── Delivery List ── */}
