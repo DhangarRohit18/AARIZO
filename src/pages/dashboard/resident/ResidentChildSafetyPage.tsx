@@ -18,6 +18,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 
 export const ResidentChildSafetyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -749,7 +750,13 @@ export const ResidentChildSafetyPage: React.FC = () => {
                 marginBottom: '1rem',
               }}
             >
-              <QrCode size={160} color="var(--aarizo-navy, #083B56)" />
+              <QRCodeSVG
+                value={activeQrModal.qrCode}
+                size={160}
+                level="M"
+                includeMargin={true}
+                style={{ borderRadius: '8px' }}
+              />
               <div style={{ marginTop: '0.5rem', fontSize: '1rem', fontWeight: 800, letterSpacing: '0.05em', color: 'var(--aarizo-navy, #083B56)' }}>
                 {activeQrModal.qrCode}
               </div>

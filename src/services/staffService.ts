@@ -7,6 +7,7 @@ import type {
   WorkerType,
 } from '../types/staff';
 import { logAudit } from './societyService';
+import { realtimeService } from './realtimeService';
 
 const STORAGE_KEYS = {
   PROFILES: 'communityos_staff_profiles_v4',
@@ -266,6 +267,23 @@ export const staffService = {
     setItem(STORAGE_KEYS.ATTENDANCE, [newLog, ...logs]);
 
     logAudit(profiles[idx].societyId, actor, 'STATUS_CHANGE', 'DomesticWorkerProfile', workerId, `Recorded gate ENTRY for staff ${profiles[idx].name}`);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'WORKER_ENTRY_EXIT',
+      {
+        workerId,
+        workerName: profiles[idx].name,
+        workerType: profiles[idx].workerType,
+        action: 'IN',
+        timestamp: timeStr,
+        gateOfficer: actor.name,
+      },
+      profiles[idx].societyId,
+      actor.role,
+      actor.name
+    );
+
     return profiles[idx];
   },
 
@@ -297,6 +315,23 @@ export const staffService = {
     setItem(STORAGE_KEYS.ATTENDANCE, [newLog, ...logs]);
 
     logAudit(profiles[idx].societyId, actor, 'STATUS_CHANGE', 'DomesticWorkerProfile', workerId, `Recorded gate EXIT for staff ${profiles[idx].name}`);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'WORKER_ENTRY_EXIT',
+      {
+        workerId,
+        workerName: profiles[idx].name,
+        workerType: profiles[idx].workerType,
+        action: 'OUT',
+        timestamp: timeStr,
+        gateOfficer: actor.name,
+      },
+      profiles[idx].societyId,
+      actor.role,
+      actor.name
+    );
+
     return profiles[idx];
   },
 };

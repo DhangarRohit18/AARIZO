@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { UserCheck, Home, QrCode, CheckCircle2, Clock } from 'lucide-react';
+import { UserCheck, Home, CheckCircle2, Clock } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { realtimeService } from '../../services/realtimeService';
 
 export const DomesticWorkerDashboard: React.FC = () => {
   const [isCheckedIn, setIsCheckedIn] = useState(true);
@@ -9,6 +11,24 @@ export const DomesticWorkerDashboard: React.FC = () => {
     { flat: 'Flat A-402', owner: 'Ananya Roy', time: '10:30 AM - 12:00 PM', status: 'IN_PROGRESS', statusColor: '#D97706', statusBg: '#FFFBEB' },
     { flat: 'Flat C-301', owner: 'Mayuri Udar', time: '04:00 PM - 05:30 PM', status: 'SCHEDULED', statusColor: '#657785', statusBg: '#F1F5F9' },
   ];
+
+  const handleToggleCheckIn = () => {
+    const nextState = !isCheckedIn;
+    setIsCheckedIn(nextState);
+    realtimeService.publish(
+      'WORKER_ENTRY_EXIT',
+      {
+        workerId: 'dw-101',
+        workerName: 'Sunita Devi',
+        workerType: 'MAID',
+        action: nextState ? 'IN' : 'OUT',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      },
+      'soc-gvs',
+      'DOMESTIC_WORKER',
+      'Sunita Devi'
+    );
+  };
 
   return (
     <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
@@ -30,7 +50,7 @@ export const DomesticWorkerDashboard: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => setIsCheckedIn(!isCheckedIn)}
+          onClick={handleToggleCheckIn}
           style={{
             padding: '0.55rem 1rem',
             background: isCheckedIn ? '#DC2626' : '#059669',
@@ -67,8 +87,8 @@ export const DomesticWorkerDashboard: React.FC = () => {
           boxShadow: '0 2px 8px rgba(8,59,86,0.06)',
         }}>
           <p style={{ fontWeight: 800, color: '#083B56', margin: '0 0 0.75rem', fontSize: '0.9375rem' }}>Gate Entry QR Pass</p>
-          <div style={{ background: '#EBF5FA', borderRadius: '14px', padding: '1rem', marginBottom: '0.75rem' }}>
-            <QrCode size={110} color="#083B56" />
+          <div style={{ background: '#EBF5FA', borderRadius: '14px', padding: '1rem', marginBottom: '0.75rem', display: 'flex', justifyContent: 'center' }}>
+            <QRCodeSVG value="COMMUNITYOS:STAFF:PASS-5542:SUNITA_DEVI" size={110} level="M" />
           </div>
           <p style={{ color: '#657785', fontSize: '0.75rem', margin: 0, maxWidth: 220, lineHeight: 1.5 }}>
             Show this QR at Security Gate for instant touchless verification

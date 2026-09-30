@@ -9,6 +9,7 @@ import type {
 } from '../types/visitor';
 import { logAudit } from './societyService';
 import { visitorRepository } from '../repositories/visitors/VisitorRepository';
+import { realtimeService } from './realtimeService';
 
 const STORAGE_KEYS = {
   PASSES: 'communityos_visitor_passes_v2',
@@ -214,6 +215,24 @@ export const visitorService = {
     setItem(STORAGE_KEYS.PASSES, [newPass, ...passes]);
     visitorRepository.create(newPass).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'VisitorPass', newPass.id, `Generated ${data.category} pass ${passCode} for ${data.visitorName}`);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'VISITOR_ARRIVAL',
+      {
+        passId: newPass.id,
+        passCode: newPass.passCode,
+        visitorName: newPass.visitorName,
+        flatCode: newPass.flatCode,
+        category: newPass.category,
+        gate: 'Gate 1',
+        status: 'EXPECTED',
+      },
+      data.societyId,
+      actor.role,
+      actor.name
+    );
+
     return newPass;
   },
 
@@ -298,6 +317,24 @@ export const visitorService = {
       usageCount: passes[idx].usageCount,
     }).catch(() => {});
     logAudit(passes[idx].societyId, actor, 'STATUS_CHANGE', 'VisitorPass', passId, `Checked in visitor ${passes[idx].visitorName} at ${gateDetails.gateName}`);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'VISITOR_ENTRY',
+      {
+        passId,
+        passCode: passes[idx].passCode,
+        visitorName: passes[idx].visitorName,
+        flatCode: passes[idx].flatCode,
+        gateName: gateDetails.gateName,
+        officerName: gateDetails.officerName,
+        timestamp: timeStr,
+      },
+      passes[idx].societyId,
+      actor.role,
+      actor.name
+    );
+
     return passes[idx];
   },
 
@@ -323,6 +360,22 @@ export const visitorService = {
       isOverdue: false,
     }).catch(() => {});
     logAudit(passes[idx].societyId, actor, 'STATUS_CHANGE', 'VisitorPass', passId, `Checked out visitor ${passes[idx].visitorName}`);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'VISITOR_EXIT',
+      {
+        passId,
+        passCode: passes[idx].passCode,
+        visitorName: passes[idx].visitorName,
+        flatCode: passes[idx].flatCode,
+        timestamp: timeStr,
+      },
+      passes[idx].societyId,
+      actor.role,
+      actor.name
+    );
+
     return passes[idx];
   },
 
@@ -342,6 +395,23 @@ export const visitorService = {
 
     setItem(STORAGE_KEYS.PASSES, passes);
     logAudit(passes[idx].societyId, actor, 'UPDATE', 'VisitorPass', passId, `Recorded delivery package pickup for ${passes[idx].visitorName}`);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'DELIVERY_STATUS',
+      {
+        passId,
+        packageReferenceNumber: passes[idx].packageReferenceNumber,
+        recipient: passes[idx].visitorName,
+        flatCode: passes[idx].flatCode,
+        status: 'PICKED_UP',
+        timestamp: timeStr,
+      },
+      passes[idx].societyId,
+      actor.role,
+      actor.name
+    );
+
     return passes[idx];
   },
 
@@ -390,6 +460,22 @@ export const visitorService = {
     };
     setItem(`${STORAGE_KEYS.LOCKDOWN}_${societyId}`, state);
     logAudit(societyId, actor, 'STATUS_CHANGE', 'Lockdown', societyId, `${isLockdownActive ? 'ACTIVATED' : 'DEACTIVATED'} Emergency Security Lockdown`);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      {
+        alertType: 'GATE_LOCKDOWN',
+        active: isLockdownActive,
+        reason,
+        activatedBy: actor.name,
+        timestamp: state.activatedAt,
+      },
+      societyId,
+      actor.role,
+      actor.name
+    );
+
     return state;
   },
 

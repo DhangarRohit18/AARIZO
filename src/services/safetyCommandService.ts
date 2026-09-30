@@ -4,6 +4,7 @@ import type {
   SocietyEmergencyContact
 } from '../types/safetyCommand';
 import { emergencyIncidentRepository } from '../repositories/safety/EmergencyIncidentRepository';
+import { realtimeService } from './realtimeService';
 
 const INCIDENTS_STORAGE_KEY = 'communityos_emergency_incidents';
 const CONTACTS_STORAGE_KEY = 'communityos_emergency_contacts';
@@ -178,7 +179,28 @@ class SafetyCommandService {
       ]
     };
 
-    return this.saveIncident(newIncident);
+    const saved = this.saveIncident(newIncident);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      {
+        incidentId: newIncident.id,
+        incidentNumber: newIncident.incidentNumber,
+        type: newIncident.type,
+        status: 'TRIGGERED',
+        flatNumber: newIncident.flatNumber,
+        tower: newIncident.tower,
+        locationDetails: newIncident.locationDetails,
+        reportedByName: newIncident.reportedByName,
+        timestamp: nowISO,
+      },
+      societyId,
+      'RESIDENT',
+      reportedByName
+    );
+
+    return saved;
   }
 
   acknowledgeIncident(societyId: string, incidentId: string, guardName: string, guardRole: string = 'Security Guard'): EmergencyIncident {
@@ -199,7 +221,25 @@ class SafetyCommandService {
       note: 'Emergency alarm acknowledged by gate control'
     });
 
-    return this.saveIncident(target);
+    const saved = this.saveIncident(target);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      {
+        incidentId: target.id,
+        incidentNumber: target.incidentNumber,
+        type: target.type,
+        status: 'ACKNOWLEDGED',
+        acknowledgedBy: guardName,
+        timestamp: nowISO,
+      },
+      societyId,
+      guardRole,
+      guardName
+    );
+
+    return saved;
   }
 
   respondIncident(
@@ -230,7 +270,25 @@ class SafetyCommandService {
       note: note || `Dispatched responder ${responderName} to scene`
     });
 
-    return this.saveIncident(target);
+    const saved = this.saveIncident(target);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      {
+        incidentId: target.id,
+        incidentNumber: target.incidentNumber,
+        type: target.type,
+        status: 'RESPONDING',
+        responderName,
+        timestamp: nowISO,
+      },
+      societyId,
+      'SECURITY',
+      actorName
+    );
+
+    return saved;
   }
 
   resolveIncident(societyId: string, incidentId: string, actorName: string, resolutionNotes: string): EmergencyIncident {
@@ -253,7 +311,26 @@ class SafetyCommandService {
       note: `Incident resolved: ${resolutionNotes}`
     });
 
-    return this.saveIncident(target);
+    const saved = this.saveIncident(target);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      {
+        incidentId: target.id,
+        incidentNumber: target.incidentNumber,
+        type: target.type,
+        status: 'RESOLVED',
+        resolvedBy: actorName,
+        notes: resolutionNotes,
+        timestamp: nowISO,
+      },
+      societyId,
+      'ADMIN',
+      actorName
+    );
+
+    return saved;
   }
 
   closeIncident(societyId: string, incidentId: string, adminName: string): EmergencyIncident {

@@ -380,8 +380,10 @@ export const SecurityTerminalPage: React.FC = () => {
       {/* QR Scanner Modal */}
       <Modal isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} title="QR Scanner">
         <QRScanner
+          simulationCode={passes[0]?.passCode || 'GVS-4092'}
           onScan={(code) => {
             handleValidateCode(code);
+            setIsScannerOpen(false);
           }}
         />
       </Modal>

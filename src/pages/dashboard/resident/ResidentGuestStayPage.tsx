@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../../context/AuthContext';
 import { guestStayService } from '../../../services/guestStayService';
 import type { GuestRoom, GuestReservation, GuestStaySettings } from '../../../types/guestStay';
@@ -261,9 +262,10 @@ export const ResidentGuestStayPage: React.FC = () => {
         <Modal isOpen={!!viewingQRResv} onClose={() => setViewingQRResv(null)} title="Guest Gate Access QR Pass">
           <div className="text-center space-y-4 py-2">
             <div className="bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 inline-block">
-              <div className="w-48 h-48 bg-white p-3 rounded-xl border border-slate-300 shadow-inner mx-auto flex items-center justify-center font-mono font-bold text-center text-indigo-900 text-xs leading-relaxed">
-                [ GUEST ACCESS QR ]
-                <br />
+              <div className="w-48 h-48 bg-white p-3 rounded-xl border border-slate-300 shadow-inner mx-auto flex items-center justify-center">
+                <QRCodeSVG value={viewingQRResv.qrCode} size={160} level="M" />
+              </div>
+              <div className="mt-2 text-xs font-mono font-bold text-slate-700">
                 {viewingQRResv.qrCode}
               </div>
             </div>

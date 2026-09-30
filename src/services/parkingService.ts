@@ -9,6 +9,7 @@ import type {
 } from '../types/parking';
 import { logAudit } from './societyService';
 import { parkingSlotRepository, parkingRequestRepository } from '../repositories/parking/ParkingRepository';
+import { realtimeService } from './realtimeService';
 
 const STORAGE_KEYS = {
   SLOTS: 'communityos_parking_slots_v3',
@@ -254,6 +255,25 @@ export const parkingService = {
     setItem(STORAGE_KEYS.LOGS, [newLog, ...logs]);
 
     logAudit(slots[idx].societyId, actor, 'STATUS_CHANGE', 'ParkingSlot', slotId, `Vehicle ${vehicleNumber} entered slot ${slots[idx].slotNumber}`);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'PARKING_OCCUPANCY',
+      {
+        slotId,
+        slotNumber: slots[idx].slotNumber,
+        level: slots[idx].level,
+        vehicleNumber: newLog.vehicleNumber,
+        flatCode: newLog.flatCode,
+        action: 'ENTRY',
+        occupancyState: 'OCCUPIED',
+        timestamp: newLog.timestamp,
+      },
+      slots[idx].societyId,
+      actor.role,
+      actor.name
+    );
+
     return slots[idx];
   },
 
@@ -285,6 +305,25 @@ export const parkingService = {
     setItem(STORAGE_KEYS.LOGS, [newLog, ...logs]);
 
     logAudit(slots[idx].societyId, actor, 'STATUS_CHANGE', 'ParkingSlot', slotId, `Vehicle exited slot ${slots[idx].slotNumber}`);
+
+    // Publish to Realtime Hub
+    realtimeService.publish(
+      'PARKING_OCCUPANCY',
+      {
+        slotId,
+        slotNumber: slots[idx].slotNumber,
+        level: slots[idx].level,
+        vehicleNumber: currentVeh,
+        flatCode: newLog.flatCode,
+        action: 'EXIT',
+        occupancyState: slots[idx].occupancyState,
+        timestamp: newLog.timestamp,
+      },
+      slots[idx].societyId,
+      actor.role,
+      actor.name
+    );
+
     return slots[idx];
   },
 };

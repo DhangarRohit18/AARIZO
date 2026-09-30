@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, AlertCircle, Info, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { realtimeService } from '../../services/realtimeService';
 
 interface NotificationItem {
   id: string;
@@ -82,6 +83,65 @@ export const NotificationCenterPage: React.FC = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'ALL' | 'UNREAD'>('ALL');
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+
+  useEffect(() => {
+    const unsub = realtimeService.subscribe('*', (msg) => {
+      let title = 'Realtime Notification';
+      let description = '';
+      let type: 'complaint' | 'general' = 'general';
+
+      switch (msg.topic) {
+        case 'VISITOR_ARRIVAL':
+          title = 'Visitor Pass Created';
+          description = `${msg.payload.visitorName} (${msg.payload.category || 'GUEST'}) scheduled for ${msg.payload.flatCode || 'society'}`;
+          break;
+        case 'VISITOR_ENTRY':
+          title = 'Visitor Gate Check-In';
+          description = `${msg.payload.visitorName} entered at ${msg.payload.gateName || 'Main Gate'} (${msg.payload.flatCode || ''})`;
+          break;
+        case 'VISITOR_EXIT':
+          title = 'Visitor Gate Check-Out';
+          description = `${msg.payload.visitorName} checked out of society (${msg.payload.flatCode || ''})`;
+          break;
+        case 'EMERGENCY_ALERTS':
+          title = '🚨 Society Emergency Alert';
+          description = msg.payload.alertType === 'GATE_LOCKDOWN'
+            ? `Security Lockdown: ${msg.payload.reason}`
+            : `SOS Alert: ${msg.payload.type || 'Incident'} at ${msg.payload.flatNumber || msg.payload.locationDetails || 'Society'}`;
+          type = 'complaint';
+          break;
+        case 'WORKER_ENTRY_EXIT':
+          title = `Staff Gate ${msg.payload.action === 'IN' ? 'Entry' : 'Exit'}`;
+          description = `${msg.payload.workerName} (${msg.payload.workerType}) recorded ${msg.payload.action === 'IN' ? 'Entry' : 'Exit'} at ${msg.payload.timestamp || 'gate'}`;
+          break;
+        case 'PARKING_OCCUPANCY':
+          title = `Parking Slot ${msg.payload.action === 'ENTRY' ? 'Occupied' : 'Vacated'}`;
+          description = `Slot ${msg.payload.slotNumber} marked ${msg.payload.occupancyState} by vehicle ${msg.payload.vehicleNumber}`;
+          break;
+        case 'DELIVERY_STATUS':
+          title = 'Delivery Parcel Picked Up';
+          description = `Delivery for ${msg.payload.recipient} (${msg.payload.flatCode}) picked up`;
+          break;
+        default:
+          title = `Alert: ${msg.topic}`;
+          description = JSON.stringify(msg.payload);
+      }
+
+      const newNotif: NotificationItem = {
+        id: msg.id || `rt-${Date.now()}`,
+        type,
+        title,
+        description,
+        date: 'Just now',
+        category: type === 'complaint' ? 'Emergency' : 'Security',
+        read: false,
+      };
+
+      setNotifications((prev) => [newNotif, ...prev]);
+    });
+
+    return () => unsub();
+  }, []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
   const filtered = notifications.filter((n) => (filter === 'UNREAD' ? !n.read : true));
