@@ -190,36 +190,79 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Header & Tabs */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-5 rounded-2xl border border-slate-200 shadow-sm gap-4">
+      {/* Header */}
+      <div
+        style={{
+          background: '#ffffff',
+          borderRadius: '14px',
+          border: '1px solid #DCE8EF',
+          padding: '0.875rem 1rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+          boxShadow: '0 2px 6px rgba(8,59,86,0.03)',
+        }}
+      >
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-slate-900">Society Expense & Budget Management</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <h2 style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#083B56', margin: 0 }}>
+              Society Expense &amp; Budget Management
+            </h2>
+            <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#059669', background: '#ECFDF5', padding: '0.15rem 0.5rem', borderRadius: '12px', border: '1px solid #A7F3D0' }}>
               Active Module
             </span>
           </div>
-          <p className="text-slate-500 text-xs mt-1">
-            Track operational spending, vendor payouts, budget vs actual variance, and invoice approval history.
+          <p style={{ fontSize: '0.72rem', color: '#657785', margin: '0.2rem 0 0' }}>
+            Operational spending, vendor payouts &amp; budget variance
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           {userRole !== 'COMMITTEE_MEMBER' && (
             <button
+              type="button"
               onClick={() => setIsExpenseModalOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.45rem 0.8rem',
+                background: '#176B91',
+                color: '#ffffff',
+                borderRadius: '10px',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                border: 'none',
+                boxShadow: '0 2px 6px rgba(23,107,145,0.2)',
+              }}
             >
-              <Plus size={16} /> Record Expense
+              <Plus size={14} /> Record Expense
             </button>
           )}
 
           {(userRole === 'COMMITTEE_MEMBER' || userRole === 'SOCIETY_ADMIN') && (
             <button
+              type="button"
               onClick={() => setIsBudgetModalOpen(true)}
-              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.45rem 0.8rem',
+                background: '#083B56',
+                color: '#ffffff',
+                borderRadius: '10px',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                border: 'none',
+                boxShadow: '0 2px 6px rgba(8,59,86,0.15)',
+              }}
             >
-              <Edit size={14} /> Configure Budget
+              <Edit size={13} /> Configure Budget
             </button>
           )}
         </div>
@@ -344,46 +387,60 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
 
       {/* TAB 1: OVERVIEW & VARIANCE */}
       {activeTab === 'OVERVIEW' && summary && (
-        <div className="space-y-6">
-          <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h2 className="text-base font-bold text-slate-900 mb-4">Category-Wise Budget vs Actual Breakdown</h2>
-            <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #DCE8EF', padding: '1rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
+            <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#083B56', margin: '0 0 0.75rem' }}>
+              Category-Wise Budget vs Actual Breakdown
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
               {summary.categoryBreakdown.map((item) => {
                 const percent = item.budgeted > 0 ? Math.min(Math.round((item.actual / item.budgeted) * 100), 100) : 0;
                 const isOver = item.variance < 0;
 
                 return (
-                  <div key={item.category} className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                    <div className="flex justify-between items-center mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-slate-900 uppercase tracking-wide">{item.category}</span>
+                  <div
+                    key={item.category}
+                    style={{
+                      background: '#F7FBFE',
+                      borderRadius: '12px',
+                      border: '1px solid #E8F1F5',
+                      padding: '0.75rem 0.875rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#083B56', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          {item.category}
+                        </span>
                         {isOver && (
-                          <span className="px-2 py-0.5 bg-rose-100 text-rose-700 font-bold text-[10px] rounded">
+                          <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#DC2626', background: '#FEF2F2', padding: '0.1rem 0.4rem', borderRadius: '6px', border: '1px solid #FECACA' }}>
                             OVER BUDGET
                           </span>
                         )}
                       </div>
-                      <div className="text-right">
-                        <span className="font-bold text-sm text-slate-900">{formatCurrency(item.actual)}</span>
-                        <span className="text-xs text-slate-500 font-medium ml-1">/ {formatCurrency(item.budgeted)}</span>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#083B56' }}>{formatCurrency(item.actual)}</span>
+                        <span style={{ fontSize: '0.72rem', color: '#8B9AA5', marginLeft: '0.25rem' }}>/ {formatCurrency(item.budgeted)}</span>
                       </div>
                     </div>
 
-                    {/* Progress Bar */}
-                    <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden mb-1">
+                    {/* Progress Track */}
+                    <div style={{ width: '100%', height: '7px', background: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden', margin: '0.35rem 0' }}>
                       <div
-                        className={`h-full transition-all rounded-full ${
-                          isOver ? 'bg-rose-500' : percent > 85 ? 'bg-amber-500' : 'bg-emerald-500'
-                        }`}
-                        style={{ width: `${percent}%` }}
-                      ></div>
+                        style={{
+                          height: '100%',
+                          borderRadius: '9999px',
+                          width: `${percent}%`,
+                          background: isOver ? '#DC2626' : percent > 85 ? '#D97706' : '#059669',
+                          transition: 'width 0.3s ease',
+                        }}
+                      />
                     </div>
 
-                    <div className="flex justify-between text-[11px] text-slate-500 font-medium">
-                      <span>Utilized: {percent}%</span>
-                      <span className={isOver ? 'text-rose-600 font-bold' : 'text-emerald-700 font-bold'}>
-                        Variance: {item.variance >= 0 ? '+' : ''}
-                        {formatCurrency(item.variance)}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.6875rem', marginTop: '0.25rem' }}>
+                      <span style={{ color: '#657785', fontWeight: 600 }}>Utilized: {percent}%</span>
+                      <span style={{ fontWeight: 700, color: isOver ? '#DC2626' : '#059669' }}>
+                        Variance: {item.variance >= 0 ? '+' : ''}{formatCurrency(item.variance)}
                       </span>
                     </div>
                   </div>
