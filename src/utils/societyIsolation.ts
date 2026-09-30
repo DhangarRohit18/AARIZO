@@ -9,7 +9,7 @@ export function filterBySociety<T extends SocietyScopedEntity>(
   userRole?: string
 ): T[] {
   // Platform Admin can see all data across societies if no filter specified
-  if (userRole === 'admin' && (!currentSocietyId || currentSocietyId === 'ALL')) {
+  if (userRole === 'admin' && (!currentSocietyId || currentSocietyId === 'ALL' || currentSocietyId === 'GLOBAL')) {
     return items;
   }
   

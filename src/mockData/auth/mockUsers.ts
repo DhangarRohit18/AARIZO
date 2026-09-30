@@ -106,7 +106,7 @@ export const MOCK_USERS: Record<UserRole, UserProfile> = {
     email: 'admin@aarizo.com',
     role: 'admin',
     roleLabel: 'Platform Administrator',
-    societyId: 'soc-gvs',
+    societyId: 'ALL',
     societyName: 'CommunityOS Platform',
     designation: 'System Administrator',
     status: 'ACTIVE',

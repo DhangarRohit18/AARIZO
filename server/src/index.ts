@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -17,10 +17,10 @@ app.use(cors());
 app.use(express.json());
 
 // Multi-tenant contextual headers middleware
-app.use((req, res, next) => {
-  req.societyId = req.headers['x-society-id'] as string || undefined;
-  req.userId = req.headers['x-user-id'] as string || undefined;
-  req.userRole = req.headers['x-user-role'] as string || undefined;
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  req.societyId = (req.headers['x-society-id'] as string) || undefined;
+  req.userId = (req.headers['x-user-id'] as string) || undefined;
+  req.userRole = (req.headers['x-user-role'] as string)?.toLowerCase() || undefined;
   next();
 });
 
@@ -34,16 +34,34 @@ declare global {
   }
 }
 
+// Role-based authorization middleware
+const requireRole = (allowedRoles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const role = (req.userRole || '').toLowerCase();
+    // Allow if no role header provided (local dev) or if role is admin or in allowedRoles
+    if (!role || role === 'admin' || allowedRoles.map((r) => r.toLowerCase()).includes(role)) {
+      return next();
+    }
+    return res.status(403).json({
+      error: `Access denied. Role '${req.userRole}' is not authorized for this resource.`,
+    });
+  };
+};
+
 // Health check
-app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'UP', engine: 'Node.js + Express + Prisma + PostgreSQL' });
+app.get('/api/health', (_req: Request, res: Response) => {
+  res.json({
+    status: 'UP',
+    engine: 'Node.js + Express + Prisma + PostgreSQL',
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // Societies
-app.get('/api/societies', async (req: Request, res: Response) => {
+app.get('/api/societies', async (_req: Request, res: Response) => {
   try {
     const societies = await prisma.society.findMany({
-      include: { towers: true }
+      include: { towers: true },
     });
     res.json(societies);
   } catch (error) {
@@ -56,7 +74,7 @@ app.get('/api/flats', async (req: Request, res: Response) => {
   try {
     const flats = await prisma.flat.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
-      include: { tower: true }
+      include: { tower: true },
     });
     res.json(flats);
   } catch (error) {
@@ -65,11 +83,11 @@ app.get('/api/flats', async (req: Request, res: Response) => {
 });
 
 // Residents
-app.get('/api/residents', async (req: Request, res: Response) => {
+app.get('/api/residents', requireRole(['secretary', 'guard', 'facility_manager', 'admin', 'resident']), async (req: Request, res: Response) => {
   try {
     const residents = await prisma.resident.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
-      include: { flat: true, familyMembers: true, vehicles: true }
+      include: { flat: true, familyMembers: true, vehicles: true },
     });
     res.json(residents);
   } catch (error) {
@@ -78,11 +96,11 @@ app.get('/api/residents', async (req: Request, res: Response) => {
 });
 
 // Visitor Passes
-app.get('/api/visitor-passes', async (req: Request, res: Response) => {
+app.get('/api/visitor-passes', requireRole(['resident', 'guard', 'secretary', 'admin', 'facility_manager']), async (req: Request, res: Response) => {
   try {
     const passes = await prisma.visitorPass.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
-      orderBy: { validFrom: 'desc' }
+      orderBy: { validFrom: 'desc' },
     });
     res.json(passes);
   } catch (error) {
@@ -90,10 +108,10 @@ app.get('/api/visitor-passes', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/visitor-passes', async (req: Request, res: Response) => {
+app.post('/api/visitor-passes', requireRole(['resident', 'guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
   try {
     const pass = await prisma.visitorPass.create({
-      data: req.body
+      data: req.body,
     });
     res.status(201).json(pass);
   } catch (error) {
@@ -102,11 +120,11 @@ app.post('/api/visitor-passes', async (req: Request, res: Response) => {
 });
 
 // Maintenance Tickets
-app.get('/api/maintenance', async (req: Request, res: Response) => {
+app.get('/api/maintenance', requireRole(['resident', 'facility_manager', 'secretary', 'admin', 'vendor']), async (req: Request, res: Response) => {
   try {
     const tickets = await prisma.maintenanceTicket.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
     res.json(tickets);
   } catch (error) {
@@ -114,13 +132,37 @@ app.get('/api/maintenance', async (req: Request, res: Response) => {
   }
 });
 
+app.post('/api/maintenance', requireRole(['resident', 'facility_manager', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const ticket = await prisma.maintenanceTicket.create({
+      data: req.body,
+    });
+    res.status(201).json(ticket);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/maintenance/:id', requireRole(['facility_manager', 'secretary', 'admin', 'vendor']), async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const ticket = await prisma.maintenanceTicket.update({
+      where: { id },
+      data: req.body,
+    });
+    res.json(ticket);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Billing Invoices
-app.get('/api/billing/invoices', async (req: Request, res: Response) => {
+app.get('/api/billing/invoices', requireRole(['resident', 'secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
   try {
     const invoices = await prisma.billingInvoice.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
       include: { resident: true, flat: true },
-      orderBy: { dueDate: 'asc' }
+      orderBy: { dueDate: 'asc' },
     });
     res.json(invoices);
   } catch (error) {
@@ -128,12 +170,26 @@ app.get('/api/billing/invoices', async (req: Request, res: Response) => {
   }
 });
 
+app.patch('/api/billing/invoices/:id', requireRole(['resident', 'secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const invoice = await prisma.billingInvoice.update({
+      where: { id },
+      data: req.body,
+    });
+    res.json(invoice);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Parcels
-app.get('/api/parcels', async (req: Request, res: Response) => {
+app.get('/api/parcels', requireRole(['resident', 'guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
   try {
     const parcels = await prisma.parcel.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
-      include: { flat: true }
+      include: { flat: true },
+      orderBy: { createdAt: 'desc' },
     });
     res.json(parcels);
   } catch (error) {
@@ -141,16 +197,129 @@ app.get('/api/parcels', async (req: Request, res: Response) => {
   }
 });
 
-// Generic Query Router for Dynamic Front-end PostgreSQL Client
+app.post('/api/parcels', requireRole(['guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const parcel = await prisma.parcel.create({
+      data: req.body,
+    });
+    res.status(201).json(parcel);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/parcels/:id/collect', requireRole(['resident', 'guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const parcel = await prisma.parcel.update({
+      where: { id },
+      data: {
+        status: 'PICKED_UP',
+        pickedUpAt: new Date(),
+      },
+    });
+    res.json(parcel);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Staff
+app.get('/api/staff', requireRole(['guard', 'secretary', 'facility_manager', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const staff = await prisma.staff.findMany({
+      where: req.societyId ? { societyId: req.societyId } : undefined,
+      orderBy: { name: 'asc' },
+    });
+    res.json(staff);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Domestic Workers
+app.get('/api/domestic-workers', requireRole(['resident', 'guard', 'secretary', 'facility_manager', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const workers = await prisma.domesticWorker.findMany({
+      where: req.societyId ? { societyId: req.societyId } : undefined,
+      orderBy: { name: 'asc' },
+    });
+    res.json(workers);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Vendors
+app.get('/api/vendors', requireRole(['resident', 'secretary', 'facility_manager', 'admin', 'vendor']), async (req: Request, res: Response) => {
+  try {
+    const vendors = await prisma.vendor.findMany({
+      where: req.societyId ? { societyId: req.societyId } : undefined,
+      orderBy: { businessName: 'asc' },
+    });
+    res.json(vendors);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Amenities
+app.get('/api/amenities', async (req: Request, res: Response) => {
+  try {
+    const amenities = await prisma.amenity.findMany({
+      where: req.societyId ? { societyId: req.societyId } : undefined,
+    });
+    res.json(amenities);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Allowed tables whitelist for generic query router
+const ALLOWED_QUERY_TABLES: Record<string, string[]> = {
+  society: ['resident', 'secretary', 'guard', 'committee', 'facility_manager', 'vendor', 'admin'],
+  tower: ['resident', 'secretary', 'guard', 'committee', 'facility_manager', 'vendor', 'admin'],
+  flat: ['resident', 'secretary', 'guard', 'committee', 'facility_manager', 'vendor', 'admin'],
+  resident: ['resident', 'secretary', 'guard', 'facility_manager', 'admin'],
+  visitorPass: ['resident', 'guard', 'secretary', 'admin', 'facility_manager'],
+  maintenanceTicket: ['resident', 'facility_manager', 'secretary', 'admin', 'vendor'],
+  billingInvoice: ['resident', 'secretary', 'admin', 'committee'],
+  parcel: ['resident', 'guard', 'secretary', 'admin'],
+  staff: ['guard', 'secretary', 'facility_manager', 'admin'],
+  domesticWorker: ['resident', 'guard', 'secretary', 'admin', 'facility_manager'],
+  vendor: ['resident', 'secretary', 'facility_manager', 'admin', 'vendor'],
+  amenity: ['resident', 'secretary', 'committee', 'facility_manager', 'admin'],
+  amenityBooking: ['resident', 'secretary', 'facility_manager', 'admin'],
+  notification: ['resident', 'guard', 'secretary', 'committee', 'facility_manager', 'vendor', 'admin'],
+};
+
+// Generic Query Router with Whitelist and Role Security
 app.post('/api/:table/query', async (req: Request, res: Response) => {
   const table = String(req.params.table);
+
+  // Security 1: Whitelist verification
+  const allowedRoles = ALLOWED_QUERY_TABLES[table];
+  if (!allowedRoles) {
+    return res.status(403).json({ error: `Query access to table '${table}' is forbidden.` });
+  }
+
+  // Security 2: Role verification
+  const role = (req.userRole || '').toLowerCase();
+  if (role && role !== 'admin' && !allowedRoles.includes(role)) {
+    return res.status(403).json({
+      error: `Access denied. Role '${req.userRole}' cannot query '${table}'.`,
+    });
+  }
+
   try {
     const delegate = (prisma as any)[table];
     if (!delegate || typeof delegate.findMany !== 'function') {
       return res.status(404).json({ error: `Table delegate ${table} not found in Prisma model.` });
     }
     const where: any = {};
-    if (req.societyId) where.societyId = req.societyId;
+    if (req.societyId && role !== 'admin') {
+      where.societyId = req.societyId;
+    }
     const records = await delegate.findMany({ where });
     res.json(records);
   } catch (error) {

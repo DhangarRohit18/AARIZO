@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   onAuthStateChanged, 
   signInWithPhoneNumber, 
@@ -38,10 +38,27 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 const ONBOARDING_STORAGE_KEY = 'communityos_onboarding_completed';
+const USER_STORAGE_KEY = 'aarizo_user';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [status, setStatus] = useState<AuthStatus>('INITIALIZING');
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
+    try {
+      const saved = localStorage.getItem(USER_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [status, setStatus] = useState<AuthStatus>(() => {
+    try {
+      const saved = localStorage.getItem(USER_STORAGE_KEY);
+      return saved ? 'AUTHENTICATED' : 'INITIALIZING';
+    } catch {
+      return 'INITIALIZING';
+    }
+  });
+
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean>(() => {
     return localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true';
   });
@@ -55,8 +72,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
-        setCurrentUser(null);
-        setStatus('UNAUTHENTICATED');
+        const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+        if (!storedUser) {
+          setCurrentUser(null);
+          setStatus('UNAUTHENTICATED');
+        }
         return;
       }
 
@@ -157,6 +177,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const user = MOCK_USERS[role] || MOCK_USERS.resident;
     setCurrentUser(user);
     setStatus('AUTHENTICATED');
+    try {
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+    } catch (e) {
+      console.warn("Failed to persist user in localStorage:", e);
+    }
   };
 
   const logout = async () => {
@@ -165,6 +190,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (e) {
       console.warn("Firebase signout error:", e);
     }
+    try {
+      localStorage.removeItem(USER_STORAGE_KEY);
+    } catch (e) {}
     setCurrentUser(null);
     setStatus('UNAUTHENTICATED');
   };

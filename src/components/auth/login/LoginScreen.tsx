@@ -191,7 +191,108 @@ export const LoginScreen: React.FC = () => {
           </div>
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+        {/* Quick Direct Portal Shortcuts */}
+        <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
+          <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--aarizo-text-muted, #8B9AA5)', display: 'block', marginBottom: '0.5rem' }}>
+            Quick Direct Portal Access
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem' }}>
+            <button
+              type="button"
+              onClick={() => {
+                loginAsRole('vendor');
+                navigate('/domestic');
+              }}
+              style={{
+                padding: '0.5rem 0.6rem',
+                borderRadius: '10px',
+                border: '1px solid #DCE8EF',
+                background: '#ffffff',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                color: '#203746',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.35rem',
+              }}
+            >
+              🧹 Domestic Pass
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                loginAsRole('facility_manager');
+                navigate('/facility/tasks');
+              }}
+              style={{
+                padding: '0.5rem 0.6rem',
+                borderRadius: '10px',
+                border: '1px solid #DCE8EF',
+                background: '#ffffff',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                color: '#203746',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.35rem',
+              }}
+            >
+              🔧 Facility Tasks
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                loginAsRole('vendor');
+                navigate('/vendor/portal');
+              }}
+              style={{
+                padding: '0.5rem 0.6rem',
+                borderRadius: '10px',
+                border: '1px solid #DCE8EF',
+                background: '#ffffff',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                color: '#203746',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.35rem',
+              }}
+            >
+              📦 Vendor Portal
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                loginAsRole('guard');
+                navigate('/security/gate');
+              }}
+              style={{
+                padding: '0.5rem 0.6rem',
+                borderRadius: '10px',
+                border: '1px solid #DCE8EF',
+                background: '#ffffff',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                color: '#203746',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.35rem',
+              }}
+            >
+              🛡️ Security Gate
+            </button>
+          </div>
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
           <p style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text-secondary, #657785)' }}>
             Need access to your flat?{' '}
             <span style={{ color: 'var(--aarizo-blue, #176B91)', fontWeight: 700, cursor: 'pointer' }} onClick={() => executeLogin('secretary')}>
