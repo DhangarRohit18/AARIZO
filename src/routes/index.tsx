@@ -195,8 +195,11 @@ export const AppRoutes: React.FC = () => {
       <Route element={<ProtectedRoute allowedRoles={['guard', 'secretary', 'admin']} />}>
         <Route element={<SecurityLayout />}>
           <Route path="/security" element={<SecurityTerminalPage />} />
+          <Route path="/security/terminal" element={<SecurityTerminalPage />} />
           <Route path="/security/gate" element={<SecurityTerminalPage />} />
-          <Route path="/security/verify" element={<SecurityTerminalPage />} />
+          <Route path="/security/verify" element={<GuardDashboard />} />
+          <Route path="/guard" element={<GuardDashboard />} />
+          <Route path="/guard/*" element={<GuardDashboard />} />
           <Route path="/security/activity" element={<SecurityTerminalPage />} />
           <Route path="/security/profile" element={<SecurityTerminalPage />} />
           <Route path="/security/parking" element={<ParkingGateScannerPage />} />
@@ -206,7 +209,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="/security/emergency-command" element={<SecurityEmergencyTerminalPage />} />
           <Route path="/security/privacy-hub" element={<SecurityTerminalPage />} />
           <Route path="/security/guest-stay" element={<GuestStayScannerPage />} />
-          <Route path="/security/*" element={<GuardDashboard />} />
+          <Route path="/security/*" element={<SecurityTerminalPage />} />
         </Route>
       </Route>
 

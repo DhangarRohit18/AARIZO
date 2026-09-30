@@ -3,7 +3,6 @@ import { MobileAppShell } from '../mobile/MobileAppShell';
 import {
   QrCode,
   Scan,
-  Activity,
   ShieldAlert,
   User,
   Package,
@@ -17,13 +16,13 @@ import {
 const DRAWER_NAV = [
   { label: 'Gate Terminal', path: '/security', icon: QrCode },
   { label: 'Visitor Scanner', path: '/security/verify', icon: Scan },
-  { label: 'Activity Log', path: '/security/activity', icon: Activity },
-  { label: 'Parcel Intelligence', path: '/security/delivery-intelligence', icon: Package },
-  { label: 'Parking Console', path: '/security/parking', icon: Car },
+  { label: 'Child Gate Scanner', path: '/security/child-safety', icon: ShieldAlert },
   { label: 'Staff Hub', path: '/security/staff-scanner', icon: HardHat },
+  { label: 'Parking Console', path: '/security/parking', icon: Car },
+  { label: 'Parcel Intelligence', path: '/security/delivery-intelligence', icon: Package },
   { label: 'Emergency Command', path: '/security/emergency-command', icon: ShieldAlert },
-  { label: 'Privacy Hub', path: '/security/privacy-hub', icon: ShieldCheck },
   { label: 'Guest Stays', path: '/security/guest-stay', icon: BedDouble },
+  { label: 'Privacy & Audit', path: '/security/privacy-hub', icon: ShieldCheck },
 ];
 
 const BOTTOM_NAV = [

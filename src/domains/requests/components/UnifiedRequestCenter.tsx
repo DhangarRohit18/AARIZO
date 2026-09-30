@@ -113,8 +113,12 @@ export const UnifiedRequestCenter: React.FC = () => {
   const filteredRequests = requests.filter((r) => {
     // If resident role, filter only resident's requests
     if (activeRole === 'resident') {
-      const myIds = [currentUser?.id, 'user-resident-01', 'res-1'].filter(Boolean);
-      const isMine = myIds.includes(r.residentId) || r.residentName === (currentUser?.name || 'Rajesh Kumar');
+      const myIds = [currentUser?.id, currentUser?.uid, 'user-resident-01', 'res-1'].filter(Boolean);
+      const isMine =
+        myIds.includes(r.residentId) ||
+        r.residentName.toLowerCase() === (currentUser?.name || '').toLowerCase() ||
+        r.residentName === 'Rajesh Kumar' ||
+        (currentUser?.flatNumber ? r.flatCode.includes(currentUser.flatNumber) : false);
       if (!isMine) {
         return false;
       }

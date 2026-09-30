@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Truck, CheckCircle2, Clock, Package, ArrowRight, History } from 'lucide-react';
+import { ShoppingBag, Truck, CheckCircle2, Clock, ArrowRight, History } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 
 export const VendorDashboard: React.FC = () => {
@@ -70,8 +71,8 @@ export const VendorDashboard: React.FC = () => {
             <h4 style={{ color: '#fff', fontWeight: 700, margin: 0, fontSize: '0.9rem' }}>Vendor Gate Pass Active</h4>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem', margin: '0.2rem 0 0' }}>Show to security for instant entry</p>
           </div>
-          <div style={{ background: '#fff', borderRadius: '10px', padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Package size={36} color="#083B56" />
+          <div style={{ background: '#fff', borderRadius: '10px', padding: '0.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <QRCodeSVG value="COMMUNITYOS:VENDOR:DEL-4412" size={44} level="M" />
           </div>
         </div>
 
