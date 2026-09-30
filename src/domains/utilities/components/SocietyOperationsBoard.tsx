@@ -174,62 +174,101 @@ export const SocietyOperationsBoard: React.FC = () => {
         </div>
       </div>
 
-      {/* Operations Uptime Metrics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Overall Uptime</p>
-          <div className="flex items-baseline justify-between mt-2">
-            <span className="text-2xl font-bold text-slate-900">{summary.overallUptimePercent}%</span>
-            <span className="text-xs font-medium text-emerald-600">Health Index</span>
+      {/* Operations Uptime Metrics Cards - Clean Mobile Layout */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+        {/* Overall Uptime Health Score Card */}
+        <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #DCE8EF', padding: '1rem', boxShadow: '0 2px 6px rgba(8, 59, 86, 0.04)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <div>
+              <span style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#8B9AA5' }}>
+                Overall Society Uptime
+              </span>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginTop: '0.15rem' }}>
+                <span style={{ fontSize: '1.75rem', fontWeight: 900, color: '#083B56', lineHeight: 1 }}>
+                  {summary.overallUptimePercent}%
+                </span>
+                <span style={{
+                  fontSize: '0.6875rem',
+                  fontWeight: 700,
+                  color: summary.overallUptimePercent >= 90 ? '#059669' : summary.overallUptimePercent >= 70 ? '#D97706' : '#DC2626',
+                  background: summary.overallUptimePercent >= 90 ? '#ECFDF5' : summary.overallUptimePercent >= 70 ? '#FFFBEB' : '#FEF2F2',
+                  padding: '0.15rem 0.5rem',
+                  borderRadius: '12px',
+                }}>
+                  {summary.overallUptimePercent >= 90 ? 'Optimal Operations' : summary.overallUptimePercent >= 70 ? 'Degraded Services' : 'Critical Outage'}
+                </span>
+              </div>
+            </div>
+            <div style={{ width: 42, height: 42, borderRadius: '12px', background: '#EAF6FC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#176B91' }}>
+              <Radio size={24} />
+            </div>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
+          <div style={{ width: '100%', height: '6px', background: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden' }}>
             <div
-              className={`h-2 rounded-full ${
-                summary.overallUptimePercent >= 90
-                  ? 'bg-emerald-500'
-                  : summary.overallUptimePercent >= 70
-                  ? 'bg-amber-500'
-                  : 'bg-rose-500'
-              }`}
-              style={{ width: `${summary.overallUptimePercent}%` }}
+              style={{
+                height: '100%',
+                borderRadius: '9999px',
+                width: `${summary.overallUptimePercent}%`,
+                background: summary.overallUptimePercent >= 90 ? '#059669' : summary.overallUptimePercent >= 70 ? '#D97706' : '#DC2626',
+                transition: 'width 0.3s ease',
+              }}
             />
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Normal Operational</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-emerald-600">{summary.normalCount} / {summary.totalUtilities}</span>
-            <CheckCircle2 size={22} className="text-emerald-500" />
+        {/* 2x2 Clean Metrics Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
+                Operational
+              </span>
+              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CheckCircle2 size={14} color="#059669" />
+              </div>
+            </div>
+            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#059669', lineHeight: 1.1 }}>{summary.normalCount} / {summary.totalUtilities}</div>
+            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>100% Functional</div>
           </div>
-          <p className="text-xs text-slate-400 mt-2">100% Functional</p>
-        </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Outages</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-rose-600">{summary.outageCount}</span>
-            <XCircle size={22} className="text-rose-500" />
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
+                Active Outages
+              </span>
+              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <XCircle size={14} color="#DC2626" />
+              </div>
+            </div>
+            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#DC2626', lineHeight: 1.1 }}>{summary.outageCount}</div>
+            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Critical attention needed</div>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Critical attention needed</p>
-        </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Degraded / Reduced</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-amber-600">{summary.degradedCount}</span>
-            <AlertTriangle size={22} className="text-amber-500" />
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
+                Degraded
+              </span>
+              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <AlertTriangle size={14} color="#D97706" />
+              </div>
+            </div>
+            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#D97706', lineHeight: 1.1 }}>{summary.degradedCount}</div>
+            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Partial service active</div>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Partial service active</p>
-        </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Scheduled Maintenance</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-blue-600">{summary.maintenanceCount}</span>
-            <Clock size={22} className="text-blue-500" />
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
+                Maintenance
+              </span>
+              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#EAF6FC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Clock size={14} color="#176B91" />
+              </div>
+            </div>
+            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#176B91', lineHeight: 1.1 }}>{summary.maintenanceCount}</div>
+            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Planned servicing</div>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Planned servicing</p>
         </div>
       </div>
 
