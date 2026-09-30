@@ -267,229 +267,378 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
         </div>
       </div>
 
-      {/* Compliance Metrics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Compliance Health</p>
-          <div className="flex items-baseline justify-between mt-2">
-            <span className="text-2xl font-bold text-slate-900">{metrics.complianceScorePercent}%</span>
-            <span className="text-xs font-medium text-emerald-600">Overall Score</span>
-          </div>
-          <div className="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
-            <div
-              className={`h-2 rounded-full ${
-                metrics.complianceScorePercent >= 80
-                  ? 'bg-emerald-500'
-                  : metrics.complianceScorePercent >= 50
-                  ? 'bg-amber-500'
-                  : 'bg-rose-500'
-              }`}
-              style={{ width: `${metrics.complianceScorePercent}%` }}
-            />
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Compliant</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-emerald-600">{metrics.activeCount}</span>
-            <CheckCircle2 size={22} className="text-emerald-500" />
-          </div>
-          <p className="text-xs text-slate-400 mt-2">Valid AMC & Insurance</p>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Expiring (30 Days)</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-amber-600">{metrics.expiringSoonCount}</span>
-            <Clock size={22} className="text-amber-500" />
-          </div>
-          <p className="text-xs text-slate-400 mt-2">Requires renewal review</p>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Expired Contracts</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-rose-600">{metrics.expiredCount}</span>
-            <XCircle size={22} className="text-rose-500" />
-          </div>
-          <p className="text-xs text-slate-400 mt-2">Immediate action needed</p>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Non-Compliant</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-2xl font-bold text-purple-600">{metrics.nonCompliantCount}</span>
-            <AlertTriangle size={22} className="text-purple-500" />
-          </div>
-          <p className="text-xs text-slate-400 mt-2">Failed recent inspection</p>
-        </div>
-      </div>
-
-      {/* Filters & Search */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="relative flex-1 md:w-72">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search asset, vendor, code..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Filter size={16} className="text-slate-400" />
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white font-medium text-slate-700"
-            >
-              <option value="ALL">All Categories</option>
-              <option value="LIFT">Lift / Elevators</option>
-              <option value="GENERATOR">Generator Sets</option>
-              <option value="PUMP">Pumps & Water</option>
-              <option value="CCTV">CCTV Security</option>
-              <option value="FIRE_SYSTEM">Fire Safety</option>
-              <option value="SWIMMING_POOL">Swimming Pool</option>
-              <option value="GYM_EQUIPMENT">Gym Equipment</option>
-              <option value="ELECTRICAL_EQUIPMENT">Electrical Equipment</option>
-              <option value="WATER_SYSTEMS">Water Treatment / STPs</option>
-              <option value="OTHER">Other Assets</option>
-            </select>
-
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white font-medium text-slate-700"
-            >
-              <option value="ALL">All Statuses</option>
-              <option value="ACTIVE">Active</option>
-              <option value="EXPIRING_SOON">Expiring Soon</option>
-              <option value="EXPIRED">Expired</option>
-              <option value="NON_COMPLIANT">Non-Compliant</option>
-            </select>
-          </div>
-        </div>
-
-        <button
-          onClick={loadData}
-          className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-1 text-xs font-semibold"
-        >
-          <RefreshCw size={14} /> Refresh
-        </button>
-      </div>
-
-      {/* Asset Grid / Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-          <h3 className="font-bold text-slate-800 text-sm uppercase tracking-wider">Asset Compliance Directory</h3>
-          <span className="text-xs text-slate-500 font-medium">Showing {filteredAssets.length} Assets</span>
-        </div>
-
-        <div className="divide-y divide-slate-200">
-          {filteredAssets.length === 0 ? (
-            <div className="p-12 text-center text-slate-400">
-              <Building2 size={36} className="mx-auto mb-2 text-slate-300" />
-              <p className="font-medium text-slate-600">No assets match your search filters.</p>
+      {/* Compliance Metrics Cards - Structured Mobile Layout */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+        {/* Compliance Health Overall Score */}
+        <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #DCE8EF', padding: '1rem', boxShadow: '0 2px 6px rgba(8, 59, 86, 0.04)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <div>
+              <span style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#8B9AA5' }}>
+                Compliance Health Score
+              </span>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginTop: '0.15rem' }}>
+                <span style={{ fontSize: '1.75rem', fontWeight: 900, color: '#083B56', lineHeight: 1 }}>
+                  {metrics.complianceScorePercent}%
+                </span>
+                <span style={{
+                  fontSize: '0.6875rem',
+                  fontWeight: 700,
+                  color: metrics.complianceScorePercent >= 80 ? '#059669' : metrics.complianceScorePercent >= 50 ? '#D97706' : '#DC2626',
+                  background: metrics.complianceScorePercent >= 80 ? '#ECFDF5' : metrics.complianceScorePercent >= 50 ? '#FFFBEB' : '#FEF2F2',
+                  padding: '0.15rem 0.5rem',
+                  borderRadius: '12px',
+                }}>
+                  {metrics.complianceScorePercent >= 80 ? 'Good Health' : metrics.complianceScorePercent >= 50 ? 'Needs Attention' : 'Critical Action'}
+                </span>
+              </div>
             </div>
-          ) : (
-            filteredAssets.map((asset) => (
-              <div key={asset.id} className="p-5 hover:bg-slate-50/80 transition-colors flex flex-col lg:flex-row justify-between lg:items-center gap-4">
-                <div className="space-y-1.5 flex-1">
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
-                      {asset.assetCode}
-                    </span>
-                    <h4 className="text-base font-bold text-slate-900">{asset.name}</h4>
-                    {getAlertBadge(asset.alertLevel, asset.status)}
-                  </div>
+            <div style={{ width: 42, height: 42, borderRadius: '12px', background: '#EAF6FC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#176B91' }}>
+              <ShieldCheck size={24} />
+            </div>
+          </div>
+          <div style={{ width: '100%', height: '6px', background: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden' }}>
+            <div
+              style={{
+                height: '100%',
+                borderRadius: '9999px',
+                width: `${metrics.complianceScorePercent}%`,
+                background: metrics.complianceScorePercent >= 80 ? '#059669' : metrics.complianceScorePercent >= 50 ? '#D97706' : '#DC2626',
+                transition: 'width 0.3s ease',
+              }}
+            />
+          </div>
+        </div>
 
-                  <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-slate-500">
-                    <span className="flex items-center gap-1">
-                      <Building2 size={13} className="text-slate-400" /> {asset.location}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <UserCheck size={13} className="text-slate-400" /> Vendor: <strong className="text-slate-700">{asset.vendorName || 'Unassigned'}</strong>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar size={13} className="text-slate-400" /> Next Inspection Due: <strong className="text-slate-700">{asset.nextInspectionDueDate}</strong>
-                    </span>
-                  </div>
+        {/* 2x2 Clean Metrics Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
+                Active Compliant
+              </span>
+              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CheckCircle2 size={14} color="#059669" />
+              </div>
+            </div>
+            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#059669', lineHeight: 1.1 }}>{metrics.activeCount}</div>
+            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Valid AMC & Insurance</div>
+          </div>
 
-                  <div className="grid grid-cols-3 gap-2 pt-2 text-xs">
-                    <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
-                      <span className="text-slate-400 block text-[10px]">AMC Expiry</span>
-                      <strong className={`font-semibold ${new Date(asset.amcExpiryDate) < new Date() ? 'text-rose-600' : 'text-slate-700'}`}>
-                        {asset.amcExpiryDate}
-                      </strong>
-                    </div>
-                    <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
-                      <span className="text-slate-400 block text-[10px]">Insurance Expiry</span>
-                      <strong className={`font-semibold ${new Date(asset.insuranceExpiryDate) < new Date() ? 'text-rose-600' : 'text-slate-700'}`}>
-                        {asset.insuranceExpiryDate}
-                      </strong>
-                    </div>
-                    <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
-                      <span className="text-slate-400 block text-[10px]">Cert Expiry</span>
-                      <strong className={`font-semibold ${new Date(asset.certificateExpiryDate) < new Date() ? 'text-rose-600' : 'text-slate-700'}`}>
-                        {asset.certificateExpiryDate}
-                      </strong>
-                    </div>
-                  </div>
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
+                Expiring (30 Days)
+              </span>
+              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Clock size={14} color="#D97706" />
+              </div>
+            </div>
+            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#D97706', lineHeight: 1.1 }}>{metrics.expiringSoonCount}</div>
+            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Needs renewal review</div>
+          </div>
+
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
+                Expired Contracts
+              </span>
+              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <XCircle size={14} color="#DC2626" />
+              </div>
+            </div>
+            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#DC2626', lineHeight: 1.1 }}>{metrics.expiredCount}</div>
+            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Action required now</div>
+          </div>
+
+          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
+                Non-Compliant
+              </span>
+              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#F5F3FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <AlertTriangle size={14} color="#7C3AED" />
+              </div>
+            </div>
+            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#7C3AED', lineHeight: 1.1 }}>{metrics.nonCompliantCount}</div>
+            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Failed inspection</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters & Search - Neat Card */}
+      <div style={{ background: '#ffffff', border: '1px solid #DCE8EF', borderRadius: '14px', padding: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+        <div style={{ position: 'relative', width: '100%' }}>
+          <Search size={15} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#8B9AA5' }} />
+          <input
+            type="text"
+            placeholder="Search asset, vendor, code..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ width: '100%', paddingLeft: '2rem', paddingRight: '0.75rem', paddingTop: '0.45rem', paddingBottom: '0.45rem', border: '1px solid #DCE8EF', borderRadius: '10px', fontSize: '0.75rem', outline: 'none' }}
+          />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            style={{ width: '100%', padding: '0.45rem 0.5rem', border: '1px solid #DCE8EF', borderRadius: '10px', fontSize: '0.72rem', fontWeight: 600, background: '#ffffff', color: '#203746' }}
+          >
+            <option value="ALL">All Categories</option>
+            <option value="LIFT">Elevators</option>
+            <option value="GENERATOR">Generator Sets</option>
+            <option value="PUMP">Pumps & Water</option>
+            <option value="CCTV">CCTV Security</option>
+            <option value="FIRE_SYSTEM">Fire Safety</option>
+            <option value="SWIMMING_POOL">Swimming Pool</option>
+            <option value="GYM_EQUIPMENT">Gym Equipment</option>
+            <option value="ELECTRICAL_EQUIPMENT">Electrical Equipment</option>
+            <option value="WATER_SYSTEMS">STP / Water Treatment</option>
+            <option value="OTHER">Other Assets</option>
+          </select>
+
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            style={{ width: '100%', padding: '0.45rem 0.5rem', border: '1px solid #DCE8EF', borderRadius: '10px', fontSize: '0.72rem', fontWeight: 600, background: '#ffffff', color: '#203746' }}
+          >
+            <option value="ALL">All Statuses</option>
+            <option value="ACTIVE">Active</option>
+            <option value="EXPIRING_SOON">Expiring Soon</option>
+            <option value="EXPIRED">Expired</option>
+            <option value="NON_COMPLIANT">Non-Compliant</option>
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {(isAdmin || isFacility) && (
+            <button
+              onClick={() => {
+                setAddForm({
+                  name: '',
+                  assetCode: '',
+                  category: 'LIFT',
+                  location: '',
+                  vendorName: '',
+                  vendorContact: '',
+                  amcStartDate: new Date().toISOString().split('T')[0],
+                  amcExpiryDate: new Date(Date.now() + 365 * 86400000).toISOString().split('T')[0],
+                  insuranceExpiryDate: new Date(Date.now() + 365 * 86400000).toISOString().split('T')[0],
+                  certificateExpiryDate: new Date(Date.now() + 365 * 86400000).toISOString().split('T')[0],
+                  inspectionScheduleFrequencyDays: 30,
+                });
+                setModalMode('ADD');
+              }}
+              style={{
+                flex: 1,
+                padding: '0.5rem',
+                background: 'var(--aarizo-blue, #176B91)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.35rem',
+                cursor: 'pointer',
+              }}
+            >
+              <PlusCircle size={14} /> Add Asset
+            </button>
+          )}
+
+          <button
+            onClick={loadData}
+            style={{
+              padding: '0.5rem 0.75rem',
+              background: '#F4FAFE',
+              border: '1px solid #DCE8EF',
+              borderRadius: '10px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: '#176B91',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              cursor: 'pointer',
+            }}
+          >
+            <RefreshCw size={13} /> Refresh
+          </button>
+        </div>
+      </div>
+
+      {/* Asset Cards - Clean Mobile Layout */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 0.25rem' }}>
+          <h3 style={{ fontSize: '0.8125rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#083B56', margin: 0 }}>
+            Asset Compliance Directory
+          </h3>
+          <span style={{ fontSize: '0.7rem', fontWeight: 600, color: '#8B9AA5' }}>
+            {filteredAssets.length} Assets Found
+          </span>
+        </div>
+
+        {filteredAssets.length === 0 ? (
+          <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #DCE8EF', padding: '2rem 1rem', textAlign: 'center', color: '#8B9AA5' }}>
+            <Building2 size={32} style={{ margin: '0 auto 0.5rem', opacity: 0.5 }} />
+            <p style={{ fontSize: '0.8125rem', fontWeight: 600, margin: 0 }}>No assets match your search filters.</p>
+          </div>
+        ) : (
+          filteredAssets.map((asset) => (
+            <div
+              key={asset.id}
+              style={{
+                background: '#ffffff',
+                borderRadius: '14px',
+                border: '1px solid #DCE8EF',
+                padding: '0.875rem',
+                boxShadow: '0 2px 6px rgba(8, 59, 86, 0.04)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.625rem',
+              }}
+            >
+              {/* Asset Top Row: Code Tag + Status Badge */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', fontWeight: 800, color: '#176B91', background: '#EAF6FC', padding: '0.15rem 0.5rem', borderRadius: '6px', border: '1px solid #DCE8EF' }}>
+                  {asset.assetCode}
+                </span>
+                {getAlertBadge(asset.alertLevel, asset.status)}
+              </div>
+
+              {/* Asset Name */}
+              <h4 style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#083B56', margin: 0, lineHeight: 1.3 }}>
+                {asset.name}
+              </h4>
+
+              {/* Location & Vendor Details */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.72rem', color: '#657785' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <Building2 size={13} color="#8B9AA5" />
+                  <span>{asset.location}</span>
                 </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <UserCheck size={13} color="#8B9AA5" />
+                  <span>Vendor: <strong style={{ color: '#083B56' }}>{asset.vendorName || 'Unassigned'}</strong></span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <Calendar size={13} color="#8B9AA5" />
+                  <span>Next Due: <strong style={{ color: '#D97706' }}>{asset.nextInspectionDueDate}</strong></span>
+                </div>
+              </div>
 
-                {/* Actions */}
-                <div className="flex flex-wrap lg:flex-col gap-2 items-end justify-center border-t lg:border-t-0 pt-3 lg:pt-0">
-                  {isFacility && (
-                    <button
-                      onClick={() => {
-                        setActiveAssetForModal(asset);
-                        setInspectForm({ result: 'PASSED', notes: '', proofUrl: '' });
-                        setModalMode('INSPECT');
-                      }}
-                      className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-lg flex items-center gap-1 transition-colors"
-                    >
-                      <CheckCircle2 size={14} /> Record Inspection
-                    </button>
-                  )}
+              {/* Expiry Dates 3-Column Pill Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.35rem', background: '#F7FBFE', border: '1px solid #EBF5FA', borderRadius: '10px', padding: '0.5rem' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.6rem', color: '#8B9AA5', display: 'block', fontWeight: 600 }}>AMC EXPIRY</span>
+                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: new Date(asset.amcExpiryDate) < new Date() ? '#DC2626' : '#083B56' }}>
+                    {asset.amcExpiryDate}
+                  </span>
+                </div>
+                <div style={{ textAlign: 'center', borderLeft: '1px solid #DCE8EF', borderRight: '1px solid #DCE8EF' }}>
+                  <span style={{ fontSize: '0.6rem', color: '#8B9AA5', display: 'block', fontWeight: 600 }}>INSURANCE</span>
+                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: new Date(asset.insuranceExpiryDate) < new Date() ? '#DC2626' : '#083B56' }}>
+                    {asset.insuranceExpiryDate}
+                  </span>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.6rem', color: '#8B9AA5', display: 'block', fontWeight: 600 }}>CERT EXPIRY</span>
+                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: new Date(asset.certificateExpiryDate) < new Date() ? '#DC2626' : '#083B56' }}>
+                    {asset.certificateExpiryDate}
+                  </span>
+                </div>
+              </div>
 
-                  {isAdmin && (
-                    <button
-                      onClick={() => {
-                        setActiveAssetForModal(asset);
-                        setRenewForm({
-                          renewalType: 'AMC',
-                          newExpiryDate: new Date(Date.now() + 365 * 86400000).toISOString().split('T')[0],
-                          vendorName: asset.vendorName || '',
-                          cost: 0,
-                          documentUrl: '',
-                          notes: '',
-                        });
-                        setModalMode('RENEW');
-                      }}
-                      className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg flex items-center gap-1 transition-colors"
-                    >
-                      <RefreshCw size={14} /> Renew AMC / Cert
-                    </button>
-                  )}
-
+              {/* Action Buttons Row */}
+              <div style={{ display: 'grid', gridTemplateColumns: isAdmin ? '1fr 1fr 1fr' : '1fr 1fr', gap: '0.4rem', marginTop: '0.2rem' }}>
+                {isFacility && (
                   <button
                     onClick={() => {
                       setActiveAssetForModal(asset);
-                      setModalMode('AUDIT');
+                      setInspectForm({ result: 'PASSED', notes: '', proofUrl: '' });
+                      setModalMode('INSPECT');
                     }}
-                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1 transition-colors"
+                    style={{
+                      padding: '0.45rem',
+                      background: '#ECFDF5',
+                      border: '1px solid #A7F3D0',
+                      borderRadius: '8px',
+                      color: '#059669',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.25rem',
+                      cursor: 'pointer',
+                    }}
                   >
-                    <History size={14} /> Audit History ({asset.auditLogs.length})
+                    <CheckCircle2 size={13} /> Inspect
                   </button>
-                </div>
+                )}
+
+                {isAdmin && (
+                  <button
+                    onClick={() => {
+                      setActiveAssetForModal(asset);
+                      setRenewForm({
+                        renewalType: 'AMC',
+                        newExpiryDate: new Date(Date.now() + 365 * 86400000).toISOString().split('T')[0],
+                        vendorName: asset.vendorName || '',
+                        cost: 0,
+                        documentUrl: '',
+                        notes: '',
+                      });
+                      setModalMode('RENEW');
+                    }}
+                    style={{
+                      padding: '0.45rem',
+                      background: '#EAF6FC',
+                      border: '1px solid #DCE8EF',
+                      borderRadius: '8px',
+                      color: '#176B91',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.25rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <RefreshCw size={13} /> Renew
+                  </button>
+                )}
+
+                <button
+                  onClick={() => {
+                    setActiveAssetForModal(asset);
+                    setModalMode('AUDIT');
+                  }}
+                  style={{
+                    padding: '0.45rem',
+                    background: '#F8FAFC',
+                    border: '1px solid #DCE8EF',
+                    borderRadius: '8px',
+                    color: '#657785',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.25rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <History size={13} /> Logs ({asset.auditLogs.length})
+                </button>
               </div>
-            ))
-          )}
-        </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Add Asset Modal */}

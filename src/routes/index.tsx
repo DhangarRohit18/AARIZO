@@ -61,6 +61,7 @@ import { AdminMoveRenovationPage } from '../pages/dashboard/admin/AdminMoveRenov
 import { AdminExpensePage } from '../pages/dashboard/admin/AdminExpensePage';
 import { CommitteeDashboard } from '../pages/dashboard/CommitteeDashboard';
 import { FacilityManagerDashboard } from '../pages/dashboard/FacilityManagerDashboard';
+import { FacilityProfilePage } from '../pages/dashboard/facility/FacilityProfilePage';
 import { DomesticWorkerDashboard } from '../pages/dashboard/DomesticWorkerDashboard';
 import { UnifiedRequestCenter } from '../domains/requests/components/UnifiedRequestCenter';
 import {
@@ -259,6 +260,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="/facility/amc" element={<FacilityManagerDashboard />} />
           <Route path="/facility/cleaning" element={<FacilityManagerDashboard />} />
           <Route path="/facility/utilities" element={<FacilityManagerDashboard />} />
+          <Route path="/facility/profile" element={<FacilityProfilePage />} />
           <Route path="/facility/*" element={<FacilityManagerDashboard />} />
         </Route>
       </Route>
