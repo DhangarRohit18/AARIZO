@@ -140,22 +140,22 @@ export const AdminHousekeepingPage: React.FC = () => {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-          <span className="text-xs text-slate-500 block">Total Scheduled Tasks</span>
-          <span className="text-2xl font-bold text-slate-900">{tasks.length}</span>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
+          <span className="text-[11px] text-slate-500 block">Total Scheduled</span>
+          <span className="text-xl font-bold text-slate-900 mt-0.5 block">{tasks.length}</span>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-          <span className="text-xs text-slate-500 block">Completed / Verified</span>
-          <span className="text-2xl font-bold text-emerald-600">{completedTasks.length}</span>
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
+          <span className="text-[11px] text-slate-500 block">Verified / Done</span>
+          <span className="text-xl font-bold text-emerald-600 mt-0.5 block">{completedTasks.length}</span>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-          <span className="text-xs text-slate-500 block">Missed / Late Tasks</span>
-          <span className="text-2xl font-bold text-rose-600">{missedOrLateTasks.length}</span>
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
+          <span className="text-[11px] text-slate-500 block">Missed / Late</span>
+          <span className="text-xl font-bold text-rose-600 mt-0.5 block">{missedOrLateTasks.length}</span>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-          <span className="text-xs text-slate-500 block">Garbage Collections Today</span>
-          <span className="text-2xl font-bold text-indigo-600">{garbageLogs.length}</span>
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
+          <span className="text-[11px] text-slate-500 block">Garbage Today</span>
+          <span className="text-xl font-bold text-indigo-600 mt-0.5 block">{garbageLogs.length}</span>
         </div>
       </div>
 
@@ -208,7 +208,7 @@ export const AdminHousekeepingPage: React.FC = () => {
 
       {/* TAB: TASKS LIST */}
       {activeTab !== 'GARBAGE' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-4">
           {filteredTasks.map(task => (
             <div key={task.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between">
               <div className="p-5">

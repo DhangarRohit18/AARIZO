@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Wifi,
   Radio,
@@ -129,7 +129,7 @@ export const RealtimeOperationsHubPage: React.FC = () => {
         </div>
 
         {/* Diagnostics Bar */}
-        <div className="mt-6 pt-4 border-t border-indigo-900/40 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+        <div className="mt-6 pt-4 border-t border-indigo-900/40 grid grid-cols-2 gap-3 text-xs">
           <div>
             <span className="text-slate-400">Transport:</span>
             <div className="font-bold text-white font-mono">{status.transportType}</div>
@@ -151,10 +151,10 @@ export const RealtimeOperationsHubPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Grid: Stream Feed vs Broadcast Simulator */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (2 Cols): Live Event Stream Feed */}
-        <div className="lg:col-span-2 space-y-4">
+      {/* Main Stream Feed & Simulator Stack */}
+      <div className="space-y-6">
+        {/* Live Event Stream Feed */}
+        <div className="space-y-4">
           <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <ListFilter className="w-4 h-4 text-slate-400" />

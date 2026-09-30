@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Users,
   UserCheck,
@@ -147,7 +147,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <Activity className="w-5 h-5 text-indigo-600" /> Real-Time Executive KPIs (15 Metrics)
         </h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {/* KPI 1: Total Residents */}
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div className="flex items-center justify-between">
@@ -372,7 +372,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
         </h2>
 
         {/* Row 1: Visitor Trends & Payment Collection */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-5">
           {/* Chart 1: Visitor Trends */}
           <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">
@@ -452,7 +452,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
         </div>
 
         {/* Row 2: Maintenance Trends & Parking Utilization */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-5">
           {/* Chart 3: Maintenance Trends */}
           <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">
@@ -464,7 +464,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+            <div className="grid grid-cols-2 gap-2.5 pt-2">
               {charts.maintenanceTrends.map((pt, i) => {
                 const colors: Record<string, { bg: string; text: string; border: string }> = {
                   OPEN: { bg: 'bg-rose-50 dark:bg-rose-900/30', text: 'text-rose-600', border: 'border-rose-200' },
@@ -520,7 +520,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
         </div>
 
         {/* Row 3: Amenity Usage & Complaint Categories */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-5">
           {/* Chart 5: Amenity Usage */}
           <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">

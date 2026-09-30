@@ -197,7 +197,7 @@ export const BillingManagementPage: React.FC = () => {
             Generate monthly billing cycles, collect 9 charge components, apply penalties, mark manual payments, and view gateway transactions.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center flex-wrap gap-2.5">
           <button
             onClick={exportReport}
             className="px-3.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"
@@ -213,36 +213,48 @@ export const BillingManagementPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Analytics Dashboard Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-          <span className="text-xs font-medium text-slate-500">Total Billed</span>
-          <div className="text-xl font-bold text-slate-900 dark:text-white mt-1">
-            ₹{analytics.totalBilled.toLocaleString()}
+      {/* Analytics Hero & 2x2 Metrics Grid */}
+      <div className="space-y-3">
+        {/* Hero Card: Total Billed & Collection Rate */}
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-[#083B56] to-[#176B91] text-white shadow-sm flex items-center justify-between">
+          <div>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-sky-200">Total Billed</span>
+            <div className="text-2xl font-black mt-0.5">₹{analytics.totalBilled.toLocaleString()}</div>
+            <div className="text-[11px] text-sky-100 mt-1">Society Collection Rate: {analytics.collectionPercentage}%</div>
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-xs px-2.5 py-1 rounded-full bg-white/20 font-bold flex items-center gap-1">
+              <TrendingUp className="w-3.5 h-3.5" /> {analytics.collectionPercentage}%
+            </span>
+            <span className="text-[10px] text-sky-200">Collected</span>
           </div>
         </div>
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-          <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Total Collected</span>
-          <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
-            ₹{analytics.totalCollected.toLocaleString()}
+
+        {/* 2x2 Metrics Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">Total Collected</span>
+            <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
+              ₹{analytics.totalCollected.toLocaleString()}
+            </div>
           </div>
-        </div>
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-          <span className="text-xs font-medium text-amber-600 dark:text-amber-400">Outstanding Balance</span>
-          <div className="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">
-            ₹{analytics.totalOutstanding.toLocaleString()}
+          <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <span className="text-[11px] font-medium text-amber-600 dark:text-amber-400">Outstanding</span>
+            <div className="text-lg font-bold text-amber-600 dark:text-amber-400 mt-0.5">
+              ₹{analytics.totalOutstanding.toLocaleString()}
+            </div>
           </div>
-        </div>
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-          <span className="text-xs font-medium text-rose-600 dark:text-rose-400">Overdue Total</span>
-          <div className="text-xl font-bold text-rose-600 dark:text-rose-400 mt-1">
-            ₹{analytics.totalOverdue.toLocaleString()}
+          <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <span className="text-[11px] font-medium text-rose-600 dark:text-rose-400">Overdue Total</span>
+            <div className="text-lg font-bold text-rose-600 dark:text-rose-400 mt-0.5">
+              ₹{analytics.totalOverdue.toLocaleString()}
+            </div>
           </div>
-        </div>
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-          <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">Collection Rate</span>
-          <div className="text-xl font-bold text-indigo-600 dark:text-indigo-400 mt-1 flex items-center gap-1">
-            <TrendingUp className="w-5 h-5" /> {analytics.collectionPercentage}%
+          <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <span className="text-[11px] font-medium text-indigo-600 dark:text-indigo-400">Recovery Status</span>
+            <div className="text-lg font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">
+              {analytics.collectionPercentage >= 80 ? 'Healthy' : 'Needs Action'}
+            </div>
           </div>
         </div>
       </div>

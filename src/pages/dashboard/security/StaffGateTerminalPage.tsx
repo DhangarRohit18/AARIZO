@@ -166,9 +166,9 @@ export const StaffGateTerminalPage: React.FC = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Search & Worker List */}
-        <div className="lg:col-span-5 space-y-6">
+      <div className="space-y-6">
+        {/* Search & Worker List */}
+        <div className="space-y-4">
           <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
             <h2 className="font-bold text-slate-900 dark:text-white">Search Worker / QR Scan</h2>
             <div className="relative">
@@ -229,8 +229,8 @@ export const StaffGateTerminalPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Worker Pass Verification & Actions */}
-        <div className="lg:col-span-7 space-y-6">
+        {/* Worker Pass Verification & Actions */}
+        <div className="space-y-6">
           {selectedWorker ? (
             <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
               <div className="flex items-center justify-between border-b pb-4 border-slate-200 dark:border-slate-700">

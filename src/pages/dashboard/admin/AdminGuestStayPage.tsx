@@ -156,51 +156,54 @@ export const AdminGuestStayPage: React.FC = () => {
       ) : (
         <>
           {/* KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-                <Hotel className="w-6 h-6" />
-              </div>
+          <div className="space-y-3">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-[#083B56] to-[#176B91] text-white shadow-sm flex items-center justify-between">
               <div>
-                <span className="text-xs text-slate-500 block">Total Guest Suites</span>
-                <span className="text-2xl font-bold text-slate-900">{rooms.length}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-sky-200">Guest Stay Revenue</span>
+                <div className="text-2xl font-black mt-0.5">₹{totalRevenue.toLocaleString()}</div>
+                <div className="text-[11px] text-sky-100 mt-0.5">Earned from guest suite reservations</div>
               </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
-              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
-                <Calendar className="w-6 h-6" />
-              </div>
-              <div>
-                <span className="text-xs text-slate-500 block">Total Reservations</span>
-                <span className="text-2xl font-bold text-slate-900">{reservations.length}</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
-              <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
+              <div className="p-3 bg-white/20 text-white rounded-xl">
                 <IndianRupee className="w-6 h-6" />
               </div>
-              <div>
-                <span className="text-xs text-slate-500 block">Guest Stay Revenue</span>
-                <span className="text-2xl font-bold text-slate-900">₹{totalRevenue.toLocaleString()}</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex items-center gap-3">
+                <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
+                  <Hotel className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-500 block">Total Suites</span>
+                  <span className="text-lg font-bold text-slate-900 block">{rooms.length}</span>
+                </div>
+              </div>
+
+              <div className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex items-center gap-3">
+                <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl shrink-0">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-500 block">Reservations</span>
+                  <span className="text-lg font-bold text-slate-900 block">{reservations.length}</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Rooms List & Add Button */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900">Society Guest Rooms Register</h2>
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <h2 className="text-base font-bold text-slate-900">Society Guest Rooms Register</h2>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-4 py-2.5 bg-[#176B91] hover:bg-[#125877] text-white font-semibold text-sm rounded-xl shadow-sm flex items-center gap-2 transition"
+                className="px-3.5 py-2 bg-[#176B91] hover:bg-[#125877] text-white font-semibold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition"
               >
-                <Plus className="w-4 h-4" /> Add Guest Suite
+                <Plus className="w-4 h-4" /> Add Suite
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-4">
               {rooms.map(room => (
                 <div key={room.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between">
                   <div>

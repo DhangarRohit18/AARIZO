@@ -318,7 +318,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
       {/* TAB 2: ACTIVE SESSIONS MONITOR */}
       {activeTab === 'sessions' && (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-3">
             {sessions.map((sess) => (
               <div
                 key={sess.sessionId}
@@ -455,7 +455,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
 
       {/* TAB 4: SECURITY & RATE SIMULATOR */}
       {activeTab === 'simulator' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-5">
           {/* Payload Sanitizer Simulator */}
           <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4">
             <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">

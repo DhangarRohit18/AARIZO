@@ -263,9 +263,9 @@ export const UnifiedRequestCenter: React.FC = () => {
       </div>
 
       {/* Requests Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {filteredRequests.length === 0 ? (
-          <div className="col-span-3 text-center py-10 px-4 bg-white rounded-2xl border border-slate-200 text-slate-400 space-y-3 shadow-sm">
+          <div className="text-center py-10 px-4 bg-white rounded-2xl border border-slate-200 text-slate-400 space-y-3 shadow-sm">
             <p className="text-xs text-slate-500 m-0">No society requests match the filter criteria.</p>
             <button
               onClick={() => setShowSubmitModal(true)}

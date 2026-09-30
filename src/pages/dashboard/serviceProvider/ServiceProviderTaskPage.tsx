@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Wrench } from 'lucide-react';
 import { maintenanceService } from '../../../services/maintenanceService';
 import type { MaintenanceTicket, TicketStatus } from '../../../types/maintenance';
@@ -80,7 +80,7 @@ export const ServiceProviderTaskPage: React.FC = () => {
       </div>
 
       {/* Task List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-4">
         {tickets.map((t) => (
           <div
             key={t.id}
