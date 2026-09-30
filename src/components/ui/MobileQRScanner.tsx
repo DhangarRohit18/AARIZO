@@ -28,6 +28,17 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState<string | null>(null);
 
+  const handleSuccess = useCallback((code: string) => {
+    setScanning(false);
+    setScanned(true);
+    setResult(code);
+
+    // Short delay then fire callback
+    setTimeout(() => {
+      onScan(code);
+    }, 600);
+  }, [onScan]);
+
   const handleScan = useCallback(async () => {
     if (scanning || scanned) return;
     setScanning(true);
@@ -55,18 +66,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
       // Native scan failed — fall back
       handleSuccess(simulationCode);
     }
-  }, [scanning, scanned, simulationCode]);
-
-  const handleSuccess = (code: string) => {
-    setScanning(false);
-    setScanned(true);
-    setResult(code);
-
-    // Short delay then fire callback
-    setTimeout(() => {
-      onScan(code);
-    }, 600);
-  };
+  }, [scanning, scanned, simulationCode, handleSuccess]);
 
   const handleReset = () => {
     setScanning(false);

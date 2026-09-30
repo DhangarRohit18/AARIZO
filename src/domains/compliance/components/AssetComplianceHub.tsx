@@ -9,7 +9,6 @@ import {
   PlusCircle,
   RefreshCw,
   Search,
-  Filter,
   Calendar,
   Building2,
   History,
