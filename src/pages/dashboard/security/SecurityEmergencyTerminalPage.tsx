@@ -157,7 +157,7 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
           <AlertTriangle size={16} style={{ color: 'var(--aarizo-danger, #D9535B)' }} /> Active Emergency Incidents ({activeTriggered.length})
         </h2>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '0.875rem' }}>
           {activeTriggered.length === 0 ? (
             <div
               style={{
@@ -329,25 +329,25 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
       {/* Modal: Dispatch Responder */}
       {selectedIncident && showRespondModal && (
         <Modal isOpen={showRespondModal} onClose={() => setShowRespondModal(false)} title={`Dispatch Responder: ${selectedIncident.incidentNumber}`}>
-          <form onSubmit={handleRespond} className="space-y-4">
+          <form onSubmit={handleRespond} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Assigned Guard / Responder Name</label>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--aarizo-navy, #083B56)', marginBottom: '0.35rem' }}>Assigned Guard / Responder Name</label>
               <input
                 type="text"
                 required
                 value={responderName}
                 onChange={e => setResponderName(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
+                style={{ width: '100%', padding: '0.625rem 0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.875rem', color: '#083B56', background: '#FFFFFF' }}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Field Response Notes</label>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--aarizo-navy, #083B56)', marginBottom: '0.35rem' }}>Field Response Notes</label>
               <textarea
                 rows={2}
                 placeholder="e.g. Guard Ramesh dispatched to Lift B2 with master keys."
                 value={responseNote}
                 onChange={e => setResponseNote(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
+                style={{ width: '100%', padding: '0.625rem 0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.875rem', color: '#083B56', background: '#FFFFFF' }}
               />
             </div>
             <div className="pt-4 flex justify-end gap-2">
@@ -361,16 +361,16 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
       {/* Modal: Resolve Incident */}
       {selectedIncident && showResolveModal && (
         <Modal isOpen={showResolveModal} onClose={() => setShowResolveModal(false)} title={`Resolve Emergency: ${selectedIncident.incidentNumber}`}>
-          <form onSubmit={handleResolve} className="space-y-4">
+          <form onSubmit={handleResolve} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Resolution Summary & Action Taken</label>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--aarizo-navy, #083B56)', marginBottom: '0.35rem' }}>Resolution Summary & Action Taken</label>
               <textarea
                 rows={3}
                 required
                 placeholder="e.g. Lift technician reset main circuit breaker. Passengers safely extracted."
                 value={resolutionNote}
                 onChange={e => setResolutionNote(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
+                style={{ width: '100%', padding: '0.625rem 0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.875rem', color: '#083B56', background: '#FFFFFF' }}
               />
             </div>
             <div className="pt-4 flex justify-end gap-2">

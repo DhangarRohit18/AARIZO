@@ -106,7 +106,16 @@ export const SecurityTerminalPage: React.FC = () => {
   return (
     <div style={{ backgroundColor: 'var(--aarizo-page, #F7FBFE)', minHeight: '100%' }}>
       {/* Header */}
-      <div style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)', padding: '1.25rem 1rem 1.5rem', position: 'relative', overflow: 'hidden' }}>
+      <div
+        className="m-3 md:m-4 rounded-2xl"
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          padding: '1.25rem 1.25rem 1.5rem',
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+      >
         <div style={{ position: 'absolute', top: -20, right: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
           <Shield size={18} style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
@@ -127,10 +136,10 @@ export const SecurityTerminalPage: React.FC = () => {
         </div>
       )}
 
-      <div style={{ padding: '0 0.75rem', display: 'flex', flexDirection: 'column', gap: '1rem', paddingBottom: '1rem' }}>
+      <div className="px-3 md:px-4 pb-6 flex flex-col gap-4">
 
         {/* Stats Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem', marginTop: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.75rem', marginTop: '0.25rem' }}>
           {[
             { label: 'Expected', value: expectedCount, color: 'var(--aarizo-blue, #176B91)' },
             { label: 'Inside', value: insideCount, color: '#3F8F58' },
@@ -147,7 +156,7 @@ export const SecurityTerminalPage: React.FC = () => {
         </div>
 
         {/* Quick Actions */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.75rem' }}>
           <button
             onClick={() => setIsScannerOpen(true)}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.375rem', padding: '0.875rem 0.5rem', borderRadius: '0.875rem', background: 'var(--aarizo-blue-light, #EAF6FC)', border: '1px solid var(--aarizo-border, #E8F1F5)', cursor: 'pointer', minHeight: 80 }}
@@ -229,9 +238,9 @@ export const SecurityTerminalPage: React.FC = () => {
           </div>
 
           {/* Visitor Cards */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '0.75rem' }}>
             {filteredPasses.length === 0 ? (
-              <div style={{ padding: '2rem 1rem', textAlign: 'center', background: '#fff', borderRadius: '0.875rem', border: '1px solid #e8e2d8' }}>
+              <div style={{ padding: '2rem 1rem', textAlign: 'center', background: '#fff', borderRadius: '0.875rem', border: '1px solid #e8e2d8', gridColumn: '1 / -1' }}>
                 <p style={{ fontSize: '0.8125rem', color: '#a8a29e', margin: 0 }}>No passes found</p>
               </div>
             ) : (
@@ -239,11 +248,15 @@ export const SecurityTerminalPage: React.FC = () => {
                 <div
                   key={p.id}
                   style={{
-                    padding: '0.875rem',
+                    padding: '1rem',
                     background: p.status === 'CHECKED_IN' ? '#f0fdf4' : '#fff',
-                    borderRadius: '0.875rem',
-                    border: p.status === 'CHECKED_IN' ? '1px solid #bbf7d0' : '1px solid #e8e2d8',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                    borderRadius: '1rem',
+                    border: p.status === 'CHECKED_IN' ? '1px solid #bbf7d0' : '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                    boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '0.75rem',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>

@@ -189,7 +189,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6">
       {/* Header */}
       <div
         style={{
@@ -270,7 +270,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
 
       {/* Overview KPI Stat Cards */}
       {summary && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.625rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem' }}>
           {/* Card 1: Total Allocated Budget */}
           <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.875rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>

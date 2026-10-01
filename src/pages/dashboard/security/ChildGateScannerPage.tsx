@@ -60,7 +60,7 @@ export const ChildGateScannerPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="flex flex-col gap-6 p-4 md:p-6">
       {/* Active Missing Child Critical Alert Banner */}
       {activeAlerts.length > 0 && (
         <div className="bg-rose-600 text-white p-5 rounded-2xl shadow-lg border-2 border-rose-400 animate-pulse flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -101,11 +101,11 @@ export const ChildGateScannerPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Scanner Terminal */}
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6">
           {/* QR Terminal Box */}
-          <div className="bg-slate-900 text-white p-4 md:p-6 rounded-2xl shadow-xl space-y-4">
+          <div className="dark-hero-banner bg-slate-900 text-white p-4 md:p-6 rounded-2xl shadow-xl flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 <QrCode className="w-5 h-5 text-indigo-400" /> Security Gate Scanner Terminal
@@ -195,13 +195,13 @@ export const ChildGateScannerPage: React.FC = () => {
         </div>
 
         {/* Right Column: Gate Logs */}
-        <div className="space-y-6">
-          <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+        <div className="flex flex-col gap-6">
+          <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col gap-4">
             <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
               <UserCheck className="w-4 h-4 text-indigo-600" /> Recent Gate Verification Logs
             </h3>
 
-            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+            <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto">
               {pickupLogs.length === 0 ? (
                 <p className="text-xs text-slate-400 text-center py-6">No recent child pickup events recorded</p>
               ) : (

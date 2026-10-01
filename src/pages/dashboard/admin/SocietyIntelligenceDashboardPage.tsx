@@ -59,7 +59,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="flex flex-col gap-6 pb-12 p-4 md:p-6">
       {/* Header & Date Range Filter Bar */}
       <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-4 md:p-6 text-white shadow-xl border border-indigo-900/30">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -147,7 +147,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <Activity className="w-5 h-5 text-indigo-600" /> Real-Time Executive KPIs (15 Metrics)
         </h2>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
           {/* KPI 1: Total Residents */}
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div className="flex items-center justify-between">
@@ -366,13 +366,13 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
       </div>
 
       {/* 7 CHARTS SECTION */}
-      <div className="space-y-6">
+      <div className="flex flex-col gap-6">
         <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <PieChart className="w-5 h-5 text-indigo-600" /> Operational Analytics & Trends (7 Visual Graphs)
         </h2>
 
         {/* Row 1: Visitor Trends & Payment Collection */}
-        <div className="space-y-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Chart 1: Visitor Trends */}
           <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">
@@ -452,7 +452,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
         </div>
 
         {/* Row 2: Maintenance Trends & Parking Utilization */}
-        <div className="space-y-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Chart 3: Maintenance Trends */}
           <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">
@@ -520,7 +520,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
         </div>
 
         {/* Row 3: Amenity Usage & Complaint Categories */}
-        <div className="space-y-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Chart 5: Amenity Usage */}
           <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-4">

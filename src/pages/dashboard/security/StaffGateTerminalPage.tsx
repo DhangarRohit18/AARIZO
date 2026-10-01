@@ -120,7 +120,7 @@ export const StaffGateTerminalPage: React.FC = () => {
   );
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
+    <div className="p-4 md:p-6 flex flex-col gap-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -166,10 +166,10 @@ export const StaffGateTerminalPage: React.FC = () => {
         </div>
       )}
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Search & Worker List */}
-        <div className="space-y-4">
-          <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+        <div className="flex flex-col gap-4">
+          <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-4">
             <h2 className="font-bold text-slate-900 dark:text-white">Search Worker / QR Scan</h2>
             <div className="relative">
               <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -182,7 +182,7 @@ export const StaffGateTerminalPage: React.FC = () => {
               />
             </div>
 
-            <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+            <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto pr-1">
               {filteredWorkers.map((w: DomesticWorkerProfile) => (
                 <div
                   key={w.id}
@@ -230,9 +230,9 @@ export const StaffGateTerminalPage: React.FC = () => {
         </div>
 
         {/* Worker Pass Verification & Actions */}
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6">
           {selectedWorker ? (
-            <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+            <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-6">
               <div className="flex items-center justify-between border-b pb-4 border-slate-200 dark:border-slate-700">
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 dark:text-white">Staff Gate Pass Verification</h2>

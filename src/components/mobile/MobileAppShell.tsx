@@ -407,7 +407,10 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
           background: 'var(--aarizo-page, #F7FBFE)',
         }}
       >
-        <div style={{ width: '100%', maxWidth: '1280px', margin: '0 auto', boxSizing: 'border-box' }}>
+        <div
+          className="pb-24 md:pb-8"
+          style={{ width: '100%', maxWidth: '1280px', margin: '0 auto', boxSizing: 'border-box' }}
+        >
           {children}
         </div>
       </main>

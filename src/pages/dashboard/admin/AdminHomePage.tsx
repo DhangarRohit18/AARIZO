@@ -80,86 +80,12 @@ export const AdminHomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* ── 2. Today's Announcements Card (Screenshot match) ── */}
-      <div
-        style={{
-          background: '#ffffff',
-          border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
-          borderRadius: '16px',
-          padding: '1rem 1.25rem',
-          boxShadow: '0 2px 10px rgba(8, 59, 86, 0.05)',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              background: 'var(--aarizo-light-blue, #EAF6FC)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--aarizo-blue, #176B91)',
-            }}
-          >
-            <Megaphone size={18} />
-          </div>
-          <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: 0 }}>
-            Today's Announcements
-          </h3>
-        </div>
-        <p style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text-muted, #8B9AA5)', margin: '0 0 0.875rem 0' }}>
-          No announcements for today.
-        </p>
-        <div style={{ display: 'flex', gap: '0.625rem' }}>
-          <button
-            onClick={() => navigate('/admin/community')}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              padding: '0.45rem 0.875rem',
-              background: 'var(--aarizo-navy, #083B56)',
-              color: '#ffffff',
-              borderRadius: '9999px',
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            <Plus size={14} /> New
-          </button>
-          <button
-            onClick={() => navigate('/admin/community')}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              padding: '0.45rem 0.875rem',
-              background: 'var(--aarizo-light-blue, #EAF6FC)',
-              color: 'var(--aarizo-navy, #083B56)',
-              border: '1px solid var(--aarizo-border, #DCE8EF)',
-              borderRadius: '9999px',
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            <List size={14} /> All
-          </button>
-        </div>
-      </div>
-
-      {/* ── 3. Quick Actions 3x2 Grid (Screenshot match) ── */}
+      {/* ── 2. Quick Actions Grid ── */}
       <div>
         <h2 style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: '0 0 0.75rem 0' }}>
           Quick Actions
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.75rem' }}>
           {QUICK_ACTIONS.map((item) => {
             const Icon = item.icon;
             return (
@@ -203,59 +129,145 @@ export const AdminHomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* ── 4. Recent Activity (Screenshot match) ── */}
-      <div>
-        <h2 style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: '0 0 0.75rem 0' }}>
-          Recent Activity
-        </h2>
-        <div
-          style={{
-            background: '#ffffff',
-            borderRadius: '16px',
-            border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
-            boxShadow: '0 2px 10px rgba(8, 59, 86, 0.05)',
-            overflow: 'hidden',
-          }}
-        >
-          {RECENT_ACTIVITIES.map((act, idx) => {
-            const Icon = act.icon;
-            return (
-              <div
-                key={act.id}
-                style={{
-                  padding: '0.875rem 1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  borderBottom: idx < RECENT_ACTIVITIES.length - 1 ? '1px solid var(--aarizo-border-soft, #E8F1F5)' : 'none',
-                }}
-              >
+      {/* ── 3. Announcements & Recent Activity Responsive Grid ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
+        {/* Today's Announcements */}
+        <div>
+          <h2 style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: '0 0 0.75rem 0' }}>
+            Today's Announcements
+          </h2>
+          <div
+            style={{
+              background: '#ffffff',
+              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              borderRadius: '16px',
+              padding: '1.25rem',
+              boxShadow: '0 2px 10px rgba(8, 59, 86, 0.05)',
+              height: 'calc(100% - 2rem)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                 <div
                   style={{
                     width: 36,
                     height: 36,
-                    borderRadius: '10px',
-                    background: act.bg,
+                    borderRadius: '50%',
+                    background: 'var(--aarizo-light-blue, #EAF6FC)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: act.color,
-                    flexShrink: 0,
+                    color: 'var(--aarizo-blue, #176B91)',
                   }}
                 >
-                  <Icon size={18} />
+                  <Megaphone size={18} />
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '0.84375rem', fontWeight: 700, color: 'var(--aarizo-text, #203746)' }}>
-                    {act.title}
-                  </div>
-                  <div style={{ fontSize: '0.71875rem', color: 'var(--aarizo-text-muted, #8B9AA5)', marginTop: '0.125rem' }}>
-                    {act.time}
-                  </div>
-                </div>
+                <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)' }}>
+                  Active Notices
+                </span>
               </div>
-            );
-          })}
+              <p style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text-muted, #8B9AA5)', margin: '0 0 1rem 0' }}>
+                No urgent society-wide announcements broadcasted for today.
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '0.625rem' }}>
+              <button
+                onClick={() => navigate('/admin/community')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  padding: '0.45rem 0.875rem',
+                  background: 'var(--aarizo-navy, #083B56)',
+                  color: '#ffffff',
+                  borderRadius: '9999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                <Plus size={14} /> New Notice
+              </button>
+              <button
+                onClick={() => navigate('/admin/community')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  padding: '0.45rem 0.875rem',
+                  background: 'var(--aarizo-light-blue, #EAF6FC)',
+                  color: 'var(--aarizo-navy, #083B56)',
+                  border: '1px solid var(--aarizo-border, #DCE8EF)',
+                  borderRadius: '9999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                <List size={14} /> View All
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div>
+          <h2 style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: '0 0 0.75rem 0' }}>
+            Recent Activity
+          </h2>
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              boxShadow: '0 2px 10px rgba(8, 59, 86, 0.05)',
+              overflow: 'hidden',
+            }}
+          >
+            {RECENT_ACTIVITIES.map((act, idx) => {
+              const Icon = act.icon;
+              return (
+                <div
+                  key={act.id}
+                  style={{
+                    padding: '0.875rem 1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    borderBottom: idx < RECENT_ACTIVITIES.length - 1 ? '1px solid var(--aarizo-border-soft, #E8F1F5)' : 'none',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: '10px',
+                      background: act.bg,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: act.color,
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Icon size={18} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.84375rem', fontWeight: 700, color: 'var(--aarizo-text, #203746)' }}>
+                      {act.title}
+                    </div>
+                    <div style={{ fontSize: '0.71875rem', color: 'var(--aarizo-text-muted, #8B9AA5)', marginTop: '0.125rem' }}>
+                      {act.time}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

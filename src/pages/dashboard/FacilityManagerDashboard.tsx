@@ -47,44 +47,44 @@ export const FacilityManagerDashboard: React.FC = () => {
   ];
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '0.75rem 0.5rem 5rem' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '0.5rem 0 3rem' }}>
       {/* ── Compact Aarizo Header Banner ── */}
       <div style={{
         background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)',
-        padding: '0.875rem 1rem',
-        borderRadius: '14px',
+        padding: '1.25rem 1.5rem',
+        borderRadius: '16px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: '0.75rem',
-        boxShadow: '0 4px 14px rgba(8,59,86,0.08)',
+        marginBottom: '1rem',
+        boxShadow: '0 4px 16px rgba(8,59,86,0.08)',
       }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.15rem' }}>
-            <Settings size={13} color="#83CBEA" />
-            <p style={{ color: '#83CBEA', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.2rem' }}>
+            <Settings size={14} color="#83CBEA" />
+            <p style={{ color: '#83CBEA', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>
               Facility Operations
             </p>
           </div>
-          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.125rem', margin: 0, letterSpacing: '-0.01em' }}>
+          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0, letterSpacing: '-0.01em' }}>
             Facility Manager
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.75rem', margin: '0.15rem 0 0' }}>
-            Maintenance, shifts, AMC &amp; utilities
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.78125rem', margin: '0.2rem 0 0' }}>
+            Facility maintenance, shift tracking, AMC contracts &amp; utilities
           </p>
         </div>
         <span style={{
           background: 'rgba(255,183,77,0.2)', borderRadius: '20px',
-          padding: '0.3rem 0.65rem', display: 'flex', alignItems: 'center', gap: '0.35rem',
-          fontSize: '0.72rem', fontWeight: 700, color: '#FBD38D', flexShrink: 0,
+          padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem',
+          fontSize: '0.75rem', fontWeight: 700, color: '#FBD38D', flexShrink: 0,
         }}>
-          <Wrench size={12} /> FM Access
+          <Wrench size={14} /> FM Access
         </span>
       </div>
 
       <div>
-        {/* ── Interactive 4-Card Stat Counters Grid ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.625rem', marginBottom: '0.75rem' }}>
+        {/* ── Interactive 4-Card Stat Counters Grid (Responsive) ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
           {stats.map((s, i) => {
             const Icon = s.icon;
             const isSelected = activeTab === s.tab;

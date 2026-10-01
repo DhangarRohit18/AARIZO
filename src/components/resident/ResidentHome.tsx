@@ -183,7 +183,7 @@ export const ResidentHome: React.FC = () => {
           <h2 style={{ fontWeight: 800, fontSize: '0.8125rem', color: 'var(--aarizo-navy, #083B56)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.625rem' }}>
             Quick Actions
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(95px, 1fr))', gap: '0.625rem' }}>
             {QUICK_ACTIONS.map((action) => {
               const Icon = action.icon;
               const isSOS = action.id === 'sos';
@@ -307,101 +307,104 @@ export const ResidentHome: React.FC = () => {
           </section>
         )}
 
-        {/* ── Recent Activity ── */}
-        <section>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
-            <h2 style={{ fontWeight: 800, fontSize: '0.8125rem', color: 'var(--aarizo-navy, #083B56)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Recent Activity
-            </h2>
-            <button
-              onClick={() => navigate('/resident/activity')}
-              style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700, background: 'none', display: 'flex', alignItems: 'center', gap: '2px' }}
+        {/* ── Responsive 2-Col Grid for Activity & Announcements on Desktop ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
+          {/* ── Recent Activity ── */}
+          <section>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+              <h2 style={{ fontWeight: 800, fontSize: '0.8125rem', color: 'var(--aarizo-navy, #083B56)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Recent Activity
+              </h2>
+              <button
+                onClick={() => navigate('/resident/activity')}
+                style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700, background: 'none', display: 'flex', alignItems: 'center', gap: '2px' }}
+              >
+                See all <ChevronRight size={12} />
+              </button>
+            </div>
+            <div
+              style={{
+                background: '#ffffff',
+                borderRadius: '16px',
+                border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                overflow: 'hidden',
+                boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+              }}
             >
-              See all <ChevronRight size={12} />
-            </button>
-          </div>
-          <div
-            style={{
-              background: '#ffffff',
-              borderRadius: '16px',
-              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
-              overflow: 'hidden',
-              boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
-            }}
-          >
-            {RECENT_ACTIVITY.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '0.75rem',
-                    padding: '0.875rem 1rem',
-                    borderBottom: index < RECENT_ACTIVITY.length - 1 ? '1px solid var(--aarizo-border-soft, #E8F1F5)' : 'none',
-                  }}
-                >
+              {RECENT_ACTIVITY.map((item, index) => {
+                const Icon = item.icon;
+                return (
                   <div
+                    key={item.id}
                     style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: '50%',
-                      background: 'var(--aarizo-light-blue, #EAF6FC)',
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
+                      alignItems: 'flex-start',
+                      gap: '0.75rem',
+                      padding: '0.875rem 1rem',
+                      borderBottom: index < RECENT_ACTIVITY.length - 1 ? '1px solid var(--aarizo-border-soft, #E8F1F5)' : 'none',
                     }}
                   >
-                    <Icon size={16} style={{ color: item.color }} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text, #203746)', lineHeight: 1.4, margin: 0, fontWeight: 600 }}>{item.text}</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.25rem' }}>
-                      <Clock size={11} style={{ color: 'var(--aarizo-text-muted, #8B9AA5)' }} />
-                      <span style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>{item.time}</span>
+                    <div
+                      style={{
+                        width: 34,
+                        height: 34,
+                        borderRadius: '50%',
+                        background: 'var(--aarizo-light-blue, #EAF6FC)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Icon size={16} style={{ color: item.color }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text, #203746)', lineHeight: 1.4, margin: 0, fontWeight: 600 }}>{item.text}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.25rem' }}>
+                        <Clock size={11} style={{ color: 'var(--aarizo-text-muted, #8B9AA5)' }} />
+                        <span style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>{item.time}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                );
+              })}
+            </div>
+          </section>
 
-        {/* ── Society Announcements ── */}
-        <section>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
-            <h2 style={{ fontWeight: 800, fontSize: '0.8125rem', color: 'var(--aarizo-navy, #083B56)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Announcements
-            </h2>
-            <button onClick={() => navigate('/resident/community')} style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700, background: 'none', display: 'flex', alignItems: 'center', gap: '2px' }}>
-              See all <ChevronRight size={12} />
-            </button>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {mockAnnouncements.slice(0, 2).map((ann, i) => (
-              <div
-                key={i}
-                style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', padding: '0.875rem 1rem', boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)' }}
-              >
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                  <TrendingUp size={16} style={{ color: 'var(--aarizo-blue, #176B91)', flexShrink: 0, marginTop: 2 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, fontSize: '0.84375rem', color: 'var(--aarizo-navy, #083B56)', marginBottom: '0.25rem' }}>
-                      {'title' in ann ? (ann as { title: string }).title : String(ann)}
+          {/* ── Society Announcements ── */}
+          <section>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+              <h2 style={{ fontWeight: 800, fontSize: '0.8125rem', color: 'var(--aarizo-navy, #083B56)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Announcements
+              </h2>
+              <button onClick={() => navigate('/resident/community')} style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700, background: 'none', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                See all <ChevronRight size={12} />
+              </button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {mockAnnouncements.slice(0, 2).map((ann, i) => (
+                <div
+                  key={i}
+                  style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', padding: '0.875rem 1rem', boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <TrendingUp size={16} style={{ color: 'var(--aarizo-blue, #176B91)', flexShrink: 0, marginTop: 2 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.84375rem', color: 'var(--aarizo-navy, #083B56)', marginBottom: '0.25rem' }}>
+                        {'title' in ann ? (ann as { title: string }).title : String(ann)}
+                      </div>
+                      {'summary' in ann && (
+                        <p style={{ fontSize: '0.75rem', color: 'var(--aarizo-text-secondary, #657785)', margin: 0, lineHeight: 1.4 }}>
+                          {(ann as { summary: string }).summary}
+                        </p>
+                      )}
                     </div>
-                    {'summary' in ann && (
-                      <p style={{ fontSize: '0.75rem', color: 'var(--aarizo-text-secondary, #657785)', margin: 0, lineHeight: 1.4 }}>
-                        {(ann as { summary: string }).summary}
-                      </p>
-                    )}
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   );

@@ -48,7 +48,7 @@ export const GuestStayScannerPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="flex flex-col gap-6 p-4 md:p-6">
       {/* Header */}
       <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -64,11 +64,11 @@ export const GuestStayScannerPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Scanner Terminal */}
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6">
           {/* QR Terminal Box */}
-          <div className="bg-slate-900 text-white p-4 md:p-6 rounded-2xl shadow-xl space-y-4">
+          <div className="dark-hero-banner bg-slate-900 text-white p-4 md:p-6 rounded-2xl shadow-xl flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 <QrCode className="w-5 h-5 text-indigo-400" /> Guest Stay Terminal Scanner
@@ -157,13 +157,13 @@ export const GuestStayScannerPage: React.FC = () => {
         </div>
 
         {/* Right Column: Active Guest Stays */}
-        <div className="space-y-6">
-          <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+        <div className="flex flex-col gap-6">
+          <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col gap-4">
             <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
               <UserCheck className="w-4 h-4 text-indigo-600" /> Currently Checked-In Guest Stays
             </h3>
 
-            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+            <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto">
               {activeReservations.filter(r => r.status === 'CHECKED_IN').length === 0 ? (
                 <p className="text-xs text-slate-400 text-center py-6">No guests currently checked-in</p>
               ) : (

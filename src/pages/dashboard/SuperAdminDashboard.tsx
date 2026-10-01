@@ -69,48 +69,48 @@ export const SuperAdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '0.75rem 0.5rem 5rem' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '0.5rem 0 3rem' }}>
       {/* ── Compact Aarizo Page Header ── */}
       <div style={{
         background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)',
-        padding: '0.875rem 1rem',
-        borderRadius: '14px',
+        padding: '1.25rem 1.5rem',
+        borderRadius: '16px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: '0.75rem',
-        marginBottom: '0.75rem',
-        boxShadow: '0 4px 14px rgba(8,59,86,0.08)',
+        marginBottom: '1rem',
+        boxShadow: '0 4px 16px rgba(8,59,86,0.08)',
       }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.15rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.2rem' }}>
             <Globe size={14} color="#83CBEA" />
-            <p style={{ color: '#83CBEA', fontSize: '0.7rem', margin: 0, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <p style={{ color: '#83CBEA', fontSize: '0.72rem', margin: 0, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Platform Administration
             </p>
           </div>
-          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.125rem', margin: 0, letterSpacing: '-0.01em' }}>
+          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0, letterSpacing: '-0.01em' }}>
             Super Admin Portal
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.75rem', margin: '0.15rem 0 0' }}>
-            Multi-tenant society management &amp; health
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.78125rem', margin: '0.2rem 0 0' }}>
+            Multi-tenant society management, provisioning &amp; system health
           </p>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.35rem',
-            padding: '0.5rem 0.875rem',
+            display: 'flex', alignItems: 'center', gap: '0.4rem',
+            padding: '0.6rem 1rem',
             background: '#176B91',
             color: '#fff',
             borderRadius: '10px',
             border: 'none',
             fontWeight: 700,
-            fontSize: '0.78125rem',
+            fontSize: '0.8125rem',
             cursor: 'pointer',
             whiteSpace: 'nowrap',
             flexShrink: 0,
-            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
           }}
         >
           <Plus size={15} /> New Society
@@ -118,8 +118,8 @@ export const SuperAdminDashboard: React.FC = () => {
       </div>
 
       <div>
-        {/* ── Stat Cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.625rem', marginBottom: '0.75rem' }}>
+        {/* ── Stat Cards (Responsive) ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
           {statCards.map((card, i) => {
             const Icon = card.icon;
             const value = card.valueKey === 'societies' ? String(societies.length) : (card.value ?? '');
