@@ -18,7 +18,7 @@ const S = {
   } as React.CSSProperties,
   htitle: { color: '#FFFFFF', fontWeight: 800, fontSize: '1.125rem', letterSpacing: '-0.02em', margin: 0 } as React.CSSProperties,
   hsub: { color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.8125rem', marginTop: '0.2rem' } as React.CSSProperties,
-  content: { padding: '1rem' } as React.CSSProperties,
+  content: { padding: '1rem', maxWidth: '1280px', margin: '0 auto', paddingBottom: '6rem' } as React.CSSProperties,
   card: {
     background: '#FFFFFF', borderRadius: '1rem',
     border: '1px solid var(--aarizo-border, #E8F1F5)', overflow: 'hidden',
