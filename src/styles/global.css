@@ -430,73 +430,33 @@ input, select, textarea {
 }
 
 /* ============================================================
-   Mobile App Shell Layout Normalizer
-   Protects mobile screens inside the 480px frame from desktop
-   Tailwind viewport breakpoint classes (lg:, md:, sm:)
+   Responsive App Shell Layout
+   Mobile-first: Full width with smooth responsive scaling
+   Desktop: Expands with rich responsive grid and column support
    ============================================================ */
 .mobile-app-shell {
   width: 100%;
-  max-width: 480px;
-  overflow-x: hidden !important;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--aarizo-page, #F7FBFE);
+  position: relative;
 }
 
 .mobile-app-shell main {
   width: 100%;
-  max-width: 100%;
-  overflow-x: hidden !important;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* 12-column layouts: stack vertically into 1 column */
-.mobile-app-shell .grid-cols-12,
-.mobile-app-shell .sm\:grid-cols-12,
-.mobile-app-shell .md\:grid-cols-12,
-.mobile-app-shell .lg\:grid-cols-12,
-.mobile-app-shell .xl\:grid-cols-12 {
-  grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+@media (max-width: 767px) {
+  .mobile-app-shell main {
+    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
-.mobile-app-shell .col-span-12,
-.mobile-app-shell .sm\:col-span-12,
-.mobile-app-shell .md\:col-span-12,
-.mobile-app-shell .lg\:col-span-12,
-.mobile-app-shell .lg\:col-span-8,
-.mobile-app-shell .lg\:col-span-7,
-.mobile-app-shell .lg\:col-span-6,
-.mobile-app-shell .lg\:col-span-5,
-.mobile-app-shell .lg\:col-span-4,
-.mobile-app-shell .lg\:col-span-3,
-.mobile-app-shell .md\:col-span-8,
-.mobile-app-shell .md\:col-span-7,
-.mobile-app-shell .md\:col-span-6,
-.mobile-app-shell .md\:col-span-5,
-.mobile-app-shell .md\:col-span-4 {
-  grid-column: span 1 / span 1 !important;
-}
-
-/* 4 and 5 column desktop classes: normalize to neat 2 columns inside 480px */
-.mobile-app-shell .lg\:grid-cols-5,
-.mobile-app-shell .md\:grid-cols-5,
-.mobile-app-shell .sm\:grid-cols-5,
-.mobile-app-shell .grid-cols-5,
-.mobile-app-shell .lg\:grid-cols-4,
-.mobile-app-shell .md\:grid-cols-4,
-.mobile-app-shell .sm\:grid-cols-4 {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-}
-
-/* Desktop 3-column breakpoint classes: collapse to 1 column for cards */
-.mobile-app-shell .lg\:grid-cols-3,
-.mobile-app-shell .xl\:grid-cols-3,
-.mobile-app-shell .md\:grid-cols-3 {
-  grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
-}
-
-/* Prevent desktop side-by-side flex splitting inside 480px */
-.mobile-app-shell .lg\:flex-row {
-  flex-direction: column !important;
-}
-
-/* Text and word wrapping fixes - prevent breaking mid-word */
+/* Text and word wrapping fixes */
 .mobile-app-shell h1,
 .mobile-app-shell h2,
 .mobile-app-shell h3,
@@ -507,9 +467,8 @@ input, select, textarea {
 .mobile-app-shell .badge,
 .mobile-app-shell [class*="badge"],
 .mobile-app-shell .card-title {
-  word-break: normal !important;
-  overflow-wrap: normal !important;
-  hyphens: manual !important;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 /* Smooth table responsiveness */
@@ -520,3 +479,4 @@ input, select, textarea {
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
 }
+

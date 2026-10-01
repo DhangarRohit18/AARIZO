@@ -15,7 +15,11 @@ import type { SocietyRequest, SocietyRequestCategory, SocietyRequestStatus, Requ
 import { useAuth } from '../../../context/AuthContext';
 import { useRBAC } from '../../../hooks/useRBAC';
 
-export const UnifiedRequestCenter: React.FC = () => {
+export interface UnifiedRequestCenterProps {
+  hideHeaderBanner?: boolean;
+}
+
+export const UnifiedRequestCenter: React.FC<UnifiedRequestCenterProps> = ({ hideHeaderBanner = false }) => {
   const { currentUser } = useAuth();
   const { activeRole } = useRBAC();
   const [requests, setRequests] = useState<SocietyRequest[]>([]);
@@ -152,56 +156,88 @@ export const UnifiedRequestCenter: React.FC = () => {
     { label: 'In Progress', count: inProgressCount, statusFilter: 'IN_PROGRESS', color: '#7C3AED', bg: '#F5F3FF', icon: AlertCircle },
   ];
 
-  return (
-    <div style={{ padding: '0.875rem 0.5rem 6rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
-      {/* ── Compact Navy Header Banner (#083B56) ── */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
-          borderRadius: '14px',
-          padding: '1rem',
-          color: '#FFFFFF',
-          boxShadow: '0 4px 14px rgba(8, 59, 86, 0.08)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '0.75rem',
-        }}
-      >
-        <div>
-          <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.125rem', margin: 0, letterSpacing: '-0.01em' }}>
-            Unified Society Request Centre
-          </h1>
-          <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.72rem', margin: '0.15rem 0 0', lineHeight: 1.3 }}>
-            NOCs, Tenant Registrations, Permits &amp; Approvals
-          </p>
-        </div>
+  const formatCategoryName = (cat: string) => {
+    switch (cat) {
+      case 'NOC': return 'NOC Certificate';
+      case 'TENANT_REGISTRATION': return 'Tenant Onboarding';
+      case 'OWNERSHIP_CHANGE': return 'Ownership Transfer';
+      case 'RENOVATION_PERMISSION': return 'Renovation Permit';
+      case 'EVENT_PERMISSION': return 'Event Permission';
+      case 'PARKING_REQUEST': return 'Parking Allocation';
+      case 'SOCIETY_CERTIFICATE': return 'Society Certificate';
+      default: return cat.replace(/_/g, ' ');
+    }
+  };
 
-        <button
-          onClick={() => setShowSubmitModal(true)}
+  const getStatusBadgeConfig = (status: SocietyRequestStatus) => {
+    switch (status) {
+      case 'APPROVED':
+      case 'COMPLETED':
+        return { bg: '#ECFDF5', color: '#059669', border: '#A7F3D0', icon: CheckCircle2, label: status };
+      case 'UNDER_REVIEW':
+      case 'SUBMITTED':
+        return { bg: '#FFFBEB', color: '#D97706', border: '#FDE68A', icon: Clock, label: status.replace('_', ' ') };
+      case 'IN_PROGRESS':
+        return { bg: '#F5F3FF', color: '#7C3AED', border: '#DDD6FE', icon: AlertCircle, label: 'IN PROGRESS' };
+      case 'REJECTED':
+        return { bg: '#FEF2F2', color: '#DC2626', border: '#FECACA', icon: AlertCircle, label: status };
+      default:
+        return { bg: '#F1F5F9', color: '#475569', border: '#E2E8F0', icon: FileText, label: status };
+    }
+  };
+
+  return (
+    <div style={{ padding: '0.5rem 0 3rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+      {/* ── Optional Compact Navy Header Banner (#083B56) ── */}
+      {!hideHeaderBanner && (
+        <div
           style={{
-            background: 'var(--aarizo-blue, #176B91)',
+            background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+            borderRadius: '16px',
+            padding: '1.25rem 1.5rem',
             color: '#FFFFFF',
-            border: '1px solid rgba(255, 255, 255, 0.25)',
-            borderRadius: '10px',
-            padding: '0.5rem 0.875rem',
-            fontWeight: 700,
-            fontSize: '0.78125rem',
+            boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
             display: 'flex',
+            justifyContent: 'space-between',
             alignItems: 'center',
-            gap: '0.35rem',
-            cursor: 'pointer',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-            flexShrink: 0,
+            flexWrap: 'wrap',
+            gap: '1rem',
           }}
         >
-          <Plus size={15} /> New Request / NOC
-        </button>
-      </div>
+          <div>
+            <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0, letterSpacing: '-0.01em' }}>
+              Unified Society Request Centre
+            </h1>
+            <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.78rem', margin: '0.2rem 0 0', lineHeight: 1.3 }}>
+              NOCs, Tenant Registrations, Permits &amp; Executive Approvals
+            </p>
+          </div>
 
-      {/* ── 4-Card KPI Stat Counters Grid ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.625rem' }}>
+          <button
+            onClick={() => setShowSubmitModal(true)}
+            style={{
+              background: 'var(--aarizo-blue, #176B91)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              borderRadius: '10px',
+              padding: '0.6rem 1rem',
+              fontWeight: 700,
+              fontSize: '0.8125rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              flexShrink: 0,
+            }}
+          >
+            <Plus size={16} /> New Request / NOC
+          </button>
+        </div>
+      )}
+
+      {/* ── 4-Card KPI Stat Counters Grid (Responsive 2 on mobile, 4 on desktop) ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem' }}>
         {requestStats.map((st) => {
           const Icon = st.icon;
           const isSelected = filterStatus === st.statusFilter;
@@ -212,23 +248,23 @@ export const UnifiedRequestCenter: React.FC = () => {
               onClick={() => setFilterStatus(st.statusFilter)}
               style={{
                 background: '#ffffff',
-                borderRadius: '12px',
+                borderRadius: '14px',
                 border: isSelected ? `2px solid ${st.color}` : '1px solid #DCE8EF',
-                padding: '0.75rem',
+                padding: '0.875rem 1rem',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.625rem',
+                gap: '0.75rem',
                 textAlign: 'left',
                 cursor: 'pointer',
-                boxShadow: isSelected ? '0 2px 10px rgba(8,59,86,0.12)' : '0 2px 6px rgba(8,59,86,0.03)',
+                boxShadow: isSelected ? '0 4px 14px rgba(8,59,86,0.12)' : '0 2px 8px rgba(8,59,86,0.03)',
                 transition: 'all 0.15s ease',
               }}
             >
               <div
                 style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: '10px',
+                  width: 40,
+                  height: 40,
+                  borderRadius: '12px',
                   background: st.bg,
                   display: 'flex',
                   alignItems: 'center',
@@ -236,13 +272,13 @@ export const UnifiedRequestCenter: React.FC = () => {
                   flexShrink: 0,
                 }}
               >
-                <Icon size={18} color={st.color} />
+                <Icon size={20} color={st.color} />
               </div>
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>
+                <div style={{ fontSize: '1.375rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>
                   {st.count}
                 </div>
-                <div style={{ fontSize: '0.6875rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: '0.72rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {st.label}
                 </div>
               </div>
@@ -251,21 +287,22 @@ export const UnifiedRequestCenter: React.FC = () => {
         })}
       </div>
 
-      {/* Filter & Search Bar */}
+      {/* ── Filter & Search Bar (Responsive flex-row on tablet/desktop) ── */}
       <div
         style={{
           background: '#ffffff',
-          padding: '0.875rem',
-          borderRadius: '14px',
-          border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
-          boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+          padding: '1rem',
+          borderRadius: '16px',
+          border: '1px solid #E2E8F0',
+          boxShadow: '0 2px 10px rgba(8, 59, 86, 0.04)',
           display: 'flex',
-          flexDirection: 'column',
-          gap: '0.625rem',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
+          alignItems: 'center',
         }}
       >
-        <div style={{ position: 'relative', width: '100%' }}>
-          <Search size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--aarizo-text-muted, #8B9AA5)', pointerEvents: 'none' }} />
+        <div style={{ position: 'relative', flex: '1 1 240px', minWidth: '220px' }}>
+          <Search size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: '#8B9AA5', pointerEvents: 'none' }} />
           <input
             type="text"
             placeholder="Search request title, resident, or Request ID..."
@@ -278,26 +315,30 @@ export const UnifiedRequestCenter: React.FC = () => {
               height: '42px',
               borderRadius: '10px',
               fontSize: '0.8125rem',
-              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              border: '1px solid #E2E8F0',
               outline: 'none',
-              background: 'var(--aarizo-pale-blue, #F4FAFE)',
-              color: 'var(--aarizo-text, #203746)',
+              background: '#F8FAFC',
+              color: '#083B56',
+              boxSizing: 'border-box',
             }}
           />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+
+        <div style={{ display: 'flex', gap: '0.5rem', flex: '1 1 280px', minWidth: '240px' }}>
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
             style={{
-              padding: '0.5rem',
+              flex: 1,
+              padding: '0.5rem 0.75rem',
               borderRadius: '10px',
-              fontSize: '0.75rem',
-              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              fontSize: '0.78125rem',
+              border: '1px solid #E2E8F0',
               background: '#ffffff',
-              color: 'var(--aarizo-text, #203746)',
-              height: '40px',
+              color: '#083B56',
+              height: '42px',
               fontWeight: 600,
+              boxSizing: 'border-box',
             }}
           >
             <option value="ALL">All Categories</option>
@@ -305,7 +346,7 @@ export const UnifiedRequestCenter: React.FC = () => {
             <option value="TENANT_REGISTRATION">Tenant Onboarding</option>
             <option value="RENOVATION_PERMISSION">Renovation Permit</option>
             <option value="EVENT_PERMISSION">Event Permission</option>
-            <option value="PARKING_REQUEST">Parking Slot Request</option>
+            <option value="PARKING_REQUEST">Parking Allocation</option>
             <option value="SOCIETY_CERTIFICATE">Statutory Certificate</option>
           </select>
 
@@ -313,14 +354,16 @@ export const UnifiedRequestCenter: React.FC = () => {
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
             style={{
-              padding: '0.5rem',
+              flex: 1,
+              padding: '0.5rem 0.75rem',
               borderRadius: '10px',
-              fontSize: '0.75rem',
-              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              fontSize: '0.78125rem',
+              border: '1px solid #E2E8F0',
               background: '#ffffff',
-              color: 'var(--aarizo-text, #203746)',
-              height: '40px',
+              color: '#083B56',
+              height: '42px',
               fontWeight: 600,
+              boxSizing: 'border-box',
             }}
           >
             <option value="ALL">All Statuses</option>
@@ -334,60 +377,154 @@ export const UnifiedRequestCenter: React.FC = () => {
         </div>
       </div>
 
-      {/* Requests Grid */}
-      <div className="grid grid-cols-1 gap-4">
+      {/* ── Requests Cards Grid (1 col on mobile, 2 col on tablet, 3 col on desktop) ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
         {filteredRequests.length === 0 ? (
-          <div className="text-center py-10 px-4 bg-white rounded-2xl border border-slate-200 text-slate-400 space-y-3 shadow-sm">
-            <p className="text-xs text-slate-500 m-0">No society requests match the filter criteria.</p>
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem 1rem', background: '#ffffff', borderRadius: '16px', border: '1px solid #E2E8F0', color: '#64748B' }}>
+            <p style={{ fontSize: '0.875rem', color: '#64748B', margin: '0 0 1rem' }}>No society requests match the filter criteria.</p>
             <button
               onClick={() => setShowSubmitModal(true)}
-              style={{ background: 'var(--aarizo-blue, #176B91)', color: '#FFFFFF' }}
-              className="px-4 py-2 text-xs font-bold rounded-xl shadow-sm hover:brightness-110 transition-all inline-flex items-center gap-1.5"
+              style={{ background: '#176B91', color: '#FFFFFF', padding: '0.5rem 1.25rem', fontSize: '0.8125rem', fontWeight: 700, borderRadius: '10px', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
             >
-              <Plus size={14} /> Submit New Request / NOC
+              <Plus size={15} /> Submit New Request / NOC
             </button>
           </div>
         ) : (
-          filteredRequests.map((req) => (
-            <div
-              key={req.id}
-              onClick={() => setSelectedRequest(req)}
-              className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:border-indigo-400 hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4"
-            >
-              <div>
-                <div className="flex justify-between items-start">
-                  <span className="text-[10px] font-mono font-bold text-slate-400">{req.id}</span>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold ${
-                    req.status === 'APPROVED' || req.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-800' :
-                    req.status === 'UNDER_REVIEW' ? 'bg-amber-100 text-amber-800' :
-                    req.status === 'REJECTED' ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-800'
-                  }`}>
-                    {req.status}
-                  </span>
+          filteredRequests.map((req) => {
+            const badge = getStatusBadgeConfig(req.status);
+            const StatusIcon = badge.icon;
+            return (
+              <div
+                key={req.id}
+                onClick={() => setSelectedRequest(req)}
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '16px',
+                  border: '1px solid #E2E8F0',
+                  padding: '1.25rem',
+                  boxShadow: '0 2px 10px rgba(8, 59, 86, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: '0.875rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.18s ease',
+                  position: 'relative',
+                }}
+              >
+                <div>
+                  {/* Top Bar: ID + Status Pill Badge */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.625rem' }}>
+                    <span style={{ fontFamily: 'monospace', fontSize: '0.72rem', fontWeight: 700, color: '#083B56', background: '#F1F5F9', padding: '0.2rem 0.5rem', borderRadius: '6px' }}>
+                      {req.id}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '0.6875rem',
+                        fontWeight: 800,
+                        color: badge.color,
+                        background: badge.bg,
+                        border: `1px solid ${badge.border}`,
+                        padding: '0.2rem 0.6rem',
+                        borderRadius: '999px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.03em',
+                      }}
+                    >
+                      <StatusIcon size={12} /> {badge.label}
+                    </span>
+                  </div>
+
+                  {/* Title & Description */}
+                  <h3 style={{ color: '#083B56', fontWeight: 800, fontSize: '0.9375rem', margin: '0 0 0.35rem', lineHeight: 1.35 }}>
+                    {req.title}
+                  </h3>
+                  <p style={{ color: '#64748B', fontSize: '0.8125rem', lineHeight: 1.45, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {req.description}
+                  </p>
                 </div>
 
-                <h3 className="font-bold text-slate-800 text-sm mt-2 line-clamp-2">{req.title}</h3>
-                <p className="text-xs text-slate-500 mt-1 line-clamp-2">{req.description}</p>
-              </div>
+                {/* Meta details card */}
+                <div style={{ background: '#F8FAFC', borderRadius: '12px', padding: '0.75rem', border: '1px solid #EDF2F7', display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: '#64748B', fontWeight: 500 }}>Resident:</span>
+                    <strong style={{ color: '#083B56', fontWeight: 700 }}>{req.residentName} ({req.flatCode})</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: '#64748B', fontWeight: 500 }}>Category:</span>
+                    <span style={{ color: '#176B91', background: '#EAF6FC', padding: '0.15rem 0.5rem', borderRadius: '6px', fontWeight: 700, fontSize: '0.7rem' }}>
+                      {formatCategoryName(req.category)}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#64748B', fontSize: '0.7rem' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Paperclip size={12} /> Attached Docs:
+                    </span>
+                    <span style={{ fontWeight: 600 }}>{req.documents.length} files</span>
+                  </div>
+                </div>
 
-              <div className="border-t pt-3 space-y-2 text-xs">
-                <div className="flex justify-between text-slate-500">
-                  <span>Resident:</span>
-                  <strong className="text-slate-800">{req.residentName} ({req.flatCode})</strong>
-                </div>
-                <div className="flex justify-between text-slate-500">
-                  <span>Category:</span>
-                  <span className="font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded text-[10px]">
-                    {req.category}
-                  </span>
-                </div>
-                <div className="flex justify-between text-slate-500 text-[11px]">
-                  <span>Documents:</span>
-                  <span>{req.documents.length} attached</span>
+                {/* Direct Action Footer */}
+                <div style={{ display: 'flex', gap: '0.5rem', paddingTop: '0.25rem' }}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedRequest(req);
+                    }}
+                    style={{
+                      flex: 1,
+                      background: '#F1F5F9',
+                      color: '#083B56',
+                      border: '1px solid #E2E8F0',
+                      borderRadius: '8px',
+                      padding: '0.45rem',
+                      fontWeight: 700,
+                      fontSize: '0.75rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.3rem',
+                    }}
+                  >
+                    View Details
+                  </button>
+
+                  {(activeRole === 'secretary' || activeRole === 'committee' || activeRole === 'admin') &&
+                    (req.status === 'UNDER_REVIEW' || req.status === 'SUBMITTED') && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedRequest(req);
+                          handleStatusTransition('APPROVED');
+                        }}
+                        style={{
+                          background: '#059669',
+                          color: '#FFFFFF',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '0.45rem 0.75rem',
+                          fontWeight: 700,
+                          fontSize: '0.75rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                          boxShadow: '0 2px 6px rgba(5,150,105,0.2)',
+                        }}
+                      >
+                        <CheckCircle2 size={13} /> Approve
+                      </button>
+                    )}
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 

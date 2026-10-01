@@ -114,79 +114,134 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
       className="mobile-app-shell"
       style={{
         minHeight: '100dvh',
-        height: '100dvh',
         display: 'flex',
         flexDirection: 'column',
         background: 'var(--aarizo-page, #F7FBFE)',
-        maxWidth: '480px',
-        margin: '0 auto',
+        width: '100%',
         position: 'relative',
-        boxShadow: '0 0 36px rgba(8, 59, 86, 0.08)',
-        borderLeft: '1px solid var(--aarizo-border-soft, #E8F1F5)',
-        borderRight: '1px solid var(--aarizo-border-soft, #E8F1F5)',
       }}
     >
       {/* ── Screenshot-Matched Deep Navy Header (#083B56) ── */}
       <header
         style={{
-          padding: '0 1rem',
+          padding: '0 1.25rem',
           paddingTop: 'env(safe-area-inset-top, 0px)',
-          height: 'calc(60px + env(safe-area-inset-top, 0px))',
+          height: 'calc(64px + env(safe-area-inset-top, 0px))',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
           background: 'var(--aarizo-navy, #083B56)',
-          zIndex: 10,
+          zIndex: 40,
           flexShrink: 0,
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {/* Avatar button that triggers drawer */}
-          <button
-            onClick={() => setDrawerOpen(true)}
-            aria-label="Open Navigation Drawer"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
-              border: 'none',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
-            <Menu size={20} />
-          </button>
-
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#ffffff' }}>
-              <span style={{ fontSize: '0.9375rem', fontWeight: 700, letterSpacing: '-0.01em' }}>
-                {currentUser?.societyName || societyName}
-              </span>
-              <ChevronDown size={14} style={{ opacity: 0.8 }} />
-            </div>
-            <p style={{ fontSize: '0.6875rem', color: 'rgba(255, 255, 255, 0.72)', margin: 0, fontWeight: 500 }}>
-              {roleTitle}
-            </p>
-          </div>
-        </div>
-
-        {/* Top Right Actions: Notification + Logout */}
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          {topRightActions || (
+        <div
+          style={{
+            width: '100%',
+            maxWidth: '1280px',
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+            {/* Drawer trigger button */}
             <button
-              onClick={() => navigate('/notifications')}
-              aria-label="Notifications"
+              onClick={() => setDrawerOpen(true)}
+              aria-label="Open Navigation Drawer"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                border: 'none',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              <Menu size={20} />
+            </button>
+
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#ffffff' }}>
+                <span style={{ fontSize: '0.9375rem', fontWeight: 800, letterSpacing: '-0.01em' }}>
+                  {currentUser?.societyName || societyName}
+                </span>
+                <ChevronDown size={14} style={{ opacity: 0.8 }} />
+              </div>
+              <p style={{ fontSize: '0.6875rem', color: 'rgba(255, 255, 255, 0.72)', margin: 0, fontWeight: 600 }}>
+                {roleTitle} Portal
+              </p>
+            </div>
+          </div>
+
+          {/* Desktop Navigation Links (visible on md screens and up) */}
+          <nav className="hidden md:flex items-center gap-1.5">
+            {bottomItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    padding: '0.45rem 0.875rem',
+                    borderRadius: '8px',
+                    fontSize: '0.8125rem',
+                    fontWeight: active ? 700 : 500,
+                    textDecoration: 'none',
+                    color: active ? '#ffffff' : 'rgba(255, 255, 255, 0.75)',
+                    background: active ? 'rgba(255, 255, 255, 0.18)' : 'transparent',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <Icon size={16} />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Top Right Actions: Notification + Logout */}
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {topRightActions || (
+              <button
+                onClick={() => navigate('/notifications')}
+                aria-label="Notifications"
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                <Bell size={18} />
+              </button>
+            )}
+            <button
+              onClick={logout}
+              aria-label="Sign Out"
+              title="Sign Out"
               style={{
                 width: 38,
                 height: 38,
                 borderRadius: '50%',
                 background: 'rgba(255, 255, 255, 0.12)',
-                color: '#ffffff',
+                color: 'rgba(255, 255, 255, 0.85)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -194,28 +249,9 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 cursor: 'pointer',
               }}
             >
-              <Bell size={18} />
+              <LogOut size={16} />
             </button>
-          )}
-          <button
-            onClick={logout}
-            aria-label="Sign Out"
-            title="Sign Out"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.12)',
-              color: 'rgba(255, 255, 255, 0.85)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            <LogOut size={16} />
-          </button>
+          </div>
         </div>
       </header>
 
@@ -363,35 +399,37 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
       {/* ── Main Content Area ── */}
       <main
         ref={mainRef}
+        className="w-full flex-1 overflow-y-auto overflow-x-hidden"
         style={{
           flex: 1,
           overflowY: 'auto',
           overflowX: 'hidden',
-          paddingBottom: 'calc(4.75rem + env(safe-area-inset-bottom, 0px))',
           background: 'var(--aarizo-page, #F7FBFE)',
         }}
       >
-        {children}
+        <div style={{ width: '100%', maxWidth: '1280px', margin: '0 auto', boxSizing: 'border-box' }}>
+          {children}
+        </div>
       </main>
 
-      {/* ── Screenshot-Matched Bottom Navigation with Center FAB ── */}
+      {/* ── Screenshot-Matched Bottom Navigation with Center FAB (Mobile Only) ── */}
       <nav
+        className="flex md:hidden"
         style={{
           position: 'fixed',
           bottom: 0,
           left: '50%',
           transform: 'translateX(-50%)',
           width: '100%',
-          maxWidth: '480px',
+          maxWidth: '500px',
           background: '#ffffff',
           borderTop: '1px solid var(--aarizo-border-soft, #E8F1F5)',
-          display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-around',
           paddingTop: '0.25rem',
           paddingBottom: 'calc(0.25rem + env(safe-area-inset-bottom, 0px))',
           zIndex: 100,
-          boxShadow: '0 -4px 16px rgba(8, 59, 86, 0.05)',
+          boxShadow: '0 -4px 16px rgba(8, 59, 86, 0.08)',
           height: 'calc(62px + env(safe-area-inset-bottom, 0px))',
           boxSizing: 'border-box',
         }}
