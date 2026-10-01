@@ -50,26 +50,40 @@ export const TowerManagementPage: React.FC = () => {
   ];
 
   return (
-    <div className="p-3 sm:p-6 max-w-6xl mx-auto font-sans text-slate-100">
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div className="p-3 sm:p-6 max-w-6xl mx-auto font-sans text-slate-800">
+      {/* Aarizo Gradient Header Banner */}
+      <header
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.5rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
+      >
         <div>
           <div className="flex items-center gap-2">
-            <Building className="w-6 h-6 text-indigo-400" />
+            <Building className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
             <h1 className="text-lg sm:text-xl font-bold text-white">Tower & Building Structure</h1>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
             Manage society towers, blocks, and floor configurations.
           </p>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-indigo-700"
+          style={{
+            background: 'var(--aarizo-blue, #176B91)',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
+          }}
+          className="flex items-center gap-2 text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md hover:opacity-95 transition"
         >
           <Plus size={16} /> Add Tower
         </button>
       </header>
 
-      <div className="mt-4">
+      <div className="mt-4 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
         <DataTable
           columns={columns}
           data={towers}
@@ -97,7 +111,7 @@ export const TowerManagementPage: React.FC = () => {
                 value={towerName}
                 onChange={(e) => setTowerName(e.target.value)}
                 placeholder="e.g. Majestic Heights"
-                className="w-full p-2.5 rounded border border-slate-300 text-slate-900"
+                className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
               />
             </FormField>
             <FormField label="Block Code">
@@ -106,7 +120,7 @@ export const TowerManagementPage: React.FC = () => {
                 value={blockCode}
                 onChange={(e) => setBlockCode(e.target.value)}
                 placeholder="e.g. A, B, T1"
-                className="w-full p-2.5 rounded border border-slate-300 text-slate-900 uppercase"
+                className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 uppercase focus:outline-none focus:ring-2 focus:ring-[#176B91]"
               />
             </FormField>
           </div>
@@ -116,20 +130,21 @@ export const TowerManagementPage: React.FC = () => {
               value={totalFloors}
               onChange={(e) => setTotalFloors(Number(e.target.value))}
               min="1"
-              className="w-full p-2.5 rounded border border-slate-300 text-slate-900 mb-4"
+              className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 mb-4 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
             />
           </FormField>
-          <div className="flex justify-end gap-2 mt-4">
+          <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-slate-200">
             <button
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              className="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded font-semibold text-sm"
+              className="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded-xl font-semibold text-xs sm:text-sm hover:bg-slate-50 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 border-none bg-indigo-600 text-white rounded font-semibold text-sm"
+              style={{ background: 'var(--aarizo-blue, #176B91)' }}
+              className="px-4 py-2 border-none text-white rounded-xl font-bold text-xs sm:text-sm shadow-md hover:opacity-95 transition"
             >
               Save Tower
             </button>

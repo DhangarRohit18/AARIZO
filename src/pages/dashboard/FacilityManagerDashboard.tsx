@@ -47,7 +47,7 @@ export const FacilityManagerDashboard: React.FC = () => {
   ];
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '0.5rem 0 3rem' }}>
+    <div className="max-w-7xl mx-auto px-2 sm:px-4" style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '0.5rem 0 3rem' }}>
       {/* ── Compact Aarizo Header Banner ── */}
       <div style={{
         background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)',

@@ -120,7 +120,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
       </div>
 
       {/* Amenities Cards Grid */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {amenities.map(amenity => (
           <div key={amenity.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:border-sky-200 transition-colors">
             <div>

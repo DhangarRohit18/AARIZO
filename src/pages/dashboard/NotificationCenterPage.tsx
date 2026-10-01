@@ -155,42 +155,42 @@ export const NotificationCenterPage: React.FC = () => {
       {/* ── Subheader with Back Button & Unread Counter ── */}
       <div
         style={{
-          background: 'var(--aarizo-navy, #083B56)',
-          padding: '1rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.875rem',
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          padding: '1.25rem 1rem',
           color: '#ffffff',
+          boxShadow: '0 2px 8px rgba(8, 59, 86, 0.08)',
         }}
       >
-        <button
-          onClick={() => navigate(-1)}
-          aria-label="Go Back"
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: '50%',
-            background: 'rgba(255, 255, 255, 0.15)',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#ffffff',
-            cursor: 'pointer',
-          }}
-        >
-          <ArrowLeft size={18} />
-        </button>
-        <div>
-          <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>Notifications</h1>
-          <p style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.72)', margin: '0.125rem 0 0' }}>
-            {unreadCount} unread
-          </p>
+        <div className="max-w-4xl mx-auto w-full flex items-center gap-3.5">
+          <button
+            onClick={() => navigate(-1)}
+            aria-label="Go Back"
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.15)',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ffffff',
+              cursor: 'pointer',
+            }}
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <div>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>Notifications</h1>
+            <p style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.75)', margin: '0.125rem 0 0' }}>
+              {unreadCount} unread
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* ── Filter Pills: All / Unread (Screenshot match) ── */}
-      <div style={{ padding: '1rem 1rem 0.5rem', display: 'flex', gap: '0.5rem' }}>
+      {/* ── Filter Pills: All / Unread ── */}
+      <div className="max-w-4xl mx-auto w-full" style={{ padding: '1rem 1rem 0.5rem', display: 'flex', gap: '0.5rem' }}>
         <button
           onClick={() => setFilter('ALL')}
           style={{
@@ -223,8 +223,8 @@ export const NotificationCenterPage: React.FC = () => {
         </button>
       </div>
 
-      {/* ── Notification List (Exact Screenshot Match) ── */}
-      <div style={{ padding: '0.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      {/* ── Notification List (Responsive 1-col Mobile, 2-col Desktop) ── */}
+      <div className="max-w-4xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-3.5 p-3 sm:p-4">
         {filtered.map((item) => {
           const isComplaint = item.type === 'complaint';
           const iconBg = isComplaint ? '#FFF0F1' : '#EDF8F0';

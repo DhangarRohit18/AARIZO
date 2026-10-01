@@ -63,7 +63,7 @@ export const ResidentManagementPage = () => {
       </div>
 
       {/* ── Search Bar & Filter Strip ── */}
-      <div style={{ padding: '1rem 1rem 0.5rem' }}>
+      <div className="max-w-7xl mx-auto w-full" style={{ padding: '1rem 1rem 0.5rem' }}>
         <div
           style={{
             display: 'flex',
@@ -123,14 +123,14 @@ export const ResidentManagementPage = () => {
       </div>
 
       {/* ── Count Heading ── */}
-      <div style={{ padding: '0.5rem 1rem 0.25rem' }}>
+      <div className="max-w-7xl mx-auto w-full" style={{ padding: '0.5rem 1rem 0.25rem' }}>
         <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--aarizo-text-secondary, #657785)' }}>
           {filteredResidents.length} residents found
         </span>
       </div>
 
-      {/* ── Resident Cards (Exact Match to Screenshot) ── */}
-      <div style={{ padding: '0.25rem 1rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      {/* ── Resident Cards (Responsive Grid on Desktop, Clean 1-Col on Mobile) ── */}
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-3 sm:p-4">
         {filteredResidents.map((r) => (
           <div
             key={r.id}

@@ -35,7 +35,7 @@ export const ResidentServicesPage: React.FC = () => {
         Everything you need, all in one place.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.75rem' }}>
         {SERVICES.map((service) => {
           const Icon = service.icon;
           return (

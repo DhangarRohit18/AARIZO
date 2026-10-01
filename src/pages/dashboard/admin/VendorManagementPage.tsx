@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { ShoppingBag, Plus } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Vendor, VendorCategory } from '../../../types/society';
@@ -75,38 +75,40 @@ export const VendorManagementPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1100px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+    <div className="p-3 sm:p-6 max-w-6xl mx-auto font-sans text-slate-800">
+      {/* Aarizo Gradient Header Banner */}
+      <header
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.5rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <ShoppingBag size={24} color="#8b5cf6" />
-            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Vendor Management & Procurement</h1>
+          <div className="flex items-center gap-2">
+            <ShoppingBag className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-lg sm:text-xl font-bold text-white">Vendor Management & Procurement</h1>
           </div>
-          <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
+          <p className="text-xs mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
             Manage society suppliers, contractors, and service partners.
           </p>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            background: '#8b5cf6',
-            color: '#fff',
-            border: 'none',
-            padding: '0.65rem 1rem',
-            borderRadius: '0.5rem',
-            fontWeight: 600,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
+            background: 'var(--aarizo-blue, #176B91)',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
           }}
+          className="flex items-center gap-2 text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md hover:opacity-95 transition"
         >
           <Plus size={16} /> Onboard Vendor
         </button>
       </header>
 
-      <div style={{ marginBottom: '2rem' }}>
+      <div className="mb-6 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
         <DataTable
           columns={columns}
           data={vendors}
@@ -130,64 +132,67 @@ export const VendorManagementPage: React.FC = () => {
 
       <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Onboard New Vendor">
         <Form onSubmit={handleCreateVendor}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <FormField label="Company Name">
-              <input
-                type="text"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                placeholder="e.g. Pure Aqua Solutions"
-                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
-              />
-            </FormField>
-            <FormField label="Service Category">
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value as VendorCategory)}
-                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField label="Company Name">
+                <input
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  placeholder="e.g. Pure Aqua Solutions"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+              <FormField label="Service Category">
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as VendorCategory)}
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                >
+                  <option value="WATER_SUPPLY">Water Supply</option>
+                  <option value="WASTE_MANAGEMENT">Waste Management</option>
+                  <option value="ELEVATOR_MAINTENANCE">Elevator Maintenance</option>
+                  <option value="SECURITY_AGENCY">Security Agency</option>
+                  <option value="LANDSCAPING">Landscaping</option>
+                </select>
+              </FormField>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField label="Contact Person">
+                <input
+                  type="text"
+                  value={contactPerson}
+                  onChange={(e) => setContactPerson(e.target.value)}
+                  placeholder="e.g. Ramesh Kumar"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+              <FormField label="Phone Number">
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="e.g. +91 9876543210"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+            </div>
+            <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(false)}
+                className="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded-xl font-semibold text-xs sm:text-sm hover:bg-slate-50 transition"
               >
-                <option value="WATER_SUPPLY">Water Supply</option>
-                <option value="WASTE_MANAGEMENT">Waste Management</option>
-                <option value="ELEVATOR_MAINTENANCE">Elevator Maintenance</option>
-                <option value="SECURITY_AGENCY">Security Agency</option>
-                <option value="LANDSCAPING">Landscaping</option>
-              </select>
-            </FormField>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <FormField label="Contact Person">
-              <input
-                type="text"
-                value={contactPerson}
-                onChange={(e) => setContactPerson(e.target.value)}
-                placeholder="e.g. Ramesh Kumar"
-                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
-              />
-            </FormField>
-            <FormField label="Phone Number">
-              <input
-                type="text"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="e.g. +91 9876543210"
-                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
-              />
-            </FormField>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
-            <button
-              type="button"
-              onClick={() => setIsAddModalOpen(false)}
-              style={{ padding: '0.65rem 1rem', border: '1px solid #cbd5e1', background: '#fff', borderRadius: '0.375rem', cursor: 'pointer' }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              style={{ padding: '0.65rem 1rem', border: 'none', background: '#8b5cf6', color: '#fff', borderRadius: '0.375rem', fontWeight: 600, cursor: 'pointer' }}
-            >
-              Onboard Vendor
-            </button>
+                Cancel
+              </button>
+              <button
+                type="submit"
+                style={{ background: 'var(--aarizo-blue, #176B91)' }}
+                className="px-4 py-2 border-none text-white rounded-xl font-bold text-xs sm:text-sm shadow-md hover:opacity-95 transition"
+              >
+                Onboard Vendor
+              </button>
+            </div>
           </div>
         </Form>
       </Modal>

@@ -138,151 +138,157 @@ export const SuperAdminSocietiesPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '1.5rem', paddingBottom: '6rem', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+    <div className="p-3 sm:p-6 pb-24 max-w-7xl mx-auto font-sans text-slate-800">
+      {/* Aarizo Gradient Header Banner */}
+      <header
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.5rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Building2 size={24} color="#176B91" />
-            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Super Admin — Multi-Society Directory</h1>
+          <div className="flex items-center gap-2">
+            <Building2 className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-lg sm:text-xl font-bold text-white">Super Admin — Multi-Society Directory</h1>
           </div>
-          <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
+          <p className="text-xs mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
             Provision and manage society accounts, subscription tiers, and assigned administrators.
           </p>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.6rem 1.2rem',
             background: 'var(--aarizo-blue, #176B91)',
-            color: '#fff',
-            borderRadius: '8px',
-            border: 'none',
-            fontWeight: 600,
-            cursor: 'pointer',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
           }}
+          className="flex items-center gap-2 text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md hover:opacity-95 transition"
         >
-          <Plus size={18} /> Add New Society
+          <Plus size={16} /> Add New Society
         </button>
       </header>
 
-      <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem' }}>
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
         <DataTable columns={columns} data={societies} keyExtractor={(s) => s.id} />
       </div>
 
       {/* Add Society Modal */}
       <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Provision New Society Account">
         <Form onSubmit={handleCreateSociety}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <FormField label="Society Name" required>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField label="Society Name" required>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Skyline Residency"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+              <FormField label="Society Code" required>
+                <input
+                  type="text"
+                  required
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.toUpperCase())}
+                  placeholder="e.g. SKL-01"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 uppercase focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+            </div>
+
+            <FormField label="Street Address" required>
               <input
                 type="text"
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Skyline Residency"
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="e.g. Plot 15, Sector 4, Vashi"
+                className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
               />
             </FormField>
-            <FormField label="Society Code" required>
-              <input
-                type="text"
-                required
-                value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
-                placeholder="e.g. SKL-01"
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-              />
-            </FormField>
-          </div>
 
-          <FormField label="Street Address" required>
-            <input
-              type="text"
-              required
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="e.g. Plot 15, Sector 4, Vashi"
-              style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-            />
-          </FormField>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <FormField label="City">
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+              <FormField label="State">
+                <input
+                  type="text"
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+              <FormField label="Pincode">
+                <input
+                  type="text"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+            </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
-            <FormField label="City">
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-              />
-            </FormField>
-            <FormField label="State">
-              <input
-                type="text"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-              />
-            </FormField>
-            <FormField label="Pincode">
-              <input
-                type="text"
-                value={pincode}
-                onChange={(e) => setPincode(e.target.value)}
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-              />
-            </FormField>
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField label="Subscription Tier">
+                <select
+                  value={subscriptionTier}
+                  onChange={(e) => setSubscriptionTier(e.target.value as SubscriptionTier)}
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                >
+                  <option value="BASIC">Basic (Up to 100 flats)</option>
+                  <option value="PRO">Pro (Up to 300 flats)</option>
+                  <option value="ENTERPRISE">Enterprise (Unlimited)</option>
+                </select>
+              </FormField>
+              <FormField label="Assigned Admin Name">
+                <input
+                  type="text"
+                  value={adminName}
+                  onChange={(e) => setAdminName(e.target.value)}
+                  placeholder="e.g. Ramesh Kumar"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+            </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <FormField label="Subscription Tier">
-              <select
-                value={subscriptionTier}
-                onChange={(e) => setSubscriptionTier(e.target.value as SubscriptionTier)}
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}
+            <FormField label="Assigned Admin Email">
+              <input
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="e.g. admin@skylineresidency.org"
+                className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+              />
+            </FormField>
+
+            <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(false)}
+                className="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded-xl font-semibold text-xs sm:text-sm hover:bg-slate-50 transition"
               >
-                <option value="BASIC">Basic (Up to 100 flats)</option>
-                <option value="PRO">Pro (Up to 300 flats)</option>
-                <option value="ENTERPRISE">Enterprise (Unlimited)</option>
-              </select>
-            </FormField>
-            <FormField label="Assigned Admin Name">
-              <input
-                type="text"
-                value={adminName}
-                onChange={(e) => setAdminName(e.target.value)}
-                placeholder="e.g. Ramesh Kumar"
-                style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-              />
-            </FormField>
-          </div>
-
-          <FormField label="Assigned Admin Email">
-            <input
-              type="email"
-              value={adminEmail}
-              onChange={(e) => setAdminEmail(e.target.value)}
-              placeholder="e.g. admin@skylineresidency.org"
-              style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-            />
-          </FormField>
-
-          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-            <button
-              type="button"
-              onClick={() => setIsAddModalOpen(false)}
-              style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff' }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: 'none', background: '#2563eb', color: '#fff', fontWeight: 600 }}
-            >
-              Create Society
-            </button>
+                Cancel
+              </button>
+              <button
+                type="submit"
+                style={{ background: 'var(--aarizo-blue, #176B91)' }}
+                className="px-4 py-2 border-none text-white rounded-xl font-bold text-xs sm:text-sm shadow-md hover:opacity-95 transition"
+              >
+                Create Society
+              </button>
+            </div>
           </div>
         </Form>
       </Modal>

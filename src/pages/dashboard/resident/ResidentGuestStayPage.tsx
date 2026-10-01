@@ -112,7 +112,7 @@ export const ResidentGuestStayPage: React.FC = () => {
       {/* Guest Rooms Catalog */}
       <div className="space-y-3">
         <h2 className="text-lg font-bold text-slate-900">Available Guest Suites</h2>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {rooms.map(room => (
             <div key={room.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:border-indigo-200 transition-colors">
               <div>

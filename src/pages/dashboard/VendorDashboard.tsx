@@ -38,49 +38,56 @@ export const VendorDashboard: React.FC = () => {
         </p>
       </div>
 
-      <div>
-        {/* ── Stat Cards (Responsive) ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
-          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.625rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
-            <div style={{ width: 36, height: 36, borderRadius: '10px', background: '#EBF5FA', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Truck size={18} color="#176B91" />
+      <div className="max-w-7xl mx-auto">
+        {/* ── Top Row: QR Gate Pass + Stat Cards Side-by-Side on Desktop ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {/* QR Gate Pass Banner */}
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #176B91, #083B56)',
+              borderRadius: '16px',
+              padding: '1.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              boxShadow: '0 4px 12px rgba(23,107,145,0.2)',
+            }}
+          >
+            <div>
+              <p style={{ color: '#83CBEA', fontSize: '0.7rem', fontWeight: 700, margin: '0 0 0.25rem', textTransform: 'uppercase' }}>Gate Access</p>
+              <h4 style={{ color: '#fff', fontWeight: 700, margin: 0, fontSize: '0.95rem' }}>Vendor Gate Pass Active</h4>
+              <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.75rem', margin: '0.2rem 0 0' }}>Show to security for instant gate entry</p>
             </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>5</div>
-              <div style={{ fontSize: '0.6875rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem' }}>Active Today</div>
+            <div style={{ background: '#fff', borderRadius: '12px', padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+              <QRCodeSVG value="COMMUNITYOS:VENDOR:DEL-4412" size={48} level="M" />
             </div>
           </div>
-          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.625rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
-            <div style={{ width: 36, height: 36, borderRadius: '10px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <CheckCircle2 size={18} color="#059669" />
-            </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>18</div>
-              <div style={{ fontSize: '0.6875rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem' }}>Completed Week</div>
-            </div>
-          </div>
-        </div>
 
-        {/* ── QR Gate Pass Banner ── */}
-        <div style={{
-          background: 'linear-gradient(135deg, #176B91, #083B56)',
-          borderRadius: '14px', padding: '1rem',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          marginBottom: '1rem',
-          boxShadow: '0 4px 12px rgba(23,107,145,0.2)',
-        }}>
-          <div>
-            <p style={{ color: '#83CBEA', fontSize: '0.7rem', fontWeight: 700, margin: '0 0 0.25rem', textTransform: 'uppercase' }}>Gate Access</p>
-            <h4 style={{ color: '#fff', fontWeight: 700, margin: 0, fontSize: '0.9rem' }}>Vendor Gate Pass Active</h4>
-            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem', margin: '0.2rem 0 0' }}>Show to security for instant entry</p>
-          </div>
-          <div style={{ background: '#fff', borderRadius: '10px', padding: '0.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <QRCodeSVG value="COMMUNITYOS:VENDOR:DEL-4412" size={44} level="M" />
+          {/* Stat Cards (Responsive) */}
+          <div className="grid grid-cols-2 gap-3">
+            <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #DCE8EF', padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
+              <div style={{ width: 42, height: 42, borderRadius: '12px', background: '#EBF5FA', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Truck size={20} color="#176B91" />
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>5</div>
+                <div style={{ fontSize: '0.75rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem' }}>Active Today</div>
+              </div>
+            </div>
+            <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #DCE8EF', padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', boxShadow: '0 2px 6px rgba(8,59,86,0.03)' }}>
+              <div style={{ width: 42, height: 42, borderRadius: '12px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <CheckCircle2 size={20} color="#059669" />
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#083B56', lineHeight: 1.1 }}>18</div>
+                <div style={{ fontSize: '0.75rem', color: '#657785', fontWeight: 600, marginTop: '0.15rem' }}>Completed Week</div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* ── Tabs ── */}
-        <div style={{ display: 'flex', gap: '0.35rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
           {tabs.map((t) => {
             const Icon = t.icon;
             const active = activeTab === t.key;
@@ -90,11 +97,11 @@ export const VendorDashboard: React.FC = () => {
                 onClick={() => setActiveTab(t.key)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '0.35rem',
-                  padding: '0.55rem 0.875rem',
+                  padding: '0.55rem 1rem',
                   borderRadius: '10px', border: active ? 'none' : '1px solid #DCE8EF',
                   background: active ? '#083B56' : '#ffffff',
                   color: active ? '#ffffff' : '#657785',
-                  fontWeight: 700, fontSize: '0.8rem',
+                  fontWeight: 700, fontSize: '0.8125rem',
                   cursor: 'pointer', transition: 'all 0.2s',
                   whiteSpace: 'nowrap',
                   boxShadow: active ? '0 2px 8px rgba(8,59,86,0.25)' : '0 1px 3px rgba(8,59,86,0.08)',
@@ -106,25 +113,25 @@ export const VendorDashboard: React.FC = () => {
           })}
         </div>
 
-        {/* ── Delivery List ── */}
+        {/* ── Delivery List (Responsive Grid) ── */}
         {activeTab === 'deliveries' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
             {deliveries.map((d) => (
               <div key={d.id} style={{
-                background: '#ffffff', borderRadius: '14px', border: '1px solid #DCE8EF',
-                padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                background: '#ffffff', borderRadius: '16px', border: '1px solid #DCE8EF',
+                padding: '1.1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 boxShadow: '0 2px 8px rgba(8,59,86,0.06)',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '12px', background: '#EBF5FA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ShoppingBag size={18} color="#176B91" />
+                  <div style={{ width: 42, height: 42, borderRadius: '12px', background: '#EBF5FA', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <ShoppingBag size={20} color="#176B91" />
                   </div>
                   <div>
-                    <div style={{ fontWeight: 700, color: '#083B56', fontSize: '0.875rem' }}>{d.recipient}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#657785' }}>{d.flat} · {d.type}</div>
+                    <div style={{ fontWeight: 700, color: '#083B56', fontSize: '0.9rem' }}>{d.recipient}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#657785', marginTop: '0.15rem' }}>{d.flat} · {d.type}</div>
                   </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.3rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.35rem' }}>
                   <StatusBadge label={d.status} variant={d.status === 'DELIVERED' ? 'success' : d.status === 'IN_TRANSIT' ? 'warning' : 'neutral'} />
                   <span style={{ fontSize: '0.7rem', color: '#8B9AA5', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                     <Clock size={11} /> {d.time}

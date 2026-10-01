@@ -282,7 +282,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
 
       {/* TAB 1: ANNOUNCEMENTS */}
       {activeTab === 'ANNOUNCEMENTS' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '0.875rem' }}>
           {announcements.map((ann) => (
             <div
               key={ann.id}
@@ -411,7 +411,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
 
       {/* TAB 3: POLLS */}
       {activeTab === 'POLLS' && (
-        <div className="space-y-6">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem' }}>
           {polls.map(poll => {
             const totalVotes = poll.options.reduce((acc, curr) => acc + curr.votes.length, 0);
 
@@ -466,7 +466,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
 
       {/* TAB 4: POSTS / FEED */}
       {activeTab === 'POSTS' && (
-        <div className="space-y-6">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '1rem' }}>
           {posts.map(post => (
             <div key={post.id} className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
               <div className="flex items-center justify-between">

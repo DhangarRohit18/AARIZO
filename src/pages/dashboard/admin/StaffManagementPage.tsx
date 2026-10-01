@@ -89,47 +89,51 @@ export const StaffManagementPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1100px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+    <div className="p-3 sm:p-6 max-w-6xl mx-auto font-sans text-slate-800">
+      {/* Aarizo Gradient Header Banner */}
+      <header
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.5rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Shield size={24} color="#2563eb" />
-            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Security Guards & Staff Roster</h1>
+          <div className="flex items-center gap-2">
+            <Shield className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-lg sm:text-xl font-bold text-white">Security Guards & Staff Roster</h1>
           </div>
-          <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
+          <p className="text-xs mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
             Manage security personnel, facility technicians, and domestic household helpers.
           </p>
         </div>
         <button
           onClick={() => setIsAddStaffModalOpen(true)}
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            background: '#2563eb',
-            color: '#fff',
-            border: 'none',
-            padding: '0.65rem 1rem',
-            borderRadius: '0.5rem',
-            fontWeight: 600,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
+            background: 'var(--aarizo-blue, #176B91)',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
           }}
+          className="flex items-center gap-2 text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md hover:opacity-95 transition"
         >
           <Plus size={16} /> Assign Staff
         </button>
       </header>
 
-      <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid #e2e8f0', marginBottom: '1.5rem', overflowX: 'auto' }}>
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '0.75rem', borderBottom: '1px solid #E2E8F0', marginBottom: '1.25rem', overflowX: 'auto', scrollbarWidth: 'none' }}>
         <button
           onClick={() => setActiveTab('STAFF')}
           style={{
-            padding: '0.75rem 1rem',
+            padding: '0.625rem 1rem',
             background: 'none',
             border: 'none',
-            borderBottom: activeTab === 'STAFF' ? '2px solid #2563eb' : '2px solid transparent',
-            color: activeTab === 'STAFF' ? '#1d4ed8' : '#64748b',
-            fontWeight: activeTab === 'STAFF' ? 600 : 500,
+            borderBottom: activeTab === 'STAFF' ? '2.5px solid var(--aarizo-navy, #083B56)' : '2.5px solid transparent',
+            color: activeTab === 'STAFF' ? 'var(--aarizo-navy, #083B56)' : '#64748B',
+            fontWeight: activeTab === 'STAFF' ? 700 : 500,
+            fontSize: '0.875rem',
             cursor: 'pointer',
             whiteSpace: 'nowrap',
           }}
@@ -139,12 +143,13 @@ export const StaffManagementPage: React.FC = () => {
         <button
           onClick={() => setActiveTab('DOMESTIC')}
           style={{
-            padding: '0.75rem 1rem',
+            padding: '0.625rem 1rem',
             background: 'none',
             border: 'none',
-            borderBottom: activeTab === 'DOMESTIC' ? '2px solid #2563eb' : '2px solid transparent',
-            color: activeTab === 'DOMESTIC' ? '#1d4ed8' : '#64748b',
-            fontWeight: activeTab === 'DOMESTIC' ? 600 : 500,
+            borderBottom: activeTab === 'DOMESTIC' ? '2.5px solid var(--aarizo-navy, #083B56)' : '2.5px solid transparent',
+            color: activeTab === 'DOMESTIC' ? 'var(--aarizo-navy, #083B56)' : '#64748B',
+            fontWeight: activeTab === 'DOMESTIC' ? 700 : 500,
+            fontSize: '0.875rem',
             cursor: 'pointer',
             whiteSpace: 'nowrap',
           }}
@@ -153,102 +158,107 @@ export const StaffManagementPage: React.FC = () => {
         </button>
       </div>
 
-      {activeTab === 'STAFF' ? (
-        <DataTable
-          columns={staffColumns}
-          data={staff}
-          keyExtractor={(s) => s.id}
-          pageSize={10}
-          mobileRender={(s) => (
-            <MobileDataCard
-              title={s.name}
-              subtitle={s.phone}
-              status={<StatusBadge label={s.status} variant={s.status === 'ON_DUTY' ? 'success' : 'neutral'} />}
-              attributes={[
-                { label: 'Role', value: s.staffType },
-                { label: 'Assigned', value: s.gateAssigned }
-              ]}
-            />
-          )}
-        />
-      ) : (
-        <DataTable
-          columns={domesticColumns}
-          data={domesticWorkers}
-          keyExtractor={(dw) => dw.id}
-          pageSize={10}
-          mobileRender={(dw) => (
-            <MobileDataCard
-              title={dw.name}
-              subtitle={dw.phone}
-              status={<StatusBadge label={dw.status === 'INSIDE' ? 'INSIDE COMPLEX' : 'OUTSIDE'} variant={dw.status === 'INSIDE' ? 'success' : 'neutral'} />}
-              attributes={[
-                { label: 'Service Role', value: dw.workRole },
-                { label: 'Passcode', value: dw.passCode }
-              ]}
-            />
-          )}
-        />
-      )}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
+        {activeTab === 'STAFF' ? (
+          <DataTable
+            columns={staffColumns}
+            data={staff}
+            keyExtractor={(s) => s.id}
+            pageSize={10}
+            mobileRender={(s) => (
+              <MobileDataCard
+                title={s.name}
+                subtitle={s.phone}
+                status={<StatusBadge label={s.status} variant={s.status === 'ON_DUTY' ? 'success' : 'neutral'} />}
+                attributes={[
+                  { label: 'Role', value: s.staffType },
+                  { label: 'Assigned', value: s.gateAssigned }
+                ]}
+              />
+            )}
+          />
+        ) : (
+          <DataTable
+            columns={domesticColumns}
+            data={domesticWorkers}
+            keyExtractor={(dw) => dw.id}
+            pageSize={10}
+            mobileRender={(dw) => (
+              <MobileDataCard
+                title={dw.name}
+                subtitle={dw.phone}
+                status={<StatusBadge label={dw.status === 'INSIDE' ? 'INSIDE COMPLEX' : 'OUTSIDE'} variant={dw.status === 'INSIDE' ? 'success' : 'neutral'} />}
+                attributes={[
+                  { label: 'Service Role', value: dw.workRole },
+                  { label: 'Passcode', value: dw.passCode }
+                ]}
+              />
+            )}
+          />
+        )}
+      </div>
 
       <Modal isOpen={isAddStaffModalOpen} onClose={() => setIsAddStaffModalOpen(false)} title="Assign New Staff Member">
         <Form onSubmit={handleCreateStaff}>
-          <FormField label="Staff Name">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Rahul Sharma"
-              style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
-            />
-          </FormField>
-          <FormField label="Phone Number">
-            <input
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="e.g. +91 9876543210"
-              style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
-            />
-          </FormField>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <FormField label="Role">
-              <select
-                value={staffType}
-                onChange={(e) => setStaffType(e.target.value as StaffType)}
-                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
-              >
-                <option value="GUARD">Security Guard</option>
-                <option value="SUPERVISOR">Supervisor</option>
-                <option value="TECHNICIAN">Technician</option>
-              </select>
+          <div className="space-y-4">
+            <FormField label="Staff Name">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Rahul Sharma"
+                className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+              />
             </FormField>
-            <FormField label="Gate Assigned">
-              <select
-                value={gateAssigned}
-                onChange={(e) => setGateAssigned(e.target.value)}
-                style={{ width: '100%', padding: '0.65rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
-              >
-                <option value="Main Gate 1">Main Gate 1</option>
-                <option value="Main Gate 2">Main Gate 2</option>
-                <option value="Basement - A">Basement - A</option>
-              </select>
+            <FormField label="Phone Number">
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="e.g. +91 9876543210"
+                className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+              />
             </FormField>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
-            <button
-              type="button"
-              onClick={() => setIsAddStaffModalOpen(false)}
-              style={{ padding: '0.65rem 1rem', border: '1px solid #cbd5e1', background: '#fff', borderRadius: '0.375rem', cursor: 'pointer' }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              style={{ padding: '0.65rem 1rem', border: 'none', background: '#2563eb', color: '#fff', borderRadius: '0.375rem', fontWeight: 600, cursor: 'pointer' }}
-            >
-              Confirm Assignment
-            </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField label="Role">
+                <select
+                  value={staffType}
+                  onChange={(e) => setStaffType(e.target.value as StaffType)}
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                >
+                  <option value="GUARD">Security Guard</option>
+                  <option value="SUPERVISOR">Supervisor</option>
+                  <option value="TECHNICIAN">Technician</option>
+                </select>
+              </FormField>
+              <FormField label="Gate Assigned">
+                <select
+                  value={gateAssigned}
+                  onChange={(e) => setGateAssigned(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                >
+                  <option value="Main Gate 1">Main Gate 1</option>
+                  <option value="Main Gate 2">Main Gate 2</option>
+                  <option value="Basement - A">Basement - A</option>
+                </select>
+              </FormField>
+            </div>
+            <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={() => setIsAddStaffModalOpen(false)}
+                className="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded-xl font-semibold text-xs sm:text-sm hover:bg-slate-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                style={{ background: 'var(--aarizo-blue, #176B91)' }}
+                className="px-4 py-2 border-none text-white rounded-xl font-bold text-xs sm:text-sm shadow-md hover:opacity-95 transition"
+              >
+                Confirm Assignment
+              </button>
+            </div>
           </div>
         </Form>
       </Modal>
