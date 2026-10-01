@@ -187,7 +187,7 @@ export const UnifiedRequestCenter: React.FC<UnifiedRequestCenterProps> = ({ hide
   };
 
   return (
-    <div style={{ padding: '0.5rem 0 3rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+    <div style={{ padding: '0.5rem 0 6rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
       {/* ── Optional Compact Navy Header Banner (#083B56) ── */}
       {!hideHeaderBanner && (
         <div

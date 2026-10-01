@@ -59,7 +59,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 pb-12 p-4 md:p-6">
+    <div className="max-w-7xl mx-auto flex flex-col gap-6 pb-24 p-4 md:p-6">
       {/* Header & Date Range Filter Bar */}
       <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-4 md:p-6 text-white shadow-xl border border-indigo-900/30">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

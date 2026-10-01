@@ -78,7 +78,7 @@ export const AdminChildSafetyPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 p-4 md:p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 p-4 md:p-6 pb-24 max-w-7xl mx-auto">
       {/* Active Safety Alert Banner */}
       {activeAlerts.length > 0 && (
         <div className="bg-rose-600 text-white p-5 rounded-2xl shadow-lg border-2 border-rose-400 animate-pulse flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -103,24 +103,25 @@ export const AdminChildSafetyPage: React.FC = () => {
       )}
 
       {/* Header */}
-      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div
+        className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
+        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+      >
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
-              <ShieldCheck className="w-5 h-5" />
-            </span>
-            <h1 className="text-2xl font-bold text-slate-900">Child Safety Oversight & Gate Audit</h1>
+            <ShieldCheck className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-xl md:text-2xl font-extrabold text-white">Child Safety Oversight &amp; Gate Audit</h1>
           </div>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
             Society-wide register of children, authorized pickup guardians, emergency alerts, and gate pickup audit history.
           </p>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+          <div className="p-3 bg-[#EAF6FC] text-[#176B91] rounded-xl">
             <Users className="w-6 h-6" />
           </div>
           <div>

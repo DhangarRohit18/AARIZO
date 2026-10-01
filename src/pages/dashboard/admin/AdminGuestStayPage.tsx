@@ -108,28 +108,29 @@ export const AdminGuestStayPage: React.FC = () => {
     .reduce((acc, curr) => acc + curr.totalPrice, 0);
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 space-y-6">
       {/* Header */}
-      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div
+        className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
+        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+      >
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
-              <Hotel className="w-5 h-5" />
-            </span>
-            <h1 className="text-2xl font-bold text-slate-900">Guest Stay & Hotel Accommodation Management</h1>
+            <Hotel className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-xl md:text-2xl font-extrabold text-white">Guest Stay &amp; Accommodation Management</h1>
           </div>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
             Configure society guest suites, pricing, stay policies, approval workflows, and optional module toggle.
           </p>
         </div>
 
         {/* Optional Module Toggle Switch */}
-        <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-          <span className="text-xs font-bold text-slate-700">Module Status:</span>
+        <div className="flex items-center gap-3 bg-white/10 p-2.5 px-3.5 rounded-2xl border border-white/20 shrink-0">
+          <span className="text-xs font-bold text-white">Module Status:</span>
           <button
             onClick={handleToggleModule}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all ${
-              settings?.isGuestStayEnabled ? 'bg-emerald-600 text-white' : 'bg-slate-300 text-slate-700'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all shadow-sm ${
+              settings?.isGuestStayEnabled ? 'bg-emerald-500 text-white' : 'bg-slate-300 text-slate-800'
             }`}
           >
             {settings?.isGuestStayEnabled ? (
@@ -203,7 +204,7 @@ export const AdminGuestStayPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {rooms.map(room => (
                 <div key={room.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between">
                   <div>

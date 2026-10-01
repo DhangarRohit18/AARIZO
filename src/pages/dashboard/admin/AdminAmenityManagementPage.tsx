@@ -169,23 +169,25 @@ export const AdminAmenityManagementPage: React.FC = () => {
   const pendingBookings = bookings.filter(b => b.status === 'PENDING');
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+      <div
+        className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
+        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+      >
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
-              <Sparkles className="w-5 h-5" />
-            </span>
-            <h1 className="text-2xl font-bold text-slate-900">Amenity & Facility Management</h1>
+            <Sparkles className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-xl md:text-2xl font-extrabold text-white">Amenity & Facility Management</h1>
           </div>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
             Configure timings, capacities, maintenance schedules, blackout dates, and approve resident slot bookings.
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+          className="px-4 py-2.5 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition flex-shrink-0"
+          style={{ background: 'var(--aarizo-blue, #176B91)', border: '1px solid rgba(255,255,255,0.2)' }}
         >
           <Plus className="w-4 h-4" /> Add New Amenity
         </button>
@@ -244,7 +246,7 @@ export const AdminAmenityManagementPage: React.FC = () => {
       )}
 
       {/* Amenities Grid */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {amenities.map(amenity => (
           <div key={amenity.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between">
             <div>

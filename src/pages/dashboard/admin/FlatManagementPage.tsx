@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Home, Plus } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Flat, BHKType, OccupancyStatus } from '../../../types/society';
@@ -84,32 +84,24 @@ export const FlatManagementPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1100px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+    <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 space-y-6">
+      <header
+        className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
+        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Home size={24} color="#2563eb" />
-            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Flat Inventory & Directory</h1>
+          <div className="flex items-center gap-2">
+            <Home className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-xl md:text-2xl font-extrabold text-white">Flat Inventory &amp; Directory</h1>
           </div>
-          <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
+          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
             Manage society units, occupancy status, and flat specifications.
           </p>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            background: '#2563eb',
-            color: '#fff',
-            border: 'none',
-            padding: '0.65rem 1rem',
-            borderRadius: '0.5rem',
-            fontWeight: 600,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-          }}
+          className="px-4 py-2.5 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition flex-shrink-0"
+          style={{ background: 'var(--aarizo-blue, #176B91)', border: '1px solid rgba(255,255,255,0.2)' }}
         >
           <Plus size={16} /> Add Flat
         </button>

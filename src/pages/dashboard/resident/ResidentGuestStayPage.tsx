@@ -92,7 +92,7 @@ export const ResidentGuestStayPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 p-4 md:p-6 pb-24 max-w-6xl mx-auto">
+    <div className="space-y-6 p-4 md:p-6 pb-24 max-w-7xl mx-auto">
       {/* Header */}
       <div
         className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
@@ -114,7 +114,7 @@ export const ResidentGuestStayPage: React.FC = () => {
         <h2 className="text-lg font-bold text-slate-900">Available Guest Suites</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {rooms.map(room => (
-            <div key={room.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:border-indigo-200 transition-colors">
+            <div key={room.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:border-[#83CBEA] transition-colors">
               <div>
                 {room.imageUrl && (
                   <div className="h-44 w-full overflow-hidden relative">
@@ -176,7 +176,7 @@ export const ResidentGuestStayPage: React.FC = () => {
                 render: (resv: GuestReservation) => (
                   <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
                     resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
-                    resv.status === 'CHECKED_IN' ? 'bg-indigo-100 text-indigo-800' :
+                    resv.status === 'CHECKED_IN' ? 'bg-[#EAF6FC] text-[#083B56]' :
                     resv.status === 'CHECKED_OUT' ? 'bg-slate-100 text-slate-700' :
                     'bg-rose-100 text-rose-800'
                   }`}>
@@ -192,7 +192,7 @@ export const ResidentGuestStayPage: React.FC = () => {
                     {(resv.status === 'CONFIRMED' || resv.status === 'CHECKED_IN') && (
                       <button
                         onClick={() => setViewingQRResv(resv)}
-                        className="px-3 py-1.5 border border-indigo-200 text-indigo-700 hover:bg-indigo-50 text-xs font-semibold rounded-lg flex items-center gap-1"
+                        className="px-3 py-1.5 border border-[#A7D7EC] text-[#176B91] hover:bg-[#EAF6FC] text-xs font-semibold rounded-lg flex items-center gap-1 transition-colors"
                       >
                         <QrCode className="w-3.5 h-3.5" /> Gate QR Pass
                       </button>
@@ -200,7 +200,7 @@ export const ResidentGuestStayPage: React.FC = () => {
                     {resv.status === 'CONFIRMED' && (
                       <button
                         onClick={() => handleCancelReservation(resv.id)}
-                        className="px-2.5 py-1 text-xs border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-lg flex items-center gap-1"
+                        className="px-2.5 py-1 text-xs border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-lg flex items-center gap-1 transition-colors"
                       >
                         <XCircle className="w-3.5 h-3.5" /> Cancel
                       </button>
@@ -219,7 +219,7 @@ export const ResidentGuestStayPage: React.FC = () => {
                 status={
                   <span className={`px-2 py-0.5 text-[0.65rem] rounded-full font-bold ${
                     resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
-                    resv.status === 'CHECKED_IN' ? 'bg-indigo-100 text-indigo-800' :
+                    resv.status === 'CHECKED_IN' ? 'bg-[#EAF6FC] text-[#083B56]' :
                     resv.status === 'CHECKED_OUT' ? 'bg-slate-100 text-slate-700' :
                     'bg-rose-100 text-rose-800'
                   }`}>
@@ -236,7 +236,7 @@ export const ResidentGuestStayPage: React.FC = () => {
                     {(resv.status === 'CONFIRMED' || resv.status === 'CHECKED_IN') && (
                       <button
                         onClick={() => setViewingQRResv(resv)}
-                        className="flex-1 py-1.5 border border-indigo-200 text-indigo-700 bg-indigo-50/50 text-xs font-semibold rounded-lg flex items-center justify-center gap-1 min-h-[44px]"
+                        className="flex-1 py-1.5 border border-[#A7D7EC] text-[#176B91] bg-[#EAF6FC]/60 text-xs font-semibold rounded-lg flex items-center justify-center gap-1 min-h-[44px] transition-colors"
                       >
                         <QrCode className="w-4 h-4" /> Gate QR Pass
                       </button>
@@ -244,7 +244,7 @@ export const ResidentGuestStayPage: React.FC = () => {
                     {resv.status === 'CONFIRMED' && (
                       <button
                         onClick={() => handleCancelReservation(resv.id)}
-                        className="flex-1 py-1.5 border border-rose-200 text-rose-600 bg-rose-50/50 text-xs font-semibold rounded-lg flex items-center justify-center gap-1 min-h-[44px]"
+                        className="flex-1 py-1.5 border border-rose-200 text-rose-600 bg-rose-50/50 text-xs font-semibold rounded-lg flex items-center justify-center gap-1 min-h-[44px] transition-colors"
                       >
                         <XCircle className="w-4 h-4" /> Cancel
                       </button>
@@ -261,7 +261,7 @@ export const ResidentGuestStayPage: React.FC = () => {
       {viewingQRResv && (
         <Modal isOpen={!!viewingQRResv} onClose={() => setViewingQRResv(null)} title="Guest Gate Access QR Pass">
           <div className="text-center space-y-4 py-2">
-            <div className="bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 inline-block">
+            <div className="bg-[#EAF6FC] p-4 rounded-2xl border border-[#A7D7EC] inline-block">
               <div className="w-48 h-48 bg-white p-3 rounded-xl border border-slate-300 shadow-inner mx-auto flex items-center justify-center">
                 <QRCodeSVG value={viewingQRResv.qrCode} size={160} level="M" />
               </div>
@@ -276,7 +276,8 @@ export const ResidentGuestStayPage: React.FC = () => {
             </div>
             <button
               onClick={() => setViewingQRResv(null)}
-              className="w-full py-2.5 bg-indigo-600 text-white font-bold text-sm rounded-xl"
+              className="w-full py-2.5 text-white font-bold text-sm rounded-xl transition-all shadow-sm"
+              style={{ background: 'var(--aarizo-blue, #176B91)' }}
             >
               Done / Share Pass with Guest
             </button>

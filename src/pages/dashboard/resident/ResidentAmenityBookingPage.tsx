@@ -102,7 +102,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6 pb-24 max-w-6xl mx-auto">
+    <div className="space-y-6 p-4 md:p-6 pb-24 max-w-7xl mx-auto">
       {/* Header */}
       <div
         className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
