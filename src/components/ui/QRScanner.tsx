@@ -61,13 +61,13 @@ export const QRScanner: React.FC<QRScannerProps> = ({
           width: 64,
           height: 64,
           borderRadius: '50%',
-          background: 'rgba(59,130,246,0.15)',
+          background: 'rgba(131,203,234,0.15)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <QrCode size={30} style={{ color: '#3b82f6' }} />
+        <QrCode size={30} style={{ color: '#83CBEA' }} />
       </div>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontWeight: 700, fontSize: '0.9375rem', marginBottom: '0.25rem' }}>{label}</div>

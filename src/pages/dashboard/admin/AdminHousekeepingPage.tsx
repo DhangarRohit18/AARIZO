@@ -116,12 +116,12 @@ export const AdminHousekeepingPage: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="max-w-7xl mx-auto space-y-6 p-4 md:p-6 pb-24">
       {/* Header */}
       <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+            <span className="p-2 bg-[#EAF6FC] text-[#083B56] rounded-xl">
               <Sparkles className="w-5 h-5" />
             </span>
             <h1 className="text-2xl font-bold text-slate-900">Housekeeping & Common Area Operations</h1>
@@ -155,7 +155,7 @@ export const AdminHousekeepingPage: React.FC = () => {
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
           <span className="text-[11px] text-slate-500 block">Garbage Today</span>
-          <span className="text-xl font-bold text-indigo-600 mt-0.5 block">{garbageLogs.length}</span>
+          <span className="text-xl font-bold text-[#083B56] mt-0.5 block">{garbageLogs.length}</span>
         </div>
       </div>
 
@@ -243,7 +243,7 @@ export const AdminHousekeepingPage: React.FC = () => {
                   </span>
                   <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
                     task.status === 'VERIFIED' ? 'bg-emerald-100 text-emerald-800' :
-                    task.status === 'COMPLETED' ? 'bg-indigo-100 text-indigo-800' :
+                    task.status === 'COMPLETED' ? 'bg-[#EAF6FC] text-[#083B56]' :
                     task.status === 'MISSED' ? 'bg-rose-100 text-rose-800' :
                     task.status === 'LATE' ? 'bg-amber-100 text-amber-800' :
                     'bg-slate-100 text-slate-600'

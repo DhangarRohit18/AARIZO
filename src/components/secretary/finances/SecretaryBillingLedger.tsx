@@ -198,7 +198,7 @@ export const SecretaryBillingLedger: React.FC<SecretaryBillingLedgerProps> = ({
               <X size={18} style={{ color: '#94a3b8' }} />
             </div>
 
-            <div className="otp-icon-header" style={{ background: '#eff6ff', color: '#2563eb' }}>
+            <div className="otp-icon-header" style={{ background: 'var(--aarizo-light-blue, #EAF6FC)', color: 'var(--aarizo-blue, #176B91)' }}>
               <CreditCard size={24} />
             </div>
 
@@ -218,7 +218,7 @@ export const SecretaryBillingLedger: React.FC<SecretaryBillingLedgerProps> = ({
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.375rem' }}>
                 <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>Total Bill Amount:</span>
-                <strong style={{ fontSize: '0.8125rem', color: '#2563eb' }}>₹{selectedBill.totalAmount.toLocaleString()}</strong>
+                <strong style={{ fontSize: '0.8125rem', color: 'var(--aarizo-navy, #083B56)' }}>₹{selectedBill.totalAmount.toLocaleString()}</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                 <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>Payment Status:</span>

@@ -118,7 +118,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="max-w-7xl mx-auto space-y-6 pb-24">
       {/* Top Banner Header */}
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-rose-950 rounded-2xl p-4 md:p-6 text-white shadow-xl border border-slate-800">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -397,7 +397,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-6">
           <div>
             <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Lock className="w-4 h-4 text-indigo-500" /> Platform Role-Based Access Control (RBAC)
+              <Lock className="w-4 h-4 text-[#176B91]" /> Platform Role-Based Access Control (RBAC)
             </h3>
             <p className="text-xs text-slate-500">Strict server-enforced permission authorization matrix</p>
           </div>

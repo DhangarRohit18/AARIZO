@@ -46,8 +46,8 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Bell size={16} color="#2563eb" />
-          <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#0f172a' }}>
+          <Bell size={16} color="#176B91" />
+          <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#083B56' }}>
             Notifications
           </span>
         </div>
@@ -57,7 +57,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#2563eb',
+              color: '#176B91',
               fontSize: '0.75rem',
               fontWeight: 600,
               cursor: 'pointer',
@@ -84,7 +84,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
               style={{
                 padding: '0.85rem 1rem',
                 borderBottom: '1px solid #f1f5f9',
-                backgroundColor: notif.isRead ? '#ffffff' : '#f0f9ff',
+                backgroundColor: notif.isRead ? '#ffffff' : '#EAF6FC',
                 cursor: 'pointer',
                 transition: 'background 0.15s ease',
               }}

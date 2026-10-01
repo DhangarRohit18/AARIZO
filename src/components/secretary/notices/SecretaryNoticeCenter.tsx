@@ -115,13 +115,13 @@ export const SecretaryNoticeCenter: React.FC<SecretaryNoticeCenterProps> = ({
                     ? '#fef2f2'
                     : notice.status === 'Draft'
                     ? '#fffbeb'
-                    : '#eff6ff',
+                    : 'var(--aarizo-light-blue, #EAF6FC)',
                 color:
                   notice.priority === 'Urgent'
                     ? '#dc2626'
                     : notice.status === 'Draft'
                     ? '#d97706'
-                    : '#2563eb',
+                    : 'var(--aarizo-blue, #176B91)',
               }}
             >
               {notice.priority === 'Urgent' ? (
@@ -177,7 +177,7 @@ export const SecretaryNoticeCenter: React.FC<SecretaryNoticeCenterProps> = ({
               <X size={18} style={{ color: '#94a3b8' }} />
             </div>
 
-            <div className="otp-icon-header" style={{ background: '#eff6ff', color: '#2563eb' }}>
+            <div className="otp-icon-header" style={{ background: 'var(--aarizo-light-blue, #EAF6FC)', color: 'var(--aarizo-blue, #176B91)' }}>
               <Megaphone size={24} />
             </div>
 

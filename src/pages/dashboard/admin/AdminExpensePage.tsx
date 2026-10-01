@@ -3,7 +3,7 @@ import { SocietyExpenseHub } from '../../../domains/expenses';
 
 export const AdminExpensePage: React.FC = () => {
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', maxWidth: '1280px', margin: '0 auto', paddingBottom: '6rem' }}>
       <div style={{
         background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
         padding: '1.25rem 1rem 1.5rem',

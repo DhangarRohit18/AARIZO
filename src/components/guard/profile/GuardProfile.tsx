@@ -38,15 +38,15 @@ export const GuardProfile: React.FC = () => {
       <div className="onboarding-card" style={{ padding: '1.25rem', textAlign: 'left', marginBottom: '1.25rem' }}>
         <div className="onboarding-features-list">
           <div className="onboarding-feature-item">
-            <Shield size={16} style={{ color: '#2563eb' }} />
+            <Shield size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Assigned Terminal: Gate #1 Main Entrance</span>
           </div>
           <div className="onboarding-feature-item">
-            <Clock size={16} style={{ color: '#2563eb' }} />
+            <Clock size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Active Shift: Morning Roster (06:00 AM – 02:00 PM)</span>
           </div>
           <div className="onboarding-feature-item">
-            <MapPin size={16} style={{ color: '#2563eb' }} />
+            <MapPin size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Location: North Perimeter Gate</span>
           </div>
           <div className="onboarding-feature-item">
@@ -77,6 +77,3 @@ export const GuardProfile: React.FC = () => {
     </div>
   );
 };
-
-
-

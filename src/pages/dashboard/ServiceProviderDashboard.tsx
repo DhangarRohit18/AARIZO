@@ -31,7 +31,7 @@ export const ServiceProviderDashboard: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', maxWidth: '1280px', margin: '0 auto', paddingBottom: '6rem' }}>
       {/* ── Aarizo Header ── */}
       <div
         className="m-3 md:m-4 rounded-2xl"

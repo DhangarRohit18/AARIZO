@@ -17,7 +17,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({ message = 'Loading C
         width: '100%',
       }}
     >
-      <Loader2 size={32} color="#2563eb" style={{ animation: 'spin 1s linear infinite' }} />
+      <Loader2 size={32} color="#176B91" style={{ animation: 'spin 1s linear infinite' }} />
       <span style={{ marginTop: '0.75rem', fontSize: '0.9rem', color: '#64748b', fontWeight: 500 }}>
         {message}
       </span>

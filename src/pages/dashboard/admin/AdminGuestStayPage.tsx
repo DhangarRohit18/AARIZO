@@ -171,7 +171,7 @@ export const AdminGuestStayPage: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex items-center gap-3">
-                <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
+                <div className="p-2.5 bg-[#EAF6FC] text-[#083B56] rounded-xl shrink-0">
                   <Hotel className="w-5 h-5" />
                 </div>
                 <div>
@@ -259,7 +259,7 @@ export const AdminGuestStayPage: React.FC = () => {
                     render: (resv: GuestReservation) => (
                       <span className={`px-2.5 py-1 text-xs rounded-full font-bold ${
                         resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
-                        resv.status === 'CHECKED_IN' ? 'bg-indigo-100 text-indigo-800' :
+                        resv.status === 'CHECKED_IN' ? 'bg-[#EAF6FC] text-[#083B56]' :
                         resv.status === 'CHECKED_OUT' ? 'bg-slate-100 text-slate-700' :
                         'bg-rose-100 text-rose-800'
                       }`}>
@@ -300,7 +300,7 @@ export const AdminGuestStayPage: React.FC = () => {
                     status={
                       <span className={`px-2 py-0.5 text-[0.65rem] rounded-full font-bold ${
                         resv.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
-                        resv.status === 'CHECKED_IN' ? 'bg-indigo-100 text-indigo-800' :
+                        resv.status === 'CHECKED_IN' ? 'bg-[#EAF6FC] text-[#083B56]' :
                         resv.status === 'CHECKED_OUT' ? 'bg-slate-100 text-slate-700' :
                         'bg-rose-100 text-rose-800'
                       }`}>
@@ -427,7 +427,7 @@ export const AdminGuestStayPage: React.FC = () => {
 
           <div className="pt-4 flex justify-end gap-2">
             <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg">Save Guest Suite</button>
+            <button type="submit" className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white font-bold text-sm rounded-lg">Save Guest Suite</button>
           </div>
         </form>
       </Modal>

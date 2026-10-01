@@ -56,10 +56,13 @@ export const PracticalAIHub: React.FC = () => {
   return (
     <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
       {/* Header & Safety Guard Warning */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-gradient-to-r from-indigo-900 to-slate-900 text-white p-5 rounded-2xl gap-4">
+      <div
+        className="flex flex-col md:flex-row justify-between items-start md:items-center text-white p-5 rounded-2xl gap-4 shadow-sm"
+        style={{ background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)' }}
+      >
         <div>
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-400" />
+            <Sparkles className="w-5 h-5 text-sky-300" />
             <h2 className="text-lg font-bold">AARIZO Practical AI Intelligence Suite</h2>
           </div>
           <p className="text-xs text-slate-300 mt-1">
@@ -138,17 +141,17 @@ export const PracticalAIHub: React.FC = () => {
             />
             <button
               type="submit"
-              className="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-sm flex items-center gap-1.5"
+              className="px-5 py-3 bg-[#083B56] hover:bg-[#176B91] text-white font-bold text-xs rounded-xl shadow-sm flex items-center gap-1.5"
             >
               <Bot size={16} /> Ask AI Concierge
             </button>
           </form>
 
           {movePlan && (
-            <div className="p-5 bg-indigo-50/50 rounded-2xl border border-indigo-100 space-y-4 text-xs">
-              <div className="flex justify-between items-center border-b border-indigo-100 pb-3">
-                <h3 className="font-bold text-indigo-950 text-sm">Generated Move-In Execution Plan</h3>
-                <span className="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 font-bold rounded-full text-[10px]">
+            <div className="p-5 bg-[#EAF6FC] rounded-2xl border border-[#DCE8EF] space-y-4 text-xs">
+              <div className="flex justify-between items-center border-b border-[#DCE8EF] pb-3">
+                <h3 className="font-bold text-[#083B56] text-sm">Generated Move-In Execution Plan</h3>
+                <span className="px-2.5 py-0.5 bg-[#083B56]/10 text-[#083B56] font-bold rounded-full text-[10px]">
                   AI Recommendation Only
                 </span>
               </div>
@@ -157,7 +160,7 @@ export const PracticalAIHub: React.FC = () => {
                 <div className="bg-white p-3.5 rounded-xl border border-slate-100">
                   <span className="font-bold text-slate-900 block mb-1">Lift Slot & Schedule:</span>
                   <p className="text-slate-600">{movePlan.liftSlotRequirements.suggestedTimeSlot}</p>
-                  <span className="text-[11px] text-indigo-600 mt-1 block">{movePlan.liftSlotRequirements.paddingRequired}</span>
+                  <span className="text-[11px] text-[#176B91] mt-1 block">{movePlan.liftSlotRequirements.paddingRequired}</span>
                 </div>
 
                 <div className="bg-white p-3.5 rounded-xl border border-slate-100">
@@ -208,7 +211,7 @@ export const PracticalAIHub: React.FC = () => {
             </div>
             <button
               type="submit"
-              className="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm"
+              className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white font-bold text-xs rounded-lg shadow-sm"
             >
               Analyze & Classify Complaint
             </button>
@@ -264,7 +267,7 @@ export const PracticalAIHub: React.FC = () => {
               onChange={(e) => setVoiceText(e.target.value)}
               className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
             />
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm">
+            <button type="submit" className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white font-bold text-xs rounded-lg shadow-sm">
               Convert Speech to Structured Data
             </button>
           </form>
@@ -273,7 +276,7 @@ export const PracticalAIHub: React.FC = () => {
             <div className="p-4 bg-white rounded-xl border border-slate-200 text-xs space-y-2">
               <div className="flex justify-between">
                 <span className="font-bold text-slate-900">Category: {voiceParsed.structuredCategory}</span>
-                <span className="text-indigo-600 font-bold">{voiceParsed.spokenLanguage}</span>
+                <span className="text-[#083B56] font-bold">{voiceParsed.spokenLanguage}</span>
               </div>
               <p className="text-slate-600">Location: {voiceParsed.extractedDetails.location}</p>
               <p className="text-slate-600">Status: {voiceParsed.extractedDetails.status}</p>

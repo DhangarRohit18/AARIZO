@@ -84,13 +84,19 @@ Certified by AARIZO Society Intelligence Engine
   return (
     <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
       {/* Top Banner: Score Gauge & AGM Export */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900 text-white p-4 md:p-6 rounded-2xl gap-6">
+      <div
+        className="flex flex-col md:flex-row justify-between items-start md:items-center text-white p-4 md:p-6 rounded-2xl gap-6"
+        style={{ background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)' }}
+      >
         <div className="flex items-center gap-5">
           {/* Main Score Badge */}
-          <div className="relative flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow-lg shrink-0">
+          <div
+            className="relative flex items-center justify-center w-24 h-24 rounded-2xl text-white shadow-lg shrink-0"
+            style={{ background: 'linear-gradient(135deg, #176B91 0%, #083B56 100%)', border: '1px solid rgba(131, 203, 234, 0.3)' }}
+          >
             <div className="text-center">
               <span className="text-3xl font-black">{data.overallScore}</span>
-              <span className="text-[10px] block font-bold text-indigo-200 uppercase">/ 100</span>
+              <span className="text-[10px] block font-bold text-sky-200 uppercase">/ 100</span>
             </div>
             <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-xs rounded-full shadow">
               Grade {data.grade}
@@ -112,7 +118,7 @@ Certified by AARIZO Society Intelligence Engine
 
         <button
           onClick={handleExportAGMReport}
-          className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 transition shrink-0"
+          className="px-4 py-2.5 bg-[#176B91] hover:bg-[#083B56] text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 transition shrink-0 border border-white/20"
         >
           <Download size={16} /> Export AGM Audit Report
         </button>
@@ -121,7 +127,7 @@ Certified by AARIZO Society Intelligence Engine
       {/* 6 Core Pillar Grid */}
       <div>
         <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
-          <Activity size={16} className="text-indigo-600" /> Transparent Score Components & Domain Inputs
+          <Activity size={16} className="text-[#176B91]" /> Transparent Score Components & Domain Inputs
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -136,7 +142,7 @@ Certified by AARIZO Society Intelligence Engine
               >
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <span className="p-2 bg-white rounded-lg border text-indigo-600 shadow-xs">
+                    <span className="p-2 bg-white rounded-lg border text-[#083B56] shadow-xs">
                       <Icon size={18} />
                     </span>
                     <span className="font-bold text-xs text-slate-800">{pillar.name}</span>
@@ -147,14 +153,14 @@ Certified by AARIZO Society Intelligence Engine
                 {/* Progress Bar */}
                 <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-indigo-600 h-full rounded-full transition-all"
+                    className="bg-[#176B91] h-full rounded-full transition-all"
                     style={{ width: `${pillar.score}%` }}
                   ></div>
                 </div>
 
                 <div className="flex justify-between items-center text-[11px] text-slate-500 font-medium">
                   <span>Weight: {pillar.weight * 100}%</span>
-                  <span className="text-indigo-600 font-bold">Contribution: +{pillar.weightedScore.toFixed(1)}</span>
+                  <span className="text-[#083B56] font-bold">Contribution: +{pillar.weightedScore.toFixed(1)}</span>
                 </div>
 
                 <p className="text-[11px] text-slate-600 line-clamp-2 bg-white p-2 rounded-lg border border-slate-100">
@@ -192,7 +198,7 @@ Certified by AARIZO Society Intelligence Engine
                     <Calendar size={12} className="text-slate-400" /> {t.period}
                   </td>
                   <td className="p-3">
-                    <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 font-extrabold rounded">
+                    <span className="px-2 py-0.5 bg-[#EAF6FC] text-[#083B56] font-extrabold rounded">
                       {t.overallScore}/100
                     </span>
                   </td>

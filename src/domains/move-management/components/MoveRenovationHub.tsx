@@ -184,7 +184,7 @@ export const MoveRenovationHub: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-24">
+    <div className="max-w-7xl mx-auto space-y-6 pb-24">
       {/* Header Banner */}
       <div
         style={{
@@ -385,14 +385,14 @@ export const MoveRenovationHub: React.FC = () => {
 
                 {/* Actions */}
                 <div className="flex justify-between items-center pt-3 border-t">
-                  <div className="flex items-center gap-1 font-mono text-xs text-indigo-600 font-bold">
+                  <div className="flex items-center gap-1 font-mono text-xs text-[#083B56] font-bold">
                     <QrCode size={14} /> Pass: {move.gatepassCode}
                   </div>
 
                   {isAdmin && move.status === 'SUBMITTED' && (
                     <button
                       onClick={() => handleApproveMove(move.id)}
-                      className="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-sm hover:bg-indigo-500"
+                      className="px-3 py-1.5 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-semibold rounded-lg shadow-sm"
                     >
                       Approve & Issue Gatepass
                     </button>
@@ -469,11 +469,11 @@ export const MoveRenovationHub: React.FC = () => {
 
                 {/* Actions */}
                 <div className="flex justify-between items-center pt-3 border-t">
-                  <div className="font-mono text-xs text-indigo-600 font-bold">Pass: {permit.gatepassCode}</div>
+                  <div className="font-mono text-xs text-[#083B56] font-bold">Pass: {permit.gatepassCode}</div>
                   {isAdmin && permit.status === 'SUBMITTED' && (
                     <button
                       onClick={() => handleApproveRenovation(permit.id)}
-                      className="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-sm hover:bg-indigo-500"
+                      className="px-3 py-1.5 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-semibold rounded-lg shadow-sm"
                     >
                       Approve Renovation Permit
                     </button>
@@ -492,9 +492,9 @@ export const MoveRenovationHub: React.FC = () => {
           <p className="text-xs text-slate-500">Upcoming lift allocations and active contractor permits.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-              <p className="text-xs font-semibold text-indigo-700">Total Active Moves Today</p>
-              <h4 className="text-2xl font-bold text-indigo-900 mt-1">2</h4>
+            <div className="p-4 bg-[#EAF6FC] rounded-xl border border-[#DCE8EF]">
+              <p className="text-xs font-semibold text-[#083B56]">Total Active Moves Today</p>
+              <h4 className="text-2xl font-bold text-[#083B56] mt-1">2</h4>
             </div>
             <div className="p-4 bg-amber-50 rounded-xl border border-amber-100">
               <p className="text-xs font-semibold text-amber-700">Active Renovations</p>
@@ -512,7 +512,7 @@ export const MoveRenovationHub: React.FC = () => {
       {activeTab === 'SECURITY_SCANNER' && (
         <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto space-y-4">
           <div className="text-center space-y-1">
-            <QrCode size={36} className="mx-auto text-indigo-600" />
+            <QrCode size={36} className="mx-auto text-[#083B56]" />
             <h3 className="font-bold text-slate-900 text-lg">Gate Security Contractor & Worker Scanner</h3>
             <p className="text-xs text-slate-500">Verify approved worker names against active permits.</p>
           </div>
@@ -532,7 +532,7 @@ export const MoveRenovationHub: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
+              className="w-full py-3 bg-[#083B56] hover:bg-[#176B91] text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
             >
               <ShieldCheck size={16} /> Verify & Record Gate Entry
             </button>

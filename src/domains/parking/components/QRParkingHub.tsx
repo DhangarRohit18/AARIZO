@@ -178,7 +178,7 @@ export const QRParkingHub: React.FC = () => {
   const levels = Array.from(new Set(slots.map((s) => s.level)));
 
   return (
-    <div className="space-y-4">
+    <div className="max-w-7xl mx-auto space-y-4 pb-24">
       {/* Header */}
       <div
         style={{
@@ -418,7 +418,7 @@ export const QRParkingHub: React.FC = () => {
               <div key={slot.id} className="p-4 flex items-center justify-between hover:bg-slate-50">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded border border-indigo-100">
+                    <span className="font-mono text-sm font-bold text-[#083B56] bg-[#EAF6FC] px-2.5 py-0.5 rounded border border-[#DCE8EF]">
                       {slot.slotCode}
                     </span>
                     <span className="text-xs font-bold text-slate-800">{slot.level}</span>
@@ -457,7 +457,7 @@ export const QRParkingHub: React.FC = () => {
                         });
                         setModalMode('ASSIGN');
                       }}
-                      className="px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg"
+                      className="px-3 py-1 bg-[#EAF6FC] hover:bg-[#EBF3F7] text-[#083B56] text-xs font-semibold rounded-lg"
                     >
                       Assign / Edit
                     </button>
@@ -518,7 +518,7 @@ export const QRParkingHub: React.FC = () => {
       {activeTab === 'SECURITY_SCANNER' && (
         <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto space-y-4">
           <div className="text-center space-y-1">
-            <QrCode size={36} className="mx-auto text-indigo-600" />
+            <QrCode size={36} className="mx-auto text-[#083B56]" />
             <h3 className="font-bold text-slate-900 text-lg">Gate Security Parking Pass QR Scanner</h3>
             <p className="text-xs text-slate-500">Scan QR pass or enter Vehicle Number / Slot Code.</p>
           </div>
@@ -537,7 +537,7 @@ export const QRParkingHub: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
+              className="w-full py-3 bg-[#083B56] hover:bg-[#176B91] text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
             >
               <ShieldCheck size={16} /> Validate Gate Parking Pass
             </button>
@@ -727,7 +727,7 @@ export const QRParkingHub: React.FC = () => {
               />
             </div>
             <div className="text-xs space-y-1 text-slate-700 font-medium">
-              <div className="font-mono font-bold text-indigo-600 text-sm">{activeQRPass.passCode}</div>
+              <div className="font-mono font-bold text-[#083B56] text-sm">{activeQRPass.passCode}</div>
               <div>Vehicle: {activeQRPass.vehicleNumber}</div>
               <div>Valid Until: {activeQRPass.validUntil}</div>
             </div>

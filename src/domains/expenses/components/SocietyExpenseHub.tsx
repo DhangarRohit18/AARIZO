@@ -189,7 +189,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="max-w-7xl mx-auto flex flex-col gap-6 pb-24">
       {/* Header */}
       <div
         style={{
@@ -337,13 +337,16 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
         </div>
       )}
 
-      {/* Tabs Bar - Scrollable Pills */}
+      {/* Tabs Bar - Standardized Aarizo Track */}
       <div
         style={{
           display: 'flex',
-          gap: '0.35rem',
+          gap: '6px',
           overflowX: 'auto',
-          paddingBottom: '0.5rem',
+          padding: '6px',
+          background: '#EBF3F7',
+          borderRadius: '16px',
+          border: '1px solid #DCE8EF',
           scrollbarWidth: 'none',
         }}
       >
@@ -361,24 +364,24 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
               type="button"
               onClick={() => setActiveTab(tab.key as any)}
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.35rem',
-                padding: '0.55rem 0.875rem',
-                borderRadius: '10px',
+                gap: '6px',
+                padding: '0.625rem 1.1rem',
+                borderRadius: '12px',
                 background: active ? '#083B56' : '#ffffff',
-                color: active ? '#ffffff' : '#657785',
-                fontWeight: 700,
-                fontSize: '0.8rem',
+                color: active ? '#ffffff' : '#475569',
+                fontWeight: active ? 700 : 600,
+                fontSize: '0.8125rem',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
+                transition: 'all 0.15s ease',
                 whiteSpace: 'nowrap',
-                boxShadow: active ? '0 2px 8px rgba(8,59,86,0.25)' : '0 1px 3px rgba(8,59,86,0.08)',
-                border: active ? 'none' : '1px solid #DCE8EF',
+                boxShadow: active ? '0 3px 10px rgba(8,59,86,0.25)' : 'none',
+                border: active ? '1px solid #083B56' : '1px solid #DCE8EF',
                 flexShrink: 0,
               }}
             >
-              <Icon size={14} />
+              <Icon size={15} color={active ? '#83CBEA' : '#176B91'} />
               <span>{tab.label}</span>
             </button>
           );
@@ -463,7 +466,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
                 placeholder="Search expense, vendor, invoice..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
               />
             </div>
 
@@ -544,7 +547,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
                             setActiveInvoice(item.invoice!);
                             setIsInvoiceModalOpen(true);
                           }}
-                          className="mt-1 text-[11px] text-indigo-600 font-semibold flex items-center gap-1 hover:underline"
+                          className="mt-1 text-[11px] text-[#176B91] font-semibold flex items-center gap-1 hover:underline"
                         >
                           <Paperclip size={12} /> #{item.invoice.invoiceNumber}
                         </button>
@@ -608,7 +611,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
                       {item.status === 'APPROVED' && (
                         <button
                           onClick={() => handleMarkPaid(item.id)}
-                          className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[11px] font-bold"
+                          className="px-2.5 py-1 bg-[#083B56] hover:bg-[#176B91] text-white rounded text-[11px] font-bold"
                         >
                           Mark Paid
                         </button>
@@ -656,7 +659,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
                             setActiveInvoice(item.invoice!);
                             setIsInvoiceModalOpen(true);
                           }}
-                          className="flex-1 py-1.5 border border-indigo-200 text-indigo-600 bg-indigo-50/50 text-xs font-semibold rounded-lg min-h-[44px]"
+                          className="flex-1 py-1.5 border border-[#DCE8EF] text-[#176B91] bg-[#EAF6FC] text-xs font-semibold rounded-lg min-h-[44px]"
                         >
                           View Invoice #{item.invoice.invoiceNumber}
                         </button>
@@ -681,7 +684,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
                       {item.status === 'APPROVED' && (
                         <button
                           onClick={() => handleMarkPaid(item.id)}
-                          className="w-full py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                          className="w-full py-1.5 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-bold rounded-lg min-h-[44px]"
                         >
                           Mark Paid
                         </button>
@@ -705,7 +708,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
                 Period: {budget.month} • Total Allocation: {formatCurrency(budget.totalAllocated)}
               </p>
             </div>
-            <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full font-bold text-xs">
+            <span className="px-3 py-1 bg-[#EAF6FC] text-[#083B56] rounded-full font-bold text-xs">
               Status: {budget.status}
             </span>
           </div>
@@ -734,7 +737,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
                     <h4 className="text-xs font-bold text-slate-900">{v.vendorName}</h4>
                     <span className="text-[11px] text-slate-400">{v.count} invoice(s) processed</span>
                   </div>
-                  <span className="text-xs font-bold text-indigo-600">{formatCurrency(v.amount)}</span>
+                  <span className="text-xs font-bold text-[#083B56]">{formatCurrency(v.amount)}</span>
                 </div>
               ))}
             </div>
@@ -850,18 +853,18 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
 
               {/* Attach Invoice Toggle */}
               <div className="pt-2 border-t border-slate-100">
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-indigo-700">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#083B56]">
                   <input
                     type="checkbox"
                     checked={attachInvoice}
                     onChange={(e) => setAttachInvoice(e.target.checked)}
-                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    className="rounded border-slate-300 text-[#083B56] focus:ring-[#176B91]"
                   />
                   Attach Vendor Invoice details
                 </label>
 
                 {attachInvoice && (
-                  <div className="mt-3 space-y-2 p-3 bg-indigo-50/50 rounded-xl border border-indigo-100">
+                  <div className="mt-3 space-y-2 p-3 bg-[#EAF6FC] rounded-xl border border-[#DCE8EF]">
                     <input
                       type="text"
                       placeholder="Invoice Number (e.g. INV-98124)"
@@ -890,7 +893,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm"
+                  className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-semibold rounded-xl shadow-sm"
                 >
                   Submit Expense Record
                 </button>
@@ -922,7 +925,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span className="text-slate-500">Total Amount:</span>
-                <span className="font-bold text-indigo-600 text-sm">{formatCurrency(activeInvoice.amount)}</span>
+                <span className="font-bold text-[#083B56] text-sm">{formatCurrency(activeInvoice.amount)}</span>
               </div>
 
               {activeInvoice.documentUrl && (
@@ -971,7 +974,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
 
               <div className="flex justify-between items-center pt-3 border-t font-bold text-sm text-slate-900">
                 <span>Total Budget:</span>
-                <span className="text-indigo-600">
+                <span className="text-[#083B56]">
                   {formatCurrency(budgetCategories.reduce((a, b) => a + Number(b.allocatedAmount || 0), 0))}
                 </span>
               </div>
@@ -986,7 +989,7 @@ export const SocietyExpenseHub: React.FC<SocietyExpenseHubProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl shadow-sm"
+                  className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-semibold rounded-xl shadow-sm"
                 >
                   Save & Approve Budget
                 </button>

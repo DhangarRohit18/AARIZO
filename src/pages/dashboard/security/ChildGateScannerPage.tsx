@@ -90,7 +90,7 @@ export const ChildGateScannerPage: React.FC = () => {
       <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+            <span className="p-2 bg-[#EAF6FC] text-[#083B56] rounded-xl">
               <QrCode className="w-5 h-5" />
             </span>
             <h1 className="text-2xl font-bold text-slate-900">Child Security & Gate Scanner</h1>
@@ -108,7 +108,7 @@ export const ChildGateScannerPage: React.FC = () => {
           <div className="dark-hero-banner bg-slate-900 text-white p-4 md:p-6 rounded-2xl shadow-xl flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold flex items-center gap-2">
-                <QrCode className="w-5 h-5 text-indigo-400" /> Security Gate Scanner Terminal
+                <QrCode className="w-5 h-5 text-[#83CBEA]" /> Security Gate Scanner Terminal
               </h2>
               <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-semibold rounded-full border border-emerald-500/30">
                 Gate Terminal Active
@@ -131,7 +131,7 @@ export const ChildGateScannerPage: React.FC = () => {
                 placeholder="Scan or Enter QR Code (e.g. CP-QR-172...)"
                 value={qrInput}
                 onChange={e => setQrInput(e.target.value)}
-                className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#83CBEA]"
               />
               <button
                 type="submit"
@@ -151,7 +151,7 @@ export const ChildGateScannerPage: React.FC = () => {
                     <button
                       key={qr.id}
                       onClick={() => handleScanQR(qr.qrCode)}
-                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-indigo-300 font-mono"
+                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-[#83CBEA] font-mono"
                     >
                       {qr.childName} ({qr.pickupPersonName})
                     </button>
@@ -198,7 +198,7 @@ export const ChildGateScannerPage: React.FC = () => {
         <div className="flex flex-col gap-6">
           <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col gap-4">
             <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-              <UserCheck className="w-4 h-4 text-indigo-600" /> Recent Gate Verification Logs
+              <UserCheck className="w-4 h-4 text-[#083B56]" /> Recent Gate Verification Logs
             </h3>
 
             <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto">

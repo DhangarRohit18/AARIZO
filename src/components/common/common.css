@@ -303,41 +303,157 @@
   color: var(--color-text-muted);
 }
 
-/* Tabs */
+/* Aarizo Standardized Tabs & Pill Controls */
 .tabs-container {
   display: flex;
-  gap: var(--space-2);
-  border-bottom: 1px solid var(--color-border-subtle);
+  gap: 6px;
   overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-.tab-btn {
+.tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs-underline {
+  border-bottom: 1px solid var(--aarizo-border, #DCE8EF);
+}
+
+.tabs-underline .tab-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-muted);
+  padding: 0.625rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #657785;
+  border: none;
+  background: transparent;
   border-bottom: 2px solid transparent;
-  transition: all var(--transition-fast);
+  transition: all 0.15s ease;
   white-space: nowrap;
+  cursor: pointer;
 }
 
-.tab-btn:hover {
-  color: var(--color-text);
+.tabs-underline .tab-btn:hover {
+  color: #083B56;
 }
 
-.tab-active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
+.tabs-underline .tab-btn.tab-active {
+  color: #083B56;
+  font-weight: 700;
+  border-bottom: 2px solid #083B56;
+}
+
+.tabs-pills {
+  background: #EBF3F7;
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid #DCE8EF;
+  display: flex;
+  gap: 6px;
+}
+
+.tabs-pills .tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid #DCE8EF;
+  border-radius: 12px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.tabs-pills .tab-btn:hover {
+  color: #083B56;
+  border-color: #CBD5E1;
+}
+
+.tabs-pills .tab-btn.tab-active {
+  background: #083B56 !important;
+  color: #ffffff !important;
+  border-color: #083B56 !important;
+  font-weight: 700;
+  box-shadow: 0 3px 10px rgba(8, 59, 86, 0.25);
+}
+
+.tabs-pills .tab-btn.tab-active .tab-icon {
+  color: #83CBEA !important;
+}
+
+.tabs-pills .tab-btn.tab-active .tab-badge {
+  background: #83CBEA !important;
+  color: #083B56 !important;
 }
 
 .tab-badge {
-  background: var(--color-surface-subtle);
+  background: #EBF5FA;
+  color: #176B91;
   font-size: 11px;
+  font-weight: 700;
   padding: 1px 6px;
-  border-radius: var(--radius-full);
+  border-radius: 9999px;
+}
+
+/* Global Control Pill Toggles & Buttons */
+.control-pill-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #EBF3F7 !important;
+  border: 1px solid #DCE8EF;
+  border-radius: 16px;
+  padding: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.control-pill-toggle::-webkit-scrollbar {
+  display: none;
+}
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid #DCE8EF;
+  border-radius: 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.pill-btn:hover {
+  color: #083B56;
+  border-color: #CBD5E1;
+}
+
+.pill-btn.pill-active {
+  background: #083B56 !important;
+  color: #ffffff !important;
+  border-color: #083B56 !important;
+  font-weight: 700;
+  box-shadow: 0 3px 10px rgba(8, 59, 86, 0.25);
+}
+
+.pill-btn.pill-active svg {
+  color: #83CBEA !important;
 }
 
 /* Divider */

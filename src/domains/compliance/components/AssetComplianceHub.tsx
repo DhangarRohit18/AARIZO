@@ -994,7 +994,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
                 {activeAssetForModal.auditLogs.map((log) => (
                   <div key={log.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
                     <div className="flex justify-between text-slate-500">
-                      <strong className="text-indigo-600 font-semibold">{log.action}</strong>
+                      <strong className="text-[#083B56] font-semibold">{log.action}</strong>
                       <span>{new Date(log.timestamp).toLocaleString()}</span>
                     </div>
                     <p className="text-slate-800">{log.details}</p>

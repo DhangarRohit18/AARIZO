@@ -76,7 +76,7 @@ export const GuestStayScannerPage: React.FC = () => {
           <div className="dark-hero-banner bg-slate-900 text-white p-4 md:p-6 rounded-2xl shadow-xl flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold flex items-center gap-2">
-                <QrCode className="w-5 h-5 text-indigo-400" /> Guest Stay Terminal Scanner
+                <QrCode className="w-5 h-5 text-[#83CBEA]" /> Guest Stay Terminal Scanner
               </h2>
               <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-semibold rounded-full border border-emerald-500/30">
                 Active Gate Terminal
@@ -99,7 +99,7 @@ export const GuestStayScannerPage: React.FC = () => {
                 placeholder="Scan or Enter Guest QR Code (e.g. GUEST-QR-8801-ROYAL)"
                 value={qrInput}
                 onChange={e => setQrInput(e.target.value)}
-                className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#83CBEA] font-mono"
               />
               <button
                 type="submit"
@@ -119,7 +119,7 @@ export const GuestStayScannerPage: React.FC = () => {
                     <button
                       key={resv.id}
                       onClick={() => handleScanQR(resv.qrCode)}
-                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-indigo-300 font-mono"
+                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-[#83CBEA] font-mono"
                     >
                       {resv.primaryGuestName} (Room {resv.roomNumber})
                     </button>
@@ -165,7 +165,7 @@ export const GuestStayScannerPage: React.FC = () => {
         <div className="flex flex-col gap-6">
           <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col gap-4">
             <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-              <UserCheck className="w-4 h-4 text-indigo-600" /> Currently Checked-In Guest Stays
+              <UserCheck className="w-4 h-4 text-[#083B56]" /> Currently Checked-In Guest Stays
             </h3>
 
             <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto">
@@ -173,10 +173,10 @@ export const GuestStayScannerPage: React.FC = () => {
                 <p className="text-xs text-slate-400 text-center py-6">No guests currently checked-in</p>
               ) : (
                 activeReservations.filter(r => r.status === 'CHECKED_IN').map(resv => (
-                  <div key={resv.id} className="p-3 bg-indigo-50/60 border border-indigo-200 rounded-xl text-xs space-y-1">
+                  <div key={resv.id} className="p-3 bg-[#EAF6FC] border border-[#DCE8EF] rounded-xl text-xs space-y-1">
                     <div className="flex items-center justify-between font-bold text-slate-900">
                       <span>Room #{resv.roomNumber} — {resv.primaryGuestName}</span>
-                      <span className="px-2 py-0.5 bg-indigo-600 text-white text-[10px] rounded-full">CHECKED IN</span>
+                      <span className="px-2 py-0.5 bg-[#083B56] text-white text-[10px] rounded-full">CHECKED IN</span>
                     </div>
                     <p className="text-slate-500">Resident Host: {resv.residentName} ({resv.flatNumber})</p>
                     <p className="text-slate-400 text-[11px]">Checkout Due: {resv.checkOutDate}</p>

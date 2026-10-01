@@ -209,7 +209,7 @@ export const FlatManagementPage: React.FC = () => {
             </button>
             <button
               type="submit"
-              style={{ padding: '0.65rem 1rem', border: 'none', background: '#2563eb', color: '#fff', borderRadius: '0.375rem', fontWeight: 600, cursor: 'pointer' }}
+              style={{ padding: '0.65rem 1rem', border: 'none', background: 'var(--aarizo-navy, #083B56)', color: '#fff', borderRadius: '0.375rem', fontWeight: 600, cursor: 'pointer' }}
             >
               Register Flat
             </button>

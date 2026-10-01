@@ -86,13 +86,13 @@ export const GateHistory: React.FC<GateHistoryProps> = ({ history }) => {
                 item.action === 'checked_in' || item.action === 'entry_approved'
                   ? '#ecfdf5'
                   : item.action === 'checked_out'
-                  ? '#eff6ff'
+                  ? 'var(--aarizo-light-blue, #EAF6FC)'
                   : '#fff1f2',
               color:
                 item.action === 'checked_in' || item.action === 'entry_approved'
                   ? '#059669'
                   : item.action === 'checked_out'
-                  ? '#2563eb'
+                  ? 'var(--aarizo-blue, #176B91)'
                   : '#dc2626',
             }}
           >
@@ -113,7 +113,7 @@ export const GateHistory: React.FC<GateHistoryProps> = ({ history }) => {
                     item.action === 'checked_in'
                       ? '#059669'
                       : item.action === 'checked_out'
-                      ? '#2563eb'
+                      ? 'var(--aarizo-blue, #176B91)'
                       : '#dc2626',
                 }}
               >

@@ -62,7 +62,7 @@ export const CreateNoticeDrawer: React.FC<CreateNoticeDrawerProps> = ({
       <div className="auth-modal-card" style={{ maxWidth: '480px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <div className="otp-icon-header" style={{ width: '36px', height: '36px', background: '#eff6ff', color: '#2563eb', margin: 0 }}>
+            <div className="otp-icon-header" style={{ width: '36px', height: '36px', background: 'var(--aarizo-light-blue, #EAF6FC)', color: 'var(--aarizo-blue, #176B91)', margin: 0 }}>
               <Megaphone size={20} />
             </div>
             <h3 className="otp-title" style={{ fontSize: '1.125rem', margin: 0 }}>
@@ -166,7 +166,7 @@ export const CreateNoticeDrawer: React.FC<CreateNoticeDrawerProps> = ({
           <div>
             <div style={{ background: '#f8fafc', padding: '0.875rem', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                <span className="banner-role-tag" style={{ background: priority === 'Urgent' ? '#fef2f2' : '#eff6ff', color: priority === 'Urgent' ? '#dc2626' : '#2563eb' }}>
+                <span className="banner-role-tag" style={{ background: priority === 'Urgent' ? '#fef2f2' : 'var(--aarizo-light-blue, #EAF6FC)', color: priority === 'Urgent' ? '#dc2626' : 'var(--aarizo-navy, #083B56)', border: '1px solid #DCE8EF' }}>
                   {category} • {priority}
                 </span>
                 <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Target: {targetAudience}</span>

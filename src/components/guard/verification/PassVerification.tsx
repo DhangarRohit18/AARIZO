@@ -139,7 +139,7 @@ export const PassVerification: React.FC<PassVerificationProps> = ({ visitors, on
             <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>Quick Test Passcodes:</span>
             <button
               className="btn-auth-text"
-              style={{ fontSize: '0.75rem', color: '#2563eb', padding: '0 0.3rem' }}
+              style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', padding: '0 0.3rem' }}
               onClick={() => {
                 setPasscodeInput('8492');
                 handleVerifyPasscode('8492');

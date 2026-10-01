@@ -269,7 +269,7 @@ export const AdminAmenityManagementPage: React.FC = () => {
                   <div>
                     <span className="text-slate-400 block">Timings</span>
                     <span className="font-semibold text-slate-700 flex items-center gap-1 mt-0.5">
-                      <Clock className="w-3.5 h-3.5 text-indigo-500" /> {amenity.openTime} - {amenity.closeTime}
+                      <Clock className="w-3.5 h-3.5 text-[#176B91]" /> {amenity.openTime} - {amenity.closeTime}
                     </span>
                   </div>
                   <div>
@@ -475,7 +475,7 @@ export const AdminAmenityManagementPage: React.FC = () => {
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-semibold rounded-lg">Create Amenity</button>
+            <button type="submit" className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white text-sm font-semibold rounded-lg">Create Amenity</button>
           </div>
         </form>
       </Modal>
@@ -568,7 +568,7 @@ export const AdminAmenityManagementPage: React.FC = () => {
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <button type="button" onClick={() => setShowMaintenanceModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-semibold rounded-lg">Schedule Maintenance</button>
+            <button type="submit" className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white text-sm font-semibold rounded-lg">Schedule Maintenance</button>
           </div>
         </form>
       </Modal>

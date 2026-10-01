@@ -183,9 +183,9 @@ export const SecretaryDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
         {/* Pending Move Approvals */}
         <div style={S.card}>
           <div style={S.head}>
-            <div style={S.iconBox('#2563eb', '#eff6ff')}><Truck size={15} /></div>
+            <div style={S.iconBox('var(--aarizo-blue, #176B91)', 'var(--aarizo-light-blue, #EAF6FC)')}><Truck size={15} /></div>
             <h2 style={S.title}>Pending Move Approvals</h2>
-            {movePending.length > 0 && <span style={S.badge('#2563eb', '#dbeafe')}>{movePending.length}</span>}
+            {movePending.length > 0 && <span style={S.badge('var(--aarizo-navy, #083B56)', 'var(--aarizo-light-blue, #EAF6FC)')}>{movePending.length}</span>}
           </div>
           {movePending.length === 0 ? (
             <div style={S.empty}>All caught up ✓</div>

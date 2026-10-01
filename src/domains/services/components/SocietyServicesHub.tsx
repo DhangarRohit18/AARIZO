@@ -177,7 +177,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
   });
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6 pb-24">
       {/* Header Banner */}
       <div
         style={{
@@ -370,7 +370,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                 <div key={item.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3 flex flex-col justify-between">
                   <div className="space-y-2">
                     <div className="flex justify-between items-start">
-                      <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+                      <span className="p-2 bg-[#EAF6FC] text-[#083B56] rounded-xl">
                         <Icon size={20} />
                       </span>
                       <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
@@ -424,7 +424,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
               <div key={order.id} className="p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
+                    <span className="font-mono text-xs font-bold text-[#083B56] bg-[#EAF6FC] px-2 py-0.5 rounded">
                       {order.orderNumber}
                     </span>
                     <h4 className="font-bold text-slate-900 text-base">{order.serviceTitle}</h4>
@@ -437,7 +437,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
 
                   <div className="flex items-center gap-2 text-xs">
                     <span className="text-slate-400">Schedule:</span>
-                    <span className="font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">
+                    <span className="font-bold text-[#083B56] bg-[#EAF6FC] px-2 py-0.5 rounded">
                       {order.recurringSchedule}
                     </span>
                   </div>
@@ -471,7 +471,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                   {isVendor && order.status === 'PENDING' && (
                     <button
                       onClick={() => handleUpdateStatus(order.id, 'ACCEPTED')}
-                      className="px-3 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-lg"
+                      className="px-3 py-1 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-semibold rounded-lg"
                     >
                       Accept Booking
                     </button>

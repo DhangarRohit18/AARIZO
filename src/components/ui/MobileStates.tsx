@@ -3,7 +3,7 @@ import { AlertCircle, FileSearch, WifiOff } from 'lucide-react';
 
 export const MobileLoadingState = () => (
   <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
-    <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '3px solid #cbd5e1', borderTopColor: '#3b82f6', animation: 'spin 1s linear infinite' }} />
+    <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '3px solid #cbd5e1', borderTopColor: '#083B56', animation: 'spin 1s linear infinite' }} />
     <p style={{ marginTop: '1rem', fontSize: '0.875rem', fontWeight: 500 }}>Loading data...</p>
     <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
   </div>

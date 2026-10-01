@@ -3,7 +3,7 @@ import { AssetComplianceHub } from '../../../domains/compliance';
 
 export const AdminCompliancePage: React.FC = () => {
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', maxWidth: '1280px', margin: '0 auto', paddingBottom: '6rem' }}>
       {/* Page Header */}
       <div style={{
         background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',

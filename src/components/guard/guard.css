@@ -96,7 +96,7 @@
   flex: 1;
   padding: 1.25rem;
   padding-bottom: 5.5rem;
-  max-width: 768px;
+  max-width: 1280px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
@@ -146,7 +146,7 @@
 
 /* Prominent Pass Verification Bar */
 .verify-hero-cta {
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  background: linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #176B91 100%);
   color: #ffffff;
   border: none;
   border-radius: 16px;
@@ -156,7 +156,7 @@
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 16px rgba(8, 59, 86, 0.25);
   margin-bottom: 1.25rem;
   transition: all 0.2s ease;
 }
@@ -205,7 +205,7 @@
   padding: 1.5rem;
   text-align: center;
   color: #ffffff;
-  border: 2px dashed #3b82f6;
+  border: 2px dashed #176B91;
   margin-bottom: 1.25rem;
   position: relative;
   overflow: hidden;
@@ -215,14 +215,14 @@
   width: 140px;
   height: 140px;
   border-radius: 16px;
-  border: 2px solid #60a5fa;
+  border: 2px solid #83CBEA;
   margin: 0 auto 1.25rem auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(30, 58, 138, 0.3);
-  box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.3);
+  background: rgba(8, 59, 86, 0.3);
+  box-shadow: inset 0 0 20px rgba(23, 107, 145, 0.3);
   position: relative;
 }
 
@@ -232,8 +232,8 @@
   left: 10px;
   right: 10px;
   height: 2px;
-  background: #3b82f6;
-  box-shadow: 0 0 8px #3b82f6;
+  background: #83CBEA;
+  box-shadow: 0 0 8px #83CBEA;
   animation: scanMove 2s infinite ease-in-out;
 }
 
@@ -264,8 +264,8 @@
 }
 
 .keypad-input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  border-color: #176B91;
+  box-shadow: 0 0 0 3px rgba(23, 107, 145, 0.3);
 }
 
 /* Guard Visitor Card */

@@ -164,7 +164,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
   };
 
   return (
-    <div className="space-y-6 pb-24">
+    <div className="max-w-7xl mx-auto space-y-6 pb-24">
       {/* Header Bar */}
       {!hideHeaderBanner && (
         <div
@@ -267,7 +267,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                 placeholder="Search appliances, furniture, free items..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
               />
             </div>
 
@@ -336,7 +336,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                             ? 'bg-amber-500 text-white'
                             : item.type === 'BUY'
                             ? 'bg-blue-600 text-white'
-                            : 'bg-indigo-600 text-white'
+                            : 'bg-[#083B56] text-white'
                         }`}
                       >
                         {item.type === 'FREE_REUSE' ? '🎁 FREE' : item.type}
@@ -450,7 +450,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                       {entry.flat} • {entry.tower} • {entry.profession || 'Resident'}
                     </p>
                   </div>
-                  <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+                  <span className="p-2 bg-[#EAF6FC] text-[#176B91] rounded-xl">
                     <UserCheck size={18} />
                   </span>
                 </div>

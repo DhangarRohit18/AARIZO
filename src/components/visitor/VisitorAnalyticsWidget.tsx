@@ -12,7 +12,7 @@ export const VisitorAnalyticsWidget: React.FC<VisitorAnalyticsWidgetProps> = ({ 
       {/* Top Metrics Row - 2x2 Grid */}
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#EAF6FC] dark:bg-slate-800 flex items-center justify-center text-[#176B91] shrink-0">
             <Clock className="w-5 h-5" />
           </div>
           <div>
@@ -66,7 +66,7 @@ export const VisitorAnalyticsWidget: React.FC<VisitorAnalyticsWidgetProps> = ({ 
         <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <BarChart3 className="w-4 h-4 text-[#176B91]" />
               Peak Visiting Hours (Hourly)
             </h3>
           </div>
@@ -78,12 +78,12 @@ export const VisitorAnalyticsWidget: React.FC<VisitorAnalyticsWidgetProps> = ({ 
 
               return (
                 <div key={idx} className="flex-1 flex flex-col items-center gap-1 group relative">
-                  <div className="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="text-[9px] font-bold text-[#083B56] dark:text-[#83CBEA] opacity-0 group-hover:opacity-100 transition-opacity">
                     {h.count}
                   </div>
                   <div
                     style={{ height: `${Math.max(15, heightPercent)}%` }}
-                    className="w-full bg-indigo-500 hover:bg-indigo-600 rounded-t transition-all"
+                    className="w-full bg-[#176B91] hover:bg-[#083B56] rounded-t transition-all"
                   />
                   <span className="text-[9px] text-slate-400 font-mono">{h.hourLabel.replace(' ', '')}</span>
                 </div>
@@ -120,7 +120,7 @@ export const VisitorAnalyticsWidget: React.FC<VisitorAnalyticsWidgetProps> = ({ 
         {/* Repeat Visitors Leaderboard */}
         <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
           <h3 className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
-            <Users className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <Users className="w-4 h-4 text-[#176B91]" />
             Top Repeat Visitors
           </h3>
 
@@ -134,7 +134,7 @@ export const VisitorAnalyticsWidget: React.FC<VisitorAnalyticsWidgetProps> = ({ 
                   <div className="font-bold text-slate-900 dark:text-white">{r.visitorName}</div>
                   <div className="text-slate-500 text-[11px]">{r.phone}</div>
                 </div>
-                <span className="px-2.5 py-1 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold rounded-full text-xs">
+                <span className="px-2.5 py-1 bg-[#EAF6FC] dark:bg-slate-800 text-[#083B56] dark:text-[#83CBEA] font-bold rounded-full text-xs border border-[#DCE8EF] dark:border-slate-700">
                   {r.visitsCount} visits
                 </span>
               </div>

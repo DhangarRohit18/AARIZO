@@ -61,10 +61,10 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto flex flex-col gap-6 pb-24 p-4 md:p-6">
       {/* Header & Date Range Filter Bar */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-4 md:p-6 text-white shadow-xl border border-indigo-900/30">
+      <div className="bg-gradient-to-r from-[#083B56] via-[#0D4767] to-[#083B56] rounded-2xl p-4 md:p-6 text-white shadow-xl border border-sky-900/30">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#83CBEA]/20 text-[#83CBEA] text-xs font-semibold uppercase tracking-wider mb-2">
               <Sparkles className="w-3.5 h-3.5" /> Society Intelligence Engine
             </div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Executive Operations Dashboard</h1>
@@ -76,7 +76,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handleExportReport}
-              className="px-4 py-2 bg-indigo-600/80 hover:bg-indigo-600 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm"
+              className="px-4 py-2 bg-[#176B91] hover:bg-[#083B56] rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm"
             >
               <Download className="w-4 h-4" /> Export Report
             </button>
@@ -84,9 +84,9 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
         </div>
 
         {/* Date Filter Bar */}
-        <div className="mt-6 pt-4 border-t border-indigo-900/40 flex flex-wrap items-center justify-between gap-4">
+        <div className="mt-6 pt-4 border-t border-sky-900/40 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-300">
-            <Filter className="w-4 h-4 text-indigo-400" />
+            <Filter className="w-4 h-4 text-[#83CBEA]" />
             <span className="font-medium">Time Window:</span>
           </div>
 
@@ -105,7 +105,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
                 onClick={() => setPreset(item.value)}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition ${
                   preset === item.value
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                    ? 'bg-[#083B56] text-white shadow-md shadow-[#083B56]/30 border border-[#83CBEA]/40 font-bold'
                     : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'
                 }`}
               >
@@ -116,7 +116,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
 
           {preset === 'CUSTOM' && (
             <div className="flex items-center gap-2 bg-slate-800/90 p-2 rounded-lg text-xs">
-              <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+              <Calendar className="w-3.5 h-3.5 text-[#83CBEA]" />
               <input
                 type="date"
                 value={startDate}
@@ -144,7 +144,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
       {/* 15 ADMIN KPIS GRID */}
       <div>
         <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-          <Activity className="w-5 h-5 text-indigo-600" /> Real-Time Executive KPIs (15 Metrics)
+          <Activity className="w-5 h-5 text-[#083B56] dark:text-[#83CBEA]" /> Real-Time Executive KPIs (15 Metrics)
         </h2>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
@@ -166,13 +166,13 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Visitors Today</span>
-              <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600">
+              <div className="p-2 rounded-lg bg-[#EAF6FC] dark:bg-[#083B56]/30 text-[#083B56] dark:text-[#83CBEA]">
                 <UserCheck className="w-4 h-4" />
               </div>
             </div>
             <div className="mt-3">
               <div className="text-2xl font-extrabold text-slate-900 dark:text-white">{kpis.visitorsToday}</div>
-              <div className="text-[11px] text-indigo-600 font-medium mt-1">Total Pass Check-ins</div>
+              <div className="text-[11px] text-[#083B56] dark:text-[#83CBEA] font-medium mt-1">Total Pass Check-ins</div>
             </div>
           </div>
 
@@ -368,7 +368,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
       {/* 7 CHARTS SECTION */}
       <div className="flex flex-col gap-6">
         <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <PieChart className="w-5 h-5 text-indigo-600" /> Operational Analytics & Trends (7 Visual Graphs)
+          <PieChart className="w-5 h-5 text-[#083B56] dark:text-[#83CBEA]" /> Operational Analytics & Trends (7 Visual Graphs)
         </h2>
 
         {/* Row 1: Visitor Trends & Payment Collection */}
@@ -378,11 +378,11 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-indigo-500" /> 1. Visitor Flow & Delivery Trends
+                  <UserCheck className="w-4 h-4 text-[#176B91]" /> 1. Visitor Flow & Delivery Trends
                 </h3>
                 <p className="text-xs text-slate-500">Daily entry volume vs delivery portion</p>
               </div>
-              <span className="text-xs px-2.5 py-1 rounded-md bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 font-semibold">
+              <span className="text-xs px-2.5 py-1 rounded-md bg-[#EAF6FC] dark:bg-[#083B56]/40 text-[#083B56] dark:text-[#83CBEA] font-semibold">
                 Daily Entries
               </span>
             </div>
@@ -398,7 +398,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
                     </div>
                     <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t h-full flex items-end">
                       <div
-                        className="w-full bg-gradient-to-t from-indigo-600 to-indigo-400 rounded-t transition-all duration-300"
+                        className="w-full bg-gradient-to-t from-[#083B56] to-[#176B91] rounded-t transition-all duration-300"
                         style={{ height: `${heightPct}%` }}
                       ></div>
                     </div>
@@ -497,7 +497,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
 
             <div className="space-y-4 pt-2">
               {charts.parkingUtilization.map((pt, i) => {
-                const colors = ['bg-indigo-600', 'bg-teal-500', 'bg-slate-300 dark:bg-slate-700'];
+                const colors = ['bg-[#083B56]', 'bg-[#176B91]', 'bg-slate-300 dark:bg-slate-700'];
                 return (
                   <div key={i} className="space-y-1">
                     <div className="flex justify-between text-xs font-semibold">

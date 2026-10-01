@@ -151,7 +151,7 @@ export const NotificationCenterPage: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', paddingBottom: '2rem' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', paddingBottom: '6rem' }}>
       {/* ── Subheader with Back Button & Unread Counter ── */}
       <div
         style={{
@@ -190,37 +190,52 @@ export const NotificationCenterPage: React.FC = () => {
       </div>
 
       {/* ── Filter Pills: All / Unread ── */}
-      <div className="max-w-4xl mx-auto w-full" style={{ padding: '1rem 1rem 0.5rem', display: 'flex', gap: '0.5rem' }}>
-        <button
-          onClick={() => setFilter('ALL')}
+      <div className="max-w-4xl mx-auto w-full" style={{ padding: '1rem 1rem 0.5rem' }}>
+        <div
           style={{
-            padding: '0.4rem 1.1rem',
-            borderRadius: '9999px',
-            border: filter === 'ALL' ? '1px solid var(--aarizo-navy, #083B56)' : '1px solid var(--aarizo-border, #DCE8EF)',
-            background: filter === 'ALL' ? '#ffffff' : 'transparent',
-            color: filter === 'ALL' ? 'var(--aarizo-navy, #083B56)' : 'var(--aarizo-text-secondary, #657785)',
-            fontWeight: 700,
-            fontSize: '0.8125rem',
-            cursor: 'pointer',
+            background: '#EBF3F7',
+            borderRadius: '16px',
+            padding: '0.375rem',
+            display: 'inline-flex',
+            gap: '0.375rem',
+            boxShadow: 'inset 0 1px 3px rgba(8, 59, 86, 0.06)',
           }}
         >
-          All
-        </button>
-        <button
-          onClick={() => setFilter('UNREAD')}
-          style={{
-            padding: '0.4rem 1.1rem',
-            borderRadius: '9999px',
-            border: filter === 'UNREAD' ? '1px solid var(--aarizo-navy, #083B56)' : '1px solid var(--aarizo-border, #DCE8EF)',
-            background: filter === 'UNREAD' ? '#ffffff' : 'transparent',
-            color: filter === 'UNREAD' ? 'var(--aarizo-navy, #083B56)' : 'var(--aarizo-text-secondary, #657785)',
-            fontWeight: 700,
-            fontSize: '0.8125rem',
-            cursor: 'pointer',
-          }}
-        >
-          Unread
-        </button>
+          <button
+            onClick={() => setFilter('ALL')}
+            style={{
+              padding: '0.5rem 1.25rem',
+              borderRadius: '12px',
+              border: 'none',
+              background: filter === 'ALL' ? '#083B56' : '#ffffff',
+              color: filter === 'ALL' ? '#ffffff' : '#475569',
+              fontWeight: 700,
+              fontSize: '0.8125rem',
+              cursor: 'pointer',
+              boxShadow: filter === 'ALL' ? '0 3px 10px rgba(8, 59, 86, 0.25)' : 'none',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            All Notifications
+          </button>
+          <button
+            onClick={() => setFilter('UNREAD')}
+            style={{
+              padding: '0.5rem 1.25rem',
+              borderRadius: '12px',
+              border: 'none',
+              background: filter === 'UNREAD' ? '#083B56' : '#ffffff',
+              color: filter === 'UNREAD' ? '#ffffff' : '#475569',
+              fontWeight: 700,
+              fontSize: '0.8125rem',
+              cursor: 'pointer',
+              boxShadow: filter === 'UNREAD' ? '0 3px 10px rgba(8, 59, 86, 0.25)' : 'none',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            Unread ({unreadCount})
+          </button>
+        </div>
       </div>
 
       {/* ── Notification List (Responsive 1-col Mobile, 2-col Desktop) ── */}

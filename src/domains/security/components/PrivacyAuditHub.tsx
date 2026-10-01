@@ -61,7 +61,7 @@ export const PrivacyAuditHub: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6 pb-24">
       {/* Header Bar */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900 text-white p-5 rounded-2xl shadow-md gap-4">
         <div>
@@ -82,7 +82,7 @@ export const PrivacyAuditHub: React.FC = () => {
       {/* Privacy Rules Enforcement Cards */}
       <div>
         <h2 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
-          <EyeOff size={16} className="text-indigo-600" /> Privacy & Access Control Enforcement Matrix
+          <EyeOff size={16} className="text-[#083B56]" /> Privacy & Access Control Enforcement Matrix
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -93,7 +93,7 @@ export const PrivacyAuditHub: React.FC = () => {
                   <h3 className="font-bold text-xs text-slate-900">{tc.title}</h3>
                   <span className="text-[11px] text-slate-500 font-medium">Policy: {tc.rule}</span>
                 </div>
-                <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 font-bold text-[10px] rounded">
+                <span className="px-2 py-0.5 bg-[#EAF6FC] text-[#083B56] font-bold text-[10px] rounded">
                   ENFORCED
                 </span>
               </div>
@@ -121,7 +121,7 @@ export const PrivacyAuditHub: React.FC = () => {
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row gap-3 justify-between items-center">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Activity size={16} className="text-indigo-600" /> Immutable Structural Audit Logs
+            <Activity size={16} className="text-[#083B56]" /> Immutable Structural Audit Logs
           </h2>
 
           <div className="flex flex-wrap gap-2 w-full md:w-auto">
@@ -167,7 +167,7 @@ export const PrivacyAuditHub: React.FC = () => {
                 render: (log: StructuralAuditLog) => (
                   <div>
                     <div className="font-bold text-slate-900">{log.actorName}</div>
-                    <span className="text-[10px] text-indigo-600 font-semibold">{log.role}</span>
+                    <span className="text-[10px] text-[#083B56] font-semibold">{log.role}</span>
                   </div>
                 )
               },
@@ -175,7 +175,7 @@ export const PrivacyAuditHub: React.FC = () => {
                 key: 'action',
                 header: 'Action',
                 render: (log: StructuralAuditLog) => (
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-[#EAF6FC] text-[#083B56] border border-[#DCE8EF]">
                     {log.action}
                   </span>
                 )
@@ -225,7 +225,7 @@ export const PrivacyAuditHub: React.FC = () => {
                 title={`${log.actorName} (${log.role})`}
                 subtitle={`${new Date(log.timestamp).toLocaleString('en-IN')} • Target: ${log.entity}`}
                 status={
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#EAF6FC] text-[#083B56] border border-[#DCE8EF]">
                     {log.action}
                   </span>
                 }

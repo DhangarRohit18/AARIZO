@@ -17,8 +17,8 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ logs }) => {
   return (
     <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-        <Activity size={18} color="#2563eb" />
-        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: '#0f172a' }}>
+        <Activity size={18} color="#176B91" />
+        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: '#083B56' }}>
           Activity Audit Log
         </h4>
       </div>

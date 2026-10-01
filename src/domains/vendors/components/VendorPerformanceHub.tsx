@@ -81,13 +81,13 @@ export const VendorPerformanceHub: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6 pb-24">
       {/* Header & Mode Switcher */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-5 rounded-2xl border border-slate-200 shadow-sm gap-4">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold text-slate-900">Vendor Performance & Scorecard Intelligence</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EAF6FC] text-[#083B56] border border-[#DCE8EF]">
               Phase 15 Engine
             </span>
           </div>
@@ -103,7 +103,7 @@ export const VendorPerformanceHub: React.FC = () => {
               className={`px-4 py-2 font-semibold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition ${
                 isCompareView
                   ? 'bg-slate-900 text-white'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                  : 'bg-[#083B56] text-white hover:bg-[#176B91]'
               }`}
             >
               <Columns size={16} />
@@ -183,7 +183,7 @@ export const VendorPerformanceHub: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Customer Satisfaction:</span>
-                    <span className="font-bold text-indigo-600">{vendor.metrics.customerSatisfactionPercentage}%</span>
+                    <span className="font-bold text-[#083B56]">{vendor.metrics.customerSatisfactionPercentage}%</span>
                   </div>
                 </div>
 
@@ -246,7 +246,7 @@ export const VendorPerformanceHub: React.FC = () => {
                 placeholder="Search vendor name, category, representative..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
               />
             </div>
 
@@ -273,7 +273,7 @@ export const VendorPerformanceHub: React.FC = () => {
                 <div
                   key={vendor.vendorId}
                   className={`bg-white p-5 rounded-2xl border shadow-sm transition space-y-4 relative ${
-                    isSelected ? 'ring-2 ring-indigo-600 border-indigo-600' : 'border-slate-200 hover:border-slate-300'
+                    isSelected ? 'ring-2 ring-[#083B56] border-[#083B56]' : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
                   {/* Top Bar */}
@@ -288,7 +288,7 @@ export const VendorPerformanceHub: React.FC = () => {
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleSelectForComparison(vendor.vendorId)}
-                        className="rounded text-indigo-600 focus:ring-indigo-500"
+                        className="rounded text-[#083B56] focus:ring-[#176B91]"
                       />
                       <span className="text-[11px] font-semibold text-slate-500">Compare</span>
                     </label>
@@ -339,7 +339,7 @@ export const VendorPerformanceHub: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase font-semibold block">Satisfaction</span>
-                      <span className="font-extrabold text-indigo-700">{vendor.metrics.customerSatisfactionPercentage}%</span>
+                      <span className="font-extrabold text-[#083B56]">{vendor.metrics.customerSatisfactionPercentage}%</span>
                     </div>
                   </div>
 
@@ -358,7 +358,7 @@ export const VendorPerformanceHub: React.FC = () => {
                       onClick={() =>
                         handleTogglePublicVisibility(vendor.vendorId, vendor.isPubliclyRanked)
                       }
-                      className="text-[11px] font-bold text-indigo-600 hover:underline"
+                      className="text-[11px] font-bold text-[#176B91] hover:underline"
                     >
                       Toggle Visibility
                     </button>
@@ -445,7 +445,7 @@ export const VendorPerformanceHub: React.FC = () => {
               </div>
               <div>
                 <span className="text-slate-400 font-semibold block">COMPLETED JOBS</span>
-                <span className="text-base font-bold text-indigo-600">{activeVendor.metrics.completedJobsCount}</span>
+                <span className="text-base font-bold text-[#083B56]">{activeVendor.metrics.completedJobsCount}</span>
               </div>
             </div>
 

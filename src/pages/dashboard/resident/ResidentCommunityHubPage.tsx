@@ -463,7 +463,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
                         key={opt.id}
                         onClick={() => handleVotePoll(poll.id, opt.id)}
                         className={`p-3 rounded-xl border cursor-pointer transition-all ${
-                          isVoted ? 'border-indigo-600 bg-indigo-50/40 ring-2 ring-indigo-200' : 'border-slate-200 hover:border-slate-300'
+                          isVoted ? 'border-[#083B56] bg-[#EAF6FC] ring-2 ring-[#83CBEA]' : 'border-slate-200 hover:border-slate-300'
                         }`}
                       >
                         <div className="flex items-center justify-between text-sm font-medium text-slate-800">
@@ -473,14 +473,14 @@ export const ResidentCommunityHubPage: React.FC = () => {
                               name={`poll-${poll.id}`}
                               checked={isVoted}
                               onChange={() => {}}
-                              className="text-indigo-600"
+                              className="text-[#083B56]"
                             />
                             {opt.text}
                           </span>
                           <span className="text-xs font-bold text-slate-600">{percent}% ({optionVotes} votes)</span>
                         </div>
                         <div className="mt-2 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                          <div className="bg-indigo-600 h-2 rounded-full transition-all" style={{ width: `${percent}%` }}></div>
+                          <div className="bg-[#083B56] h-2 rounded-full transition-all" style={{ width: `${percent}%` }}></div>
                         </div>
                       </div>
                     );
@@ -499,7 +499,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
             <div key={post.id} className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">
+                  <div className="w-10 h-10 rounded-full bg-[#EAF6FC] text-[#083B56] font-bold flex items-center justify-center text-sm">
                     {post.authorName.charAt(0)}
                   </div>
                   <div>
@@ -518,7 +518,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
                 <button
                   onClick={() => handleToggleLike(post.id)}
                   className={`flex items-center gap-1 font-semibold ${
-                    post.likes.includes(residentId) ? 'text-indigo-600' : 'hover:text-slate-800'
+                    post.likes.includes(residentId) ? 'text-[#083B56]' : 'hover:text-slate-800'
                   }`}
                 >
                   <ThumbsUp className="w-4 h-4" /> {post.likes.length} Likes
@@ -548,11 +548,11 @@ export const ResidentCommunityHubPage: React.FC = () => {
                   value={commentInputs[post.id] || ''}
                   onChange={e => setCommentInputs({ ...commentInputs, [post.id]: e.target.value })}
                   onKeyDown={e => e.key === 'Enter' && handleAddComment(post.id)}
-                  className="flex-1 px-3 py-1.5 text-xs border rounded-lg focus:outline-none focus:border-indigo-500"
+                  className="flex-1 px-3 py-1.5 text-xs border rounded-lg focus:outline-none focus:border-[#083B56]"
                 />
                 <button
                   onClick={() => handleAddComment(post.id)}
-                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1"
+                  className="px-3 py-1.5 bg-[#176B91] hover:bg-[#083B56] text-white rounded-lg text-xs font-semibold flex items-center gap-1"
                 >
                   <Send className="w-3.5 h-3.5" />
                 </button>
@@ -601,7 +601,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <button type="button" onClick={() => setShowCreatePostModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-semibold rounded-lg">Publish Post</button>
+            <button type="submit" className="px-4 py-2 bg-[#083B56] text-white hover:bg-[#176B91] text-sm font-semibold rounded-lg">Publish Post</button>
           </div>
         </form>
       </Modal>
@@ -654,7 +654,7 @@ export const ResidentCommunityHubPage: React.FC = () => {
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <button type="button" onClick={() => setShowCreateEventModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-semibold rounded-lg">Publish Event</button>
+            <button type="submit" className="px-4 py-2 bg-[#083B56] text-white hover:bg-[#176B91] text-sm font-semibold rounded-lg">Publish Event</button>
           </div>
         </form>
       </Modal>
@@ -702,14 +702,14 @@ export const ResidentCommunityHubPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setPollOptions([...pollOptions, ''])}
-              className="px-3 py-1.5 text-indigo-600 border border-indigo-200 hover:bg-indigo-50 text-xs font-semibold rounded-lg mt-1"
+              className="px-3 py-1.5 text-[#176B91] border border-[#DCE8EF] hover:bg-[#EAF6FC] text-xs font-semibold rounded-lg mt-1"
             >
               + Add Option
             </button>
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <button type="button" onClick={() => setShowCreatePollModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-semibold rounded-lg">Create Poll</button>
+            <button type="submit" className="px-4 py-2 bg-[#083B56] text-white hover:bg-[#176B91] text-sm font-semibold rounded-lg">Create Poll</button>
           </div>
         </form>
       </Modal>

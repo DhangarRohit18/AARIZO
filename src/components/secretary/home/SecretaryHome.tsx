@@ -228,7 +228,7 @@ export const SecretaryHome: React.FC<SecretaryHomeProps> = ({
       <div className="section-heading-row" style={{ marginTop: '1.25rem' }}>
         <h3 className="section-title">Official Announcements</h3>
         <span
-          style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+          style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
           onClick={() => onQuickActionClick && onQuickActionClick('Broadcast Notice')}
         >
           <span>Manage Center</span>
@@ -241,8 +241,8 @@ export const SecretaryHome: React.FC<SecretaryHomeProps> = ({
           <div
             className="activity-icon-box"
             style={{
-              background: notice.priority === 'Urgent' ? '#fef2f2' : '#eff6ff',
-              color: notice.priority === 'Urgent' ? '#dc2626' : '#2563eb',
+              background: notice.priority === 'Urgent' ? '#fef2f2' : 'var(--aarizo-light-blue, #EAF6FC)',
+              color: notice.priority === 'Urgent' ? '#dc2626' : 'var(--aarizo-blue, #176B91)',
             }}
           >
             {notice.priority === 'Urgent' ? <BellRing size={20} /> : <Megaphone size={20} />}

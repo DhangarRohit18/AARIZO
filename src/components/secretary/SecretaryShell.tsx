@@ -342,7 +342,7 @@ export const SecretaryShell: React.FC = () => {
           <div className="auth-modal-card" style={{ maxWidth: '440px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <div className="otp-icon-header" style={{ width: '32px', height: '32px', background: '#eff6ff', color: '#2563eb', margin: 0 }}>
+                <div className="otp-icon-header" style={{ width: '32px', height: '32px', background: 'var(--aarizo-light-blue, #EAF6FC)', color: 'var(--aarizo-blue, #176B91)', margin: 0 }}>
                   <Bell size={18} />
                 </div>
                 <h3 className="otp-title" style={{ fontSize: '1rem', margin: 0 }}>

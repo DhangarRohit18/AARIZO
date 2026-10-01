@@ -144,7 +144,7 @@ export const ResidentGarbagePage: React.FC = () => {
           <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-indigo-600" /> Swimming Pool Water Hygiene
+                <Sparkles className="w-5 h-5 text-[#176B91]" /> Swimming Pool Water Hygiene
               </h2>
               <span className={`px-2.5 py-1 text-xs font-bold rounded-full ${
                 poolTask.status === 'COMPLETED' || poolTask.status === 'VERIFIED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'

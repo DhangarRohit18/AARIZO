@@ -138,7 +138,7 @@ export const ServiceProviderTaskPage: React.FC = () => {
               </div>
 
               <div>
-                <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                <div className="text-xs font-bold text-[#083B56] dark:text-[#83CBEA]">
                   Category: {t.category}
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
@@ -183,7 +183,7 @@ export const ServiceProviderTaskPage: React.FC = () => {
                       setSelectedTicket(t);
                       setStatusUpdate(t.status === 'ASSIGNED' ? 'IN_PROGRESS' : t.status);
                     }}
-                    className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs font-semibold"
+                    className="px-3 py-1.5 bg-[#176B91] hover:bg-[#083B56] text-white rounded text-xs font-semibold"
                   >
                     Update Progress
                   </button>
@@ -267,7 +267,7 @@ export const ServiceProviderTaskPage: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold"
+                className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white rounded-lg text-xs font-semibold"
               >
                 Save Progress
               </button>

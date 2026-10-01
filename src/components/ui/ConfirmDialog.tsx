@@ -30,7 +30,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       case 'warning':
         return '#d97706';
       default:
-        return '#2563eb';
+        return 'var(--aarizo-blue, #176B91)';
     }
   };
 
@@ -42,7 +42,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             width: '48px',
             height: '48px',
             borderRadius: '50%',
-            backgroundColor: variant === 'danger' ? '#fef2f2' : variant === 'warning' ? '#fffbeb' : '#eff6ff',
+            backgroundColor: variant === 'danger' ? '#fef2f2' : variant === 'warning' ? '#fffbeb' : '#EAF6FC',
             color: getButtonBg(),
             display: 'inline-flex',
             alignItems: 'center',
@@ -52,7 +52,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         >
           <AlertTriangle size={24} />
         </div>
-        <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.15rem', color: '#0f172a' }}>{title}</h3>
+        <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.15rem', color: '#083B56', fontWeight: 800 }}>{title}</h3>
         <p style={{ margin: '0 0 1.5rem 0', fontSize: '0.9rem', color: '#64748b' }}>{message}</p>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
           <button

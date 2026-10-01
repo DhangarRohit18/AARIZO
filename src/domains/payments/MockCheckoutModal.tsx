@@ -54,7 +54,7 @@ export const MockCheckoutModal: React.FC<MockCheckoutModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
       <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-700 to-indigo-800 p-5 text-white flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#083B56] to-[#176B91] p-5 text-white flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black text-lg">
               A
@@ -83,7 +83,7 @@ export const MockCheckoutModal: React.FC<MockCheckoutModalProps> = ({
           </div>
           <div className="text-right">
             <div className="text-xs text-slate-500 dark:text-slate-400">Amount Due</div>
-            <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
+            <div className="text-2xl font-black text-[#083B56] dark:text-[#83CBEA]">
               {formatCurrency(amount)}
             </div>
           </div>
@@ -99,18 +99,18 @@ export const MockCheckoutModal: React.FC<MockCheckoutModalProps> = ({
             onClick={() => setSelectedMethod('upi')}
             className={`w-full p-3.5 rounded-xl border flex items-center justify-between transition-all ${
               selectedMethod === 'upi'
-                ? 'border-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/20 text-indigo-900 dark:text-indigo-200'
+                ? 'border-[#083B56] bg-[#EAF6FC]/50 dark:bg-[#083B56]/20 text-[#083B56] dark:text-[#83CBEA]'
                 : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50'
             }`}
           >
             <div className="flex items-center gap-3">
-              <Smartphone className="w-5 h-5 text-indigo-600" />
+              <Smartphone className="w-5 h-5 text-[#083B56]" />
               <div className="text-left">
                 <div className="font-bold text-sm">UPI (GPay, PhonePe, Paytm)</div>
                 <div className="text-xs text-slate-500">Fast & Zero Gateway Surcharge</div>
               </div>
             </div>
-            {selectedMethod === 'upi' && <CheckCircle2 className="w-5 h-5 text-indigo-600" />}
+            {selectedMethod === 'upi' && <CheckCircle2 className="w-5 h-5 text-[#083B56]" />}
           </button>
 
           {/* Cards */}
@@ -119,18 +119,18 @@ export const MockCheckoutModal: React.FC<MockCheckoutModalProps> = ({
             onClick={() => setSelectedMethod('card')}
             className={`w-full p-3.5 rounded-xl border flex items-center justify-between transition-all ${
               selectedMethod === 'card'
-                ? 'border-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/20 text-indigo-900 dark:text-indigo-200'
+                ? 'border-[#083B56] bg-[#EAF6FC]/50 dark:bg-[#083B56]/20 text-[#083B56] dark:text-[#83CBEA]'
                 : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50'
             }`}
           >
             <div className="flex items-center gap-3">
-              <CreditCard className="w-5 h-5 text-blue-600" />
+              <CreditCard className="w-5 h-5 text-[#176B91]" />
               <div className="text-left">
                 <div className="font-bold text-sm">Credit / Debit Cards</div>
                 <div className="text-xs text-slate-500">Visa, Mastercard, RuPay</div>
               </div>
             </div>
-            {selectedMethod === 'card' && <CheckCircle2 className="w-5 h-5 text-indigo-600" />}
+            {selectedMethod === 'card' && <CheckCircle2 className="w-5 h-5 text-[#083B56]" />}
           </button>
 
           {/* Net Banking */}
@@ -139,7 +139,7 @@ export const MockCheckoutModal: React.FC<MockCheckoutModalProps> = ({
             onClick={() => setSelectedMethod('net_banking')}
             className={`w-full p-3.5 rounded-xl border flex items-center justify-between transition-all ${
               selectedMethod === 'net_banking'
-                ? 'border-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/20 text-indigo-900 dark:text-indigo-200'
+                ? 'border-[#083B56] bg-[#EAF6FC]/50 dark:bg-[#083B56]/20 text-[#083B56] dark:text-[#83CBEA]'
                 : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50'
             }`}
           >
@@ -150,7 +150,7 @@ export const MockCheckoutModal: React.FC<MockCheckoutModalProps> = ({
                 <div className="text-xs text-slate-500">All major Indian banks</div>
               </div>
             </div>
-            {selectedMethod === 'net_banking' && <CheckCircle2 className="w-5 h-5 text-indigo-600" />}
+            {selectedMethod === 'net_banking' && <CheckCircle2 className="w-5 h-5 text-[#083B56]" />}
           </button>
         </div>
 
@@ -187,7 +187,7 @@ export const MockCheckoutModal: React.FC<MockCheckoutModalProps> = ({
             type="button"
             onClick={handlePay}
             disabled={isProcessing}
-            className="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-colors shadow-lg shadow-indigo-500/20"
+            className="w-full py-3.5 px-4 bg-[#083B56] hover:bg-[#176B91] disabled:opacity-50 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-colors shadow-lg shadow-[#083B56]/20"
           >
             {isProcessing ? (
               <>

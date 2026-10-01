@@ -49,12 +49,12 @@ export const DeliveryIntelligencePage: React.FC = () => {
   );
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
+    <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 space-y-4 md:space-y-6 text-slate-900 dark:text-slate-100">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Truck className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
+            <Truck className="w-7 h-7 text-[#083B56] dark:text-[#83CBEA]" />
             Visitor Follow-Up & Delivery Intelligence
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -127,7 +127,7 @@ export const DeliveryIntelligencePage: React.FC = () => {
               <input
                 type="text"
                 placeholder="Search vendor, package ref, flat code..."
-                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-[#176B91]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -141,7 +141,7 @@ export const DeliveryIntelligencePage: React.FC = () => {
                   key: 'vendor',
                   header: 'Vendor',
                   render: (p: SmartVisitorPass) => (
-                    <span className="font-bold text-indigo-600 dark:text-indigo-400">
+                    <span className="font-bold text-[#083B56] dark:text-[#83CBEA]">
                       {p.deliveryVendor || p.companyName || 'Courier'}
                     </span>
                   )

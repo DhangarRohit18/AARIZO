@@ -100,8 +100,8 @@ export const SecretaryNotifications: React.FC = () => {
           <div
             className="activity-icon-box"
             style={{
-              background: item.category === 'Complaint' ? '#fff1f2' : item.category === 'Security' ? '#fffbe6' : '#eff6ff',
-              color: item.category === 'Complaint' ? '#e11d48' : item.category === 'Security' ? '#d97706' : '#2563eb',
+              background: item.category === 'Complaint' ? '#fff1f2' : item.category === 'Security' ? '#fffbe6' : 'var(--aarizo-light-blue, #EAF6FC)',
+              color: item.category === 'Complaint' ? '#e11d48' : item.category === 'Security' ? '#d97706' : 'var(--aarizo-blue, #176B91)',
             }}
           >
             {item.category === 'Complaint' && <AlertCircle size={20} />}
@@ -116,7 +116,7 @@ export const SecretaryNotifications: React.FC = () => {
               {!item.isRead && (
                 <button
                   className="btn-auth-text"
-                  style={{ fontSize: '0.6875rem', color: '#2563eb', padding: '0 0.2rem' }}
+                  style={{ fontSize: '0.6875rem', color: 'var(--aarizo-blue, #176B91)', padding: '0 0.2rem' }}
                   onClick={() => handleMarkRead(item.id)}
                 >
                   Mark read

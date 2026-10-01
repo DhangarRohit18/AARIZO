@@ -58,7 +58,7 @@ export const RealtimeOperationsHubPage: React.FC = () => {
       case 'VISITOR_ARRIVAL':
       case 'VISITOR_ENTRY':
       case 'VISITOR_EXIT':
-        return <UserCheck className="w-4 h-4 text-indigo-500" />;
+        return <UserCheck className="w-4 h-4 text-[#176B91]" />;
       case 'VISITOR_APPROVAL':
         return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
       case 'QR_SCAN':
@@ -90,7 +90,7 @@ export const RealtimeOperationsHubPage: React.FC = () => {
         return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300 font-bold animate-pulse';
       case 'VISITOR_ARRIVAL':
       case 'VISITOR_APPROVAL':
-        return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300';
+        return 'bg-[#EAF6FC] text-[#083B56] dark:bg-[#083B56]/40 dark:text-[#83CBEA]';
       case 'PAYMENT_STATUS':
         return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300';
       case 'PARKING_OCCUPANCY':

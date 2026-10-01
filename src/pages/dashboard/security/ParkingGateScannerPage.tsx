@@ -33,12 +33,12 @@ export const ParkingGateScannerPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+    <div style={{ padding: '1.5rem 1.5rem 6rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
       <header style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#eff6ff', color: '#2563eb', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem' }}>
+        <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#EAF6FC', color: '#083B56', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem' }}>
           <Car size={28} />
         </div>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#0f172a' }}>Gate Parking QR Verification</h1>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#083B56', fontWeight: 800 }}>Gate Parking QR Verification</h1>
         <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.9rem' }}>
           Scan vehicle permit QR tag to validate slot allocation & toggle entry/exit.
         </p>

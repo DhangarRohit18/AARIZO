@@ -30,7 +30,7 @@ export const SecretaryCommitteeRoster: React.FC<SecretaryCommitteeRosterProps> =
             style={{
               padding: '1rem',
               alignItems: 'flex-start',
-              borderLeft: '4px solid #2563eb',
+              borderLeft: '4px solid var(--aarizo-blue, #176B91)',
             }}
           >
             <img
@@ -54,8 +54,8 @@ export const SecretaryCommitteeRoster: React.FC<SecretaryCommitteeRosterProps> =
                     fontWeight: 700,
                     padding: '0.15rem 0.5rem',
                     borderRadius: '9999px',
-                    background: '#eff6ff',
-                    color: '#2563eb',
+                    background: 'var(--aarizo-light-blue, #EAF6FC)',
+                    color: 'var(--aarizo-blue, #176B91)',
                   }}
                 >
                   {member.designation}
@@ -68,11 +68,11 @@ export const SecretaryCommitteeRoster: React.FC<SecretaryCommitteeRosterProps> =
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.75rem', color: '#64748b' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                  <Phone size={13} style={{ color: '#2563eb' }} />
+                  <Phone size={13} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
                   <span>{member.phone}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                  <Mail size={13} style={{ color: '#2563eb' }} />
+                  <Mail size={13} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
                   <span>{member.email}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', marginTop: '0.125rem' }}>

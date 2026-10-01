@@ -36,14 +36,14 @@ export const Timeline: React.FC<TimelineProps> = ({ items }) => {
               width: '16px',
               height: '16px',
               borderRadius: '50%',
-              backgroundColor: item.status === 'completed' ? '#10b981' : item.status === 'active' ? '#2563eb' : '#cbd5e1',
+              backgroundColor: item.status === 'completed' ? '#10b981' : item.status === 'active' ? 'var(--aarizo-blue, #176B91)' : '#cbd5e1',
               border: '3px solid #ffffff',
               boxShadow: '0 0 0 1px #e2e8f0',
             }}
           />
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
-              <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#0f172a' }}>{item.title}</span>
+              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#083B56' }}>{item.title}</span>
               <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{item.timestamp}</span>
             </div>
             {item.description && (

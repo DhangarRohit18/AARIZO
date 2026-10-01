@@ -188,12 +188,12 @@ export const BillingManagementPage: React.FC = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
+    <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 space-y-4 md:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <CreditCard className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
+            <CreditCard className="w-7 h-7 text-[#083B56] dark:text-[#83CBEA]" />
             Society Financial Billing & Revenue Engine
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -209,7 +209,7 @@ export const BillingManagementPage: React.FC = () => {
           </button>
           <button
             onClick={() => setIsCycleModalOpen(true)}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors shadow-sm"
+            className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors shadow-sm"
           >
             <Plus className="w-4 h-4" /> New Billing Cycle
           </button>
@@ -254,8 +254,8 @@ export const BillingManagementPage: React.FC = () => {
             </div>
           </div>
           <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-            <span className="text-[11px] font-medium text-indigo-600 dark:text-indigo-400">Recovery Status</span>
-            <div className="text-lg font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">
+            <span className="text-[11px] font-medium text-[#083B56] dark:text-[#83CBEA]">Recovery Status</span>
+            <div className="text-lg font-bold text-[#083B56] dark:text-[#83CBEA] mt-0.5">
               {analytics.collectionPercentage >= 80 ? 'Healthy' : 'Needs Action'}
             </div>
           </div>
@@ -321,7 +321,7 @@ export const BillingManagementPage: React.FC = () => {
               <input
                 type="text"
                 placeholder="Search flat, resident, invoice number..."
-                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-[#083B56]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -346,7 +346,7 @@ export const BillingManagementPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4">
             <DataTable
               columns={[
-                { key: 'invoiceNumber', header: 'Invoice ID', render: (inv: SocietyInvoice) => <span className="font-semibold text-indigo-600 dark:text-indigo-400">{inv.invoiceNumber}</span> },
+                { key: 'invoiceNumber', header: 'Invoice ID', render: (inv: SocietyInvoice) => <span className="font-semibold text-[#083B56] dark:text-[#83CBEA]">{inv.invoiceNumber}</span> },
                 { key: 'flatResident', header: 'Flat & Resident', render: (inv: SocietyInvoice) => `Flat ${inv.flatCode} (${inv.residentName})` },
                 { key: 'totalAmount', header: 'Total (₹)', render: (inv: SocietyInvoice) => <span className="font-bold">₹{inv.totalAmount.toLocaleString()}</span> },
                 { key: 'paidAmount', header: 'Paid (₹)', render: (inv: SocietyInvoice) => <span className="text-emerald-600 dark:text-emerald-400 font-semibold">₹{inv.paidAmount.toLocaleString()}</span> },
@@ -469,7 +469,7 @@ export const BillingManagementPage: React.FC = () => {
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4">
           <DataTable
             columns={[
-              { key: 'transactionId', header: 'Txn ID', render: (t: PaymentTransaction) => <span className="font-semibold text-indigo-600 dark:text-indigo-400">{t.transactionId}</span> },
+              { key: 'transactionId', header: 'Txn ID', render: (t: PaymentTransaction) => <span className="font-semibold text-[#083B56] dark:text-[#83CBEA]">{t.transactionId}</span> },
               { key: 'invoiceNumber', header: 'Invoice' },
               { key: 'flatResident', header: 'Flat & Resident', render: (t: PaymentTransaction) => `Flat ${t.flatCode} (${t.residentName})` },
               { key: 'amount', header: 'Amount (₹)', render: (t: PaymentTransaction) => <span className="font-bold">₹{t.amount.toLocaleString()}</span> },
@@ -585,7 +585,7 @@ export const BillingManagementPage: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold"
+                className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white rounded-lg text-xs font-semibold"
               >
                 Publish Cycle & Generate Invoices
               </button>

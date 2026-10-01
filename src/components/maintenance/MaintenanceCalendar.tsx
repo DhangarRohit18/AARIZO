@@ -49,7 +49,7 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({ events
       {/* Calendar Header Navigation */}
       <div className="flex items-center justify-between bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="flex items-center gap-3">
-          <CalendarIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+          <CalendarIcon className="w-6 h-6 text-[#176B91]" />
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">
             {monthNames[month]} {year} Maintenance Calendar
           </h2>
@@ -107,14 +107,14 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({ events
               <div
                 key={`day-${dayNum}`}
                 className={`p-2 min-h-[100px] flex flex-col justify-start transition-colors ${
-                  isToday ? 'bg-indigo-50/40 dark:bg-indigo-950/20' : 'bg-white dark:bg-slate-800'
+                  isToday ? 'bg-[#EAF6FC] dark:bg-slate-800/80' : 'bg-white dark:bg-slate-800'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <span
                     className={`text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center ${
                       isToday
-                        ? 'bg-indigo-600 text-white'
+                        ? 'bg-[#083B56] text-white'
                         : 'text-slate-700 dark:text-slate-300'
                     }`}
                   >
@@ -136,7 +136,7 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({ events
                       className={`p-1.5 rounded text-[11px] font-medium cursor-pointer truncate transition-all flex items-center justify-between gap-1 border ${
                         ev.type === 'RECURRING_TASK'
                           ? 'bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-200 dark:border-emerald-800'
-                          : 'bg-indigo-50 text-indigo-900 border-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-200 dark:border-indigo-800'
+                          : 'bg-[#EAF6FC] text-[#083B56] border-[#DCE8EF] dark:bg-slate-800 dark:text-[#83CBEA] dark:border-slate-700'
                       }`}
                     >
                       <span className="truncate">{ev.title}</span>
@@ -155,7 +155,7 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({ events
           <div className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-4 md:p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl animate-in fade-in zoom-in duration-150">
             <div className="flex items-center justify-between border-b pb-3 border-slate-200 dark:border-slate-700">
               <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                <CheckCircle className="w-5 h-5 text-[#176B91]" />
                 Maintenance Task Details
               </h3>
               <button
@@ -200,7 +200,7 @@ export const MaintenanceCalendar: React.FC<MaintenanceCalendarProps> = ({ events
             <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold transition-colors"
+                className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white rounded-lg text-xs font-semibold transition-colors"
               >
                 Close View
               </button>

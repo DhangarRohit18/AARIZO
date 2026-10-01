@@ -53,8 +53,9 @@ export const VisitorVerificationDetail: React.FC<VisitorVerificationDetailProps>
             <span
               className="banner-role-tag"
               style={{
-                background: visitor.visitorType === 'guest' ? '#eff6ff' : '#fffbe6',
-                color: visitor.visitorType === 'guest' ? '#2563eb' : '#d97706',
+                background: visitor.visitorType === 'guest' ? 'var(--aarizo-light-blue, #EAF6FC)' : '#fffbe6',
+                color: visitor.visitorType === 'guest' ? 'var(--aarizo-blue, #176B91)' : '#d97706',
+                border: '1px solid #DCE8EF',
               }}
             >
               {visitor.visitorTypeLabel.toUpperCase()}
@@ -72,7 +73,7 @@ export const VisitorVerificationDetail: React.FC<VisitorVerificationDetailProps>
               borderRadius: '8px',
               background: visitor.status === 'approved' || visitor.status === 'checked_in' ? '#ecfdf5' : '#fffbe6',
               color: visitor.status === 'approved' || visitor.status === 'checked_in' ? '#059669' : '#d97706',
-              border: '1px solid #bfdbfe',
+              border: '1px solid #DCE8EF',
             }}
           >
             {visitor.status.toUpperCase()}
@@ -82,7 +83,7 @@ export const VisitorVerificationDetail: React.FC<VisitorVerificationDetailProps>
         {/* Info Grid */}
         <div className="onboarding-features-list">
           <div className="onboarding-feature-item">
-            <Building size={16} style={{ color: '#2563eb' }} />
+            <Building size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>
               Resident: <strong>{visitor.residentName}</strong> ({visitor.tower} • {visitor.flatCode})
             </span>
@@ -90,25 +91,25 @@ export const VisitorVerificationDetail: React.FC<VisitorVerificationDetailProps>
 
           {visitor.vehicleNumber && (
             <div className="onboarding-feature-item">
-              <Car size={16} style={{ color: '#2563eb' }} />
+              <Car size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
               <span>Vehicle Tag: <strong>{visitor.vehicleNumber}</strong></span>
             </div>
           )}
 
           <div className="onboarding-feature-item">
-            <Clock size={16} style={{ color: '#2563eb' }} />
+            <Clock size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Expected Time: {visitor.expectedTimeSlot} ({visitor.expectedDate})</span>
           </div>
 
           <div className="onboarding-feature-item">
-            <ShieldCheck size={16} style={{ color: '#2563eb' }} />
+            <ShieldCheck size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Passcode: <strong>{visitor.passcode}</strong> • Gate: {visitor.gateName}</span>
           </div>
         </div>
       </div>
 
       {callFeedback && (
-        <div className="error-banner" style={{ background: '#eff6ff', borderColor: '#bfdbfe', color: '#1e3a8a', marginBottom: '1.25rem' }}>
+        <div className="error-banner" style={{ background: 'var(--aarizo-light-blue, #EAF6FC)', borderColor: '#DCE8EF', color: 'var(--aarizo-navy, #083B56)', marginBottom: '1.25rem' }}>
           <Info size={16} />
           <span>{callFeedback}</span>
         </div>

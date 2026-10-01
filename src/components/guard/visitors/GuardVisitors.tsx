@@ -86,8 +86,8 @@ export const GuardVisitors: React.FC<GuardVisitorsProps> = ({ visitors, onSelect
             <span
               className="banner-role-tag"
               style={{
-                background: item.status === 'checked_in' ? '#ecfdf5' : item.status === 'approval_required' ? '#fffbe6' : '#eff6ff',
-                color: item.status === 'checked_in' ? '#059669' : item.status === 'approval_required' ? '#d97706' : '#2563eb',
+                background: item.status === 'checked_in' ? '#ecfdf5' : item.status === 'approval_required' ? '#fffbe6' : 'var(--aarizo-light-blue, #EAF6FC)',
+                color: item.status === 'checked_in' ? '#059669' : item.status === 'approval_required' ? '#d97706' : 'var(--aarizo-navy, #083B56)',
               }}
             >
               {getEntryStatusLabel(item.status)}
@@ -106,7 +106,7 @@ export const GuardVisitors: React.FC<GuardVisitorsProps> = ({ visitors, onSelect
 
           <button
             className="btn-guard-action-primary"
-            style={{ width: '100%', background: '#2563eb' }}
+            style={{ width: '100%', background: 'var(--aarizo-navy, #083B56)' }}
             onClick={(e) => {
               e.stopPropagation();
               onSelectVisitor(item);

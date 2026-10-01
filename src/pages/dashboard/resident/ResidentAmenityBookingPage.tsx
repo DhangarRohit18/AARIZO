@@ -279,7 +279,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
               </div>
             )}
 
-            <div className="bg-indigo-50/60 p-3 rounded-xl text-xs text-indigo-900 space-y-1">
+            <div className="bg-[#EAF6FC] border border-[#DCE8EF] p-3 rounded-xl text-xs text-[#083B56] space-y-1">
               <p><strong>Configured Hours:</strong> {selectedAmenity.openTime} to {selectedAmenity.closeTime}</p>
               <p><strong>Max Slot Capacity:</strong> {selectedAmenity.capacityPerSlot} Pax</p>
               {selectedAmenity.requiresApproval && (

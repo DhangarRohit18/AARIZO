@@ -27,7 +27,7 @@ export const VisualParkingMap: React.FC<VisualParkingMapProps> = ({
       case 'OCCUPIED':
         return { bg: '#fef2f2', border: '#ef4444', color: '#b91c1c' };
       case 'RESERVED':
-        return { bg: '#eff6ff', border: '#2563eb', color: '#1d4ed8' };
+        return { bg: '#EAF6FC', border: '#176B91', color: '#083B56' };
       case 'VISITOR':
         return { bg: '#fffbeb', border: '#f59e0b', color: '#b45309' };
       case 'BLOCKED':
@@ -64,7 +64,7 @@ export const VisualParkingMap: React.FC<VisualParkingMapProps> = ({
           <span>Occupied</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-          <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#2563eb' }} />
+          <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#176B91' }} />
           <span>Reserved</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
@@ -151,7 +151,7 @@ export const VisualParkingMap: React.FC<VisualParkingMapProps> = ({
                 onClick={() => setShowQRModal(true)}
                 style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', padding: '0.65rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff', fontWeight: 600, cursor: 'pointer' }}
               >
-                <QrCode size={16} color="#2563eb" /> View Parking QR
+                <QrCode size={16} color="#176B91" /> View Parking QR
               </button>
 
               {selectedSlot.occupancyState !== 'OCCUPIED' && onEntryScan && (

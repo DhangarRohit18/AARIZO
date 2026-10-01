@@ -89,7 +89,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
   });
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-24">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4">
         <div>
@@ -263,7 +263,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
                       setSelectedParcel(p);
                       setShowVerifyModal(true);
                     }}
-                    className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold text-[11px] flex items-center gap-1"
+                    className="px-3 py-1 bg-[#083B56] hover:bg-[#176B91] text-white rounded font-bold text-[11px] flex items-center gap-1"
                   >
                     <QrCode size={12} /> Verify OTP
                   </button>
@@ -309,7 +309,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
                       setSelectedParcel(p);
                       setShowVerifyModal(true);
                     }}
-                    className="w-full py-1.5 bg-indigo-600 text-white font-bold text-xs rounded-lg min-h-[44px] flex items-center justify-center gap-1.5"
+                    className="w-full py-1.5 bg-[#083B56] hover:bg-[#176B91] text-white font-bold text-xs rounded-lg min-h-[44px] flex items-center justify-center gap-1.5"
                   >
                     <QrCode size={14} /> Verify OTP & Release Package
                   </button>
@@ -424,7 +424,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
                 placeholder="Enter 6-digit OTP or scan QR"
                 value={verifyOtpInput}
                 onChange={(e) => setVerifyOtpInput(e.target.value)}
-                className="w-full p-3 text-center tracking-widest text-lg font-bold border-2 rounded-xl border-indigo-400 focus:outline-none"
+                className="w-full p-3 text-center tracking-widest text-lg font-bold border-2 rounded-xl border-[#176B91] focus:outline-none"
                 required
               />
               {verifyResult.message && (
@@ -446,7 +446,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold text-xs hover:bg-indigo-700"
+                  className="px-4 py-2 bg-[#083B56] text-white rounded-lg font-bold text-xs hover:bg-[#176B91]"
                 >
                   Confirm Pickup
                 </button>

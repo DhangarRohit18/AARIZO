@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import {
   Bell,
@@ -118,17 +118,20 @@ export const NotificationEngineHub: React.FC = () => {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6 pb-24">
       {/* Header Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-4 md:p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div
+        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+        className="text-white rounded-2xl p-4 md:p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
         <div className="space-y-1 z-10">
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
+            <span className="p-2 bg-white/10 text-white rounded-lg">
               <Radio size={24} className="animate-pulse" />
             </span>
             <h2 className="text-xl font-bold">Multi-Channel Notification Engine</h2>
           </div>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-200 text-sm">
             Event-driven dispatches via In-App, Push, WhatsApp, SMS & Email with preference routing.
           </p>
         </div>
@@ -137,7 +140,7 @@ export const NotificationEngineHub: React.FC = () => {
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllRead}
-              className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-md"
+              className="px-3.5 py-2 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-md border border-white/20"
             >
               <CheckCheck size={15} /> Mark All Read ({unreadCount})
             </button>
@@ -236,12 +239,12 @@ export const NotificationEngineHub: React.FC = () => {
                 <div
                   key={notif.id}
                   className={`p-5 transition-colors flex items-start justify-between gap-4 ${
-                    notif.isRead ? 'bg-white' : 'bg-indigo-50/30'
+                    notif.isRead ? 'bg-white' : 'bg-[#EAF6FC]/40'
                   }`}
                 >
                   <div className="space-y-1.5 flex-1">
                     <div className="flex items-center gap-2">
-                      {!notif.isRead && <span className="w-2.5 h-2.5 bg-indigo-600 rounded-full animate-ping" />}
+                      {!notif.isRead && <span className="w-2.5 h-2.5 bg-[#083B56] rounded-full animate-ping" />}
                       <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
                         {notif.eventType}
                       </span>
@@ -284,7 +287,7 @@ export const NotificationEngineHub: React.FC = () => {
                         setSelectedEventForLogs(notif);
                         setActiveTab('DELIVERY_LOGS');
                       }}
-                      className="text-xs text-indigo-600 hover:underline font-medium"
+                      className="text-xs text-[#083B56] hover:underline font-bold"
                     >
                       Audit Logs ({notif.deliveryLogs.length})
                     </button>
@@ -354,7 +357,7 @@ export const NotificationEngineHub: React.FC = () => {
                                 type="checkbox"
                                 checked={isChecked}
                                 onChange={() => handleTogglePreference(cat, chan)}
-                                className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 cursor-pointer"
+                                className="w-4 h-4 text-[#083B56] rounded focus:ring-[#176B91] cursor-pointer"
                               />
                             </td>
                           );
@@ -396,7 +399,7 @@ export const NotificationEngineHub: React.FC = () => {
                 <div key={event.id} className="p-4 border rounded-xl bg-slate-50/50 space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-[10px] font-bold font-mono bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">
+                      <span className="text-[10px] font-bold font-mono bg-[#EAF6FC] text-[#083B56] px-2 py-0.5 rounded">
                         {event.eventType}
                       </span>
                       <h4 className="font-bold text-slate-900 text-sm mt-1">{event.title}</h4>
@@ -411,7 +414,7 @@ export const NotificationEngineHub: React.FC = () => {
                       {event.deliveryLogs.map((log: DeliveryLog) => (
                         <div key={log.id} className="p-2.5 bg-white border rounded-lg text-xs space-y-1">
                           <div className="flex justify-between items-center font-bold">
-                            <span className="text-indigo-600 flex items-center gap-1">
+                            <span className="text-[#083B56] font-semibold flex items-center gap-1">
                               {log.channel === 'WHATSAPP' && <MessageSquare size={12} />}
                               {log.channel === 'SMS' && <Smartphone size={12} />}
                               {log.channel === 'EMAIL' && <Mail size={12} />}
@@ -519,7 +522,7 @@ export const NotificationEngineHub: React.FC = () => {
                 id="isCritical"
                 checked={simulatorForm.isCritical}
                 onChange={(e) => setSimulatorForm({ ...simulatorForm, isCritical: e.target.checked })}
-                className="w-4 h-4 text-indigo-600 rounded"
+                className="w-4 h-4 text-[#083B56] rounded"
               />
               <label htmlFor="isCritical" className="text-xs font-semibold text-rose-700 cursor-pointer">
                 Mark as Critical Safety/Security Override (Bypasses muted channel preferences)
@@ -529,7 +532,7 @@ export const NotificationEngineHub: React.FC = () => {
             <div className="flex justify-end pt-3 border-t">
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-indigo-600 text-white text-xs font-semibold rounded-xl shadow-md hover:bg-indigo-500 flex items-center gap-2"
+                className="px-5 py-2.5 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-semibold rounded-xl shadow-md flex items-center gap-2"
               >
                 <Send size={14} /> Dispatch Event Now
               </button>

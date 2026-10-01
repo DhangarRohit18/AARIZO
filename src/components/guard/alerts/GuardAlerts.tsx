@@ -75,8 +75,8 @@ export const GuardAlerts: React.FC<GuardAlertsProps> = ({ alerts, onAcknowledgeA
               <div
                 className="activity-icon-box"
                 style={{
-                  background: item.severity === 'warning' ? '#fffbe6' : '#eff6ff',
-                  color: item.severity === 'warning' ? '#d97706' : '#2563eb',
+                  background: item.severity === 'warning' ? '#fffbe6' : 'var(--aarizo-light-blue, #EAF6FC)',
+                  color: item.severity === 'warning' ? '#d97706' : 'var(--aarizo-blue, #176B91)',
                 }}
               >
                 {item.severity === 'warning' ? <AlertTriangle size={20} /> : <Bell size={20} />}
@@ -88,7 +88,7 @@ export const GuardAlerts: React.FC<GuardAlertsProps> = ({ alerts, onAcknowledgeA
                   {!item.isAcknowledged && (
                     <button
                       className="btn-auth-text"
-                      style={{ fontSize: '0.6875rem', color: '#2563eb', padding: 0 }}
+                      style={{ fontSize: '0.6875rem', color: 'var(--aarizo-blue, #176B91)', padding: 0 }}
                       onClick={() => onAcknowledgeAlert(item.id)}
                     >
                       Acknowledge

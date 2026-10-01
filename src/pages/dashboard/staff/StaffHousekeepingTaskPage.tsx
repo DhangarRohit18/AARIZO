@@ -84,12 +84,12 @@ export const StaffHousekeepingTaskPage: React.FC = () => {
           <div key={task.id} className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full">
+                <span className="px-2.5 py-0.5 bg-[#EAF6FC] text-[#083B56] text-xs font-bold rounded-full">
                   {task.category}
                 </span>
                 <span className={`px-2.5 py-1 text-xs font-bold rounded-full ${
                   task.status === 'VERIFIED' ? 'bg-emerald-100 text-emerald-800' :
-                  task.status === 'COMPLETED' ? 'bg-indigo-100 text-indigo-800' :
+                  task.status === 'COMPLETED' ? 'bg-[#EAF6FC] text-[#083B56]' :
                   task.status === 'MISSED' ? 'bg-rose-100 text-rose-800' :
                   'bg-slate-100 text-slate-700'
                 }`}>

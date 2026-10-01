@@ -24,7 +24,7 @@ export const SecretaryProfile: React.FC = () => {
             'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=250&q=80'
           }
           alt={currentUser?.name || 'Mayuri Udar'}
-          style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #2563eb', marginBottom: '0.875rem' }}
+          style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--aarizo-blue, #176B91)', marginBottom: '0.875rem' }}
         />
         <h2 className="onboarding-title" style={{ fontSize: '1.25rem', margin: '0 0 0.25rem 0' }}>
           {currentUser?.name || 'Mayuri Udar'}
@@ -33,7 +33,7 @@ export const SecretaryProfile: React.FC = () => {
           {currentUser?.designation || 'Management Committee Secretary'} · Green Valley Society
         </p>
 
-        <span className="banner-role-tag" style={{ background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe' }}>
+        <span className="banner-role-tag" style={{ background: 'var(--aarizo-light-blue, #EAF6FC)', color: 'var(--aarizo-navy, #083B56)', border: '1px solid #DCE8EF' }}>
           Official Society Representative
         </span>
       </div>
@@ -46,23 +46,23 @@ export const SecretaryProfile: React.FC = () => {
       <div className="onboarding-card" style={{ padding: '1.25rem', textAlign: 'left', marginBottom: '1.25rem' }}>
         <div className="onboarding-features-list">
           <div className="onboarding-feature-item">
-            <Building2 size={16} style={{ color: '#2563eb' }} />
+            <Building2 size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Society Name: Green Valley Society (128 Flats)</span>
           </div>
           <div className="onboarding-feature-item">
-            <FileText size={16} style={{ color: '#2563eb' }} />
+            <FileText size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Reg. Number: SOC-REG-8042-MH</span>
           </div>
           <div className="onboarding-feature-item">
-            <MapPin size={16} style={{ color: '#2563eb' }} />
+            <MapPin size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Location: Park Road, Sector 14, Navi Mumbai</span>
           </div>
           <div className="onboarding-feature-item">
-            <Phone size={16} style={{ color: '#2563eb' }} />
+            <Phone size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Official Admin Phone: +91 98200 12345</span>
           </div>
           <div className="onboarding-feature-item">
-            <Mail size={16} style={{ color: '#2563eb' }} />
+            <Mail size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Secretary Email: secretary@greenvalley.com</span>
           </div>
         </div>
@@ -89,6 +89,3 @@ export const SecretaryProfile: React.FC = () => {
     </div>
   );
 };
-
-
-

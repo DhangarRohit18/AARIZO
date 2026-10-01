@@ -148,7 +148,7 @@ export const SafetyCommandHub: React.FC = () => {
       case 'FIRE':
         return <Flame className="text-amber-600" size={24} />;
       case 'SECURITY':
-        return <ShieldCheck className="text-indigo-600" size={24} />;
+        return <ShieldCheck className="text-[#083B56]" size={24} />;
       case 'CHILD_SAFETY':
         return <Users className="text-purple-600" size={24} />;
       case 'LIFT':
@@ -180,7 +180,7 @@ export const SafetyCommandHub: React.FC = () => {
   const activeIncidents = incidents.filter((i) => i.status !== 'RESOLVED' && i.status !== 'CLOSED');
 
   return (
-    <div className="space-y-4 pb-24">
+    <div className="max-w-7xl mx-auto space-y-4 pb-24">
       {/* Header Banner */}
       <div
         style={{
@@ -345,7 +345,7 @@ export const SafetyCommandHub: React.FC = () => {
                   </div>
                   <div>Location: {inc.location}</div>
                   {inc.responderName && (
-                    <div className="text-indigo-600 font-bold">
+                    <div className="text-[#083B56] font-bold">
                       Assigned Responder: {inc.responderName} ({inc.responderRole})
                     </div>
                   )}
@@ -420,7 +420,7 @@ export const SafetyCommandHub: React.FC = () => {
                       Flat {child.flatCode} · Guardian: <strong className="text-slate-800">{child.guardianName}</strong>
                     </p>
                   </div>
-                  <span className="font-mono text-xs text-indigo-600 font-bold bg-indigo-50 px-2.5 py-1 rounded-md">
+                  <span className="font-mono text-xs text-[#083B56] font-bold bg-[#EAF6FC] px-2.5 py-1 rounded-md">
                     {child.qrPassCode}
                   </span>
                 </div>
@@ -463,7 +463,7 @@ export const SafetyCommandHub: React.FC = () => {
       {activeTab === 'GATE_VERIFIER' && (
         <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto space-y-4">
           <div className="text-center space-y-1">
-            <QrCode size={36} className="mx-auto text-indigo-600" />
+            <QrCode size={36} className="mx-auto text-[#083B56]" />
             <h3 className="font-bold text-slate-900 text-lg">Gate Security Child Exit Verifier</h3>
             <p className="text-xs text-slate-500">Verify child name or QR pass against guardian authorization list.</p>
           </div>

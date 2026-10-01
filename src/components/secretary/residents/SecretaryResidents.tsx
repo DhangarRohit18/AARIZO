@@ -56,7 +56,7 @@ export const SecretaryResidents: React.FC<SecretaryResidentsProps> = ({
             Operational Directory & KYC Approval Center
           </p>
         </div>
-        <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700 }}>
+        <span style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700 }}>
           {activeCount} Active • {pendingCount} Pending
         </span>
       </div>
@@ -202,7 +202,7 @@ export const SecretaryResidents: React.FC<SecretaryResidentsProps> = ({
               )}
               <button
                 className="btn-auth-text"
-                style={{ color: '#2563eb', padding: '0.4rem 0.5rem' }}
+                style={{ color: 'var(--aarizo-blue, #176B91)', padding: '0.4rem 0.5rem' }}
                 onClick={() => setSelectedResident(res)}
                 title="View Full Resident Details"
               >
@@ -234,7 +234,7 @@ export const SecretaryResidents: React.FC<SecretaryResidentsProps> = ({
               <X size={18} style={{ color: '#94a3b8' }} />
             </div>
 
-            <div className="otp-icon-header" style={{ background: '#eff6ff', color: '#2563eb' }}>
+            <div className="otp-icon-header" style={{ background: 'var(--aarizo-light-blue, #EAF6FC)', color: 'var(--aarizo-blue, #176B91)' }}>
               <UserCheck size={26} />
             </div>
 
@@ -245,15 +245,15 @@ export const SecretaryResidents: React.FC<SecretaryResidentsProps> = ({
 
             <div className="onboarding-features-list" style={{ marginBottom: '1.25rem' }}>
               <div className="onboarding-feature-item">
-                <Phone size={14} style={{ color: '#2563eb' }} />
+                <Phone size={14} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
                 <span>Contact: {selectedResident.phone} ({selectedResident.email})</span>
               </div>
               <div className="onboarding-feature-item">
-                <Car size={14} style={{ color: '#2563eb' }} />
+                <Car size={14} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
                 <span>Vehicles: {selectedResident.vehiclesCount} Registered Slots</span>
               </div>
               <div className="onboarding-feature-item">
-                <Users size={14} style={{ color: '#2563eb' }} />
+                <Users size={14} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
                 <span>Family Members: {selectedResident.familyCount} Registered</span>
               </div>
               <div className="onboarding-feature-item">
@@ -262,7 +262,7 @@ export const SecretaryResidents: React.FC<SecretaryResidentsProps> = ({
               </div>
               {selectedResident.kycDocType && (
                 <div className="onboarding-feature-item">
-                  <CheckCircle2 size={14} style={{ color: '#2563eb' }} />
+                  <CheckCircle2 size={14} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
                   <span>KYC Doc: {selectedResident.kycDocType}</span>
                 </div>
               )}

@@ -38,7 +38,7 @@ export const ResidentApprovalModal: React.FC<ResidentApprovalModalProps> = ({
       <div className="auth-modal-card" style={{ maxWidth: '440px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <div className="otp-icon-header" style={{ width: '36px', height: '36px', background: '#eff6ff', color: '#2563eb', margin: 0 }}>
+            <div className="otp-icon-header" style={{ width: '36px', height: '36px', background: 'var(--aarizo-light-blue, #EAF6FC)', color: 'var(--aarizo-blue, #176B91)', margin: 0 }}>
               <UserCheck size={20} />
             </div>
             <h3 className="otp-title" style={{ fontSize: '1.125rem', margin: 0 }}>
@@ -54,7 +54,7 @@ export const ResidentApprovalModal: React.FC<ResidentApprovalModalProps> = ({
           <div>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.25rem' }}>
               <span className="resident-flat-badge">{resident.canonicalDisplay}</span>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: resident.type === 'Owner' ? '#2563eb' : '#d97706' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: resident.type === 'Owner' ? 'var(--aarizo-blue, #176B91)' : '#d97706' }}>
                 {resident.type}
               </span>
             </div>
@@ -67,7 +67,7 @@ export const ResidentApprovalModal: React.FC<ResidentApprovalModalProps> = ({
 
         <div style={{ background: '#f1f5f9', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.8125rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
-            <FileText size={15} style={{ color: '#2563eb' }} />
+            <FileText size={15} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
             <span>Attached Document Checklist</span>
           </div>
           <div style={{ color: '#475569' }}>

@@ -6,9 +6,9 @@ import type { RBACUser } from '../../types/rbac';
 import { MessageSquare, Package, HardHat, ClipboardList } from 'lucide-react';
 
 const S = {
-  page: { minHeight: '100%', background: '#f7f8fa', paddingBottom: '1.5rem' } as React.CSSProperties,
+  page: { minHeight: '100%', background: '#f8fafc', paddingBottom: '6rem' } as React.CSSProperties,
   header: {
-    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+    background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)',
     padding: '1.25rem 1rem 1.5rem',
     position: 'relative' as const,
     overflow: 'hidden',
@@ -76,7 +76,7 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
   if (loading) {
     return (
       <div style={S.loading}>
-        <span style={{ width: 18, height: 18, border: '2px solid #e5e7eb', borderTopColor: '#2563eb', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
+        <span style={{ width: 18, height: 18, border: '2px solid #e5e7eb', borderTopColor: 'var(--aarizo-blue, #176B91)', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
         Syncing your household data...
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
@@ -96,7 +96,7 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
         <div style={{ display: 'flex', gap: '0.625rem', marginTop: '1rem', flexWrap: 'wrap' }}>
           {[
             { label: 'Open Tickets', value: myComplaints.length, color: '#f59e0b', bg: 'rgba(245,158,11,0.15)' },
-            { label: 'Active Moves', value: activeResidentMoves.length, color: '#3b82f6', bg: 'rgba(59,130,246,0.15)' },
+            { label: 'Active Moves', value: activeResidentMoves.length, color: '#176B91', bg: '#EAF6FC' },
             { label: 'Renovations', value: allResidentRenovations.length, color: '#10b981', bg: 'rgba(16,185,129,0.15)' },
           ].map(({ label, value, color, bg }) => (
             <div key={label} style={{ background: bg, border: `1px solid ${color}30`, borderRadius: 10, padding: '0.5rem 0.75rem' }}>
@@ -111,7 +111,7 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
         {/* Visitors & Parcels placeholder */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.875rem' }}>
           {[
-            { label: 'My Visitors', icon: ClipboardList, color: '#3b82f6', bg: '#eff6ff' },
+            { label: 'My Visitors', icon: ClipboardList, color: '#083B56', bg: '#EAF6FC' },
             { label: 'My Parcels', icon: Package, color: '#8b5cf6', bg: '#f5f3ff' },
           ].map(({ label, icon: Icon, color, bg }) => (
             <div key={label} style={{ background: bg, borderRadius: '1rem', border: `1px dashed ${color}30`, padding: '1rem', textAlign: 'center' }}>
@@ -153,9 +153,9 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
         {/* My Move Requests */}
         <div style={S.card}>
           <div style={S.cardHead}>
-            <div style={S.iconBox('#2563eb', '#eff6ff')}><Package size={15} /></div>
+            <div style={S.iconBox('var(--aarizo-blue, #176B91)', 'var(--aarizo-light-blue, #EAF6FC)')}><Package size={15} /></div>
             <h2 style={S.cardTitle}>My Move Requests</h2>
-            {activeResidentMoves.length > 0 && <span style={S.badge('#2563eb', '#dbeafe')}>{activeResidentMoves.length}</span>}
+            {activeResidentMoves.length > 0 && <span style={S.badge('var(--aarizo-navy, #083B56)', 'var(--aarizo-light-blue, #EAF6FC)')}>{activeResidentMoves.length}</span>}
           </div>
           {activeResidentMoves.length === 0 ? (
             <div style={S.empty}>No active moves</div>

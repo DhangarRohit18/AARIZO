@@ -81,7 +81,7 @@ export interface TabsProps {
   variant?: 'underline' | 'pills';
 }
 
-export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange, variant = 'underline' }) => {
+export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange, variant = 'pills' }) => {
   return (
     <div className={`tabs-container tabs-${variant}`}>
       {tabs.map((tab) => (

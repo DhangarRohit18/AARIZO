@@ -146,7 +146,7 @@ export const SocietyOperationsBoard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-24">
+    <div className="max-w-7xl mx-auto space-y-6 pb-24">
       {/* Header Banner */}
       <div
         className="text-white rounded-2xl p-4 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
@@ -154,7 +154,7 @@ export const SocietyOperationsBoard: React.FC = () => {
       >
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
+            <span className="p-2 bg-white/10 text-white rounded-lg">
               <Radio size={24} className="animate-pulse" />
             </span>
             <h2 className="text-xl font-bold">Society Operations Centre & Live Utility Health Board</h2>
@@ -341,7 +341,7 @@ export const SocietyOperationsBoard: React.FC = () => {
                   <p className="text-xs text-slate-500">{item.location}</p>
 
                   {item.metricValue && (
-                    <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 font-mono text-xs text-indigo-700 font-semibold">
+                    <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 font-mono text-xs text-[#083B56] font-semibold">
                       {item.metricValue}
                     </div>
                   )}
@@ -360,7 +360,7 @@ export const SocietyOperationsBoard: React.FC = () => {
                         setUpdateMetric(item.metricValue || '');
                         setIsUpdateModalOpen(true);
                       }}
-                      className="px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg flex items-center gap-1"
+                      className="px-3 py-1 bg-[#EAF6FC] hover:bg-[#EBF3F7] text-[#083B56] text-xs font-semibold rounded-lg flex items-center gap-1"
                     >
                       <Edit3 size={13} /> Update Status
                     </button>
@@ -384,7 +384,7 @@ export const SocietyOperationsBoard: React.FC = () => {
             {outages.map((outage) => (
               <div key={outage.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
                 <div className="flex justify-between items-center font-bold">
-                  <span className="text-indigo-600 font-mono">{outage.category} - {outage.name}</span>
+                  <span className="text-[#083B56] font-mono">{outage.category} - {outage.name}</span>
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] ${outage.status === 'RESTORED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
                     {outage.status}
                   </span>
@@ -473,7 +473,7 @@ export const SocietyOperationsBoard: React.FC = () => {
             <div className="flex justify-end pt-3 border-t">
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-md flex items-center gap-2"
+                className="px-5 py-2.5 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-semibold rounded-xl shadow-md flex items-center gap-2"
               >
                 <Cpu size={15} /> Ingest Sensor Payload
               </button>

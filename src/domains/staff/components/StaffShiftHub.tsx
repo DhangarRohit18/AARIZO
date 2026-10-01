@@ -568,7 +568,7 @@ export const StaffShiftHub: React.FC = () => {
               {activeShiftForModal.historyLogs.map((log) => (
                 <div key={log.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
                   <div className="flex justify-between text-slate-500 font-semibold">
-                    <span className="text-indigo-600">{log.action}</span>
+                    <span className="text-[#083B56] font-bold">{log.action}</span>
                     <span>{new Date(log.timestamp).toLocaleTimeString()}</span>
                   </div>
                   <p className="text-slate-800">{log.details}</p>

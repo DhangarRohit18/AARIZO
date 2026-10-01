@@ -181,9 +181,9 @@ export const ComplaintSLAEngineHub: React.FC = () => {
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-500 font-medium">Avg Resolution Speed</p>
-              <h3 className="text-2xl font-bold text-indigo-600 mt-1">{analytics.avgResolutionTimeHours} hrs</h3>
+              <h3 className="text-2xl font-bold text-[#083B56] mt-1">{analytics.avgResolutionTimeHours} hrs</h3>
             </div>
-            <div className="p-3 bg-indigo-50 rounded-lg text-indigo-600">
+            <div className="p-3 bg-[#EAF6FC] rounded-lg text-[#176B91]">
               <Clock size={24} />
             </div>
           </div>
@@ -276,7 +276,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
             <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
               <div className="text-right">
                 <span className="text-[10px] text-slate-400 block uppercase">Escalation Tier</span>
-                <span className="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 font-extrabold text-xs rounded-full">
+                <span className="px-2.5 py-0.5 bg-[#EAF6FC] text-[#083B56] font-extrabold text-xs rounded-full border border-[#DCE8EF]">
                   Level: {c.escalationLevel}
                 </span>
                 <div className="text-[10px] font-bold mt-1">

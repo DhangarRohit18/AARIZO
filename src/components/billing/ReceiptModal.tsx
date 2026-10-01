@@ -19,7 +19,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ invoice, transaction
         {/* Actions Bar */}
         <div className="flex items-center justify-between border-b pb-4 border-slate-200 dark:border-slate-800 print:hidden">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <FileText className="w-5 h-5 text-[#083B56] dark:text-[#83CBEA]" />
             <h2 className="font-bold text-slate-900 dark:text-white text-base">
               Official Payment Receipt & Tax Invoice
             </h2>
@@ -27,7 +27,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ invoice, transaction
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-xs flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 bg-[#083B56] hover:bg-[#176B91] text-white font-semibold rounded-lg text-xs flex items-center gap-1.5 transition-colors"
             >
               <Printer className="w-4 h-4" /> Print / PDF Receipt
             </button>
@@ -45,7 +45,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ invoice, transaction
           {/* Header Branding */}
           <div className="flex items-start justify-between border-b pb-4 border-slate-200 dark:border-slate-700">
             <div>
-              <div className="flex items-center gap-2 font-black text-lg text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">
+              <div className="flex items-center gap-2 font-black text-lg text-[#083B56] dark:text-[#83CBEA] uppercase tracking-wide">
                 <Shield className="w-6 h-6" /> Grand Vista Towers RWA
               </div>
               <div className="text-xs text-slate-500 mt-1">
@@ -92,7 +92,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ invoice, transaction
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
                 {invoice.lineItems.map((item) => (
                   <tr key={item.id}>
-                    <td className="p-2.5 font-semibold text-indigo-600 dark:text-indigo-400">{item.component}</td>
+                    <td className="p-2.5 font-semibold text-[#083B56] dark:text-[#83CBEA]">{item.component}</td>
                     <td className="p-2.5">{item.description}</td>
                     <td className="p-2.5 text-right font-medium">₹{item.amount.toLocaleString()}</td>
                   </tr>

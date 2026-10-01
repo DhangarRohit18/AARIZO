@@ -76,7 +76,7 @@ export const GuardHome: React.FC<GuardHomeProps> = ({
       {/* Dashboard Stats 4-Grid */}
       <div className="guard-stats-row">
         <div className="guard-stat-box" onClick={() => onNavigateTab('visitors')} style={{ cursor: 'pointer' }}>
-          <div className="stat-box-num" style={{ color: '#2563eb' }}>{stats.expectedToday}</div>
+          <div className="stat-box-num" style={{ color: 'var(--aarizo-blue, #176B91)' }}>{stats.expectedToday}</div>
           <div className="stat-box-label">Expected Today</div>
         </div>
 
@@ -137,7 +137,7 @@ export const GuardHome: React.FC<GuardHomeProps> = ({
       <div className="section-heading-row">
         <h3 className="section-title">Recent Gate Movements</h3>
         <span
-          style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700, cursor: 'pointer' }}
+          style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700, cursor: 'pointer' }}
           onClick={() => onNavigateTab('history')}
         >
           View Log
@@ -149,8 +149,8 @@ export const GuardHome: React.FC<GuardHomeProps> = ({
           <div
             className="activity-icon-box"
             style={{
-              background: act.status === 'checked_in' ? '#ecfdf5' : '#eff6ff',
-              color: act.status === 'checked_in' ? '#059669' : '#2563eb',
+              background: act.status === 'checked_in' ? '#ecfdf5' : 'var(--aarizo-light-blue, #EAF6FC)',
+              color: act.status === 'checked_in' ? '#059669' : 'var(--aarizo-blue, #176B91)',
             }}
           >
             {act.status === 'checked_in' ? <LogIn size={20} /> : <ShieldCheck size={20} />}

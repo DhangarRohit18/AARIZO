@@ -69,7 +69,7 @@ export const SuperAdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '0.5rem 0 3rem' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', maxWidth: '1280px', margin: '0 auto', padding: '0.5rem 1rem 6rem' }}>
       {/* ── Compact Aarizo Page Header ── */}
       <div style={{
         background: 'linear-gradient(135deg, #083B56 0%, #0D4767 100%)',

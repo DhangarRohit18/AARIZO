@@ -148,7 +148,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
                 left: 0,
                 right: 0,
                 height: 3,
-                background: 'linear-gradient(90deg, transparent, #3b82f6, transparent)',
+                background: 'linear-gradient(90deg, transparent, #83CBEA, transparent)',
                 animation: 'scanLine 1.4s ease-in-out',
               }}
             />
@@ -157,7 +157,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
           {scanned ? (
             <CheckCircle2 size={64} style={{ color: '#10b981' }} />
           ) : scanning ? (
-            <RefreshCw size={40} style={{ color: '#3b82f6', animation: 'spin 1s linear infinite' }} />
+            <RefreshCw size={40} style={{ color: '#83CBEA', animation: 'spin 1s linear infinite' }} />
           ) : (
             <Camera size={48} style={{ color: 'rgba(255,255,255,0.3)' }} />
           )}
@@ -190,7 +190,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
             </p>
           </>
         ) : scanning ? (
-          <p style={{ color: '#3b82f6', fontWeight: 600, fontSize: '0.875rem' }}>
+          <p style={{ color: '#83CBEA', fontWeight: 600, fontSize: '0.875rem' }}>
             Scanning...
           </p>
         ) : (
@@ -214,7 +214,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
           style={{
             padding: '0.875rem 2.5rem',
             borderRadius: '2rem',
-            background: scanning ? 'rgba(255,255,255,0.1)' : '#3b82f6',
+            background: scanning ? 'rgba(255,255,255,0.1)' : '#176B91',
             color: '#fff',
             fontWeight: 700,
             fontSize: '0.9375rem',

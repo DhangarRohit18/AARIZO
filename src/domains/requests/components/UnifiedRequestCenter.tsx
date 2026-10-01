@@ -187,7 +187,7 @@ export const UnifiedRequestCenter: React.FC<UnifiedRequestCenterProps> = ({ hide
   };
 
   return (
-    <div style={{ padding: '0.5rem 0 6rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+    <div style={{ maxWidth: '1280px', margin: '0 auto', width: '100%', padding: '0.75rem 1rem 6rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', boxSizing: 'border-box' }}>
       {/* ── Optional Compact Navy Header Banner (#083B56) ── */}
       {!hideHeaderBanner && (
         <div
@@ -282,6 +282,58 @@ export const UnifiedRequestCenter: React.FC<UnifiedRequestCenterProps> = ({ hide
                   {st.label}
                 </div>
               </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Category Pill Tabs Track ── */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '6px',
+          overflowX: 'auto',
+          padding: '6px',
+          background: '#EBF3F7',
+          borderRadius: '16px',
+          border: '1px solid #DCE8EF',
+          scrollbarWidth: 'none',
+        }}
+      >
+        {[
+          { key: 'ALL', label: 'All Requests' },
+          { key: 'NOC', label: 'NOC Certificate' },
+          { key: 'TENANT_REGISTRATION', label: 'Tenant Onboarding' },
+          { key: 'RENOVATION_PERMISSION', label: 'Renovation Permit' },
+          { key: 'EVENT_PERMISSION', label: 'Event Permission' },
+          { key: 'PARKING_REQUEST', label: 'Parking Allocation' },
+          { key: 'SOCIETY_CERTIFICATE', label: 'Statutory Certificate' },
+        ].map((cat) => {
+          const isActive = filterCategory === cat.key;
+          return (
+            <button
+              key={cat.key}
+              type="button"
+              onClick={() => setFilterCategory(cat.key)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '0.5rem 1rem',
+                fontSize: '0.8125rem',
+                fontWeight: isActive ? 700 : 600,
+                background: isActive ? '#083B56' : '#ffffff',
+                color: isActive ? '#ffffff' : '#475569',
+                border: isActive ? '1px solid #083B56' : '1px solid #DCE8EF',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                boxShadow: isActive ? '0 3px 10px rgba(8, 59, 86, 0.25)' : 'none',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              {cat.label}
             </button>
           );
         })}
