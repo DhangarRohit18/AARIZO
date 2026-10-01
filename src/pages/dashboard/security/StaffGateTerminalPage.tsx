@@ -120,26 +120,31 @@ export const StaffGateTerminalPage: React.FC = () => {
   );
 
   return (
-    <div className="p-4 md:p-6 flex flex-col gap-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Shield className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
-            Domestic Staff & Worker Security Scanner
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Verify staff QR codes, inspect background verification status, and log attendance entries/exits.
-          </p>
+    <div style={{ background: 'var(--aarizo-page, #F7FBFE)', minHeight: '100%' }}>
+      <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 space-y-6">
+        {/* Aarizo Gradient Header */}
+        <div
+          className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
+          style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+        >
+          <div>
+            <div className="flex items-center gap-2.5">
+              <Shield className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+              <h1 className="text-xl md:text-2xl font-extrabold text-white">Staff &amp; Worker Gate Scanner</h1>
+            </div>
+            <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
+              Verify staff QR codes, inspect background verification status, and log attendance entries &amp; exits.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', padding: '0.35rem 0.75rem', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 700 }}>
+              Main Gate 1
+            </span>
+            <span style={{ background: 'var(--aarizo-blue, #176B91)', color: '#ffffff', padding: '0.35rem 0.75rem', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 700 }}>
+              {currentUser.name}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="px-3 py-1 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded-full text-xs font-semibold">
-            Gate #1 Main Gate
-          </span>
-          <span className="px-3 py-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full text-xs font-semibold">
-            {currentUser.name}
-          </span>
-        </div>
-      </div>
 
       {scanResult && (
         <div
@@ -394,6 +399,7 @@ export const StaffGateTerminalPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

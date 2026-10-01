@@ -48,21 +48,26 @@ export const GuestStayScannerPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-4 md:p-6">
-      {/* Header */}
-      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
-              <Hotel className="w-5 h-5" />
-            </span>
-            <h1 className="text-2xl font-bold text-slate-900">Guest Accommodation Gate Scanner</h1>
+    <div style={{ background: 'var(--aarizo-page, #F7FBFE)', minHeight: '100%' }}>
+      <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 space-y-6">
+        {/* Aarizo Gradient Header */}
+        <div
+          className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
+          style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+        >
+          <div>
+            <div className="flex items-center gap-2.5">
+              <Hotel className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+              <h1 className="text-xl md:text-2xl font-extrabold text-white">Guest Room Gate Scanner</h1>
+            </div>
+            <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
+              Scan and verify Guest Room QR passes, auto check-in pre-booked visitors, and issue access cards.
+            </p>
           </div>
-          <p className="text-slate-500 text-sm mt-1">
-            Scan and verify Guest Room QR passes, auto check-in pre-booked visitors, and issue access cards.
-          </p>
+          <span style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', padding: '0.35rem 0.75rem', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 700 }}>
+            Gate Terminal
+          </span>
         </div>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Scanner Terminal */}
@@ -181,6 +186,7 @@ export const GuestStayScannerPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

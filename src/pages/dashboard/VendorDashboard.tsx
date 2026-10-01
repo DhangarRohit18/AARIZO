@@ -87,7 +87,19 @@ export const VendorDashboard: React.FC = () => {
         </div>
 
         {/* ── Tabs ── */}
-        <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
+        <div
+          style={{
+            background: '#EBF3F7',
+            borderRadius: '16px',
+            padding: '0.375rem',
+            display: 'flex',
+            gap: '0.375rem',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            boxShadow: 'inset 0 1px 3px rgba(8, 59, 86, 0.06)',
+            marginBottom: '1.25rem',
+          }}
+        >
           {tabs.map((t) => {
             const Icon = t.icon;
             const active = activeTab === t.key;
@@ -96,18 +108,25 @@ export const VendorDashboard: React.FC = () => {
                 key={t.key}
                 onClick={() => setActiveTab(t.key)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '0.35rem',
-                  padding: '0.55rem 1rem',
-                  borderRadius: '10px', border: active ? 'none' : '1px solid #DCE8EF',
-                  background: active ? '#083B56' : '#ffffff',
-                  color: active ? '#ffffff' : '#657785',
-                  fontWeight: 700, fontSize: '0.8125rem',
-                  cursor: 'pointer', transition: 'all 0.2s',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '0.6rem 1rem',
+                  borderRadius: '12px',
+                  border: active ? 'none' : '1px solid #DCE8EF',
+                  background: active ? 'var(--aarizo-navy, #083B56)' : '#FFFFFF',
+                  color: active ? '#FFFFFF' : '#475569',
+                  fontWeight: 700,
+                  fontSize: '0.8125rem',
+                  cursor: 'pointer',
                   whiteSpace: 'nowrap',
-                  boxShadow: active ? '0 2px 8px rgba(8,59,86,0.25)' : '0 1px 3px rgba(8,59,86,0.08)',
+                  transition: 'all 0.15s ease',
+                  boxShadow: active ? '0 3px 10px rgba(8, 59, 86, 0.25)' : '0 1px 3px rgba(0,0,0,0.04)',
+                  flexShrink: 0,
                 }}
               >
-                <Icon size={14} /> {t.label}
+                <Icon size={15} color={active ? 'var(--aarizo-sky, #83CBEA)' : 'var(--aarizo-blue, #176B91)'} />
+                <span>{t.label}</span>
               </button>
             );
           })}

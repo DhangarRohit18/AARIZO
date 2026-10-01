@@ -143,26 +143,49 @@ export const SecurityAuditCenterPage: React.FC = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="mt-6 flex flex-wrap gap-2 pt-4 border-t border-slate-800">
+        <div
+          style={{
+            marginTop: '1.25rem',
+            paddingTop: '1rem',
+            borderTop: '1px solid rgba(255, 255, 255, 0.12)',
+            display: 'flex',
+            gap: '0.5rem',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+          }}
+        >
           {[
             { id: 'audit_logs', label: 'Audit Logs (14 Events)', icon: Activity },
             { id: 'sessions', label: `Active Sessions (${sessions.filter((s) => !s.isExpired).length})`, icon: UserCheck },
-            { id: 'rbac', label: 'RBAC Permission Matrix', icon: Lock },
-            { id: 'simulator', label: 'Security & Rate Simulator', icon: Terminal },
+            { id: 'rbac', label: 'RBAC Matrix', icon: Lock },
+            { id: 'simulator', label: 'Security Simulator', icon: Terminal },
           ].map((tab) => {
             const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 ${
-                  activeTab === tab.id
-                    ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
-                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'
-                }`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '0.55rem 0.95rem',
+                  borderRadius: '12px',
+                  border: isActive ? 'none' : '1px solid rgba(255, 255, 255, 0.15)',
+                  background: isActive ? '#DC2626' : 'rgba(255, 255, 255, 0.08)',
+                  color: '#FFFFFF',
+                  fontWeight: 700,
+                  fontSize: '0.8125rem',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  boxShadow: isActive ? '0 3px 10px rgba(220, 38, 38, 0.35)' : 'none',
+                  transition: 'all 0.15s ease',
+                }}
               >
-                <Icon className="w-4 h-4" />
-                {tab.label}
+                <Icon size={15} color={isActive ? '#FFFFFF' : '#FDA4AF'} />
+                <span>{tab.label}</span>
               </button>
             );
           })}

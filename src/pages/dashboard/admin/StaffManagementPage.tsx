@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Plus } from 'lucide-react';
+import { Shield, Plus, Users, Home } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Staff, StaffType, DomesticWorker } from '../../../types/society';
 import { DataTable } from '../../../components/ui/DataTable';
@@ -123,39 +123,52 @@ export const StaffManagementPage: React.FC = () => {
       </header>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '0.75rem', borderBottom: '1px solid #E2E8F0', marginBottom: '1.25rem', overflowX: 'auto', scrollbarWidth: 'none' }}>
-        <button
-          onClick={() => setActiveTab('STAFF')}
-          style={{
-            padding: '0.625rem 1rem',
-            background: 'none',
-            border: 'none',
-            borderBottom: activeTab === 'STAFF' ? '2.5px solid var(--aarizo-navy, #083B56)' : '2.5px solid transparent',
-            color: activeTab === 'STAFF' ? 'var(--aarizo-navy, #083B56)' : '#64748B',
-            fontWeight: activeTab === 'STAFF' ? 700 : 500,
-            fontSize: '0.875rem',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Facility Staff ({staff.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('DOMESTIC')}
-          style={{
-            padding: '0.625rem 1rem',
-            background: 'none',
-            border: 'none',
-            borderBottom: activeTab === 'DOMESTIC' ? '2.5px solid var(--aarizo-navy, #083B56)' : '2.5px solid transparent',
-            color: activeTab === 'DOMESTIC' ? 'var(--aarizo-navy, #083B56)' : '#64748B',
-            fontWeight: activeTab === 'DOMESTIC' ? 700 : 500,
-            fontSize: '0.875rem',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Domestic Workers ({domesticWorkers.length})
-        </button>
+      <div
+        style={{
+          background: '#EBF3F7',
+          borderRadius: '16px',
+          padding: '0.375rem',
+          display: 'flex',
+          gap: '0.375rem',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          boxShadow: 'inset 0 1px 3px rgba(8, 59, 86, 0.06)',
+          marginBottom: '1.25rem',
+        }}
+      >
+        {[
+          { key: 'STAFF', label: `Facility Staff (${staff.length})`, icon: Users },
+          { key: 'DOMESTIC', label: `Domestic Workers (${domesticWorkers.length})`, icon: Home },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '0.6rem 1rem',
+                borderRadius: '12px',
+                border: isActive ? 'none' : '1px solid #DCE8EF',
+                background: isActive ? 'var(--aarizo-navy, #083B56)' : '#FFFFFF',
+                color: isActive ? '#FFFFFF' : '#475569',
+                fontWeight: 700,
+                fontSize: '0.8125rem',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
+                boxShadow: isActive ? '0 3px 10px rgba(8, 59, 86, 0.25)' : '0 1px 3px rgba(0,0,0,0.04)',
+                flexShrink: 0,
+              }}
+            >
+              <Icon size={15} color={isActive ? 'var(--aarizo-sky, #83CBEA)' : 'var(--aarizo-blue, #176B91)'} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">

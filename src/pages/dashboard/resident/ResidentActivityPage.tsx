@@ -27,69 +27,120 @@ export const ResidentActivityPage: React.FC = () => {
     : ALL_ACTIVITIES.filter((a) => a.category === activeFilter);
 
   return (
-    <div style={{ backgroundColor: 'var(--aarizo-page, #F7FBFE)', minHeight: '100%', paddingBottom: '1.5rem' }}>
-      {/* ── Subheader ── */}
-      <div style={{ background: 'var(--aarizo-light-blue, #EAF6FC)', borderBottom: '1px solid var(--aarizo-border, #DCE8EF)', padding: '1.25rem 1rem' }}>
-        <h1 style={{ color: 'var(--aarizo-navy, #083B56)', fontWeight: 800, fontSize: '1.25rem', margin: 0 }}>Activity Feed</h1>
-        <p style={{ color: 'var(--aarizo-text-secondary, #657785)', fontSize: '0.75rem', margin: '0.25rem 0 0' }}>All recent events in your flat & society</p>
-      </div>
-
-      {/* Filter pills */}
-      <div className="scroll-x" style={{ padding: '0.75rem 1rem', gap: '0.5rem' }}>
-        {FILTERS.map((f) => (
-          <button
-            key={f}
-            onClick={() => setActiveFilter(f)}
-            style={{
-              padding: '0.35rem 0.875rem',
-              borderRadius: '9999px',
-              background: activeFilter === f ? 'var(--aarizo-navy, #083B56)' : '#ffffff',
-              color: activeFilter === f ? '#fff' : 'var(--aarizo-text-secondary, #657785)',
-              fontWeight: 700,
-              fontSize: '0.75rem',
-              border: activeFilter === f ? '1px solid var(--aarizo-navy, #083B56)' : '1px solid var(--aarizo-border, #DCE8EF)',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              minHeight: 34,
-              textTransform: 'capitalize',
-            }}
-          >
-            {f === 'all' ? 'All' : f}
-          </button>
-        ))}
-      </div>
-
-      {/* Activity list */}
-      <div style={{ padding: '0.25rem 1rem 1rem' }}>
-        {filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>
-            <Bell size={32} style={{ marginBottom: '0.5rem', opacity: 0.5 }} />
-            <p style={{ fontSize: '0.875rem' }}>No activity in this category</p>
+    <div style={{ backgroundColor: 'var(--aarizo-page, #F7FBFE)', minHeight: '100%' }}>
+      <div className="max-w-4xl mx-auto p-4 md:p-6 pb-24 space-y-4">
+        {/* ── Aarizo Gradient Header ── */}
+        <div
+          className="p-5 md:p-6 rounded-2xl shadow-sm text-white"
+          style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+        >
+          <div className="flex items-center gap-2">
+            <Bell className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0 }}>Activity Feed</h1>
           </div>
-        ) : (
-          <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', overflow: 'hidden', boxShadow: '0 2px 10px rgba(8, 59, 86, 0.05)' }}>
-            {filtered.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.id}
-                  style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', padding: '0.875rem 1rem', borderBottom: index < filtered.length - 1 ? '1px solid var(--aarizo-border-soft, #E8F1F5)' : 'none' }}
-                >
-                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--aarizo-light-blue, #EAF6FC)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
-                    <Icon size={16} style={{ color: item.color }} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text, #203746)', lineHeight: 1.4, margin: 0, fontWeight: 600 }}>{item.text}</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.25rem' }}>
-                      <Clock size={11} style={{ color: 'var(--aarizo-text-muted, #8B9AA5)' }} />
-                      <span style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>{item.time}</span>
+          <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.8125rem', margin: '0.25rem 0 0' }}>
+            All recent events, visitors, payments &amp; maintenance in your flat and society
+          </p>
+        </div>
+
+        {/* Filter pills */}
+        <div className="scroll-x flex gap-2 py-1 overflow-x-auto">
+          {FILTERS.map((f) => (
+            <button
+              key={f}
+              onClick={() => setActiveFilter(f)}
+              style={{
+                padding: '0.4rem 1rem',
+                borderRadius: '9999px',
+                background: activeFilter === f ? 'var(--aarizo-navy, #083B56)' : '#ffffff',
+                color: activeFilter === f ? '#fff' : 'var(--aarizo-text-secondary, #657785)',
+                fontWeight: 700,
+                fontSize: '0.78125rem',
+                border: activeFilter === f ? '1px solid var(--aarizo-navy, #083B56)' : '1px solid var(--aarizo-border, #DCE8EF)',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                minHeight: 36,
+                textTransform: 'capitalize',
+                boxShadow: activeFilter === f ? '0 2px 8px rgba(8,59,86,0.15)' : 'none',
+              }}
+            >
+              {f === 'all' ? 'All Activity' : f}
+            </button>
+          ))}
+        </div>
+
+        {/* Activity list */}
+        <div>
+          {filtered.length === 0 ? (
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '3rem 1rem',
+                background: '#ffffff',
+                borderRadius: '16px',
+                border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              }}
+            >
+              <Bell size={36} style={{ marginBottom: '0.5rem', color: 'var(--aarizo-blue, #176B91)', opacity: 0.5 }} />
+              <p style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--aarizo-text-muted, #8B9AA5)', margin: 0 }}>
+                No activity found in this category
+              </p>
+            </div>
+          ) : (
+            <div
+              style={{
+                background: '#ffffff',
+                borderRadius: '16px',
+                border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                overflow: 'hidden',
+                boxShadow: '0 2px 10px rgba(8, 59, 86, 0.04)',
+              }}
+            >
+              {filtered.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '0.875rem',
+                      padding: '1rem 1.25rem',
+                      borderBottom: index < filtered.length - 1 ? '1px solid var(--aarizo-border-soft, #E8F1F5)' : 'none',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: '12px',
+                        background: 'var(--aarizo-light-blue, #EAF6FC)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        marginTop: 1,
+                      }}
+                    >
+                      <Icon size={18} style={{ color: item.color }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--aarizo-text, #203746)', lineHeight: 1.4, margin: 0, fontWeight: 600 }}>
+                        {item.text}
+                      </p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.35rem' }}>
+                        <Clock size={12} style={{ color: 'var(--aarizo-text-muted, #8B9AA5)' }} />
+                        <span style={{ fontSize: '0.72rem', color: 'var(--aarizo-text-muted, #8B9AA5)', fontWeight: 600 }}>
+                          {item.time}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

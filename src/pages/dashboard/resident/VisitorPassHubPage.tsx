@@ -87,122 +87,168 @@ export const VisitorPassHubPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Users size={24} color="var(--aarizo-blue, #176B91)" />
-            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#0f172a' }}>Visitor & Gate Pass Hub</h1>
-          </div>
-          <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.85rem' }}>
-            Pre-approve expected guests, deliveries, cabs, and event group entry passes for Flat {currentFlat}.
-          </p>
-        </div>
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.6rem 1.2rem',
-            background: 'var(--aarizo-blue, #176B91)',
-            color: '#fff',
-            borderRadius: '10px',
-            border: 'none',
-            fontWeight: 700,
-            cursor: 'pointer',
-          }}
+    <div style={{ background: 'var(--aarizo-page, #F7FBFE)', minHeight: '100%' }}>
+      <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 space-y-6">
+        {/* Aarizo Gradient Header */}
+        <div
+          className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
+          style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
         >
-          <Plus size={18} /> Pre-Approve Visitor
-        </button>
-      </header>
+          <div>
+            <div className="flex items-center gap-2.5">
+              <Users className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+              <h1 className="text-xl md:text-2xl font-extrabold text-white">Visitor &amp; Gate Pass Hub</h1>
+            </div>
+            <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
+              Pre-approve expected guests, deliveries, cabs, and event group entry passes for Flat {currentFlat}.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            style={{
+              background: 'var(--aarizo-blue, #176B91)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              borderRadius: '12px',
+              padding: '0.65rem 1.25rem',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              flexShrink: 0,
+            }}
+          >
+            <Plus size={18} /> Pre-Approve Visitor
+          </button>
+        </div>
 
-      {/* Active & Expected Passes */}
-      <section style={{ marginBottom: '2rem' }}>
-        <h3 style={{ margin: '0 0 1rem 0', color: '#0f172a' }}>Active & Pre-Approved Gate Passes</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
-          {passes.map((pass) => (
-            <div
-              key={pass.id}
-              style={{
-                padding: '1.25rem',
-                background: '#ffffff',
-                borderRadius: '12px',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                  <div>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase' }}>
-                      {pass.category.replace('_', ' ')}
-                    </span>
-                    <h4 style={{ margin: '0.1rem 0 0 0', fontSize: '1.1rem', color: '#0f172a' }}>{pass.visitorName}</h4>
-                  </div>
-                  <StatusBadge
-                    label={pass.status.replace('_', ' ')}
-                    variant={pass.status === 'EXPECTED' ? 'info' : pass.status === 'CHECKED_IN' ? 'success' : pass.status === 'REVOKED' ? 'danger' : 'neutral'}
-                  />
-                </div>
+        {/* Active & Expected Passes */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base md:text-lg font-bold" style={{ color: 'var(--aarizo-navy, #083B56)' }}>
+              Active &amp; Pre-Approved Gate Passes ({passes.length})
+            </h2>
+          </div>
 
-                <div style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', flexDirection: 'column', gap: '0.25rem', marginBottom: '1rem' }}>
-                  <div>Phone: <strong>{pass.visitorPhone}</strong></div>
-                  {pass.companyName && <div>Company: <strong>{pass.companyName}</strong></div>}
-                  {pass.purpose && <div>Purpose: {pass.purpose}</div>}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#64748b', fontSize: '0.8rem', marginTop: '0.2rem' }}>
-                    <Clock size={14} /> Pass Code: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#0f172a' }}>{pass.passCode}</span>
-                  </div>
-                </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
+            {passes.length === 0 ? (
+              <div
+                style={{
+                  gridColumn: '1 / -1',
+                  background: '#FFFFFF',
+                  borderRadius: '16px',
+                  border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                  padding: '3rem 1rem',
+                  textAlign: 'center',
+                }}
+              >
+                <Users size={40} style={{ color: 'var(--aarizo-blue, #176B91)', margin: '0 auto 0.75rem', opacity: 0.6 }} />
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--aarizo-navy, #083B56)', margin: 0 }}>No Expected Visitors</h3>
+                <p style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text-muted, #657785)', margin: '0.25rem 0 0' }}>
+                  Generate a quick gate pass to pre-authorize your guests at the main gate.
+                </p>
               </div>
-
-              <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid #f1f5f9', paddingTop: '0.75rem' }}>
-                <button
-                  onClick={() => setSelectedPassForQR(pass)}
+            ) : (
+              passes.map((pass) => (
+                <div
+                  key={pass.id}
                   style={{
-                    flex: 1,
+                    padding: '1.25rem',
+                    background: '#ffffff',
+                    borderRadius: '16px',
+                    border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                    boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.35rem',
-                    padding: '0.45rem',
-                    borderRadius: '6px',
-                    border: '1px solid #cbd5e1',
-                    background: '#fff',
-                    color: '#0f172a',
-                    fontWeight: 600,
-                    fontSize: '0.8rem',
-                    cursor: 'pointer',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
                   }}
                 >
-                  <QrCode size={16} color="#2563eb" /> View QR
-                </button>
-                {pass.status === 'EXPECTED' && (
-                  <button
-                    onClick={() => handleRevoke(pass.id)}
-                    style={{
-                      padding: '0.45rem 0.65rem',
-                      borderRadius: '6px',
-                      border: 'none',
-                      background: '#fef2f2',
-                      color: '#dc2626',
-                      fontWeight: 600,
-                      fontSize: '0.8rem',
-                      cursor: 'pointer',
-                    }}
-                    title="Revoke Pass"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                      <div>
+                        <span
+                          style={{
+                            fontSize: '0.6875rem',
+                            fontWeight: 800,
+                            color: 'var(--aarizo-blue, #176B91)',
+                            background: 'var(--aarizo-light-blue, #EAF6FC)',
+                            padding: '0.2rem 0.5rem',
+                            borderRadius: '6px',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em',
+                          }}
+                        >
+                          {pass.category.replace(/_/g, ' ')}
+                        </span>
+                        <h3 style={{ margin: '0.35rem 0 0 0', fontSize: '1.125rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)' }}>
+                          {pass.visitorName}
+                        </h3>
+                      </div>
+                      <StatusBadge
+                        label={pass.status.replace(/_/g, ' ')}
+                        variant={pass.status === 'EXPECTED' ? 'info' : pass.status === 'CHECKED_IN' ? 'success' : pass.status === 'REVOKED' ? 'danger' : 'neutral'}
+                      />
+                    </div>
+
+                    <div style={{ fontSize: '0.8125rem', color: '#475569', display: 'flex', flexDirection: 'column', gap: '0.35rem', marginBottom: '1rem' }}>
+                      <div>Phone: <strong style={{ color: 'var(--aarizo-navy, #083B56)' }}>{pass.visitorPhone}</strong></div>
+                      {pass.companyName && <div>Company: <strong style={{ color: 'var(--aarizo-navy, #083B56)' }}>{pass.companyName}</strong></div>}
+                      {pass.purpose && <div>Purpose: <span style={{ color: '#657785' }}>{pass.purpose}</span></div>}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#657785', fontSize: '0.75rem', marginTop: '0.2rem' }}>
+                        <Clock size={14} /> Pass Code: <span style={{ fontFamily: 'monospace', fontWeight: 800, color: 'var(--aarizo-blue, #176B91)', fontSize: '0.85rem' }}>{pass.passCode}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid #f1f5f9', paddingTop: '0.75rem' }}>
+                    <button
+                      onClick={() => setSelectedPassForQR(pass)}
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.4rem',
+                        padding: '0.55rem',
+                        borderRadius: '10px',
+                        border: '1px solid #cbd5e1',
+                        background: '#ffffff',
+                        color: 'var(--aarizo-navy, #083B56)',
+                        fontWeight: 700,
+                        fontSize: '0.8125rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <QrCode size={16} color="var(--aarizo-blue, #176B91)" /> View QR Pass
+                    </button>
+                    {pass.status === 'EXPECTED' && (
+                      <button
+                        onClick={() => handleRevoke(pass.id)}
+                        style={{
+                          padding: '0.55rem 0.75rem',
+                          borderRadius: '10px',
+                          border: 'none',
+                          background: '#fef2f2',
+                          color: '#dc2626',
+                          fontWeight: 700,
+                          fontSize: '0.8125rem',
+                          cursor: 'pointer',
+                        }}
+                        title="Revoke Pass"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+      </div>
 
       {/* Pre-Approve Modal */}
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Generate Visitor Gate Pass">

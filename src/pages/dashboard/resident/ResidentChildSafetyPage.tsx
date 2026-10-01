@@ -135,34 +135,48 @@ export const ResidentChildSafetyPage: React.FC = () => {
   const currentChild = selectedChild || children[0];
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '1rem', paddingBottom: '6rem', maxWidth: '800px', margin: '0 auto' }}>
-      {/* Top Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', padding: '1rem', paddingBottom: '6rem', maxWidth: '1280px', margin: '0 auto' }}>
+      {/* Top Header Banner */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.5rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '1rem',
+          marginBottom: '1.25rem',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <button
             onClick={() => navigate('/resident')}
             aria-label="Back to Home"
             style={{
-              width: 36,
-              height: 36,
+              width: 38,
+              height: 38,
               borderRadius: '10px',
-              border: '1px solid var(--aarizo-border, #E8F1F5)',
-              background: '#ffffff',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              background: 'rgba(255, 255, 255, 0.12)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--aarizo-navy, #083B56)',
+              color: '#FFFFFF',
               cursor: 'pointer',
             }}
           >
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)' }}>
+            <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>
               Child Safety Pass
             </h1>
-            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--aarizo-text-muted, #657785)' }}>
-              Gate authorization & security escort verification for Flat {flatNumber}
+            <p style={{ margin: '0.2rem 0 0', fontSize: '0.75rem', color: 'var(--aarizo-sky, #83CBEA)' }}>
+              Gate authorization &amp; security escort verification for Flat {flatNumber}
             </p>
           </div>
         </div>
@@ -191,297 +205,304 @@ export const ResidentChildSafetyPage: React.FC = () => {
       )}
 
       {currentChild ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {/* Child Identity Card */}
-          <div
-            style={{
-              background: 'linear-gradient(135deg, #083B56 0%, #176B91 100%)',
-              borderRadius: '20px',
-              padding: '1.25rem',
-              color: '#ffffff',
-              boxShadow: '0 8px 24px rgba(8, 59, 86, 0.15)',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontSize: '0.6875rem', background: 'rgba(255, 255, 255, 0.2)', padding: '0.25rem 0.625rem', borderRadius: '20px', fontWeight: 700, letterSpacing: '0.04em' }}>
-                  PROTECTED CHILD PASS
-                </span>
-                <span style={{ fontSize: '0.6875rem', background: '#059669', color: '#ffffff', padding: '0.25rem 0.625rem', borderRadius: '20px', fontWeight: 700 }}>
-                  ● SAFE ON PREMISES
-                </span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem', alignItems: 'start' }}>
+          {/* Left Column: Identity Card & Active Passes */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Child Identity Card */}
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #083B56 0%, #176B91 100%)',
+                borderRadius: '20px',
+                padding: '1.25rem',
+                color: '#ffffff',
+                boxShadow: '0 8px 24px rgba(8, 59, 86, 0.15)',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.6875rem', background: 'rgba(255, 255, 255, 0.2)', padding: '0.25rem 0.625rem', borderRadius: '20px', fontWeight: 700, letterSpacing: '0.04em' }}>
+                    PROTECTED CHILD PASS
+                  </span>
+                  <span style={{ fontSize: '0.6875rem', background: '#059669', color: '#ffffff', padding: '0.25rem 0.625rem', borderRadius: '20px', fontWeight: 700 }}>
+                    ● SAFE ON PREMISES
+                  </span>
+                </div>
+                <ShieldCheck size={22} style={{ opacity: 0.9 }} />
               </div>
-              <ShieldCheck size={22} style={{ opacity: 0.9 }} />
-            </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <img
-                src={currentChild.photoUrl || 'https://images.unsplash.com/photo-1543332164-6e82f355badc?auto=format&fit=crop&w=400&q=80'}
-                alt={currentChild.fullName}
-                style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: '18px',
-                  objectFit: 'cover',
-                  border: '3px solid rgba(255, 255, 255, 0.4)',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                }}
-              />
-              <div style={{ flex: 1 }}>
-                <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
-                  {currentChild.fullName}
-                </h2>
-                <p style={{ margin: '0.25rem 0 0', fontSize: '0.8125rem', opacity: 0.85 }}>
-                  Flat {currentChild.flatNumber} · DOB: {currentChild.dateOfBirth}
-                </p>
-                {currentChild.medicalNotes && (
-                  <p style={{ margin: '0.35rem 0 0', fontSize: '0.6875rem', background: 'rgba(0, 0, 0, 0.18)', padding: '0.25rem 0.5rem', borderRadius: '6px', display: 'inline-block' }}>
-                    ⚕ {currentChild.medicalNotes}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.15)' }}>
-              <button
-                onClick={() => setShowPassModal(true)}
-                style={{
-                  flex: 1,
-                  background: '#ffffff',
-                  color: 'var(--aarizo-blue, #176B91)',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '0.65rem 0.75rem',
-                  fontSize: '0.8125rem',
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.4rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                <QrCode size={16} />
-                <span>Generate Exit Pass</span>
-              </button>
-
-              <button
-                onClick={() => setShowMissingModal(true)}
-                style={{
-                  background: 'rgba(225, 29, 72, 0.95)',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '0.65rem 0.875rem',
-                  fontSize: '0.8125rem',
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.4rem',
-                  cursor: 'pointer',
-                }}
-              >
-                <AlertTriangle size={16} />
-                <span>Report Missing</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Active Gate Passes Strip */}
-          {activeQRs.length > 0 && (
-            <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', padding: '1rem', boxShadow: '0 2px 10px rgba(8, 59, 86, 0.04)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--aarizo-text, #203746)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <QrCode size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
-                  Active Gate Exit QR Passes ({activeQRs.length})
-                </span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-                {activeQRs.map((qr) => {
-                  const escort = currentChild.authorizedPickups.find((p) => p.id === qr.pickupPersonId);
-                  return (
-                    <div
-                      key={qr.id}
-                      onClick={() => setActiveQrModal(qr)}
-                      style={{
-                        padding: '0.75rem',
-                        borderRadius: '12px',
-                        background: 'var(--aarizo-card-blue, #F4FAFE)',
-                        border: '1px solid #DCE8EF',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <strong style={{ fontSize: '0.875rem', color: 'var(--aarizo-navy, #083B56)' }}>
-                            {escort?.name || 'Authorized Escort'}
-                          </strong>
-                          <span style={{ fontSize: '0.625rem', background: '#DCFCE7', color: '#166534', padding: '0.15rem 0.4rem', borderRadius: '6px', fontWeight: 700 }}>
-                            ACTIVE
-                          </span>
-                        </div>
-                        <p style={{ margin: '0.2rem 0 0', fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #657785)' }}>
-                          Valid until: {new Date(qr.validUntil).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · Code: {qr.qrCode}
-                        </p>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--aarizo-blue, #176B91)' }}>
-                          View QR
-                        </span>
-                        <ChevronRight size={16} color="var(--aarizo-blue, #176B91)" />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Authorized Escorts / Pickups Section */}
-          <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', padding: '1.25rem', boxShadow: '0 2px 10px rgba(8, 59, 86, 0.04)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 700, color: 'var(--aarizo-text, #203746)' }}>
-                  Authorized Pickups & Escorts
-                </h3>
-                <p style={{ margin: '0.2rem 0 0', fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #657785)' }}>
-                  Only verified escorts with matching ID can pick up child from school gate or society entrance
-                </p>
-              </div>
-              <button
-                onClick={() => setShowAddEscortModal(true)}
-                style={{
-                  background: 'var(--aarizo-blue-light, #EAF6FC)',
-                  color: 'var(--aarizo-blue, #176B91)',
-                  border: 'none',
-                  borderRadius: '10px',
-                  padding: '0.45rem 0.75rem',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  cursor: 'pointer',
-                }}
-              >
-                <UserPlus size={14} />
-                <span>Add Escort</span>
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {currentChild.authorizedPickups.map((escort) => (
-                <div
-                  key={escort.id}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <img
+                  src={currentChild.photoUrl || 'https://images.unsplash.com/photo-1543332164-6e82f355badc?auto=format&fit=crop&w=400&q=80'}
+                  alt={currentChild.fullName}
                   style={{
-                    padding: '0.875rem',
+                    width: 72,
+                    height: 72,
+                    borderRadius: '18px',
+                    objectFit: 'cover',
+                    border: '3px solid rgba(255, 255, 255, 0.4)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                  }}
+                />
+                <div style={{ flex: 1 }}>
+                  <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+                    {currentChild.fullName}
+                  </h2>
+                  <p style={{ margin: '0.25rem 0 0', fontSize: '0.8125rem', opacity: 0.85 }}>
+                    Flat {currentChild.flatNumber} · DOB: {currentChild.dateOfBirth}
+                  </p>
+                  {currentChild.medicalNotes && (
+                    <p style={{ margin: '0.35rem 0 0', fontSize: '0.6875rem', background: 'rgba(0, 0, 0, 0.18)', padding: '0.25rem 0.5rem', borderRadius: '6px', display: 'inline-block' }}>
+                      ⚕ {currentChild.medicalNotes}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.15)' }}>
+                <button
+                  onClick={() => setShowPassModal(true)}
+                  style={{
+                    flex: 1,
+                    background: '#ffffff',
+                    color: 'var(--aarizo-blue, #176B91)',
+                    border: 'none',
                     borderRadius: '12px',
-                    border: '1px solid var(--aarizo-border, #E8F1F5)',
-                    background: '#FAFCFD',
+                    padding: '0.65rem 0.75rem',
+                    fontSize: '0.8125rem',
+                    fontWeight: 700,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '0.75rem',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <img
-                      src={escort.photoUrl || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80'}
-                      alt={escort.name}
-                      style={{ width: 44, height: 44, borderRadius: '12px', objectFit: 'cover' }}
-                    />
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <span style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--aarizo-navy, #083B56)' }}>
-                          {escort.name}
-                        </span>
-                        <span style={{ fontSize: '0.625rem', background: '#F1F5F9', color: '#475569', padding: '0.15rem 0.35rem', borderRadius: '4px', fontWeight: 600 }}>
-                          {escort.relationship}
-                        </span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.2rem' }}>
-                        <a
-                          href={`tel:${escort.phone}`}
-                          style={{ fontSize: '0.6875rem', color: 'var(--aarizo-blue, #176B91)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
-                        >
-                          <Phone size={11} /> {escort.phone}
-                        </a>
-                        <span style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #657785)' }}>
-                          {escort.idProofType}: {escort.idProofNumber}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                  <QrCode size={16} />
+                  <span>Generate Exit Pass</span>
+                </button>
 
-                  <button
-                    onClick={() => {
-                      setSelectedEscortId(escort.id);
-                      setShowPassModal(true);
-                    }}
-                    style={{
-                      background: 'var(--aarizo-blue, #176B91)',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '0.4rem 0.75rem',
-                      fontSize: '0.6875rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      flexShrink: 0,
-                    }}
-                  >
-                    Generate Pass
-                  </button>
-                </div>
-              ))}
+                <button
+                  onClick={() => setShowMissingModal(true)}
+                  style={{
+                    background: 'rgba(225, 29, 72, 0.95)',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '0.65rem 0.875rem',
+                    fontSize: '0.8125rem',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <AlertTriangle size={16} />
+                  <span>Report Missing</span>
+                </button>
+              </div>
             </div>
+
+            {/* Active Gate Passes Strip */}
+            {activeQRs.length > 0 && (
+              <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', padding: '1rem', boxShadow: '0 2px 10px rgba(8, 59, 86, 0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                  <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--aarizo-text, #203746)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <QrCode size={16} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
+                    Active Gate Exit QR Passes ({activeQRs.length})
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+                  {activeQRs.map((qr) => {
+                    const escort = currentChild.authorizedPickups.find((p) => p.id === qr.pickupPersonId);
+                    return (
+                      <div
+                        key={qr.id}
+                        onClick={() => setActiveQrModal(qr)}
+                        style={{
+                          padding: '0.75rem',
+                          borderRadius: '12px',
+                          background: 'var(--aarizo-card-blue, #F4FAFE)',
+                          border: '1px solid #DCE8EF',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <strong style={{ fontSize: '0.875rem', color: 'var(--aarizo-navy, #083B56)' }}>
+                              {escort?.name || 'Authorized Escort'}
+                            </strong>
+                            <span style={{ fontSize: '0.625rem', background: '#DCFCE7', color: '#166534', padding: '0.15rem 0.4rem', borderRadius: '6px', fontWeight: 700 }}>
+                              ACTIVE
+                            </span>
+                          </div>
+                          <p style={{ margin: '0.2rem 0 0', fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #657785)' }}>
+                            Valid until: {new Date(qr.validUntil).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · Code: {qr.qrCode}
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--aarizo-blue, #176B91)' }}>
+                            View QR
+                          </span>
+                          <ChevronRight size={16} color="var(--aarizo-blue, #176B91)" />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Gate Movement Log */}
-          <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', padding: '1.25rem', boxShadow: '0 2px 10px rgba(8, 59, 86, 0.04)' }}>
-            <h3 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 700, color: 'var(--aarizo-text, #203746)', marginBottom: '0.75rem' }}>
-              Recent Gate Movements & Verification Log
-            </h3>
-            {pickupLogs.length === 0 ? (
-              <div style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--aarizo-text-muted, #657785)', fontSize: '0.8125rem' }}>
-                No recent gate exit logs recorded today. Child is registered safe on premises.
+          {/* Right Column: Authorized Escorts & Gate Log */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Authorized Escorts / Pickups Section */}
+            <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', padding: '1.25rem', boxShadow: '0 2px 10px rgba(8, 59, 86, 0.04)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 700, color: 'var(--aarizo-text, #203746)' }}>
+                    Authorized Pickups &amp; Escorts
+                  </h3>
+                  <p style={{ margin: '0.2rem 0 0', fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #657785)' }}>
+                    Only verified escorts with matching ID can pick up child from gate
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddEscortModal(true)}
+                  style={{
+                    background: 'var(--aarizo-blue-light, #EAF6FC)',
+                    color: 'var(--aarizo-blue, #176B91)',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '0.45rem 0.75rem',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <UserPlus size={14} />
+                  <span>Add Escort</span>
+                </button>
               </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-                {pickupLogs.map((log) => (
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {currentChild.authorizedPickups.map((escort) => (
                   <div
-                    key={log.id}
+                    key={escort.id}
                     style={{
-                      padding: '0.75rem',
-                      borderRadius: '10px',
-                      border: '1px solid #f1f5f9',
-                      background: '#F8FAFC',
+                      padding: '0.875rem',
+                      borderRadius: '12px',
+                      border: '1px solid var(--aarizo-border, #E8F1F5)',
+                      background: '#FAFCFD',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      fontSize: '0.75rem',
+                      gap: '0.75rem',
+                      flexWrap: 'wrap',
                     }}
                   >
-                    <div>
-                      <strong style={{ color: 'var(--aarizo-navy, #083B56)' }}>{log.pickupPersonName}</strong>
-                      <span style={{ color: 'var(--aarizo-text-muted, #657785)', marginLeft: '0.5rem' }}>
-                        Gate {log.gateId} · Guard {log.securityGuardId}
-                      </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <img
+                        src={escort.photoUrl || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80'}
+                        alt={escort.name}
+                        style={{ width: 44, height: 44, borderRadius: '12px', objectFit: 'cover' }}
+                      />
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--aarizo-navy, #083B56)' }}>
+                            {escort.name}
+                          </span>
+                          <span style={{ fontSize: '0.625rem', background: '#F1F5F9', color: '#475569', padding: '0.15rem 0.35rem', borderRadius: '4px', fontWeight: 600 }}>
+                            {escort.relationship}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.2rem', flexWrap: 'wrap' }}>
+                          <a
+                            href={`tel:${escort.phone}`}
+                            style={{ fontSize: '0.6875rem', color: 'var(--aarizo-blue, #176B91)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                          >
+                            <Phone size={11} /> {escort.phone}
+                          </a>
+                          <span style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #657785)' }}>
+                            {escort.idProofType}: {escort.idProofNumber}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <span style={{ fontSize: '0.6875rem', color: log.status === 'ALLOWED' ? '#059669' : '#E11D48', fontWeight: 700, background: log.status === 'ALLOWED' ? '#DCFCE7' : '#FFE4E6', padding: '0.2rem 0.5rem', borderRadius: '6px' }}>
-                      {log.status}
-                    </span>
+
+                    <button
+                      onClick={() => {
+                        setSelectedEscortId(escort.id);
+                        setShowPassModal(true);
+                      }}
+                      style={{
+                        background: 'var(--aarizo-blue, #176B91)',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '0.4rem 0.75rem',
+                        fontSize: '0.6875rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        flexShrink: 0,
+                      }}
+                    >
+                      Generate Pass
+                    </button>
                   </div>
                 ))}
               </div>
-            )}
+            </div>
+
+            {/* Gate Movement Log */}
+            <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', padding: '1.25rem', boxShadow: '0 2px 10px rgba(8, 59, 86, 0.04)' }}>
+              <h3 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 700, color: 'var(--aarizo-text, #203746)', marginBottom: '0.75rem' }}>
+                Recent Gate Movements &amp; Verification Log
+              </h3>
+              {pickupLogs.length === 0 ? (
+                <div style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--aarizo-text-muted, #657785)', fontSize: '0.8125rem' }}>
+                  No recent gate exit logs recorded today. Child is registered safe on premises.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+                  {pickupLogs.map((log) => (
+                    <div
+                      key={log.id}
+                      style={{
+                        padding: '0.75rem',
+                        borderRadius: '10px',
+                        border: '1px solid #f1f5f9',
+                        background: '#F8FAFC',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        fontSize: '0.75rem',
+                      }}
+                    >
+                      <div>
+                        <strong style={{ color: 'var(--aarizo-navy, #083B56)' }}>{log.pickupPersonName}</strong>
+                        <span style={{ color: 'var(--aarizo-text-muted, #657785)', marginLeft: '0.5rem' }}>
+                          Gate {log.gateId} · Guard {log.securityGuardId}
+                        </span>
+                      </div>
+                      <span style={{ fontSize: '0.6875rem', color: log.status === 'ALLOWED' ? '#059669' : '#E11D48', fontWeight: 700, background: log.status === 'ALLOWED' ? '#DCFCE7' : '#FFE4E6', padding: '0.2rem 0.5rem', borderRadius: '6px' }}>
+                        {log.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       ) : (

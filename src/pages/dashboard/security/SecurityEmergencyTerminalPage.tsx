@@ -77,7 +77,7 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
   const activeTriggered = incidents.filter(i => i.status === 'TRIGGERED' || i.status === 'ACKNOWLEDGED' || i.status === 'RESPONDING');
 
   return (
-    <div style={{ padding: '1rem', paddingBottom: '6rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
+    <div style={{ padding: '1rem', paddingBottom: '6rem', display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', maxWidth: '1280px', margin: '0 auto' }}>
       {/* High Priority Active Alarm Header */}
       {incidents.some(i => i.status === 'TRIGGERED') && (
         <div

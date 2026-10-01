@@ -76,10 +76,10 @@ export const StaffHousekeepingTaskPage: React.FC = () => {
           <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.8125rem', marginTop: '0.25rem' }}>Mark checklists, attach proof &amp; log task completions</p>
         </div>
       </div>
-      <div className="space-y-4 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 space-y-6">
 
       {/* Task List */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {tasks.map(task => (
           <div key={task.id} className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4 flex flex-col justify-between">
             <div>

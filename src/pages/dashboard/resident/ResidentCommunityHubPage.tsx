@@ -232,15 +232,14 @@ export const ResidentCommunityHubPage: React.FC = () => {
       {/* Pill Tabs */}
       <div
         style={{
-          background: '#FFFFFF',
-          borderRadius: '12px',
-          border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+          background: '#EBF3F7',
+          borderRadius: '16px',
           padding: '0.375rem',
           display: 'flex',
           gap: '0.375rem',
           overflowX: 'auto',
           scrollbarWidth: 'none',
-          boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)',
+          boxShadow: 'inset 0 1px 3px rgba(8, 59, 86, 0.06)',
         }}
       >
         {[
@@ -260,20 +259,22 @@ export const ResidentCommunityHubPage: React.FC = () => {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.375rem',
-                padding: '0.5rem 0.875rem',
-                borderRadius: '8px',
+                gap: '0.45rem',
+                padding: '0.6rem 1rem',
+                borderRadius: '12px',
                 border: 'none',
-                background: isActive ? 'var(--aarizo-light-blue, #EAF6FC)' : 'transparent',
-                color: isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #8B9AA5)',
-                fontWeight: isActive ? 700 : 500,
-                fontSize: '0.75rem',
+                background: isActive ? 'var(--aarizo-navy, #083B56)' : '#FFFFFF',
+                color: isActive ? '#FFFFFF' : '#475569',
+                fontWeight: 700,
+                fontSize: '0.8125rem',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.15s ease',
+                boxShadow: isActive ? '0 3px 10px rgba(8, 59, 86, 0.25)' : '0 1px 3px rgba(0,0,0,0.04)',
+                flexShrink: 0,
               }}
             >
-              <Icon size={14} style={{ color: isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #8B9AA5)' }} />
+              <Icon size={15} color={isActive ? 'var(--aarizo-sky, #83CBEA)' : 'var(--aarizo-blue, #176B91)'} />
               <span>{tab.label}</span>
             </button>
           );
@@ -347,57 +348,84 @@ export const ResidentCommunityHubPage: React.FC = () => {
             const totalGoing = evt.rsvps.filter(r => r.status === 'GOING').reduce((acc, curr) => acc + 1 + curr.guestsCount, 0);
 
             return (
-              <div key={evt.id} className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+              <div key={evt.id} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', padding: '1.25rem', boxShadow: '0 2px 10px rgba(8, 59, 86, 0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '1rem' }}>
                 <div>
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded-full">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <span style={{ padding: '0.25rem 0.65rem', background: 'var(--aarizo-light-blue, #EAF6FC)', color: 'var(--aarizo-blue, #176B91)', fontSize: '0.75rem', fontWeight: 700, borderRadius: '9999px' }}>
                       Organizer: {evt.organizerName}
                     </span>
-                    <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                      <Users className="w-3.5 h-3.5" /> {totalGoing} Attending
+                    <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Users size={14} /> {totalGoing} Attending
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mt-3">{evt.title}</h3>
-                  <p className="text-slate-600 text-sm mt-2">{evt.description}</p>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: '0 0 0.5rem 0' }}>{evt.title}</h3>
+                  <p style={{ color: 'var(--aarizo-text-secondary, #657785)', fontSize: '0.875rem', margin: '0 0 1rem 0', lineHeight: 1.5 }}>{evt.description}</p>
 
-                  <div className="mt-4 space-y-1.5 text-xs text-slate-500">
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-indigo-500" />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.78125rem', color: '#657785' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Clock size={14} color="var(--aarizo-blue, #176B91)" />
                       <span>{evt.eventDate}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-rose-500" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <MapPin size={14} color="#D9535B" />
                       <span>{evt.location}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-500">
-                    Status: <strong className="text-slate-800">{userRsvp ? userRsvp.status : 'Not Responded'}</strong>
+                <div style={{ paddingTop: '0.875rem', borderTop: '1px solid #E8F1F5', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <span style={{ fontSize: '0.78125rem', color: '#657785' }}>
+                    Status: <strong style={{ color: 'var(--aarizo-navy, #083B56)' }}>{userRsvp ? userRsvp.status : 'Not Responded'}</strong>
                   </span>
-                  <div className="flex gap-2">
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button
                       onClick={() => handleRSVP(evt.id, 'GOING', 0)}
-                      className={`px-3 py-1.5 text-xs font-semibold rounded-lg border ${
-                        userRsvp?.status === 'GOING' ? 'bg-indigo-600 text-white border-indigo-600' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
-                      }`}
+                      style={{
+                        padding: '0.45rem 0.85rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        borderRadius: '10px',
+                        cursor: 'pointer',
+                        background: userRsvp?.status === 'GOING' ? '#059669' : '#FFFFFF',
+                        color: userRsvp?.status === 'GOING' ? '#FFFFFF' : '#059669',
+                        border: userRsvp?.status === 'GOING' ? '1px solid #059669' : '1.5px solid #A7F3D0',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                        transition: 'all 0.15s ease',
+                      }}
                     >
                       Going
                     </button>
                     <button
                       onClick={() => handleRSVP(evt.id, 'MAYBE', 0)}
-                      className={`px-3 py-1.5 text-xs font-semibold rounded-lg border ${
-                        userRsvp?.status === 'MAYBE' ? 'bg-indigo-600 text-white border-indigo-600' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
-                      }`}
+                      style={{
+                        padding: '0.45rem 0.85rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        borderRadius: '10px',
+                        cursor: 'pointer',
+                        background: userRsvp?.status === 'MAYBE' ? '#D97706' : '#FFFFFF',
+                        color: userRsvp?.status === 'MAYBE' ? '#FFFFFF' : '#D97706',
+                        border: userRsvp?.status === 'MAYBE' ? '1px solid #D97706' : '1.5px solid #FDE68A',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                        transition: 'all 0.15s ease',
+                      }}
                     >
                       Maybe
                     </button>
                     <button
                       onClick={() => handleRSVP(evt.id, 'NOT_GOING', 0)}
-                      className={`px-3 py-1.5 text-xs font-semibold rounded-lg border ${
-                        userRsvp?.status === 'NOT_GOING' ? 'bg-indigo-600 text-white border-indigo-600' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
-                      }`}
+                      style={{
+                        padding: '0.45rem 0.85rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        borderRadius: '10px',
+                        cursor: 'pointer',
+                        background: userRsvp?.status === 'NOT_GOING' ? '#DC2626' : '#FFFFFF',
+                        color: userRsvp?.status === 'NOT_GOING' ? '#FFFFFF' : '#DC2626',
+                        border: userRsvp?.status === 'NOT_GOING' ? '1px solid #DC2626' : '1.5px solid #FECACA',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                        transition: 'all 0.15s ease',
+                      }}
                     >
                       Decline
                     </button>
@@ -536,12 +564,12 @@ export const ResidentCommunityHubPage: React.FC = () => {
 
       {/* TAB 5: DIRECTORY */}
       {(activeTab as string) === 'DIRECTORY' && (
-        <CommunityMarketplaceHub userRole="RESIDENT" initialTab="DIRECTORY" />
+        <CommunityMarketplaceHub userRole="RESIDENT" initialTab="DIRECTORY" hideHeaderBanner={true} hideTabs={true} />
       )}
 
       {/* TAB 6: LOST & FOUND */}
       {(activeTab as string) === 'LOST_FOUND' && (
-        <CommunityMarketplaceHub userRole="RESIDENT" initialTab="LOST_FOUND" />
+        <CommunityMarketplaceHub userRole="RESIDENT" initialTab="LOST_FOUND" hideHeaderBanner={true} hideTabs={true} />
       )}
 
       {/* Modal: Create Post */}

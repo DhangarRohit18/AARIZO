@@ -49,20 +49,29 @@ export const ResidentBillingPage: React.FC = () => {
   const activeInvoice = invoices.find((i) => i.outstandingBalance > 0) || invoices[0];
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="p-3 sm:p-6 pb-24 space-y-4 md:space-y-6 max-w-6xl mx-auto font-sans text-slate-800">
+      {/* Aarizo Gradient Header */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.5rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+        }}
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+      >
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <CreditCard className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
-            Society Billing & Maintenance Dues
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2">
+            <CreditCard className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+            <h1 className="text-lg sm:text-xl font-bold text-white">Society Billing &amp; Maintenance Dues</h1>
+          </div>
+          <p className="text-xs mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
             View current maintenance bill breakdown for Flat {currentResident.flatCode}, pay online, and download tax receipts.
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-3 py-1.5 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded-full text-xs font-bold">
+          <span className="px-3.5 py-1.5 bg-white/10 border border-white/20 text-white rounded-full text-xs font-bold">
             Flat {currentResident.flatCode}
           </span>
         </div>
@@ -70,13 +79,13 @@ export const ResidentBillingPage: React.FC = () => {
 
       {/* Active Bill Hero Card */}
       {activeInvoice && (
-        <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 border-slate-200 dark:border-slate-700">
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 border-slate-200">
             <div>
-              <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#176B91] uppercase tracking-wider">
                 {activeInvoice.cycleName}
               </span>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">
+              <h2 className="text-xl font-bold text-slate-900 mt-0.5">
                 Invoice {activeInvoice.invoiceNumber}
               </h2>
               <div className="text-xs text-slate-500 mt-1">Due Date: {activeInvoice.dueDate}</div>
@@ -98,7 +107,7 @@ export const ResidentBillingPage: React.FC = () => {
                 style={{ background: '#F1F5F9', color: '#1E293B' }}
                 className="px-3.5 py-2 font-semibold rounded-xl text-xs flex items-center gap-1.5 border border-slate-200 hover:bg-slate-200 transition-colors shadow-sm"
               >
-                <FileText className="w-4 h-4 text-indigo-600" /> Download Receipt
+                <FileText className="w-4 h-4 text-[#176B91]" /> Download Receipt
               </button>
             </div>
           </div>
@@ -161,18 +170,18 @@ export const ResidentBillingPage: React.FC = () => {
       )}
 
       {/* Past Invoices & Payment History */}
-      <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-        <h2 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
-          <History className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Payment & Transaction History
+      <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+        <h2 className="font-bold text-slate-900 text-base flex items-center gap-2">
+          <History className="w-5 h-5 text-[#176B91]" /> Payment &amp; Transaction History
         </h2>
 
         <div className="mt-4">
           <DataTable
             columns={[
-              { key: 'transactionId', header: 'Txn ID', render: (t: PaymentTransaction) => <span className="font-semibold text-indigo-600 dark:text-indigo-400">{t.transactionId}</span> },
+              { key: 'transactionId', header: 'Txn ID', render: (t: PaymentTransaction) => <span className="font-semibold text-[#176B91]">{t.transactionId}</span> },
               { key: 'paymentDate', header: 'Date' },
               { key: 'paymentMethod', header: 'Method', render: (t: PaymentTransaction) => <span className="font-medium">{t.paymentMethod}</span> },
-              { key: 'amount', header: 'Amount (₹)', render: (t: PaymentTransaction) => <span className="font-bold text-slate-900 dark:text-white">{formatINR(t.amount)}</span> },
+              { key: 'amount', header: 'Amount (₹)', render: (t: PaymentTransaction) => <span className="font-bold text-slate-900">{formatINR(t.amount)}</span> },
               {
                 key: 'status',
                 header: 'Status',

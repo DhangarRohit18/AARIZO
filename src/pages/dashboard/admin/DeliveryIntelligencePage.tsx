@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Truck, Search, Package } from 'lucide-react';
+import { Truck, Search, Package, BarChart3 } from 'lucide-react';
 import { visitorService } from '../../../services/visitorService';
 import type { SmartVisitorPass, VisitorAnalyticsData } from '../../../types/visitor';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
@@ -61,38 +61,57 @@ export const DeliveryIntelligencePage: React.FC = () => {
             Track courier delivery packages, monitor overstayed guests, inspect peak visiting hours, and record package pickups.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setActiveTab('PARCEL_ROOM')}
-            className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 ${
-              activeTab === 'PARCEL_ROOM'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-            }`}
-          >
-            <Package size={14} /> Parcel Room Hub
-          </button>
-          <button
-            onClick={() => setActiveTab('DELIVERIES')}
-            className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
-              activeTab === 'DELIVERIES'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-            }`}
-          >
-            Delivery Entry Log ({deliveryPasses.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('ANALYTICS')}
-            className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
-              activeTab === 'ANALYTICS'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-            }`}
-          >
-            Visitor Analytics & Peak Hours
-          </button>
-        </div>
+      </div>
+
+      {/* Tabs */}
+      <div
+        style={{
+          background: '#EBF3F7',
+          borderRadius: '16px',
+          padding: '0.375rem',
+          display: 'flex',
+          gap: '0.375rem',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          boxShadow: 'inset 0 1px 3px rgba(8, 59, 86, 0.06)',
+          marginTop: '1rem',
+          marginBottom: '1rem',
+        }}
+      >
+        {[
+          { key: 'PARCEL_ROOM', label: 'Parcel Room Hub', icon: Package },
+          { key: 'DELIVERIES', label: `Delivery Entry Log (${deliveryPasses.length})`, icon: Truck },
+          { key: 'ANALYTICS', label: 'Visitor Analytics & Peak Hours', icon: BarChart3 },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '0.6rem 1rem',
+                borderRadius: '12px',
+                border: isActive ? 'none' : '1px solid #DCE8EF',
+                background: isActive ? 'var(--aarizo-navy, #083B56)' : '#FFFFFF',
+                color: isActive ? '#FFFFFF' : '#475569',
+                fontWeight: 700,
+                fontSize: '0.8125rem',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
+                boxShadow: isActive ? '0 3px 10px rgba(8, 59, 86, 0.25)' : '0 1px 3px rgba(0,0,0,0.04)',
+                flexShrink: 0,
+              }}
+            >
+              <Icon size={15} color={isActive ? 'var(--aarizo-sky, #83CBEA)' : 'var(--aarizo-blue, #176B91)'} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Tab 0: Parcel Room Hub */}

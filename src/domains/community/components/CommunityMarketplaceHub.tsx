@@ -24,11 +24,15 @@ import type {
 interface CommunityMarketplaceHubProps {
   userRole?: 'RESIDENT' | 'SOCIETY_ADMIN' | 'SUPER_ADMIN';
   initialTab?: 'MARKETPLACE' | 'DIRECTORY' | 'LOST_FOUND';
+  hideHeaderBanner?: boolean;
+  hideTabs?: boolean;
 }
 
 export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = ({
   userRole = 'RESIDENT',
   initialTab = 'MARKETPLACE',
+  hideHeaderBanner = false,
+  hideTabs = false,
 }) => {
   const [activeTab, setActiveTab] = useState<'MARKETPLACE' | 'DIRECTORY' | 'LOST_FOUND'>(initialTab);
 
@@ -162,67 +166,94 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
   return (
     <div className="space-y-6 pb-24">
       {/* Header Bar */}
-      <div
-        className="flex flex-col md:flex-row justify-between items-start md:items-center p-5 md:p-6 rounded-2xl shadow-sm gap-4 text-white"
-        style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
-      >
-        <div>
-          <div className="flex items-center gap-2">
-            <Store className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
-            <h1 className="text-xl md:text-2xl font-extrabold text-white">Community & Resident Marketplace</h1>
+      {!hideHeaderBanner && (
+        <div
+          className="flex flex-col md:flex-row justify-between items-start md:items-center p-5 md:p-6 rounded-2xl shadow-sm gap-4 text-white"
+          style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
+        >
+          <div>
+            <div className="flex items-center gap-2">
+              <Store className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+              <h1 className="text-xl md:text-2xl font-extrabold text-white">Community &amp; Resident Marketplace</h1>
+            </div>
+            <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
+              Buy, sell, borrow, or share items for FREE/REUSE. Connect with verified neighbors in the directory &amp; lost-found board.
+            </p>
           </div>
-          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
-            Buy, sell, borrow, or share items for FREE/REUSE. Connect with verified neighbors in the directory & lost-found board.
-          </p>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          {activeTab === 'MARKETPLACE' && (
-            <button
-              onClick={() => setIsListingModalOpen(true)}
-              className="flex-1 md:flex-none px-4 py-2.5 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition"
-              style={{ background: 'var(--aarizo-blue, #176B91)', border: '1px solid rgba(255,255,255,0.2)' }}
-            >
-              <Plus size={16} /> Create Marketplace Listing
-            </button>
-          )}
+          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+            {activeTab === 'MARKETPLACE' && (
+              <button
+                onClick={() => setIsListingModalOpen(true)}
+                className="flex-1 md:flex-none px-4 py-2.5 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition"
+                style={{ background: 'var(--aarizo-blue, #176B91)', border: '1px solid rgba(255,255,255,0.2)' }}
+              >
+                <Plus size={16} /> Create Marketplace Listing
+              </button>
+            )}
 
-          {activeTab === 'LOST_FOUND' && (
-            <button
-              onClick={() => setIsLostFoundModalOpen(true)}
-              className="flex-1 md:flex-none px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition"
-            >
-              <Plus size={16} /> Report Lost / Found Item
-            </button>
-          )}
+            {activeTab === 'LOST_FOUND' && (
+              <button
+                onClick={() => setIsLostFoundModalOpen(true)}
+                className="flex-1 md:flex-none px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition"
+              >
+                <Plus size={16} /> Report Lost / Found Item
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 gap-2 md:gap-6 overflow-x-auto pb-1">
-        {[
-          { key: 'MARKETPLACE', label: 'Resident Marketplace', icon: Store },
-          { key: 'DIRECTORY', label: 'Neighbour Directory', icon: Users },
-          { key: 'LOST_FOUND', label: 'Lost & Found Board', icon: HelpCircle },
-        ].map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as any)}
-              className={`pb-2.5 font-bold text-xs md:text-sm flex items-center gap-2 border-b-2 transition whitespace-nowrap px-2 ${
-                isActive
-                  ? 'border-[#176B91] text-[#176B91]'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              <Icon size={16} />
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      {!hideTabs && (
+        <div
+          style={{
+            background: '#EBF3F7',
+            borderRadius: '16px',
+            padding: '0.375rem',
+            display: 'flex',
+            gap: '0.375rem',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            boxShadow: 'inset 0 1px 3px rgba(8, 59, 86, 0.06)',
+          }}
+        >
+          {[
+            { key: 'MARKETPLACE', label: 'Resident Marketplace', icon: Store },
+            { key: 'DIRECTORY', label: 'Neighbour Directory', icon: Users },
+            { key: 'LOST_FOUND', label: 'Lost & Found Board', icon: HelpCircle },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key as any)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '0.6rem 1rem',
+                  borderRadius: '12px',
+                  border: 'none',
+                  background: isActive ? '#083B56' : '#FFFFFF',
+                  color: isActive ? '#FFFFFF' : '#475569',
+                  fontWeight: 700,
+                  fontSize: '0.8125rem',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.15s ease',
+                  boxShadow: isActive ? '0 3px 10px rgba(8, 59, 86, 0.25)' : '0 1px 3px rgba(0,0,0,0.03)',
+                  flexShrink: 0,
+                }}
+              >
+                <Icon size={16} color={isActive ? '#83CBEA' : '#176B91'} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* TAB 1: MARKETPLACE */}
       {activeTab === 'MARKETPLACE' && (

@@ -216,7 +216,18 @@ export const SafetyCommandHub: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid var(--aarizo-border, #E8F1F5)', padding: '0.375rem', display: 'flex', gap: '0.375rem', overflowX: 'auto', scrollbarWidth: 'none', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
+      <div
+        style={{
+          background: '#EBF3F7',
+          borderRadius: '16px',
+          padding: '0.375rem',
+          display: 'flex',
+          gap: '0.375rem',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          boxShadow: 'inset 0 1px 3px rgba(8, 59, 86, 0.06)',
+        }}
+      >
         {[
           { key: 'ONE_TAP_SOS', label: 'One-Tap Emergency SOS', icon: ShieldAlert },
           ...(isAdminOrSecurity ? [{ key: 'COMMAND_CONSOLE', label: `Command Console (${activeIncidents.length} Active)`, icon: Radio }] : []),
@@ -232,20 +243,22 @@ export const SafetyCommandHub: React.FC = () => {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.375rem',
-                padding: '0.5rem 0.875rem',
-                borderRadius: '8px',
+                gap: '0.45rem',
+                padding: '0.6rem 1rem',
+                borderRadius: '12px',
                 border: 'none',
-                background: isActive ? 'var(--aarizo-blue-light, #EAF6FC)' : 'transparent',
-                color: isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #657785)',
-                fontWeight: isActive ? 700 : 500,
+                background: isActive ? 'var(--aarizo-navy, #083B56)' : '#FFFFFF',
+                color: isActive ? '#FFFFFF' : '#475569',
+                fontWeight: 700,
                 fontSize: '0.8125rem',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.15s ease',
+                boxShadow: isActive ? '0 3px 10px rgba(8, 59, 86, 0.25)' : '0 1px 3px rgba(0,0,0,0.04)',
+                flexShrink: 0,
               }}
             >
-              <Icon size={16} color={isActive ? 'var(--aarizo-blue, #176B91)' : 'var(--aarizo-text-muted, #657785)'} />
+              <Icon size={16} color={isActive ? 'var(--aarizo-sky, #83CBEA)' : 'var(--aarizo-blue, #176B91)'} />
               <span>{tab.label}</span>
             </button>
           );

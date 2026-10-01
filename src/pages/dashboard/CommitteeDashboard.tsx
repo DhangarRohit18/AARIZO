@@ -75,7 +75,19 @@ export const CommitteeDashboard: React.FC = () => {
 
       <div>
         {/* ── Tabs Bar ── */}
-        <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem', scrollbarWidth: 'none' }}>
+        <div
+          style={{
+            background: '#EBF3F7',
+            borderRadius: '16px',
+            padding: '0.375rem',
+            display: 'flex',
+            gap: '0.375rem',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            boxShadow: 'inset 0 1px 3px rgba(8, 59, 86, 0.06)',
+            marginBottom: '1.25rem',
+          }}
+        >
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const active = activeTab === tab.key;
@@ -88,24 +100,25 @@ export const CommitteeDashboard: React.FC = () => {
                   navigate(tab.path);
                 }}
                 style={{
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.4rem',
-                  padding: '0.6rem 1.1rem',
+                  gap: '0.45rem',
+                  padding: '0.6rem 1rem',
                   borderRadius: '12px',
-                  background: active ? '#083B56' : '#ffffff',
-                  color: active ? '#ffffff' : '#657785',
+                  border: active ? 'none' : '1px solid #DCE8EF',
+                  background: active ? 'var(--aarizo-navy, #083B56)' : '#FFFFFF',
+                  color: active ? '#FFFFFF' : '#475569',
                   fontWeight: 700,
                   fontSize: '0.8125rem',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
                   whiteSpace: 'nowrap',
-                  boxShadow: active ? '0 3px 10px rgba(8,59,86,0.25)' : '0 1px 4px rgba(8,59,86,0.06)',
-                  border: active ? 'none' : '1px solid #DCE8EF',
+                  transition: 'all 0.15s ease',
+                  boxShadow: active ? '0 3px 10px rgba(8, 59, 86, 0.25)' : '0 1px 3px rgba(0,0,0,0.04)',
                   flexShrink: 0,
                 }}
               >
-                <Icon size={15} /> {tab.label}
+                <Icon size={15} color={active ? 'var(--aarizo-sky, #83CBEA)' : 'var(--aarizo-blue, #176B91)'} />
+                <span>{tab.label}</span>
               </button>
             );
           })}

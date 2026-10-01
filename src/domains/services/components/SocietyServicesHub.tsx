@@ -227,7 +227,19 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '0.4rem', overflowX: 'auto', paddingBottom: '0.25rem', borderBottom: '1px solid #DCE8EF' }}>
+      <div
+        style={{
+          background: '#EBF3F7',
+          borderRadius: '16px',
+          padding: '0.375rem',
+          display: 'flex',
+          gap: '0.375rem',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          boxShadow: 'inset 0 1px 3px rgba(8, 59, 86, 0.06)',
+          marginBottom: '1rem',
+        }}
+      >
         {[
           { key: 'MARKETPLACE', label: '15 Categories', icon: Wrench },
           { key: 'MY_ORDERS', label: `My Orders (${orders.length})`, icon: Clock },
@@ -235,7 +247,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           ...(isAdmin ? [{ key: 'ADMIN_APPROVALS', label: 'Governance', icon: Building2 }] : []),
         ].map((tab) => {
           const Icon = tab.icon;
-          const active = activeTab === tab.key;
+          const isActive = activeTab === tab.key;
           return (
             <button
               key={tab.key}
@@ -243,21 +255,23 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.35rem',
-                padding: '0.5rem 0.75rem',
-                borderRadius: '10px',
-                border: active ? 'none' : '1px solid #DCE8EF',
-                background: active ? 'var(--aarizo-navy, #083B56)' : '#ffffff',
-                color: active ? '#ffffff' : '#657785',
-                fontSize: '0.75rem',
+                gap: '0.45rem',
+                padding: '0.6rem 1rem',
+                borderRadius: '12px',
+                border: isActive ? 'none' : '1px solid #DCE8EF',
+                background: isActive ? 'var(--aarizo-navy, #083B56)' : '#FFFFFF',
+                color: isActive ? '#FFFFFF' : '#475569',
                 fontWeight: 700,
+                fontSize: '0.8125rem',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
-                boxShadow: active ? '0 2px 6px rgba(8, 59, 86, 0.2)' : 'none',
+                transition: 'all 0.15s ease',
+                boxShadow: isActive ? '0 3px 10px rgba(8, 59, 86, 0.25)' : '0 1px 3px rgba(0,0,0,0.04)',
+                flexShrink: 0,
               }}
             >
-              <Icon size={14} />
-              {tab.label}
+              <Icon size={15} color={isActive ? 'var(--aarizo-sky, #83CBEA)' : 'var(--aarizo-blue, #176B91)'} />
+              <span>{tab.label}</span>
             </button>
           );
         })}

@@ -62,25 +62,63 @@ export const ServiceProviderTaskPage: React.FC = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)' }}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Wrench className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
-            Service Provider Task Execution Portal
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            View assigned society maintenance tasks, accept/reject assignments, update work progress, and attach before/after media.
-          </p>
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          padding: '1.25rem 1.5rem',
+          color: '#FFFFFF',
+          boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: '12px',
+              background: 'rgba(131,203,234,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <Wrench size={22} color="var(--aarizo-sky, #83CBEA)" />
+          </div>
+          <div>
+            <h1 style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.25rem', margin: 0 }}>
+              Service Provider Task Portal
+            </h1>
+            <p style={{ color: 'var(--aarizo-sky, #83CBEA)', fontSize: '0.8rem', margin: '0.2rem 0 0' }}>
+              Assigned society maintenance tasks, status logs &amp; proof submissions
+            </p>
+          </div>
         </div>
-        <span className="px-3 py-1 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded-full text-xs font-semibold">
+        <span
+          style={{
+            padding: '0.35rem 0.85rem',
+            background: 'rgba(255, 255, 255, 0.12)',
+            color: '#FFFFFF',
+            borderRadius: '9999px',
+            fontSize: '0.75rem',
+            fontWeight: 700,
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+          }}
+        >
           {providerActor.name}
         </span>
       </div>
 
-      {/* Task List */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="max-w-7xl mx-auto p-4 md:p-6 pb-24 space-y-6">
+        {/* Task List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {tickets.map((t) => (
           <div
             key={t.id}
@@ -156,7 +194,7 @@ export const ServiceProviderTaskPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Modal: Update Progress & Media */}
+      </div>
       {selectedTicket && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <form

@@ -19,8 +19,9 @@ export const ResidentProfilePage: React.FC = () => {
   ];
 
   return (
-    <div style={{ backgroundColor: 'var(--aarizo-page, #F7FBFE)', minHeight: '100%', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      {/* ── Large White Profile Card (Screenshot match) ── */}
+    <div style={{ backgroundColor: 'var(--aarizo-page, #F7FBFE)', minHeight: '100%' }}>
+      <div className="max-w-xl mx-auto p-4 md:p-6 pb-24 flex flex-col gap-4">
+        {/* ── Large White Profile Card (Screenshot match) ── */}
       <div
         style={{
           background: '#ffffff',
@@ -194,6 +195,7 @@ export const ResidentProfilePage: React.FC = () => {
           <LogOut size={18} />
           Sign Out
         </button>
+      </div>
       </div>
     </div>
   );

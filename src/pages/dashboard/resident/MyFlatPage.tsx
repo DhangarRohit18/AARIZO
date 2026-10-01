@@ -84,9 +84,10 @@ export const MyFlatPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '1rem', paddingBottom: '6rem', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      {/* Header */}
-      <header style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)', padding: '1.5rem', borderRadius: '16px', color: '#FFFFFF' }}>
+    <div style={{ background: 'var(--aarizo-page, #F7FBFE)', minHeight: '100%' }}>
+      <div style={{ padding: '1rem', paddingBottom: '6rem', maxWidth: '1280px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+        {/* Header */}
+        <header style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)', padding: '1.5rem', borderRadius: '16px', color: '#FFFFFF', boxShadow: '0 4px 16px rgba(8, 59, 86, 0.08)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Home size={28} color="var(--aarizo-sky, #83CBEA)" />
           <div>
@@ -287,6 +288,7 @@ export const MyFlatPage: React.FC = () => {
           </div>
         </Form>
       </Modal>
+      </div>
     </div>
   );
 };

@@ -146,26 +146,51 @@ export const NotificationEngineHub: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 space-x-4 bg-white px-4 rounded-xl shadow-sm">
+      <div
+        style={{
+          background: '#EBF3F7',
+          borderRadius: '16px',
+          padding: '0.375rem',
+          display: 'flex',
+          gap: '0.375rem',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          boxShadow: 'inset 0 1px 3px rgba(8, 59, 86, 0.06)',
+          marginBottom: '1.25rem',
+        }}
+      >
         {[
           { key: 'INBOX', label: `In-App Inbox (${unreadCount} New)`, icon: Bell },
           { key: 'PREFERENCES', label: 'Channel Preferences', icon: Sliders },
-          { key: 'DELIVERY_LOGS', label: 'Delivery & Provider Audit Logs', icon: Layers },
+          { key: 'DELIVERY_LOGS', label: 'Provider Audit Logs', icon: Layers },
           { key: 'DISPATCH_SIMULATOR', label: 'Test Dispatch Terminal', icon: Send },
         ].map((tab) => {
           const Icon = tab.icon;
+          const isActive = activeTab === tab.key;
           return (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`py-3.5 font-semibold text-xs md:text-sm flex items-center gap-2 border-b-2 transition-colors ${
-                activeTab === tab.key
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '0.6rem 1rem',
+                borderRadius: '12px',
+                border: isActive ? 'none' : '1px solid #DCE8EF',
+                background: isActive ? 'var(--aarizo-navy, #083B56)' : '#FFFFFF',
+                color: isActive ? '#FFFFFF' : '#475569',
+                fontWeight: 700,
+                fontSize: '0.8125rem',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
+                boxShadow: isActive ? '0 3px 10px rgba(8, 59, 86, 0.25)' : '0 1px 3px rgba(0,0,0,0.04)',
+                flexShrink: 0,
+              }}
             >
-              <Icon size={16} />
-              {tab.label}
+              <Icon size={15} color={isActive ? 'var(--aarizo-sky, #83CBEA)' : 'var(--aarizo-blue, #176B91)'} />
+              <span>{tab.label}</span>
             </button>
           );
         })}
