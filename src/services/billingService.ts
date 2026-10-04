@@ -483,7 +483,7 @@ export const billingService = {
   },
 
   // ========================================================
-  // FIRESTORE-FIRST ASYNC QUERIES & LIVE REALTIME LISTENERS
+  // POSTGRESQL-FIRST ASYNC QUERIES & LIVE SSE REALTIME LISTENERS
   // ========================================================
   fetchInvoices: async (societyId: string): Promise<SocietyInvoice[]> => {
     try {
