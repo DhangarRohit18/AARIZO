@@ -221,7 +221,23 @@ app.post('/api/visitor-passes', requireRole(['resident', 'guard', 'secretary', '
     const pass = await prisma.visitorPass.create({
       data: req.body,
     });
+    broadcastEvent('VISITOR_ARRIVAL', pass, pass.societyId);
     res.status(201).json(pass);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/visitor-passes/:id', requireRole(['resident', 'guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const pass = await prisma.visitorPass.update({
+      where: { id },
+      data: req.body,
+    });
+    const topic = req.body.status === 'CHECKED_IN' ? 'VISITOR_ENTRY' : req.body.status === 'CHECKED_OUT' ? 'VISITOR_EXIT' : 'VISITOR_APPROVAL';
+    broadcastEvent(topic, pass, pass.societyId);
+    res.json(pass);
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }
@@ -245,6 +261,7 @@ app.post('/api/maintenance', requireRole(['resident', 'facility_manager', 'secre
     const ticket = await prisma.maintenanceTicket.create({
       data: req.body,
     });
+    broadcastEvent('MAINTENANCE_STATUS', ticket, ticket.societyId);
     res.status(201).json(ticket);
   } catch (error) {
     res.status(500).json({ error: String(error) });
@@ -258,6 +275,7 @@ app.patch('/api/maintenance/:id', requireRole(['facility_manager', 'secretary', 
       where: { id },
       data: req.body,
     });
+    broadcastEvent('MAINTENANCE_STATUS', ticket, ticket.societyId);
     res.json(ticket);
   } catch (error) {
     res.status(500).json({ error: String(error) });
@@ -285,6 +303,7 @@ app.patch('/api/billing/invoices/:id', requireRole(['resident', 'secretary', 'ad
       where: { id },
       data: req.body,
     });
+    broadcastEvent('BILLING_INVOICES_UPDATED', invoice, invoice.societyId);
     res.json(invoice);
   } catch (error) {
     res.status(500).json({ error: String(error) });
@@ -310,6 +329,8 @@ app.post('/api/parcels', requireRole(['guard', 'secretary', 'admin']), async (re
     const parcel = await prisma.parcel.create({
       data: req.body,
     });
+    broadcastEvent('PARCEL_ARRIVED', parcel, parcel.societyId);
+    broadcastEvent('DELIVERY_STATUS', parcel, parcel.societyId);
     res.status(201).json(parcel);
   } catch (error) {
     res.status(500).json({ error: String(error) });
@@ -326,6 +347,8 @@ app.patch('/api/parcels/:id/collect', requireRole(['resident', 'guard', 'secreta
         pickedUpAt: new Date(),
       },
     });
+    broadcastEvent('PARCEL_COLLECTED', parcel, parcel.societyId);
+    broadcastEvent('DELIVERY_STATUS', parcel, parcel.societyId);
     res.json(parcel);
   } catch (error) {
     res.status(500).json({ error: String(error) });
@@ -426,6 +449,7 @@ app.post('/api/community-events', requireRole(['secretary', 'admin', 'committee'
     const event = await prisma.communityEvent.create({
       data: req.body,
     });
+    broadcastEvent('COMMUNITY_EVENT_CREATED', event, event.societyId);
     res.status(201).json(event);
   } catch (error) {
     res.status(500).json({ error: String(error) });
@@ -450,6 +474,7 @@ app.post('/api/emergency-incidents', async (req: Request, res: Response) => {
     const incident = await prisma.emergencyIncident.create({
       data: req.body,
     });
+    broadcastEvent('EMERGENCY_ALERTS', incident, incident.societyId);
     res.status(201).json(incident);
   } catch (error) {
     res.status(500).json({ error: String(error) });
@@ -469,12 +494,25 @@ app.get('/api/notifications', async (req: Request, res: Response) => {
   }
 });
 
+app.post('/api/notifications', async (req: Request, res: Response) => {
+  try {
+    const notif = await prisma.notification.create({
+      data: req.body,
+    });
+    broadcastEvent('NOTIFICATIONS', notif, notif.societyId);
+    res.status(201).json(notif);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 app.patch('/api/notifications/:id/read', async (req: Request, res: Response) => {
   try {
     const notif = await prisma.notification.update({
       where: { id: req.params.id as string },
       data: { isRead: true, readAt: new Date() },
     });
+    broadcastEvent('NOTIFICATIONS_READ', notif, notif.societyId);
     res.json(notif);
   } catch (error) {
     res.status(500).json({ error: String(error) });

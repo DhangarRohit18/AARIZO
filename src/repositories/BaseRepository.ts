@@ -151,7 +151,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
 
     // 2. Real-time PostgreSQL event stream via Server-Sent Events (SSE)
     const unsubRealtime = realtimeService.subscribe('*', (msg) => {
-      if (msg.topic.includes(this.collectionName.toUpperCase()) || msg.topic === 'GENERAL') {
+      if (this.isTopicRelevant(msg.topic)) {
         this.listAll(constraints).then(callback);
       }
     });
@@ -187,12 +187,43 @@ export abstract class BaseRepository<T extends BaseEntity> {
 
     // 2. Real-time PostgreSQL live synchronization via Server-Sent Events (SSE)
     const unsubRealtime = realtimeService.subscribe('*', (msg) => {
-      if (msg.topic.includes(this.collectionName.toUpperCase()) || msg.topic === 'GENERAL') {
+      if (this.isTopicRelevant(msg.topic)) {
         this.list(societyId, constraints).then(callback);
       }
     });
 
     return unsubRealtime;
+  }
+
+  /**
+   * Universal real-time topic matcher to ensure all domain-specific events
+   * trigger immediate UI updates across all clients.
+   */
+  private isTopicRelevant(topic: string): boolean {
+    if (!topic || topic === 'GENERAL') return true;
+    const t = topic.toUpperCase();
+    const col = this.collectionName.toUpperCase();
+    if (t.includes(col)) return true;
+
+    // Domain mappings for common society features
+    if (col.includes('VISITOR') && (t.includes('VISITOR') || t.includes('QR') || t.includes('GATE'))) return true;
+    if (col.includes('PARCEL') && (t.includes('PARCEL') || t.includes('DELIVERY'))) return true;
+    if (col.includes('MAINTENANCE') && t.includes('MAINTENANCE')) return true;
+    if ((col.includes('BILLING') || col.includes('PAYMENT')) && (t.includes('PAYMENT') || t.includes('BILLING') || t.includes('INVOICE'))) return true;
+    if (col.includes('ADVERTISEMENT') && t.includes('ADVERTISEMENT')) return true;
+    if (col.includes('VENDOR') && t.includes('VENDOR')) return true;
+    if (col.includes('EMERGENCY') && t.includes('EMERGENCY')) return true;
+    if (col.includes('ANNOUNCEMENT') && t.includes('ANNOUNCEMENT')) return true;
+    if (col.includes('EVENT') && t.includes('EVENT')) return true;
+    if (col.includes('NOTIFICATION') && t.includes('NOTIFICATION')) return true;
+    if (col.includes('STAFF') && (t.includes('STAFF') || t.includes('WORKER') || t.includes('ATTENDANCE'))) return true;
+    if (col.includes('DOMESTIC') && (t.includes('WORKER') || t.includes('DOMESTIC'))) return true;
+    if (col.includes('PARKING') && t.includes('PARKING')) return true;
+    if (col.includes('AMENITY') && t.includes('AMENITY')) return true;
+    if (col.includes('FLAT') && (t.includes('FLAT') || t.includes('RESIDENT'))) return true;
+    if (col.includes('RESIDENT') && (t.includes('RESIDENT') || t.includes('FLAT'))) return true;
+
+    return false;
   }
 }
 
