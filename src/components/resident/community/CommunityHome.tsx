@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePrototype } from '../../../context/PrototypeContext';
 import type {
   CommunityAnnouncement,
@@ -6,11 +6,9 @@ import type {
   EventRSVPStatus,
   Poll,
 } from '../../../domains/community';
-import {
-  mockAnnouncements,
-  mockEvents,
-  mockPolls,
-} from '../../../mockData/community';
+import { mockPolls } from '../../../mockData/community';
+import { apiClient } from '../../../services/apiClient';
+import { realtimeService } from '../../../services/realtimeService';
 import { AnnouncementCard } from './AnnouncementCard';
 import { AnnouncementDetail } from './AnnouncementDetail';
 import { EventCard } from './EventCard';
@@ -32,11 +30,61 @@ export const CommunityHome: React.FC<CommunityHomeProps> = ({
 }) => {
   const { uiState } = usePrototype();
 
-  // Local state datasets
-  const [announcementsList, setAnnouncementsList] =
-    useState<CommunityAnnouncement[]>(mockAnnouncements);
-  const [eventsList, setEventsList] = useState<CommunityEvent[]>(mockEvents);
+  // Live state datasets from PostgreSQL
+  const [announcementsList, setAnnouncementsList] = useState<CommunityAnnouncement[]>([]);
+  const [eventsList, setEventsList] = useState<CommunityEvent[]>([]);
   const [pollsList, setPollsList] = useState<Poll[]>(mockPolls);
+
+  const loadCommunityData = async () => {
+    try {
+      const [dbAnnouncements, dbEvents] = await Promise.all([
+        apiClient.getAnnouncements(),
+        apiClient.getCommunityEvents(),
+      ]);
+
+      if (dbAnnouncements && Array.isArray(dbAnnouncements) && dbAnnouncements.length > 0) {
+        const mapped: CommunityAnnouncement[] = dbAnnouncements.map((a: any) => ({
+          id: a.id,
+          title: a.title,
+          category: (a.category?.toLowerCase() || 'general') as any,
+          priority: (a.isUrgent ? 'urgent' : 'normal') as any,
+          publishedDate: new Date(a.publishedAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }),
+          authorName: a.authorName || 'Managing Committee',
+          authorRole: 'Committee',
+          summary: a.content.length > 80 ? a.content.slice(0, 80) + '...' : a.content,
+          content: a.content,
+          isRead: true,
+        }));
+        setAnnouncementsList(mapped);
+      }
+
+      if (dbEvents && Array.isArray(dbEvents) && dbEvents.length > 0) {
+        const mappedEvents: CommunityEvent[] = dbEvents.map((e: any) => ({
+          id: e.id,
+          title: e.title,
+          category: 'event',
+          date: new Date(e.startDate).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }),
+          time: new Date(e.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          location: e.location,
+          organizer: 'Welfare Committee',
+          description: e.description,
+          attendeesCount: e.rsvpCount || 24,
+          userRsvp: 'going',
+        }));
+        setEventsList(mappedEvents);
+      }
+    } catch (err) {
+      console.error('Error fetching community data:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadCommunityData();
+    const unsub = realtimeService.subscribe('*', () => {
+      loadCommunityData();
+    });
+    return () => unsub();
+  }, []);
 
   const [activeTab, setActiveTab] = useState<
     'all' | 'announcements' | 'events' | 'polls'
@@ -47,14 +95,7 @@ export const CommunityHome: React.FC<CommunityHomeProps> = ({
   });
 
   const [selectedAnnouncement, setSelectedAnnouncement] =
-    useState<CommunityAnnouncement | null>(() => {
-      if (initialAnnouncementId) {
-        return (
-          mockAnnouncements.find((a) => a.id === initialAnnouncementId) || null
-        );
-      }
-      return null;
-    });
+    useState<CommunityAnnouncement | null>(null);
 
   const [selectedEvent, setSelectedEvent] = useState<CommunityEvent | null>(
     null

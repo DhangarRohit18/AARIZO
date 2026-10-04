@@ -31,6 +31,7 @@ const SEED_AMENITIES: Omit<SocietyAmenity, 'societyId'>[] = [
     isBookable: true,
     isActive: true,
     imageUrl: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80',
+    bookingFee: 0,
     rules: ['Proper swimwear required', 'Shower before entering', 'No glass containers near pool area'],
     blackoutDates: [],
     maintenanceSchedules: [
@@ -60,6 +61,7 @@ const SEED_AMENITIES: Omit<SocietyAmenity, 'societyId'>[] = [
     isBookable: true,
     isActive: true,
     imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',
+    bookingFee: 0,
     rules: ['Carry a personal gym towel', 'Wipe equipment after use', 'Non-marking sports shoes mandatory'],
     blackoutDates: [],
     maintenanceSchedules: [],
@@ -80,6 +82,7 @@ const SEED_AMENITIES: Omit<SocietyAmenity, 'societyId'>[] = [
     isBookable: true,
     isActive: true,
     imageUrl: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80',
+    bookingFee: 500,
     rules: ['Keep noise levels moderate', 'No smoking allowed'],
     blackoutDates: [],
     maintenanceSchedules: [],
@@ -100,6 +103,7 @@ const SEED_AMENITIES: Omit<SocietyAmenity, 'societyId'>[] = [
     isBookable: true,
     isActive: true,
     imageUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=800&q=80',
+    bookingFee: 150,
     rules: ['Non-marking shoes mandatory', 'Maximum 4 players per slot'],
     blackoutDates: [],
     maintenanceSchedules: [],
@@ -120,6 +124,7 @@ const SEED_AMENITIES: Omit<SocietyAmenity, 'societyId'>[] = [
     isBookable: true,
     isActive: true,
     imageUrl: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=800&q=80',
+    bookingFee: 250,
     rules: ['Proper tennis footwear required', 'Bring own rackets and balls'],
     blackoutDates: [],
     maintenanceSchedules: [],
@@ -140,6 +145,7 @@ const SEED_AMENITIES: Omit<SocietyAmenity, 'societyId'>[] = [
     isBookable: true,
     isActive: true,
     imageUrl: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80',
+    bookingFee: 1500,
     rules: ['Loud music must stop by 22:00', 'Decorations must not damage walls'],
     blackoutDates: [],
     maintenanceSchedules: [],
@@ -378,7 +384,8 @@ class AmenityService {
     startTime: string,
     endTime: string,
     guestCount: number,
-    purpose?: string
+    purpose?: string,
+    paymentDetails?: { bookingFee?: number; paymentStatus?: 'FREE' | 'PAID' | 'PENDING'; paymentId?: string }
   ): AmenityBooking {
     const validation = this.validateBookingRequest(
       societyId,
@@ -396,6 +403,8 @@ class AmenityService {
     const amenities = this.getAmenities(societyId);
     const amenity = amenities.find(a => a.id === amenityId)!;
 
+    const fee = paymentDetails?.bookingFee ?? amenity.bookingFee ?? 0;
+
     const newBooking: AmenityBooking = {
       id: `bk-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
       societyId,
@@ -409,6 +418,9 @@ class AmenityService {
       endTime,
       guestCount,
       purpose,
+      bookingFee: fee,
+      paymentStatus: paymentDetails?.paymentStatus ?? (fee > 0 ? 'PENDING' : 'FREE'),
+      paymentId: paymentDetails?.paymentId,
       status: amenity.requiresApproval ? 'PENDING' : 'APPROVED',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

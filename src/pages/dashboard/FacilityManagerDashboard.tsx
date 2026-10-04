@@ -42,7 +42,7 @@ export const FacilityManagerDashboard: React.FC = () => {
   const stats = [
     { label: 'Open Tickets', value: '7', tab: 'maintenance' as const, path: '/facility/maintenance', color: '#D97706', bg: '#FFFBEB', icon: Wrench },
     { label: 'Staff On Duty', value: '18/20', tab: 'shifts' as const, path: '/facility/shifts', color: '#059669', bg: '#ECFDF5', icon: UserCheck },
-    { label: 'Active AMCs', value: '12', tab: 'amc' as const, path: '/facility/amc', color: '#7C3AED', bg: '#F5F3FF', icon: Calendar },
+    { label: 'Active AMCs', value: '12', tab: 'amc' as const, path: '/facility/amc', color: '#176B91', bg: '#EAF6FC', icon: Calendar },
     { label: 'Utility Status', value: 'OK', tab: 'utilities' as const, path: '/facility/utilities', color: '#176B91', bg: '#EBF5FA', icon: Zap },
   ];
 

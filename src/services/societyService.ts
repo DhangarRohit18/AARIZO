@@ -24,6 +24,7 @@ import {
   domesticWorkerRepository,
 } from '../repositories/societies/OperationsRepositories';
 import { logAuditEvent } from '../repositories/auditRepository';
+import { realtimeService } from './realtimeService';
 
 // Helper to append audit logs to Firestore and local cache
 export function logAudit(
@@ -259,6 +260,22 @@ export const societyService = {
     db.saveVendors([...vendors, newVendor]);
     vendorRepository.create(newVendor).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'Vendor', newVendor.id, `Added vendor ${newVendor.companyName}`);
+
+    realtimeService.publish(
+      'VENDOR_REGISTERED',
+      {
+        vendorId: newVendor.id,
+        businessName: newVendor.companyName,
+        category: newVendor.category,
+        contactPerson: newVendor.contactPerson,
+        phone: newVendor.phone,
+        documentUrl: newVendor.documentUrl,
+      },
+      data.societyId,
+      actor.role,
+      actor.name
+    );
+
     return newVendor;
   },
 
@@ -286,4 +303,99 @@ export const societyService = {
   // --- AUDIT LOGS ---
   getAuditLogs: (societyId: string): AuditLog[] =>
     db.getAuditLogs().filter((l) => l.societyId === societyId || societyId === 'GLOBAL'),
+
+  // ========================================================
+  // FIRESTORE-FIRST ASYNC QUERIES & LIVE REALTIME LISTENERS
+  // ========================================================
+  fetchSocieties: async (): Promise<Society[]> => {
+    try {
+      const records = await societyRepository.listAll();
+      if (records && records.length > 0) {
+        db.saveSocieties(records);
+        return records;
+      }
+      return db.getSocieties();
+    } catch {
+      return db.getSocieties();
+    }
+  },
+
+  fetchTowers: async (societyId: string): Promise<Tower[]> => {
+    try {
+      const records = await towerRepository.list(societyId);
+      if (records && records.length > 0) return records;
+      return db.getTowers().filter((t) => t.societyId === societyId);
+    } catch {
+      return db.getTowers().filter((t) => t.societyId === societyId);
+    }
+  },
+
+  fetchFlats: async (societyId: string): Promise<Flat[]> => {
+    try {
+      const records = await flatRepository.list(societyId);
+      if (records && records.length > 0) return records;
+      return db.getFlats().filter((f) => f.societyId === societyId);
+    } catch {
+      return db.getFlats().filter((f) => f.societyId === societyId);
+    }
+  },
+
+  fetchResidents: async (societyId: string): Promise<Resident[]> => {
+    try {
+      const records = await residentRepository.list(societyId);
+      if (records && records.length > 0) return records;
+      return db.getResidents().filter((r) => r.societyId === societyId);
+    } catch {
+      return db.getResidents().filter((r) => r.societyId === societyId);
+    }
+  },
+
+  fetchVendors: async (societyId: string): Promise<Vendor[]> => {
+    try {
+      const records = await vendorRepository.list(societyId);
+      if (records && records.length > 0) return records;
+      return db.getVendors().filter((v) => v.societyId === societyId);
+    } catch {
+      return db.getVendors().filter((v) => v.societyId === societyId);
+    }
+  },
+
+  fetchStaff: async (societyId: string): Promise<Staff[]> => {
+    try {
+      const records = await staffRepository.list(societyId);
+      if (records && records.length > 0) return records;
+      return db.getStaff().filter((s) => s.societyId === societyId);
+    } catch {
+      return db.getStaff().filter((s) => s.societyId === societyId);
+    }
+  },
+
+  fetchDomesticWorkers: async (societyId: string): Promise<DomesticWorker[]> => {
+    try {
+      const records = await domesticWorkerRepository.list(societyId);
+      if (records && records.length > 0) return records;
+      return db.getDomesticWorkers().filter((w) => w.societyId === societyId);
+    } catch {
+      return db.getDomesticWorkers().filter((w) => w.societyId === societyId);
+    }
+  },
+
+  // Firestore onSnapshot real-time subscriptions
+  subscribeResidents: (societyId: string, callback: (residents: Resident[]) => void): () => void =>
+    residentRepository.subscribe(societyId, callback),
+
+  subscribeFlats: (societyId: string, callback: (flats: Flat[]) => void): () => void =>
+    flatRepository.subscribe(societyId, callback),
+
+  subscribeTowers: (societyId: string, callback: (towers: Tower[]) => void): () => void =>
+    towerRepository.subscribe(societyId, callback),
+
+  subscribeVendors: (societyId: string, callback: (vendors: Vendor[]) => void): () => void =>
+    vendorRepository.subscribe(societyId, callback),
+
+  subscribeStaff: (societyId: string, callback: (staff: Staff[]) => void): () => void =>
+    staffRepository.subscribe(societyId, callback),
+
+  subscribeDomesticWorkers: (societyId: string, callback: (workers: DomesticWorker[]) => void): () => void =>
+    domesticWorkerRepository.subscribe(societyId, callback),
 };

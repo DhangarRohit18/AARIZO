@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
-import { Shield, Search as SearchIcon, AlertTriangle, Lock, Unlock, CheckCircle2, XCircle, LogOut, QrCode } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  Shield,
+  Search as SearchIcon,
+  AlertTriangle,
+  Lock,
+  Unlock,
+  CheckCircle2,
+  XCircle,
+  LogOut,
+  QrCode,
+  UserPlus,
+  Camera,
+} from 'lucide-react';
 import { visitorService } from '../../../services/visitorService';
-import type { SmartVisitorPass, BlacklistEntry, PassValidationResult } from '../../../types/visitor';
+import type { SmartVisitorPass, BlacklistEntry, PassValidationResult, VisitorCategory } from '../../../types/visitor';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { Modal } from '../../../components/ui/Modal';
 import { QRScanner } from '../../../components/ui/QRScanner';
 import { Form, FormField } from '../../../components/ui/Form';
-
 import { useAuth } from '../../../context/AuthContext';
+import { realtimeService } from '../../../services/realtimeService';
+import { FileUpload } from '../../../components/ui/FileUpload';
 
 export const SecurityTerminalPage: React.FC = () => {
   const { currentUser } = useAuth();
@@ -27,6 +40,21 @@ export const SecurityTerminalPage: React.FC = () => {
   const [validationResult, setValidationResult] = useState<PassValidationResult | null>(null);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isBlacklistModalOpen, setIsBlacklistModalOpen] = useState(false);
+  const [isWalkInModalOpen, setIsWalkInModalOpen] = useState(false);
+
+  // Walk-in entry form state
+  const [walkInForm, setWalkInForm] = useState({
+    visitorName: '',
+    visitorPhone: '',
+    flatCode: 'B-1204',
+    residentName: 'Vikram Joshi',
+    towerName: 'Tower B',
+    category: 'GUEST' as VisitorCategory,
+    vehicleNumber: '',
+    purpose: '',
+    companyName: '',
+    photoUrl: '',
+  });
 
   // Blacklist form state
   const [blName, setBlName] = useState('');
@@ -37,6 +65,57 @@ export const SecurityTerminalPage: React.FC = () => {
     setPasses(visitorService.getPasses(currentSocietyId));
     setBlacklist(visitorService.getBlacklist(currentSocietyId));
     setLockdown(visitorService.getLockdownState(currentSocietyId));
+  };
+
+  useEffect(() => {
+    refreshData();
+    const unsub = realtimeService.subscribe('*', () => {
+      refreshData();
+    });
+    return () => unsub();
+  }, [currentSocietyId]);
+
+  const handleCreateWalkIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!walkInForm.visitorName || !walkInForm.visitorPhone || !walkInForm.flatCode) return;
+
+    visitorService.createVisitorPass(
+      {
+        societyId: currentSocietyId,
+        residentId: 'res-1',
+        residentName: walkInForm.residentName || 'Resident',
+        flatCode: walkInForm.flatCode,
+        towerName: walkInForm.towerName || 'Tower A',
+        visitorName: walkInForm.visitorName,
+        visitorPhone: walkInForm.visitorPhone,
+        category: walkInForm.category,
+        passLifecycle: 'ONE_TIME',
+        vehicleNumber: walkInForm.vehicleNumber || undefined,
+        photoUrl: walkInForm.photoUrl || undefined,
+        purpose: walkInForm.purpose || 'Gate Walk-in Entry',
+        companyName: walkInForm.companyName || undefined,
+        status: 'CHECKED_IN',
+        gateName: 'Main Gate 1',
+        gateOfficerName: officerActor.name,
+        checkedInAt: `Today, ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+      },
+      officerActor
+    );
+
+    refreshData();
+    setIsWalkInModalOpen(false);
+    setWalkInForm({
+      visitorName: '',
+      visitorPhone: '',
+      flatCode: 'B-1204',
+      residentName: 'Vikram Joshi',
+      towerName: 'Tower B',
+      category: 'GUEST',
+      vehicleNumber: '',
+      purpose: '',
+      companyName: '',
+      photoUrl: '',
+    });
   };
 
   const handleValidateCode = (code: string) => {
@@ -159,6 +238,17 @@ export const SecurityTerminalPage: React.FC = () => {
         {/* Quick Actions */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.75rem' }}>
           <button
+            onClick={() => setIsWalkInModalOpen(true)}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.375rem', padding: '0.875rem 0.5rem', borderRadius: '0.875rem', background: '#ecfdf5', border: '1.5px solid #a7f3d0', cursor: 'pointer', minHeight: 80 }}
+            aria-label="Walk-in Entry"
+          >
+            <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#d1fae5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <UserPlus size={20} style={{ color: '#059669' }} />
+            </div>
+            <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#065f46' }}>Walk-in Entry</span>
+          </button>
+
+          <button
             onClick={() => setIsScannerOpen(true)}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.375rem', padding: '0.875rem 0.5rem', borderRadius: '0.875rem', background: 'var(--aarizo-blue-light, #EAF6FC)', border: '1px solid var(--aarizo-border, #E8F1F5)', cursor: 'pointer', minHeight: 80 }}
             aria-label="Scan QR Code"
@@ -272,6 +362,35 @@ export const SecurityTerminalPage: React.FC = () => {
                         <strong>{p.flatCode}</strong> • {p.residentName}
                       </div>
                       <div style={{ fontSize: '0.6875rem', fontFamily: 'monospace', color: '#ef4444', marginTop: '0.125rem' }}>{p.passCode}</div>
+                      {p.vehicleNumber && (
+                        <div style={{ fontSize: '0.6875rem', color: '#64748b', marginTop: '0.125rem' }}>
+                          Vehicle: <strong style={{ color: '#1e293b' }}>{p.vehicleNumber}</strong>
+                        </div>
+                      )}
+                      {p.photoUrl && (
+                        <div style={{ marginTop: '0.375rem' }}>
+                          <a
+                            href={p.photoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.375rem',
+                              padding: '0.2rem 0.5rem',
+                              borderRadius: '0.375rem',
+                              background: '#e0f2fe',
+                              color: '#0284c7',
+                              fontSize: '0.6875rem',
+                              fontWeight: 600,
+                              textDecoration: 'none',
+                            }}
+                          >
+                            <Camera size={12} />
+                            <span>View Gate Photo</span>
+                          </a>
+                        </div>
+                      )}
                     </div>
                     <StatusBadge
                       label={p.status.replace('_', ' ')}
@@ -458,6 +577,132 @@ export const SecurityTerminalPage: React.FC = () => {
             ))}
           </div>
         )}
+      </Modal>
+
+      {/* Walk-in Visitor Entry Modal */}
+      <Modal isOpen={isWalkInModalOpen} onClose={() => setIsWalkInModalOpen(false)} title="Register Walk-in Gate Entry">
+        <Form onSubmit={handleCreateWalkIn}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '70vh', overflowY: 'auto', paddingRight: '0.25rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
+              <FormField label="Visitor Full Name" required>
+                <input
+                  type="text"
+                  required
+                  value={walkInForm.visitorName}
+                  onChange={(e) => setWalkInForm({ ...walkInForm, visitorName: e.target.value })}
+                  placeholder="e.g. Rajan Pillai"
+                  style={{ width: '100%', padding: '0.625rem', borderRadius: '0.625rem', border: '1px solid #e8e2d8', fontSize: '0.8125rem' }}
+                />
+              </FormField>
+
+              <FormField label="Mobile Number" required>
+                <input
+                  type="tel"
+                  required
+                  value={walkInForm.visitorPhone}
+                  onChange={(e) => setWalkInForm({ ...walkInForm, visitorPhone: e.target.value })}
+                  placeholder="10-digit mobile"
+                  style={{ width: '100%', padding: '0.625rem', borderRadius: '0.625rem', border: '1px solid #e8e2d8', fontSize: '0.8125rem' }}
+                />
+              </FormField>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
+              <FormField label="Visitor Category" required>
+                <select
+                  value={walkInForm.category}
+                  onChange={(e) => setWalkInForm({ ...walkInForm, category: e.target.value as VisitorCategory })}
+                  style={{ width: '100%', padding: '0.625rem', borderRadius: '0.625rem', border: '1px solid #e8e2d8', fontSize: '0.8125rem', background: '#fff' }}
+                >
+                  <option value="GUEST">Guest / Relative</option>
+                  <option value="DELIVERY">Delivery Executive</option>
+                  <option value="CAB">Cab / Driver</option>
+                  <option value="SERVICE_PROVIDER">Service Provider / Plumber</option>
+                  <option value="DOMESTIC_WORKER">Domestic Worker / Helper</option>
+                </select>
+              </FormField>
+
+              <FormField label="Destination Flat" required>
+                <input
+                  type="text"
+                  required
+                  value={walkInForm.flatCode}
+                  onChange={(e) => setWalkInForm({ ...walkInForm, flatCode: e.target.value })}
+                  placeholder="e.g. B-1204"
+                  style={{ width: '100%', padding: '0.625rem', borderRadius: '0.625rem', border: '1px solid #e8e2d8', fontSize: '0.8125rem' }}
+                />
+              </FormField>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
+              <FormField label="Host Resident Name">
+                <input
+                  type="text"
+                  value={walkInForm.residentName}
+                  onChange={(e) => setWalkInForm({ ...walkInForm, residentName: e.target.value })}
+                  placeholder="e.g. Vikram Joshi"
+                  style={{ width: '100%', padding: '0.625rem', borderRadius: '0.625rem', border: '1px solid #e8e2d8', fontSize: '0.8125rem' }}
+                />
+              </FormField>
+
+              <FormField label="Vehicle Number (Optional)">
+                <input
+                  type="text"
+                  value={walkInForm.vehicleNumber}
+                  onChange={(e) => setWalkInForm({ ...walkInForm, vehicleNumber: e.target.value })}
+                  placeholder="e.g. MH 12 AB 4590"
+                  style={{ width: '100%', padding: '0.625rem', borderRadius: '0.625rem', border: '1px solid #e8e2d8', fontSize: '0.8125rem' }}
+                />
+              </FormField>
+            </div>
+
+            <FormField label="Purpose / Company (Optional)">
+              <input
+                type="text"
+                value={walkInForm.purpose}
+                onChange={(e) => setWalkInForm({ ...walkInForm, purpose: e.target.value })}
+                placeholder="e.g. Grocery delivery, Swiggy, AC repair"
+                style={{ width: '100%', padding: '0.625rem', borderRadius: '0.625rem', border: '1px solid #e8e2d8', fontSize: '0.8125rem' }}
+              />
+            </FormField>
+
+            {/* Gate Visitor Photo Capture */}
+            <div style={{ marginTop: '0.25rem' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--aarizo-navy, #083B56)', marginBottom: '0.375rem' }}>
+                Capture Visitor / Delivery Photo (Optional)
+              </label>
+              <FileUpload
+                category="general"
+                label="Take Visitor Photo or Upload Image"
+                onUploadSuccess={(url: string) => {
+                  setWalkInForm((prev) => ({ ...prev, photoUrl: url }));
+                }}
+              />
+              {walkInForm.photoUrl && (
+                <div style={{ marginTop: '0.375rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: '#059669', background: '#ecfdf5', padding: '0.375rem 0.625rem', borderRadius: '0.5rem', border: '1px solid #a7f3d0' }}>
+                  <CheckCircle2 size={14} />
+                  <span>Gate photo successfully captured & attached</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.625rem', marginTop: '1rem', borderTop: '1px solid #f1f5f9', paddingTop: '0.875rem' }}>
+            <button
+              type="button"
+              onClick={() => setIsWalkInModalOpen(false)}
+              style={{ flex: 1, padding: '0.75rem', borderRadius: '0.75rem', border: '1px solid #e8e2d8', background: '#fff', fontWeight: 600, fontSize: '0.8125rem', cursor: 'pointer' }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              style={{ flex: 2, padding: '0.75rem', borderRadius: '0.75rem', border: 'none', background: '#059669', color: '#fff', fontWeight: 700, fontSize: '0.8125rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem' }}
+            >
+              <CheckCircle2 size={16} /> Allow & Check In Visitor
+            </button>
+          </div>
+        </Form>
       </Modal>
       </div>
     </div>

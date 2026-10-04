@@ -112,7 +112,7 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.875rem' }}>
           {[
             { label: 'My Visitors', icon: ClipboardList, color: '#083B56', bg: '#EAF6FC' },
-            { label: 'My Parcels', icon: Package, color: '#8b5cf6', bg: '#f5f3ff' },
+            { label: 'My Parcels', icon: Package, color: '#176B91', bg: '#EAF6FC' },
           ].map(({ label, icon: Icon, color, bg }) => (
             <div key={label} style={{ background: bg, borderRadius: '1rem', border: `1px dashed ${color}30`, padding: '1rem', textAlign: 'center' }}>
               <Icon size={24} color={color} style={{ margin: '0 auto 0.5rem' }} />
@@ -168,7 +168,7 @@ export const ResidentDashboard: React.FC<{ user: RBACUser }> = ({ user }) => {
                   </div>
                   <div style={{ fontSize: '0.6875rem', color: '#6b7280', marginTop: 2 }}>Lift Slot: {move.timeSlot}</div>
                 </div>
-                <span style={{ marginLeft: '0.75rem', ...S.badge('#7c3aed', '#f5f3ff') }}>{move.status}</span>
+                <span style={{ marginLeft: '0.75rem', ...S.badge('#176B91', '#EAF6FC') }}>{move.status}</span>
               </div>
             ))
           )}

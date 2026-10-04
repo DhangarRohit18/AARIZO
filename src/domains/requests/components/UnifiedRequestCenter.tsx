@@ -3,14 +3,14 @@ import {
   Plus,
   Search,
   Paperclip,
-  History,
-  X,
   FileText,
   Clock,
   CheckCircle2,
   AlertCircle,
 } from 'lucide-react';
 import { societyRequestService } from '../services/societyRequestService';
+import { SubmitRequestModal } from './SubmitRequestModal';
+import { RequestDetailDrawer } from './RequestDetailDrawer';
 import type { SocietyRequest, SocietyRequestCategory, SocietyRequestStatus, RequestDocument } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { useRBAC } from '../../../hooks/useRBAC';
@@ -153,7 +153,7 @@ export const UnifiedRequestCenter: React.FC<UnifiedRequestCenterProps> = ({ hide
     { label: 'Total Requests', count: totalCount, statusFilter: 'ALL', color: '#176B91', bg: '#EBF5FA', icon: FileText },
     { label: 'Under Review', count: underReviewCount, statusFilter: 'UNDER_REVIEW', color: '#D97706', bg: '#FFFBEB', icon: Clock },
     { label: 'Approved / Done', count: approvedCount, statusFilter: 'APPROVED', color: '#059669', bg: '#ECFDF5', icon: CheckCircle2 },
-    { label: 'In Progress', count: inProgressCount, statusFilter: 'IN_PROGRESS', color: '#7C3AED', bg: '#F5F3FF', icon: AlertCircle },
+    { label: 'In Progress', count: inProgressCount, statusFilter: 'IN_PROGRESS', color: '#176B91', bg: '#EAF6FC', icon: AlertCircle },
   ];
 
   const formatCategoryName = (cat: string) => {
@@ -178,7 +178,7 @@ export const UnifiedRequestCenter: React.FC<UnifiedRequestCenterProps> = ({ hide
       case 'SUBMITTED':
         return { bg: '#FFFBEB', color: '#D97706', border: '#FDE68A', icon: Clock, label: status.replace('_', ' ') };
       case 'IN_PROGRESS':
-        return { bg: '#F5F3FF', color: '#7C3AED', border: '#DDD6FE', icon: AlertCircle, label: 'IN PROGRESS' };
+        return { bg: '#EAF6FC', color: '#176B91', border: '#DCE8EF', icon: AlertCircle, label: 'IN PROGRESS' };
       case 'REJECTED':
         return { bg: '#FEF2F2', color: '#DC2626', border: '#FECACA', icon: AlertCircle, label: status };
       default:
@@ -581,399 +581,38 @@ export const UnifiedRequestCenter: React.FC<UnifiedRequestCenterProps> = ({ hide
       </div>
 
       {/* Submit Modal */}
-      {showSubmitModal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(8, 59, 86, 0.65)',
-            backdropFilter: 'blur(3px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1rem',
-            zIndex: 1000,
-            overflowY: 'auto',
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '20px',
-              maxWidth: '520px',
-              width: '100%',
-              boxShadow: '0 20px 40px rgba(8,59,86,0.25)',
-              border: '1px solid #E2E8F0',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              maxHeight: '90vh',
-              margin: 'auto',
-            }}
-          >
-            {/* Modal Header */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '1.25rem 1.5rem',
-                borderBottom: '1px solid #E2E8F0',
-                background: '#F8FAFC',
-                flexShrink: 0,
-              }}
-            >
-              <h3 style={{ fontSize: '1.0625rem', fontWeight: 800, color: '#083B56', margin: 0 }}>
-                Submit New Request / NOC
-              </h3>
-              <button
-                type="button"
-                onClick={() => setShowSubmitModal(false)}
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: '10px',
-                  background: '#ffffff',
-                  border: '1px solid #E2E8F0',
-                  color: '#64748B',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                }}
-                title="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <form onSubmit={handleCreateRequest} id="societyRequestForm" style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.8125rem', overflowY: 'auto', flex: 1 }}>
-              <div>
-                <label style={{ display: 'block', fontWeight: 700, color: '#083B56', marginBottom: '0.35rem' }}>Request Title</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Balcony Grill Expansion Permission"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.8125rem', color: '#083B56', outline: 'none', boxSizing: 'border-box' }}
-                  required
-                />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontWeight: 700, color: '#083B56', marginBottom: '0.35rem' }}>Category</label>
-                  <select
-                    value={newCategory}
-                    onChange={(e) => setNewCategory(e.target.value as any)}
-                    style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', background: '#ffffff', fontSize: '0.78125rem', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
-                  >
-                    <option value="NOC">No Objection Certificate (NOC)</option>
-                    <option value="TENANT_REGISTRATION">Tenant Registration</option>
-                    <option value="OWNERSHIP_CHANGE">Ownership Transfer</option>
-                    <option value="RENOVATION_PERMISSION">Renovation Permit</option>
-                    <option value="EVENT_PERMISSION">Lawn / Hall Event</option>
-                    <option value="PARKING_REQUEST">Parking Allocation</option>
-                    <option value="SOCIETY_CERTIFICATE">Society Certificate</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontWeight: 700, color: '#083B56', marginBottom: '0.35rem' }}>Priority</label>
-                  <select
-                    value={newPriority}
-                    onChange={(e) => setNewPriority(e.target.value as any)}
-                    style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', background: '#ffffff', fontSize: '0.78125rem', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
-                  >
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                    <option value="URGENT">Urgent</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontWeight: 700, color: '#083B56', marginBottom: '0.35rem' }}>Description &amp; Details</label>
-                <textarea
-                  rows={3}
-                  placeholder="Provide complete explanation for committee review..."
-                  value={newDescription}
-                  onChange={(e) => setNewDescription(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.8125rem', color: '#083B56', outline: 'none', boxSizing: 'border-box', resize: 'vertical' }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontWeight: 700, color: '#083B56', marginBottom: '0.35rem' }}>Upload Supporting Document / Agreement</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Registered_Agreement.pdf or Architectural_Plan.pdf"
-                  value={newFileName}
-                  onChange={(e) => setNewFileName(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.75rem', fontFamily: 'monospace', color: '#083B56', outline: 'none', boxSizing: 'border-box' }}
-                />
-              </div>
-            </form>
-
-            {/* Modal Footer */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', padding: '1rem 1.5rem', borderTop: '1px solid #E2E8F0', background: '#F8FAFC', flexShrink: 0 }}>
-              <button
-                type="button"
-                onClick={() => setShowSubmitModal(false)}
-                style={{ padding: '0.55rem 1rem', fontSize: '0.78125rem', fontWeight: 700, borderRadius: '10px', border: '1px solid #E2E8F0', background: '#ffffff', color: '#475569', cursor: 'pointer' }}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                form="societyRequestForm"
-                style={{ padding: '0.55rem 1.25rem', fontSize: '0.78125rem', fontWeight: 700, borderRadius: '10px', border: 'none', background: '#176B91', color: '#ffffff', cursor: 'pointer', boxShadow: '0 2px 6px rgba(23,107,145,0.25)' }}
-              >
-                Submit Request
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Submit Request Modal */}
+      <SubmitRequestModal
+        isOpen={showSubmitModal}
+        onClose={() => setShowSubmitModal(false)}
+        handleCreateRequest={handleCreateRequest}
+        newTitle={newTitle}
+        setNewTitle={setNewTitle}
+        newCategory={newCategory}
+        setNewCategory={setNewCategory}
+        newDescription={newDescription}
+        setNewDescription={setNewDescription}
+        newPriority={newPriority}
+        setNewPriority={setNewPriority}
+        newFileName={newFileName}
+        setNewFileName={setNewFileName}
+      />
 
       {/* Selected Request Detail Drawer */}
-      {selectedRequest && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(8, 59, 86, 0.65)',
-            backdropFilter: 'blur(3px)',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: '#ffffff',
-              width: '100%',
-              maxWidth: '560px',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              boxShadow: '-6px 0 28px rgba(8, 59, 86, 0.25)',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            {/* Drawer Header (Sticky) */}
-            <div
-              style={{
-                padding: '1.25rem 1.5rem',
-                borderBottom: '1px solid #E2E8F0',
-                background: '#ffffff',
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                gap: '1rem',
-                flexShrink: 0,
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                  <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', fontWeight: 800, color: '#083B56', background: '#F1F5F9', padding: '0.2rem 0.6rem', borderRadius: '6px' }}>
-                    {selectedRequest.id}
-                  </span>
-                  {(() => {
-                    const b = getStatusBadgeConfig(selectedRequest.status);
-                    const BIcon = b.icon;
-                    return (
-                      <span style={{ fontSize: '0.7rem', fontWeight: 800, color: b.color, background: b.bg, border: `1px solid ${b.border}`, padding: '0.2rem 0.6rem', borderRadius: '999px', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-                        <BIcon size={12} /> {b.label}
-                      </span>
-                    );
-                  })()}
-                </div>
-                <h2 style={{ fontSize: '1.125rem', fontWeight: 800, color: '#083B56', margin: 0, lineHeight: 1.35 }}>
-                  {selectedRequest.title}
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedRequest(null)}
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: '10px',
-                  background: '#F1F5F9',
-                  border: '1px solid #E2E8F0',
-                  color: '#475569',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                  transition: 'all 0.15s ease',
-                }}
-                title="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Drawer Scrollable Content */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {/* Meta Grid */}
-              <div style={{ background: '#F8FAFC', borderRadius: '14px', border: '1px solid #EDF2F7', padding: '1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem', fontSize: '0.78125rem' }}>
-                <div>
-                  <span style={{ color: '#64748B', display: 'block', fontSize: '0.72rem', fontWeight: 600 }}>Resident</span>
-                  <strong style={{ color: '#083B56', fontSize: '0.85rem' }}>{selectedRequest.residentName}</strong>
-                  <div style={{ color: '#64748B', fontSize: '0.72rem' }}>{selectedRequest.flatCode}</div>
-                </div>
-                <div>
-                  <span style={{ color: '#64748B', display: 'block', fontSize: '0.72rem', fontWeight: 600 }}>Category</span>
-                  <span style={{ color: '#176B91', background: '#EAF6FC', padding: '0.2rem 0.5rem', borderRadius: '6px', fontWeight: 700, fontSize: '0.72rem', display: 'inline-block', marginTop: '0.15rem' }}>
-                    {formatCategoryName(selectedRequest.category)}
-                  </span>
-                </div>
-                <div>
-                  <span style={{ color: '#64748B', display: 'block', fontSize: '0.72rem', fontWeight: 600 }}>Assigned Officer</span>
-                  <span style={{ color: '#083B56', fontWeight: 700 }}>{selectedRequest.assignedOfficerName || 'Not Assigned'}</span>
-                </div>
-                <div>
-                  <span style={{ color: '#64748B', display: 'block', fontSize: '0.72rem', fontWeight: 600 }}>Priority</span>
-                  <span style={{ fontWeight: 800, color: selectedRequest.priority === 'URGENT' ? '#DC2626' : '#D97706' }}>
-                    {selectedRequest.priority}
-                  </span>
-                </div>
-              </div>
-
-              {/* Description */}
-              <div>
-                <h4 style={{ fontSize: '0.8125rem', fontWeight: 800, color: '#083B56', margin: '0 0 0.4rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Request Description
-                </h4>
-                <div style={{ background: '#F8FAFC', padding: '0.875rem 1rem', borderRadius: '12px', border: '1px solid #E2E8F0', color: '#334155', fontSize: '0.8125rem', lineHeight: 1.5 }}>
-                  {selectedRequest.description}
-                </div>
-              </div>
-
-              {/* Attached Documents */}
-              <div>
-                <h4 style={{ fontSize: '0.8125rem', fontWeight: 800, color: '#083B56', margin: '0 0 0.4rem', display: 'flex', alignItems: 'center', gap: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  <Paperclip size={14} /> Supporting Documents ({selectedRequest.documents.length})
-                </h4>
-                {selectedRequest.documents.length === 0 ? (
-                  <p style={{ color: '#8B9AA5', fontSize: '0.75rem', fontStyle: 'italic', margin: 0 }}>No documents attached to this application.</p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    {selectedRequest.documents.map((doc) => (
-                      <div key={doc.id} style={{ padding: '0.75rem 1rem', background: '#F8FAFC', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78125rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <Paperclip size={16} color="#176B91" />
-                          <span style={{ fontWeight: 700, color: '#083B56' }}>{doc.fileName}</span>
-                        </div>
-                        <span style={{ fontSize: '0.7rem', color: '#64748B' }}>uploaded by {doc.uploadedBy}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Audit Trail */}
-              <div>
-                <h4 style={{ fontSize: '0.8125rem', fontWeight: 800, color: '#083B56', margin: '0 0 0.4rem', display: 'flex', alignItems: 'center', gap: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  <History size={14} /> Audit Trail ({selectedRequest.history.length})
-                </h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '200px', overflowY: 'auto' }}>
-                  {selectedRequest.history.map((h) => (
-                    <div key={h.id} style={{ padding: '0.75rem', background: '#F8FAFC', borderRadius: '10px', border: '1px solid #E2E8F0', fontSize: '0.75rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748B', fontSize: '0.7rem', marginBottom: '0.2rem' }}>
-                        <span><strong style={{ color: '#083B56' }}>{h.actorName}</strong> ({h.actorRole})</span>
-                        <span>{h.timestamp}</span>
-                      </div>
-                      <div style={{ fontWeight: 700, color: '#083B56' }}>{h.action}</div>
-                      {h.notes && <p style={{ color: '#475569', fontSize: '0.72rem', fontStyle: 'italic', margin: '0.25rem 0 0' }}>"{h.notes}"</p>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Admin & Committee Review Actions */}
-              {(activeRole === 'secretary' || activeRole === 'committee' || activeRole === 'admin') && (
-                <div style={{ marginTop: '0.5rem', background: '#F8FAFC', padding: '1.25rem', borderRadius: '16px', border: '1px solid #DCE8EF', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: '#083B56', margin: 0 }}>
-                    Official Committee Decision &amp; Actions
-                  </h4>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#083B56', marginBottom: '0.25rem' }}>
-                      Decision Notes / Correction Comments
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Add officer review notes or remarks..."
-                      value={actionNotes}
-                      onChange={(e) => setActionNotes(e.target.value)}
-                      style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', fontSize: '0.78125rem', border: '1px solid #CBD5E1', background: '#ffffff', color: '#083B56', boxSizing: 'border-box' }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#083B56', marginBottom: '0.25rem' }}>
-                      Assign Officer Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Secretary Mayuri / Chairman Mehta"
-                      value={assignedOfficer}
-                      onChange={(e) => setAssignedOfficer(e.target.value)}
-                      style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', fontSize: '0.78125rem', border: '1px solid #CBD5E1', background: '#ffffff', color: '#083B56', boxSizing: 'border-box' }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#083B56', marginBottom: '0.25rem' }}>
-                      Approval Certificate / NOC PDF Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Signed_NOC_Certificate.pdf"
-                      value={approvalDocName}
-                      onChange={(e) => setApprovalDocName(e.target.value)}
-                      style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', fontSize: '0.78125rem', border: '1px solid #CBD5E1', background: '#ffffff', color: '#083B56', boxSizing: 'border-box' }}
-                    />
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '0.5rem', paddingTop: '0.5rem' }}>
-                    <button
-                      type="button"
-                      onClick={() => handleStatusTransition('UNDER_REVIEW')}
-                      style={{ flex: 1, padding: '0.6rem', background: '#D97706', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '0.78125rem', cursor: 'pointer' }}
-                    >
-                      Mark Review
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleStatusTransition('APPROVED')}
-                      style={{ flex: 1.5, padding: '0.6rem', background: '#059669', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '0.78125rem', cursor: 'pointer', boxShadow: '0 2px 8px rgba(5, 150, 105, 0.25)' }}
-                    >
-                      Approve Request
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleStatusTransition('REJECTED')}
-                      style={{ flex: 1, padding: '0.6rem', background: '#DC2626', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '0.78125rem', cursor: 'pointer' }}
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <RequestDetailDrawer
+        selectedRequest={selectedRequest}
+        onClose={() => setSelectedRequest(null)}
+        activeRole={activeRole}
+        formatCategoryName={formatCategoryName}
+        getStatusBadgeConfig={getStatusBadgeConfig}
+        actionNotes={actionNotes}
+        setActionNotes={setActionNotes}
+        assignedOfficer={assignedOfficer}
+        setAssignedOfficer={setAssignedOfficer}
+        approvalDocName={approvalDocName}
+        setApprovalDocName={setApprovalDocName}
+        handleStatusTransition={handleStatusTransition}
+      />
     </div>
   );
 };
-

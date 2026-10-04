@@ -19,11 +19,17 @@ import {
   Building2,
   RefreshCw,
   X,
+  CreditCard,
+  CheckCircle2,
 } from 'lucide-react';
 import { societyServicesEngine } from '../services/societyServicesEngine';
 import type { ServiceCategory, VendorPartner, ServiceItem, ServiceBookingOrder, RecurringScheduleType, OrderStatus } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
+import { realtimeService } from '../../../services/realtimeService';
+import { RazorpayCheckoutModal } from '../../../domains/payments/RazorpayCheckoutModal';
+import { AdvertisementPopup, OffersLauncherPill } from '../../../components/common/AdvertisementPopup';
+import { FileUpload } from '../../../components/ui/FileUpload';
 
 interface SocietyServicesHubProps {
   userRoleOverride?: string;
@@ -76,12 +82,16 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
   const [ratingVal, setRatingVal] = useState(5);
   const [reviewNotes, setReviewNotes] = useState('');
 
+  const [checkoutOrder, setCheckoutOrder] = useState<ServiceBookingOrder | null>(null);
+  const [isOffersOpen, setIsOffersOpen] = useState(false);
+
   const [newItemForm, setNewItemForm] = useState({
     title: '',
     category: 'PLUMBER' as ServiceCategory,
     price: 499,
     unit: 'per service',
     description: '',
+    imageUrl: '',
   });
 
   const loadData = () => {
@@ -97,6 +107,28 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
     });
     return () => unsubscribe();
   }, []);
+
+  const handlePaymentSuccess = (paymentDetails: { transactionId: string; method: "card" | "upi" | "net_banking"; amount: number }) => {
+    if (!checkoutOrder) return;
+    societyServicesEngine.updateOrderStatus(checkoutOrder.id, 'COMPLETED');
+    realtimeService.publish(
+      'PAYMENT_COMPLETED',
+      {
+        orderId: checkoutOrder.id,
+        orderNumber: checkoutOrder.orderNumber,
+        amount: checkoutOrder.price,
+        serviceTitle: checkoutOrder.serviceTitle,
+        vendorName: checkoutOrder.vendorName,
+        paymentId: paymentDetails.transactionId,
+        paymentMethod: paymentDetails.method,
+      },
+      'soc-1',
+      'RESIDENT',
+      currentUser?.name || 'Resident'
+    );
+    loadData();
+    setCheckoutOrder(null);
+  };
 
   const handleBookSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -456,6 +488,28 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                     {order.status}
                   </span>
 
+                  {order.status !== 'COMPLETED' && (
+                    <button
+                      onClick={() => setCheckoutOrder(order)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        padding: '0.35rem 0.75rem',
+                        borderRadius: '0.5rem',
+                        background: '#059669',
+                        color: '#fff',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        border: 'none',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px rgba(5, 150, 105, 0.2)',
+                      }}
+                    >
+                      <CreditCard size={13} /> Pay ₹{order.price}
+                    </button>
+                  )}
+
                   {order.status === 'COMPLETED' && !order.rating && (
                     <button
                       onClick={() => {
@@ -775,6 +829,25 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                 </div>
               </div>
 
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Service Photo / Rate Sheet (Optional)
+                </label>
+                <FileUpload
+                  category="general"
+                  label="Upload Service Photo or Menu/Rate Card"
+                  onUploadSuccess={(url: string) => {
+                    setNewItemForm((prev) => ({ ...prev, imageUrl: url }));
+                  }}
+                />
+                {newItemForm.imageUrl && (
+                  <div className="mt-2 text-xs text-emerald-700 flex items-center gap-1.5 font-medium">
+                    <CheckCircle2 size={13} />
+                    <span>Photo attached successfully</span>
+                  </div>
+                )}
+              </div>
+
               <div className="flex justify-end gap-2 pt-3 border-t">
                 <button
                   type="button"
@@ -796,6 +869,29 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
           </div>
         </div>
       )}
+
+      {/* Razorpay Online Payment Checkout */}
+      {checkoutOrder && (
+        <RazorpayCheckoutModal
+          isOpen={!!checkoutOrder}
+          onClose={() => setCheckoutOrder(null)}
+          amount={checkoutOrder.price}
+          purpose={`Payment for ${checkoutOrder.serviceTitle} (${checkoutOrder.vendorName})`}
+          invoiceNumber={checkoutOrder.orderNumber}
+          invoiceId={checkoutOrder.id}
+          userName={currentUser?.name || 'Resident'}
+          userPhone={currentUser?.phone || '9876543210'}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
+
+      {/* Floating Offers Pill Launcher & Popup */}
+      <OffersLauncherPill onOpen={() => setIsOffersOpen(true)} />
+      <AdvertisementPopup
+        forceOpen={isOffersOpen}
+        onClose={() => setIsOffersOpen(false)}
+        societyId="soc-gvs"
+      />
     </div>
   );
 };

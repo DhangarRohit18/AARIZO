@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { amenityService } from '../../../services/amenityService';
+import { realtimeService } from '../../../services/realtimeService';
 import type { SocietyAmenity, AmenityBooking } from '../../../types/amenity';
 import { Modal } from '../../../components/ui/Modal';
 import { DataTable } from '../../../components/ui/DataTable';
 import { MobileDataCard } from '../../../components/ui/MobileDataCard';
+import { RazorpayCheckoutModal } from '../../../domains/payments/RazorpayCheckoutModal';
+import { AdvertisementPopup } from '../../../components/ads/AdvertisementPopup';
+import { OffersLauncherPill } from '../../../components/ads/OffersLauncherPill';
 import {
   Calendar,
   Clock,
@@ -13,7 +17,9 @@ import {
   CheckCircle2,
   AlertCircle,
   XCircle,
-  Sparkles
+  Sparkles,
+  CreditCard,
+  ShieldCheck,
 } from 'lucide-react';
 
 export const ResidentAmenityBookingPage: React.FC = () => {
@@ -26,6 +32,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
   const [amenities, setAmenities] = useState<SocietyAmenity[]>([]);
   const [userBookings, setUserBookings] = useState<AmenityBooking[]>([]);
   const [selectedAmenity, setSelectedAmenity] = useState<SocietyAmenity | null>(null);
+  const [isAdOpen, setIsAdOpen] = useState(false);
 
   // Booking Form State
   const [bookingDate, setBookingDate] = useState<string>(new Date().toISOString().substring(0, 10));
@@ -37,8 +44,19 @@ export const ResidentAmenityBookingPage: React.FC = () => {
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState<string | null>(null);
 
+  // Razorpay Payment Modal State
+  const [isRazorpayOpen, setIsRazorpayOpen] = useState(false);
+
   useEffect(() => {
     loadData();
+
+    // Listen for realtime booking updates from other devices / admin
+    const unsub = realtimeService.subscribe('*', (msg) => {
+      if (msg.topic === 'AMENITY_BOOKED' || msg.topic === 'AMENITY_AVAILABILITY') {
+        loadData();
+      }
+    });
+    return () => unsub();
   }, [societyId, residentId]);
 
   const loadData = () => {
@@ -68,6 +86,13 @@ export const ResidentAmenityBookingPage: React.FC = () => {
     setBookingError(null);
     setBookingSuccess(null);
 
+    // If amenity requires a booking fee, invoke Razorpay checkout
+    if (selectedAmenity.bookingFee && selectedAmenity.bookingFee > 0) {
+      setIsRazorpayOpen(true);
+      return;
+    }
+
+    // Complimentary booking flow
     try {
       const newBooking = amenityService.createBooking(
         societyId,
@@ -79,12 +104,29 @@ export const ResidentAmenityBookingPage: React.FC = () => {
         startTime,
         endTime,
         guestCount,
-        purpose
+        purpose,
+        {
+          bookingFee: 0,
+          paymentStatus: 'FREE',
+        }
+      );
+
+      realtimeService.publish(
+        'AMENITY_BOOKED',
+        {
+          amenityName: selectedAmenity.name,
+          residentName,
+          bookingDate,
+          timeSlot: `${startTime} - ${endTime}`,
+          amount: 0,
+        },
+        societyId,
+        'RESIDENT'
       );
 
       setBookingSuccess(
         newBooking.status === 'PENDING'
-          ? 'Booking request submitted! Pending admin approval.'
+          ? 'Complimentary booking request submitted! Pending admin approval.'
           : 'Slot booked successfully!'
       );
       loadData();
@@ -93,6 +135,61 @@ export const ResidentAmenityBookingPage: React.FC = () => {
       }, 1500);
     } catch (err: any) {
       setBookingError(err.message || 'Failed to complete booking');
+    }
+  };
+
+  const handleRazorpaySuccess = (paymentDetails: {
+    transactionId: string;
+    method: 'upi' | 'card' | 'net_banking';
+    amount: number;
+  }) => {
+    if (!selectedAmenity) return;
+
+    try {
+      amenityService.createBooking(
+        societyId,
+        selectedAmenity.id,
+        residentId,
+        residentName,
+        flatNumber,
+        bookingDate,
+        startTime,
+        endTime,
+        guestCount,
+        purpose,
+        {
+          bookingFee: selectedAmenity.bookingFee,
+          paymentStatus: 'PAID',
+          paymentId: paymentDetails.transactionId,
+        }
+      );
+
+      // Realtime SSE broadcast to society committee & security
+      realtimeService.publish(
+        'AMENITY_BOOKED',
+        {
+          amenityName: selectedAmenity.name,
+          residentName,
+          bookingDate,
+          timeSlot: `${startTime} - ${endTime}`,
+          amount: selectedAmenity.bookingFee,
+          transactionId: paymentDetails.transactionId,
+          method: paymentDetails.method,
+        },
+        societyId,
+        'RESIDENT'
+      );
+
+      setBookingSuccess(
+        `Payment of ₹${paymentDetails.amount} verified! Booking confirmed for ${selectedAmenity.name}. Transaction Ref: ${paymentDetails.transactionId}`
+      );
+      setIsRazorpayOpen(false);
+      loadData();
+      setTimeout(() => {
+        setSelectedAmenity(null);
+      }, 2000);
+    } catch (err: any) {
+      setBookingError(err.message || 'Payment received but failed to create booking');
     }
   };
 
@@ -114,7 +211,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
             <h1 className="text-xl md:text-2xl font-extrabold text-white">Amenities & Clubhouse Booking</h1>
           </div>
           <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
-            Reserve slots for swimming pool, gym, tennis courts, party hall, and community facilities.
+            Reserve slots for swimming pool, gym, tennis courts, party hall, and community facilities with live Razorpay checkout.
           </p>
         </div>
       </div>
@@ -127,13 +224,25 @@ export const ResidentAmenityBookingPage: React.FC = () => {
               {amenity.imageUrl && (
                 <div className="h-44 w-full overflow-hidden relative">
                   <img src={amenity.imageUrl} alt={amenity.name} className="w-full h-full object-cover" />
+                  
+                  {/* Amenity Fee Badge */}
+                  <div className="absolute top-3 left-3 bg-[#083B56]/90 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1 shadow-sm">
+                    {amenity.bookingFee && amenity.bookingFee > 0 ? (
+                      <span className="text-amber-300 font-extrabold">₹{amenity.bookingFee} / slot</span>
+                    ) : (
+                      <span className="text-emerald-300 font-bold">Complimentary (₹0)</span>
+                    )}
+                  </div>
+
                   <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-medium">
                     {amenity.type.replace(/_/g, ' ')}
                   </div>
                 </div>
               )}
               <div className="p-5">
-                <h3 className="text-lg font-bold text-slate-900">{amenity.name}</h3>
+                <div className="flex justify-between items-start gap-2">
+                  <h3 className="text-lg font-bold text-slate-900">{amenity.name}</h3>
+                </div>
                 <p className="text-slate-500 text-xs mt-1 flex items-center gap-1">
                   <Building className="w-3.5 h-3.5 text-[#176B91]" /> {amenity.location}
                 </p>
@@ -177,7 +286,7 @@ export const ResidentAmenityBookingPage: React.FC = () => {
                 onClick={() => handleOpenBookingModal(amenity)}
                 disabled={!amenity.isBookable || !amenity.isActive}
               >
-                <Calendar className="w-4 h-4" /> Book Slot Now
+                <Calendar className="w-4 h-4" /> Book Slot {amenity.bookingFee && amenity.bookingFee > 0 ? `(₹${amenity.bookingFee})` : 'Now'}
               </button>
             </div>
           </div>
@@ -194,6 +303,21 @@ export const ResidentAmenityBookingPage: React.FC = () => {
               { key: 'bookingDate', header: 'Date' },
               { key: 'time', header: 'Time Slot', render: (bk: AmenityBooking) => `${bk.startTime} - ${bk.endTime}` },
               { key: 'guestCount', header: 'Guests', render: (bk: AmenityBooking) => `${bk.guestCount} Pax` },
+              {
+                key: 'bookingFee',
+                header: 'Fee & Payment',
+                render: (bk: AmenityBooking) => (
+                  <span className="text-xs font-semibold">
+                    {bk.bookingFee && bk.bookingFee > 0 ? (
+                      <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md font-bold">
+                        ₹{bk.bookingFee} • {bk.paymentStatus || 'PAID'}
+                      </span>
+                    ) : (
+                      <span className="text-slate-500 font-medium">Free</span>
+                    )}
+                  </span>
+                )
+              },
               {
                 key: 'status',
                 header: 'Status',
@@ -243,7 +367,8 @@ export const ResidentAmenityBookingPage: React.FC = () => {
                 attributes={[
                   { label: 'Date', value: bk.bookingDate },
                   { label: 'Time', value: `${bk.startTime} - ${bk.endTime}` },
-                  { label: 'Guests', value: `${bk.guestCount} Pax` }
+                  { label: 'Guests', value: `${bk.guestCount} Pax` },
+                  { label: 'Payment', value: bk.bookingFee && bk.bookingFee > 0 ? `₹${bk.bookingFee} (${bk.paymentStatus})` : 'Free' }
                 ]}
                 actions={
                   (bk.status === 'APPROVED' || bk.status === 'PENDING') ? (
@@ -286,6 +411,23 @@ export const ResidentAmenityBookingPage: React.FC = () => {
                 <p className="text-amber-700 font-medium">⚠️ Note: Bookings for this facility require society admin approval.</p>
               )}
             </div>
+
+            {/* Price Fee Notice */}
+            {selectedAmenity.bookingFee && selectedAmenity.bookingFee > 0 ? (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs space-y-1">
+                <div className="flex justify-between items-center font-bold text-emerald-950">
+                  <span>Facility Reservation Fee:</span>
+                  <span className="text-base text-emerald-700 font-extrabold">₹{selectedAmenity.bookingFee}</span>
+                </div>
+                <div className="flex items-center gap-1 text-[11px] text-emerald-700">
+                  <ShieldCheck size={14} /> Instant Razorpay checkout (UPI QR, GooglePay, PhonePe, Cards, NetBanking)
+                </div>
+              </div>
+            ) : (
+              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 font-semibold flex items-center gap-1.5">
+                <CheckCircle2 size={14} className="text-emerald-600" /> Complimentary Society Facility (₹0)
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">Booking Date</label>
@@ -357,16 +499,44 @@ export const ResidentAmenityBookingPage: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 text-white font-bold text-sm rounded-lg shadow-sm transition"
+                className="px-4 py-2 text-white font-bold text-sm rounded-lg shadow-sm transition flex items-center gap-1.5"
                 style={{ background: 'var(--aarizo-blue, #176B91)' }}
               >
-                Confirm Booking
+                {selectedAmenity.bookingFee && selectedAmenity.bookingFee > 0 ? (
+                  <>
+                    <CreditCard size={15} /> Pay ₹{selectedAmenity.bookingFee} via Razorpay
+                  </>
+                ) : (
+                  'Confirm Booking'
+                )}
               </button>
             </div>
           </form>
         </Modal>
       )}
+
+      {/* Razorpay Online Checkout Modal */}
+      {selectedAmenity && (
+        <RazorpayCheckoutModal
+          isOpen={isRazorpayOpen}
+          onClose={() => setIsRazorpayOpen(false)}
+          onSuccess={handleRazorpaySuccess}
+          amount={selectedAmenity.bookingFee || 0}
+          purpose={`Amenity Booking: ${selectedAmenity.name}`}
+          societyName="Green Valley Society"
+          invoiceNumber={`AMN-${Date.now().toString().slice(-6)}`}
+          invoiceId={`amn-${selectedAmenity.id}`}
+          userName={residentName}
+          userPhone={currentUser?.phone || '9876543210'}
+          userEmail={currentUser?.email || 'resident@aarizo.com'}
+        />
+      )}
+
+      {/* Society Partner Discounts Launcher & Modal */}
+      <OffersLauncherPill onClick={() => setIsAdOpen(true)} label="Sports &amp; Fitness Deals" />
+      <AdvertisementPopup isOpen={isAdOpen} onClose={() => setIsAdOpen(false)} />
     </div>
   );
 };
 
+export default ResidentAmenityBookingPage;

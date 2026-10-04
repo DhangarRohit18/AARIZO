@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { Users, Plus, QrCode, Share2, Clock, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Users, Plus, QrCode, Share2, Clock, Trash2, Camera, CheckCircle2 } from 'lucide-react';
 import { visitorService } from '../../../services/visitorService';
 import type { SmartVisitorPass, VisitorCategory, PassLifecycleType } from '../../../types/visitor';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { Modal } from '../../../components/ui/Modal';
 import { Form, FormField } from '../../../components/ui/Form';
 import { QRGenerator } from '../../../components/ui/QRGenerator';
-
 import { useAuth } from '../../../context/AuthContext';
+import { realtimeService } from '../../../services/realtimeService';
+import { RealtimeSyncBadge, FileUploader } from '../../../components/common';
+import { AdvertisementPopup, OffersLauncherPill } from '../../../components/common/AdvertisementPopup';
 
 export const VisitorPassHubPage: React.FC = () => {
   const { currentUser } = useAuth();
@@ -30,6 +32,7 @@ export const VisitorPassHubPage: React.FC = () => {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedPassForQR, setSelectedPassForQR] = useState<SmartVisitorPass | null>(null);
+  const [isOffersOpen, setIsOffersOpen] = useState(false);
 
   // Form state
   const [visitorName, setVisitorName] = useState('');
@@ -40,10 +43,31 @@ export const VisitorPassHubPage: React.FC = () => {
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [purpose, setPurpose] = useState('');
   const [groupCount, setGroupCount] = useState<number>(1);
+  const [visitorPhotoUrl, setVisitorPhotoUrl] = useState('');
 
   const refreshData = () => {
     setPasses(filterMyPasses(visitorService.getPasses(currentSocietyId)));
   };
+
+  useEffect(() => {
+    refreshData();
+
+    // Firestore real-time visitor passes sync
+    const unsubFirestore = visitorService.subscribePasses(currentSocietyId, (livePasses) => {
+      if (livePasses && livePasses.length > 0) {
+        setPasses(filterMyPasses(livePasses));
+      }
+    });
+
+    const unsub = realtimeService.subscribe('*', () => {
+      refreshData();
+    });
+
+    return () => {
+      unsubFirestore();
+      unsub();
+    };
+  }, [currentSocietyId, currentResidentId, currentFlat]);
 
   const handleCreatePass = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +88,7 @@ export const VisitorPassHubPage: React.FC = () => {
         vehicleNumber,
         purpose,
         groupCount: Number(groupCount),
+        photoUrl: visitorPhotoUrl || undefined,
       },
       { id: currentResidentId, name: residentName, role: 'resident' }
     );
@@ -72,13 +97,13 @@ export const VisitorPassHubPage: React.FC = () => {
     setIsCreateModalOpen(false);
     setSelectedPassForQR(newPass);
 
-    // Reset Form
     setVisitorName('');
     setVisitorPhone('');
     setCompanyName('');
     setVehicleNumber('');
     setPurpose('');
     setGroupCount(1);
+    setVisitorPhotoUrl('');
   };
 
   const handleRevoke = (passId: string) => {
@@ -103,26 +128,29 @@ export const VisitorPassHubPage: React.FC = () => {
               Pre-approve expected guests, deliveries, cabs, and event group entry passes for Flat {currentFlat}.
             </p>
           </div>
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            style={{
-              background: 'var(--aarizo-blue, #176B91)',
-              color: '#FFFFFF',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              borderRadius: '12px',
-              padding: '0.65rem 1.25rem',
-              fontWeight: 700,
-              fontSize: '0.85rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              flexShrink: 0,
-            }}
-          >
-            <Plus size={18} /> Pre-Approve Visitor
-          </button>
+          <div className="flex items-center gap-3">
+            <RealtimeSyncBadge state="live" label="Live Gate Sync" />
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              style={{
+                background: 'var(--aarizo-blue, #176B91)',
+                color: '#FFFFFF',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                borderRadius: '12px',
+                padding: '0.65rem 1.25rem',
+                fontWeight: 700,
+                fontSize: '0.85rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                flexShrink: 0,
+              }}
+            >
+              <Plus size={18} /> Pre-Approve Visitor
+            </button>
+          </div>
         </div>
 
         {/* Active & Expected Passes */}
@@ -200,6 +228,30 @@ export const VisitorPassHubPage: React.FC = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#657785', fontSize: '0.75rem', marginTop: '0.2rem' }}>
                         <Clock size={14} /> Pass Code: <span style={{ fontFamily: 'monospace', fontWeight: 800, color: 'var(--aarizo-blue, #176B91)', fontSize: '0.85rem' }}>{pass.passCode}</span>
                       </div>
+                      {pass.photoUrl && (
+                        <div style={{ marginTop: '0.35rem' }}>
+                          <a
+                            href={pass.photoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.35rem',
+                              padding: '0.2rem 0.5rem',
+                              borderRadius: '0.375rem',
+                              background: '#e0f2fe',
+                              color: '#0284c7',
+                              fontSize: '0.75rem',
+                              fontWeight: 600,
+                              textDecoration: 'none',
+                            }}
+                          >
+                            <Camera size={13} />
+                            <span>View Gate Visitor Photo</span>
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -339,6 +391,30 @@ export const VisitorPassHubPage: React.FC = () => {
             />
           </FormField>
 
+          <div style={{ marginTop: '0.25rem' }}>
+            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--aarizo-navy, #083B56)', marginBottom: '0.35rem' }}>
+              Visitor Photo / ID Document (Optional)
+            </label>
+            <FileUploader
+              label="Attach Visitor Photo or ID Proof"
+              entityType="resident"
+              entityId={currentResidentId}
+              societyId={currentSocietyId}
+              accept="image/*,application/pdf"
+              maxSizeMB={5}
+              onUploadSuccess={(res) => {
+                setVisitorPhotoUrl(res.downloadUrl);
+              }}
+              onRemove={() => setVisitorPhotoUrl('')}
+            />
+            {visitorPhotoUrl && (
+              <div style={{ marginTop: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: '#059669', background: '#ecfdf5', padding: '0.35rem 0.6rem', borderRadius: '0.375rem' }}>
+                <CheckCircle2 size={13} />
+                <span>Photo / ID Document attached</span>
+              </div>
+            )}
+          </div>
+
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
             <button
               type="button"
@@ -381,6 +457,14 @@ export const VisitorPassHubPage: React.FC = () => {
           </div>
         </Modal>
       )}
+
+      {/* Floating Offers Pill Launcher & Popup */}
+      <OffersLauncherPill onOpen={() => setIsOffersOpen(true)} />
+      <AdvertisementPopup
+        forceOpen={isOffersOpen}
+        onClose={() => setIsOffersOpen(false)}
+        societyId={currentSocietyId}
+      />
     </div>
   );
 };

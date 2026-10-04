@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import type { TicketCategory, SupportTicket } from '../../../domains/support';
 import { Input, Select, Button } from '../../common';
+import { FileUpload } from '../../ui/FileUpload';
 import { ArrowLeft } from 'lucide-react';
 import '../resident.css';
 import '../more/more.css';
 
 export interface TicketFormProps {
-  onSubmit: (newTicket: Partial<SupportTicket>) => void;
+  onSubmit: (newTicket: Partial<SupportTicket> & { attachmentUrl?: string }) => void;
   onBack: () => void;
 }
 
@@ -15,6 +16,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({ onSubmit, onBack }) => {
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
   const [locationArea, setLocationArea] = useState('Flat 1204');
+  const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -51,6 +53,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({ onSubmit, onBack }) => {
       updatedAt: 'Just now',
       flatCode: '1204',
       tower: 'Tower B',
+      attachmentUrl: attachmentUrl || undefined,
       updates: [
         {
           id: `up-${Date.now()}`,
@@ -116,6 +119,18 @@ export const TicketForm: React.FC<TicketFormProps> = ({ onSubmit, onBack }) => {
         value={locationArea}
         onChange={(e) => setLocationArea(e.target.value)}
       />
+
+      {/* File Upload Attachment for Proof / Inspection */}
+      <div className="input-group">
+        <FileUpload
+          label="Attach Photo or Document of Issue (Optional)"
+          category="tickets"
+          accept="image/*,application/pdf"
+          maxSizeMB={10}
+          onUploadSuccess={(url) => setAttachmentUrl(url)}
+          onRemove={() => setAttachmentUrl(null)}
+        />
+      </div>
 
       <div className="vis-form-actions">
         <Button variant="outline" type="button" onClick={onBack}>

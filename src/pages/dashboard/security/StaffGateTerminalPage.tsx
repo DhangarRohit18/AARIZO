@@ -11,6 +11,7 @@ import {
   UserX,
 } from 'lucide-react';
 import { staffService } from '../../../services/staffService';
+import { realtimeService } from '../../../services/realtimeService';
 import type { DomesticWorkerProfile, StaffAttendanceLog, AttendanceStatus } from '../../../types/staff';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 
@@ -36,6 +37,14 @@ export const StaffGateTerminalPage: React.FC = () => {
 
   useEffect(() => {
     reloadData();
+
+    const unsub = realtimeService.subscribe('*', (msg) => {
+      if (['WORKER_ENTRY_EXIT', 'STAFF_DUTY_CHANGED', 'SOCIETY_SYNC'].includes(msg.topic)) {
+        reloadData();
+      }
+    });
+
+    return () => unsub();
   }, []);
 
   const handleSearch = (query: string) => {

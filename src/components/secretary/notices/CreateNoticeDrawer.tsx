@@ -5,7 +5,8 @@ import type {
   NoticeTargetAudience,
   SecretaryNoticeItem,
 } from '../../../domains/secretary/types';
-import { Megaphone, X, Eye, Send } from 'lucide-react';
+import { Megaphone, X, Eye, Send, Paperclip } from 'lucide-react';
+import { FileUpload } from '../../ui/FileUpload';
 import '../secretary.css';
 
 interface CreateNoticeDrawerProps {
@@ -25,6 +26,8 @@ export const CreateNoticeDrawer: React.FC<CreateNoticeDrawerProps> = ({
   const [priority, setPriority] = useState<NoticePriority>('Normal');
   const [targetAudience, setTargetAudience] = useState<NoticeTargetAudience>('All Blocks');
   const [content, setContent] = useState<string>('');
+  const [attachmentUrl, setAttachmentUrl] = useState<string>('');
+  const [attachmentName, setAttachmentName] = useState<string>('');
 
   const isFormValid = title.trim().length > 3 && content.trim().length > 10;
 
@@ -35,6 +38,8 @@ export const CreateNoticeDrawer: React.FC<CreateNoticeDrawerProps> = ({
       priority,
       targetAudience,
       content: content.trim(),
+      attachmentUrl: attachmentUrl || undefined,
+      attachmentName: attachmentName || undefined,
       status: 'Published',
       publishedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       authorName: 'Mayuri Udar',
@@ -50,6 +55,8 @@ export const CreateNoticeDrawer: React.FC<CreateNoticeDrawerProps> = ({
       priority,
       targetAudience,
       content: content.trim(),
+      attachmentUrl: attachmentUrl || undefined,
+      attachmentName: attachmentName || undefined,
       status: 'Draft',
       authorName: 'Mayuri Udar',
       authorRole: 'Society Secretary',
@@ -137,11 +144,29 @@ export const CreateNoticeDrawer: React.FC<CreateNoticeDrawerProps> = ({
             <textarea
               className="search-input-field"
               rows={4}
-              style={{ width: '100%', marginBottom: '1rem', padding: '0.5rem', fontSize: '0.8125rem' }}
+              style={{ width: '100%', marginBottom: '0.75rem', padding: '0.5rem', fontSize: '0.8125rem' }}
               placeholder="Type official notice details, schedule, requirements, and instructions for residents..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label className="form-group-label" style={{ fontSize: '0.75rem' }}>Attach Circular / File (Optional)</label>
+              <FileUpload
+                category="general"
+                label="Upload Circular PDF / Image"
+                accept="image/*,application/pdf"
+                currentUrl={attachmentUrl}
+                onUploadSuccess={(url, name) => {
+                  setAttachmentUrl(url);
+                  setAttachmentName(name);
+                }}
+                onRemove={() => {
+                  setAttachmentUrl('');
+                  setAttachmentName('');
+                }}
+              />
+            </div>
 
             <div style={{ display: 'flex', gap: '0.75rem' }}>
               <button
@@ -175,6 +200,14 @@ export const CreateNoticeDrawer: React.FC<CreateNoticeDrawerProps> = ({
               <p style={{ margin: 0, fontSize: '0.8125rem', color: '#475569', whiteSpace: 'pre-wrap' }}>
                 {content}
               </p>
+              {attachmentUrl && (
+                <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: '#ffffff', borderRadius: '6px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Paperclip size={14} style={{ color: 'var(--aarizo-blue, #176B91)' }} />
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--aarizo-navy, #083B56)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    Circular Attached: {attachmentName || 'Official Document'}
+                  </span>
+                </div>
+              )}
               <div style={{ marginTop: '0.75rem', fontSize: '0.6875rem', color: '#64748b', borderTop: '1px solid #e2e8f0', paddingTop: '0.375rem' }}>
                 Posted by Mayuri Udar (Secretary) • Broadcast preview for Resident App
               </div>

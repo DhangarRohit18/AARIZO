@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type {
   GuardVisitor,
   GateHistoryRecord,
@@ -8,9 +8,10 @@ import type {
 } from '../../domains/guard/types';
 import { MOCK_GUARD_PROFILE } from '../../mockData/guard/guardProfile';
 import { MOCK_GATES } from '../../mockData/guard/gates';
-import { INITIAL_GUARD_VISITORS } from '../../mockData/guard/guardVisitors';
 import { INITIAL_GATE_HISTORY } from '../../mockData/guard/gateHistory';
 import { INITIAL_GUARD_ALERTS } from '../../mockData/guard/guardAlerts';
+import { apiClient } from '../../services/apiClient';
+import { realtimeService } from '../../services/realtimeService';
 
 import { GuardHome } from './home/GuardHome';
 import { PassVerification } from './verification/PassVerification';
@@ -30,11 +31,51 @@ export type GuardShellTab = 'home' | 'verify' | 'visitors' | 'inside' | 'history
 export const GuardShell: React.FC = () => {
   const [activeTab, setActiveTab] = useState<GuardShellTab>('home');
 
-  // Guard domain local prototype state
+  // Guard domain live state from PostgreSQL
   const [gate, setGate] = useState<Gate>(MOCK_GATES[0]);
-  const [visitors, setVisitors] = useState<GuardVisitor[]>(INITIAL_GUARD_VISITORS);
+  const [visitors, setVisitors] = useState<GuardVisitor[]>([]);
   const [history, setHistory] = useState<GateHistoryRecord[]>(INITIAL_GATE_HISTORY);
   const [alerts, setAlerts] = useState<GuardAlert[]>(INITIAL_GUARD_ALERTS);
+
+  const loadGuardData = async () => {
+    try {
+      const passes = await apiClient.getVisitorPasses();
+      if (passes && Array.isArray(passes) && passes.length > 0) {
+        const mapped: GuardVisitor[] = passes.map((p: any) => ({
+          id: p.id,
+          passcode: (p.id.slice(-4) || '8492'),
+          name: p.visitorName,
+          phone: p.phone,
+          visitorType: (p.passType?.toLowerCase() || 'guest') as any,
+          visitorTypeLabel: `${p.passType || 'Guest'} Visitor`,
+          residentName: 'Vikram Joshi',
+          flatCode: 'Flat 1204',
+          tower: 'Tower B',
+          societyName: 'Green Valley Society',
+          vehicleNumber: p.vehicleNumber || undefined,
+          expectedDate: 'Today',
+          expectedTimeSlot: new Date(p.validFrom).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          status: p.status === 'CHECKED_IN' ? 'checked_in' : (p.status === 'APPROVED' ? 'approved' : 'expected'),
+          verificationStatus: 'valid',
+          createdAt: new Date(p.createdAt).toLocaleDateString(),
+          gateName: 'Gate #1 Main Entrance',
+          gateOfficer: 'Officer Ramesh Shinde',
+          notes: p.purpose || 'Visit',
+        }));
+        setVisitors(mapped);
+      }
+    } catch (err) {
+      console.error('Error loading guard visitors:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadGuardData();
+    const unsub = realtimeService.subscribe('*', () => {
+      loadGuardData();
+    });
+    return () => unsub();
+  }, []);
 
   // Active modal / detail selection states
   const [selectedVisitor, setSelectedVisitor] = useState<GuardVisitor | null>(null);

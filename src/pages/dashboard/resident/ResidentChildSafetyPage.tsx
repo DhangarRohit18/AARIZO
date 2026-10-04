@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { childSafetyService } from '../../../services/childSafetyService';
+import { realtimeService } from '../../../services/realtimeService';
 import type {
   ChildProfile,
   ChildPickupQR,
   PickupLog,
 } from '../../../types/childSafety';
 import { Modal } from '../../../components/ui/Modal';
+import { FileUpload } from '../../../components/ui/FileUpload';
+import { AdvertisementPopup } from '../../../components/ads/AdvertisementPopup';
+import { OffersLauncherPill } from '../../../components/ads/OffersLauncherPill';
 import {
   ShieldCheck,
   AlertTriangle,
@@ -23,6 +27,8 @@ import { QRCodeSVG } from 'qrcode.react';
 export const ResidentChildSafetyPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const [isAdOpen, setIsAdOpen] = useState(false);
+  const [escortPhotoUrl, setEscortPhotoUrl] = useState('');
   const societyId = (currentUser as any)?.societyId || 'soc-gvs';
   const flatNumber = currentUser?.flatNumber || 'B-1204';
 
@@ -53,6 +59,14 @@ export const ResidentChildSafetyPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
+
+    const unsub = realtimeService.subscribe('*', (msg) => {
+      if (['CHILD_SAFETY_UPDATED', 'CHILD_EXIT_SCANNED', 'CHILD_ALERT_TRIGGERED', 'EMERGENCY_ALERTS'].includes(msg.topic)) {
+        loadData();
+      }
+    });
+
+    return () => unsub();
   }, [societyId, flatNumber]);
 
   const loadData = () => {
@@ -719,6 +733,19 @@ export const ResidentChildSafetyPage: React.FC = () => {
             />
           </div>
 
+          <div style={{ marginTop: '0.5rem' }}>
+            <FileUpload
+              category="kyc"
+              label="Escort Photo ID / Aadhaar Document (Optional)"
+              onUploadSuccess={(url) => setEscortPhotoUrl(url)}
+            />
+            {escortPhotoUrl && (
+              <p style={{ fontSize: '0.75rem', color: '#059669', margin: '0.25rem 0 0', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <CheckCircle2 size={13} /> Escort ID Document Attached
+              </p>
+            )}
+          </div>
+
           <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
             <button
               type="button"
@@ -870,6 +897,10 @@ export const ResidentChildSafetyPage: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Society Partner Discounts Launcher & Modal */}
+      <OffersLauncherPill onClick={() => setIsAdOpen(true)} label="Family &amp; Kids Perks" />
+      <AdvertisementPopup isOpen={isAdOpen} onClose={() => setIsAdOpen(false)} />
     </div>
   );
 };

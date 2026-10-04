@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePrototype } from '../../../context/PrototypeContext';
 import type { PaymentRecord, PaymentMethod } from '../../../domains/payments';
 import { formatCurrency } from '../../../domains/payments';
-import { mockDues, mockPaymentHistory } from '../../../mockData/payments';
+import { apiClient } from '../../../services/apiClient';
+import { realtimeService } from '../../../services/realtimeService';
 import { PaymentCard } from './PaymentCard';
 import { PaymentDetail } from './PaymentDetail';
 import { PaymentCheckout } from './PaymentCheckout';
@@ -22,9 +23,44 @@ type PaymentsSubView = 'main' | 'detail' | 'success' | 'receipt';
 export const PaymentsHome: React.FC<PaymentsHomeProps> = () => {
   const { uiState } = usePrototype();
 
-  // Local state for active dues and history
-  const [duesList, setDuesList] = useState<PaymentRecord[]>(mockDues);
-  const [historyList, setHistoryList] = useState<PaymentRecord[]>(mockPaymentHistory);
+  // Local state for active dues and history loaded from PostgreSQL
+  const [duesList, setDuesList] = useState<PaymentRecord[]>([]);
+  const [historyList, setHistoryList] = useState<PaymentRecord[]>([]);
+
+  const loadInvoices = async () => {
+    try {
+      const invoices = await apiClient.getBillingInvoices();
+      if (invoices && Array.isArray(invoices) && invoices.length > 0) {
+        const all: PaymentRecord[] = invoices.map((inv: any) => ({
+          id: inv.id,
+          title: `Society Maintenance — ${inv.invoiceNumber}`,
+          description: `Flat ${inv.flat?.flatNumber || '1204'} monthly maintenance assessment`,
+          accountReference: inv.invoiceNumber || 'ACC-1204',
+          amount: Number(inv.totalAmount || 0),
+          dueDate: new Date(inv.dueDate).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
+          category: 'maintenance',
+          status: inv.status === 'PAID' ? 'PAID' : (inv.status === 'OVERDUE' ? 'OVERDUE' : 'DUE'),
+          paymentDate: inv.paidAt ? new Date(inv.paidAt).toLocaleDateString('en-IN') : undefined,
+          transactionId: inv.id.slice(-8),
+          paymentMethod: inv.paymentMode ? (inv.paymentMode.toLowerCase() as any) : undefined,
+          period: 'Monthly Assessment',
+        }));
+
+        setDuesList(all.filter((i) => i.status !== 'PAID'));
+        setHistoryList(all.filter((i) => i.status === 'PAID'));
+      }
+    } catch (err) {
+      console.error('Error fetching live billing invoices:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadInvoices();
+    const unsub = realtimeService.subscribe('PAYMENT_STATUS', () => {
+      loadInvoices();
+    });
+    return () => unsub();
+  }, []);
 
   const [activeTab, setActiveTab] = useState<'all' | 'unpaid' | 'history'>('all');
   const [subView, setSubView] = useState<PaymentsSubView>('main');
@@ -177,6 +213,32 @@ export const PaymentsHome: React.FC<PaymentsHomeProps> = () => {
       setSelectedPayment(updatedPaidRecord);
       setCompletedTxnId(txnId);
       setSubView('success');
+
+      // Persist payment to PostgreSQL backend database
+      apiClient
+        .updateBillingInvoice(paymentId, {
+          status: 'PAID',
+          paidAmount: targetItem.amount,
+          paymentMode: String(method || 'UPI'),
+          paidAt: new Date(),
+        })
+        .then(() => {
+          realtimeService.publish(
+            'PAYMENT_STATUS',
+            {
+              invoiceId: paymentId,
+              amount: targetItem.amount,
+              status: 'PAID',
+              flatCode: '1204',
+            },
+            'soc-gvs',
+            'RESIDENT',
+            'Payment Gateway'
+          );
+        })
+        .catch((err) => {
+          console.error('Failed to update invoice in PostgreSQL:', err);
+        });
     }
   };
 

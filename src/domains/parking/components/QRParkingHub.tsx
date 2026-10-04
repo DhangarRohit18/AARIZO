@@ -17,6 +17,8 @@ import { qrParkingService } from '../services/qrParkingService';
 import type { ParkingSlotItem, ParkingViolationRecord, ParkingType, OccupancyState, ParkingPassQR } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
+import { realtimeService } from '../../../services/realtimeService';
+import { FileUpload } from '../../../components/ui/FileUpload';
 
 export const QRParkingHub: React.FC = () => {
   const { currentUser } = useAuth();
@@ -79,7 +81,15 @@ export const QRParkingHub: React.FC = () => {
     const unsubscribe = realTimeSync.subscribe('PARKING_UPDATED', () => {
       loadData();
     });
-    return () => unsubscribe();
+    const unsubRealtime = realtimeService.subscribe('*', (msg) => {
+      if (['PARKING_UPDATED', 'PARKING_VIOLATION_REPORTED', 'VEHICLE_GATE_LOGGED'].includes(msg.topic)) {
+        loadData();
+      }
+    });
+    return () => {
+      unsubscribe();
+      unsubRealtime();
+    };
   }, []);
 
   const handleAddSlotSubmit = (e: React.FormEvent) => {
@@ -150,7 +160,7 @@ export const QRParkingHub: React.FC = () => {
       case 'OCCUPIED':
         return 'bg-rose-50 border-rose-500 text-rose-800';
       case 'RESERVED':
-        return 'bg-blue-50 border-blue-500 text-blue-800';
+        return 'bg-[#EAF6FC] border-[#176B91] text-[#083B56]';
       case 'VISITOR':
         return 'bg-amber-50 border-amber-500 text-amber-800';
       case 'BLOCKED':
@@ -308,7 +318,7 @@ export const QRParkingHub: React.FC = () => {
               <span className="w-3 h-3 rounded bg-rose-500" /> <span>OCCUPIED</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded bg-blue-500" /> <span>RESERVED</span>
+              <span className="w-3 h-3 rounded bg-[#176B91]" /> <span>RESERVED</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-3 h-3 rounded bg-amber-500" /> <span>VISITOR</span>
@@ -505,6 +515,25 @@ export const QRParkingHub: React.FC = () => {
                 </div>
 
                 <p className="text-xs text-slate-600">{v.privateNotes}</p>
+
+                {v.photoEvidenceUrl && (
+                  <div className="pt-1 flex items-center gap-2">
+                    <img
+                      src={v.photoEvidenceUrl}
+                      alt="Violation Evidence"
+                      className="w-16 h-12 rounded-lg object-cover border border-slate-200 shadow-sm"
+                    />
+                    <a
+                      href={v.photoEvidenceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs text-[#176B91] hover:underline font-semibold"
+                    >
+                      View Photo Evidence
+                    </a>
+                  </div>
+                )}
+
                 <div className="text-[11px] text-slate-400">
                   Reported by: {v.reportedBy} · Owner Flat: {v.flatCode || 'Unregistered'} ({v.residentName || 'Visitor'})
                 </div>
@@ -875,14 +904,16 @@ export const QRParkingHub: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Evidence Photo Link (URL)</label>
-                <input
-                  type="text"
-                  placeholder="https://example.com/evidence/photo.jpg"
-                  value={violationForm.photoEvidenceUrl}
-                  onChange={(e) => setViolationForm({ ...violationForm, photoEvidenceUrl: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-xs"
+                <FileUpload
+                  category="tickets"
+                  label="Upload Violation Photo / Vehicle Number Plate"
+                  onUploadSuccess={(url) => setViolationForm({ ...violationForm, photoEvidenceUrl: url })}
                 />
+                {violationForm.photoEvidenceUrl && (
+                  <p className="text-xs text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+                    <CheckCircle2 size={13} /> Photo Evidence Attached
+                  </p>
+                )}
               </div>
 
               <div>

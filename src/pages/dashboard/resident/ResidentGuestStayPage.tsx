@@ -2,16 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../../context/AuthContext';
 import { guestStayService } from '../../../services/guestStayService';
+import { realtimeService } from '../../../services/realtimeService';
 import type { GuestRoom, GuestReservation, GuestStaySettings } from '../../../types/guestStay';
 import { Modal } from '../../../components/ui/Modal';
 import { DataTable } from '../../../components/ui/DataTable';
 import { MobileDataCard } from '../../../components/ui/MobileDataCard';
+import { RazorpayCheckoutModal } from '../../../domains/payments/RazorpayCheckoutModal';
+import { FileUpload } from '../../../components/ui/FileUpload';
+import { AdvertisementPopup } from '../../../components/ads/AdvertisementPopup';
+import { OffersLauncherPill } from '../../../components/ads/OffersLauncherPill';
 import {
   Hotel,
   Calendar,
   QrCode,
   Building,
-  XCircle
+  XCircle,
+  CreditCard,
+  CheckCircle2,
 } from 'lucide-react';
 
 export const ResidentGuestStayPage: React.FC = () => {
@@ -31,15 +38,29 @@ export const ResidentGuestStayPage: React.FC = () => {
   const [guestPhone, setGuestPhone] = useState('');
   const [idProofType, setIdProofType] = useState('Aadhaar Card');
   const [idProofNumber, setIdProofNumber] = useState('');
+  const [guestIdDocUrl, setGuestIdDocUrl] = useState('');
   const [guestCount, setGuestCount] = useState(2);
   const [checkInDate, setCheckInDate] = useState(new Date().toISOString().substring(0, 10));
   const [checkOutDate, setCheckOutDate] = useState(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10));
+
+  // Razorpay & Ad States
+  const [isRazorpayOpen, setIsRazorpayOpen] = useState(false);
+  const [bookingTotalAmount, setBookingTotalAmount] = useState(0);
+  const [isAdOpen, setIsAdOpen] = useState(false);
 
   // Active QR View Modal
   const [viewingQRResv, setViewingQRResv] = useState<GuestReservation | null>(null);
 
   useEffect(() => {
     loadData();
+
+    const unsub = realtimeService.subscribe('*', (msg) => {
+      if (['GUEST_STAY_BOOKED', 'GUEST_CHECKED_IN', 'GUEST_CHECKED_OUT', 'SOCIETY_SYNC'].includes(msg.topic)) {
+        loadData();
+      }
+    });
+
+    return () => unsub();
   }, [societyId, residentId]);
 
   const loadData = () => {
@@ -49,10 +70,8 @@ export const ResidentGuestStayPage: React.FC = () => {
     setMyReservations(list);
   };
 
-  const handleBookRoom = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedRoom || !guestName || !guestPhone) return;
-
+  const confirmBooking = () => {
+    if (!selectedRoom) return;
     const resv = guestStayService.requestReservation(
       societyId,
       selectedRoom.id,
@@ -68,12 +87,48 @@ export const ResidentGuestStayPage: React.FC = () => {
       checkOutDate
     );
 
+    realtimeService.publish(
+      'GUEST_STAY_BOOKED',
+      {
+        resvId: resv.id,
+        guestName,
+        roomName: selectedRoom.roomName,
+        flatNumber,
+        checkInDate,
+        checkOutDate,
+      },
+      societyId,
+      'RESIDENT'
+    );
+
     setSelectedRoom(null);
     setGuestName('');
     setGuestPhone('');
     setIdProofNumber('');
+    setGuestIdDocUrl('');
     setViewingQRResv(resv);
     loadData();
+  };
+
+  const handleBookRoom = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedRoom || !guestName || !guestPhone) return;
+
+    const nights = Math.max(
+      1,
+      Math.round(
+        (new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)
+      )
+    );
+    const total = (selectedRoom.pricePerNight || 0) * nights;
+    setBookingTotalAmount(total);
+
+    if (total > 0) {
+      setIsRazorpayOpen(true);
+      return;
+    }
+
+    confirmBooking();
   };
 
   const handleCancelReservation = (id: string) => {
@@ -383,19 +438,61 @@ export const ResidentGuestStayPage: React.FC = () => {
               </div>
             </div>
 
+            <div className="pt-1">
+              <FileUpload
+                category="kyc"
+                label="Upload Guest Govt ID (Aadhaar / Passport / DL)"
+                onUploadSuccess={(url) => setGuestIdDocUrl(url)}
+              />
+              {guestIdDocUrl && (
+                <p className="text-xs text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+                  <CheckCircle2 size={13} /> Guest ID Attached Successfully
+                </p>
+              )}
+            </div>
+
             <div className="pt-4 flex justify-end gap-2">
               <button type="button" onClick={() => setSelectedRoom(null)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 text-sm font-semibold rounded-lg">Cancel</button>
               <button
                 type="submit"
-                className="px-4 py-2 text-white font-bold text-sm rounded-lg shadow-sm transition"
+                className="px-4 py-2 text-white font-bold text-sm rounded-lg shadow-sm transition flex items-center gap-1.5"
                 style={{ background: 'var(--aarizo-blue, #176B91)' }}
               >
-                Confirm & Generate QR Pass
+                {selectedRoom.pricePerNight && selectedRoom.pricePerNight > 0 ? (
+                  <>
+                    <CreditCard size={15} /> Pay &amp; Generate QR Pass
+                  </>
+                ) : (
+                  'Confirm & Generate QR Pass'
+                )}
               </button>
             </div>
           </form>
         </Modal>
       )}
+
+      {/* Razorpay Online Payment Modal */}
+      {selectedRoom && (
+        <RazorpayCheckoutModal
+          isOpen={isRazorpayOpen}
+          onClose={() => setIsRazorpayOpen(false)}
+          amount={bookingTotalAmount}
+          purpose={`Guest Stay: ${selectedRoom.roomName} (${checkInDate} to ${checkOutDate})`}
+          societyName="Green Valley Society"
+          invoiceNumber={`GST-${Date.now().toString().slice(-6)}`}
+          userName={residentName}
+          userPhone={currentUser?.phone || '9876543210'}
+          userEmail={currentUser?.email || 'resident@aarizo.com'}
+          onSuccess={() => {
+            setIsRazorpayOpen(false);
+            confirmBooking();
+          }}
+        />
+      )}
+
+      {/* Society Partner Discounts Launcher & Modal */}
+      <OffersLauncherPill onClick={() => setIsAdOpen(true)} label="Travel &amp; Hospitality Perks" />
+      <AdvertisementPopup isOpen={isAdOpen} onClose={() => setIsAdOpen(false)} />
     </div>
   );
 };

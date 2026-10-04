@@ -4,6 +4,7 @@ import {
   getDoc, 
   getDocs, 
   addDoc, 
+  setDoc,
   updateDoc, 
   deleteDoc, 
   query, 
@@ -86,6 +87,35 @@ export abstract class BaseRepository<T extends BaseEntity> {
     } as any);
   }
 
+  public async upsertWithId(id: string, data: any): Promise<void> {
+    const payload = {
+      ...data,
+      id,
+      updatedAt: serverTimestamp(),
+      updatedBy: this.getCurrentUserId(),
+    };
+    await setDoc(this.getDocRef(id) as any, payload as any, { merge: true });
+  }
+
+  public async listAll(constraints: QueryConstraint[] = []): Promise<T[]> {
+    const q = query(this.getCollectionRef(), ...constraints);
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data());
+  }
+
+  public subscribeAll(
+    callback: (data: T[]) => void, 
+    constraints: QueryConstraint[] = []
+  ): () => void {
+    const q = query(this.getCollectionRef(), ...constraints);
+    return onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => doc.data());
+      callback(data);
+    }, (error) => {
+      console.warn(`[Firestore] Subscription to ${this.collectionName} error:`, error);
+    });
+  }
+
   public async list(societyId: string, constraints: QueryConstraint[] = []): Promise<T[]> {
     const q = query(
       this.getCollectionRef(),
@@ -110,7 +140,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
       const data = snapshot.docs.map(doc => doc.data());
       callback(data);
     }, (error) => {
-      console.error('Error subscribing to', error);
+      console.warn(`[Firestore] Subscription to ${this.collectionName} error:`, error);
     });
   }
 }

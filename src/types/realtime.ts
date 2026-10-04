@@ -11,11 +11,24 @@ export type RealtimeTopic =
   | 'DELIVERY_STATUS'
   | 'WORKER_ENTRY_EXIT'
   | 'AMENITY_AVAILABILITY'
-  | 'NOTIFICATIONS';
+  | 'NOTIFICATIONS'
+  | 'ADVERTISEMENT_PUBLISHED'
+  | 'PAYMENT_COMPLETED'
+  | 'FILE_UPLOADED'
+  | 'VENDOR_REGISTERED'
+  | 'ANNOUNCEMENT_CREATED'
+  | 'AMENITY_BOOKED'
+  | 'OFFLINE_PAYMENT_LOGGED'
+  | 'GUEST_STAY_BOOKED'
+  | 'CHILD_EXIT_TRIGGERED'
+  | 'EMERGENCY_TRIGGERED'
+  | 'PARKING_GATE_TRIGGERED'
+  | string;
 
 export interface RealtimeMessage<T = any> {
   id: string;
   topic: RealtimeTopic;
+  type: string;
   societyId: string;
   payload: T;
   timestamp: string;

@@ -272,7 +272,7 @@ export const StaffShiftHub: React.FC = () => {
                         : shift.status === 'ABSENT'
                         ? '#DC2626'
                         : shift.status === 'REPLACED'
-                        ? '#7C3AED'
+                        ? '#176B91'
                         : '#64748B',
                   }}
                 >
@@ -291,7 +291,7 @@ export const StaffShiftHub: React.FC = () => {
                   </span>
                 )}
                 {shift.overtimeHours > 0 && (
-                  <span style={{ background: '#EEF2FF', border: '1px solid #C7D2FE', color: '#4338CA', padding: '0.15rem 0.45rem', borderRadius: '6px', fontWeight: 600 }}>
+                  <span style={{ background: '#EAF6FC', border: '1px solid #DCE8EF', color: '#083B56', padding: '0.15rem 0.45rem', borderRadius: '6px', fontWeight: 600 }}>
                     OT: {shift.overtimeHours} hrs
                   </span>
                 )}
@@ -319,7 +319,7 @@ export const StaffShiftHub: React.FC = () => {
               )}
 
               {shift.replacementWorkerName && (
-                <div style={{ fontSize: '0.7rem', color: '#7C3AED', fontWeight: 600 }}>
+                <div style={{ fontSize: '0.7rem', color: '#176B91', fontWeight: 600 }}>
                   Replacement: {shift.replacementWorkerName}
                 </div>
               )}

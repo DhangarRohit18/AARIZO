@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Car, Camera, CheckCircle2, XCircle } from 'lucide-react';
 import { parkingService } from '../../../services/parkingService';
+import { realtimeService } from '../../../services/realtimeService';
 import type { ParkingSlot, ParkingQRValidationResult } from '../../../types/parking';
 import { Modal } from '../../../components/ui/Modal';
 import { QRScanner } from '../../../components/ui/QRScanner';
@@ -20,6 +21,10 @@ export const ParkingGateScannerPage: React.FC = () => {
 
   const handleEntry = (slot: ParkingSlot) => {
     parkingService.scanEntry(slot.id, slot.assignedVehicleNumber || 'VISITOR', officerActor);
+    realtimeService.publish({
+      type: 'PARKING_UPDATE',
+      payload: { action: 'ENTRY', slotId: slot.id, slotNumber: slot.slotNumber, timestamp: new Date().toISOString() }
+    });
     alert(`Vehicle entry recorded for Slot ${slot.slotNumber}. Occupancy state updated to OCCUPIED.`);
     setValidationResult(null);
     setIsScannerOpen(false);
@@ -27,6 +32,10 @@ export const ParkingGateScannerPage: React.FC = () => {
 
   const handleExit = (slot: ParkingSlot) => {
     parkingService.scanExit(slot.id, officerActor);
+    realtimeService.publish({
+      type: 'PARKING_UPDATE',
+      payload: { action: 'EXIT', slotId: slot.id, slotNumber: slot.slotNumber, timestamp: new Date().toISOString() }
+    });
     alert(`Vehicle exit recorded for Slot ${slot.slotNumber}. Slot returns to ${slot.slotType === 'VISITOR' ? 'VISITOR' : 'AVAILABLE'}.`);
     setValidationResult(null);
     setIsScannerOpen(false);

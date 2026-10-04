@@ -51,6 +51,8 @@ export interface SecretaryNoticeItem {
   authorName: string;
   authorRole: string;
   acknowledgedCount: number;
+  attachmentUrl?: string;
+  attachmentName?: string;
 }
 
 export type PaymentCategory = 'maintenance' | 'parking' | 'amenity' | 'electricity';

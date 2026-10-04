@@ -20,10 +20,13 @@ import {
   HardHat,
   ShieldCheck,
   Baby,
+  Database,
+  Megaphone,
 } from 'lucide-react';
 
 const DRAWER_NAV = [
   { label: 'Admin Overview', path: '/admin', icon: LayoutDashboard },
+  { label: 'Developer DB Studio', path: '/dev/database', icon: Database },
   { label: 'Residents Directory', path: '/admin/residents', icon: Users },
   { label: 'Complaints & NOCs', path: '/admin/requests', icon: CheckSquare },
   { label: 'Housekeeping Ops', path: '/admin/housekeeping', icon: Sparkles },
@@ -37,6 +40,7 @@ const DRAWER_NAV = [
   { label: 'Parking Operations', path: '/admin/parking', icon: Car },
   { label: 'Domestic Workers', path: '/admin/domestic-workers', icon: HardHat },
   { label: 'Vendor Management', path: '/admin/vendors', icon: Store },
+  { label: 'Advertisements', path: '/admin/advertisements', icon: Megaphone },
   { label: 'Society Expenses', path: '/admin/expenses', icon: DollarSign },
   { label: 'Billing Engine', path: '/admin/billing', icon: CreditCard },
   { label: 'Society Intelligence', path: '/admin/intelligence', icon: BarChart3 },

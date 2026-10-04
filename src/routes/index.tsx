@@ -64,6 +64,8 @@ import { FacilityManagerDashboard } from '../pages/dashboard/FacilityManagerDash
 import { FacilityProfilePage } from '../pages/dashboard/facility/FacilityProfilePage';
 import { DomesticWorkerDashboard } from '../pages/dashboard/DomesticWorkerDashboard';
 import { UnifiedRequestCenter } from '../domains/requests/components/UnifiedRequestCenter';
+import { AdminAdvertisementsPage } from '../pages/dashboard/admin/AdminAdvertisementsPage';
+import { VendorOnboardingPage } from '../pages/dashboard/vendor/VendorOnboardingPage';
 import {
   SuperAdminLayout,
   SocietyAdminLayout,
@@ -77,6 +79,7 @@ import {
 } from '../components/layouts';
 import { ProtectedRoute } from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
+import { DeveloperDatabaseStudio } from '../components/dev/DeveloperDatabaseStudio';
 
 export const AppRoutes: React.FC = () => {
   const { status, currentUser } = useAuth();
@@ -104,6 +107,10 @@ export const AppRoutes: React.FC = () => {
 
   return (
     <Routes>
+      {/* Developer Database Studio */}
+      <Route path="/dev/database" element={<DeveloperDatabaseStudio />} />
+      <Route path="/dev/db" element={<DeveloperDatabaseStudio />} />
+
       {/* Public Routes */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/onboarding" element={<OnboardingPage />} />
@@ -177,6 +184,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="/admin/compliance" element={<AdminCompliancePage />} />
           <Route path="/admin/move-renovation" element={<AdminMoveRenovationPage />} />
           <Route path="/admin/expenses" element={<AdminExpensePage />} />
+          <Route path="/admin/advertisements" element={<AdminAdvertisementsPage />} />
           <Route path="/admin/operations" element={<RealtimeOperationsHubPage />} />
           <Route path="/admin/community" element={<ResidentCommunityHubPage />} />
           <Route path="/admin/profile" element={<AdminHomePage />} />
@@ -227,6 +235,7 @@ export const AppRoutes: React.FC = () => {
         <Route element={<VendorLayout />}>
           <Route path="/vendor" element={<VendorDashboard />} />
           <Route path="/vendor/portal" element={<VendorPortalPage />} />
+          <Route path="/vendor/onboarding" element={<VendorOnboardingPage />} />
           <Route path="/vendor/*" element={<VendorDashboard />} />
         </Route>
       </Route>

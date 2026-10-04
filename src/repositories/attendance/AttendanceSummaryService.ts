@@ -1,4 +1,3 @@
-﻿// @ts-nocheck
 import { attendanceRepository } from './AttendanceRepository';
 import { BaseRepository } from '../BaseRepository';
 import type { AttendanceSummary, AttendanceLog } from '../../domains/attendance/types';

@@ -1,5 +1,6 @@
 import type { VendorPartner, ServiceItem, ServiceBookingOrder, OrderStatus } from '../types';
 import { realTimeSync } from '../../../services/realTimeSync';
+import { vendorRequestRepository } from '../../../repositories/vendors/VendorRequestRepository';
 
 const STORAGE_KEY_VENDORS = 'aarizo_vendors_v1';
 const STORAGE_KEY_SERVICE_ITEMS = 'aarizo_service_items_v1';
@@ -253,6 +254,28 @@ class SocietyServicesEngine {
 
     orders.unshift(newOrder);
     this.saveOrders(orders);
+
+    // Sync to Firestore vendorRequests collection for real-time vendor dashboard
+    vendorRequestRepository.upsertWithId(newId, {
+      orderNumber,
+      societyId: newOrder.societyId || 'soc-gvs',
+      residentId: newOrder.residentId || 'res-1',
+      residentName: newOrder.residentName || 'Resident',
+      residentPhone: newOrder.phone || '9876543210',
+      flatCode: newOrder.flatCode || 'A-101',
+      vendorId: newOrder.vendorId,
+      vendorName: newOrder.vendorName || 'Verified Vendor',
+      serviceId: newId,
+      serviceTitle: newOrder.serviceTitle,
+      category: String(newOrder.category || 'SERVICES'),
+      price: newOrder.price,
+      scheduledDate: newOrder.scheduledDate,
+      timeSlot: 'Morning (10:00 AM - 01:00 PM)',
+      notes: newOrder.customScheduleNotes || '',
+      status: 'PENDING',
+      paymentStatus: 'UNPAID',
+    }).catch((err) => console.warn('[Firestore] Failed to sync order to vendorRequests:', err));
+
     return newOrder;
   }
 
@@ -270,6 +293,10 @@ class SocietyServicesEngine {
 
     orders[index] = updated;
     this.saveOrders(orders);
+
+    // Sync status change to Firestore
+    vendorRequestRepository.updateStatus(orderId, status).catch(() => {});
+
     return updated;
   }
 
@@ -288,6 +315,10 @@ class SocietyServicesEngine {
 
     orders[index] = updated;
     this.saveOrders(orders);
+
+    // Sync review to Firestore
+    vendorRequestRepository.submitReview(orderId, rating, reviewNotes).catch(() => {});
+
     return updated;
   }
 }

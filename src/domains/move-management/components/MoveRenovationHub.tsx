@@ -17,12 +17,22 @@ import type { MoveEvent, MoveType } from '../types';
 import type { RenovationPermit } from '../../renovation/types';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
+import { realtimeService } from '../../../services/realtimeService';
+import { FileUpload } from '../../../components/ui/FileUpload';
+import { RazorpayCheckoutModal } from '../../../domains/payments/RazorpayCheckoutModal';
+import { AdvertisementPopup } from '../../../components/ads/AdvertisementPopup';
+import { OffersLauncherPill } from '../../../components/ads/OffersLauncherPill';
 
 export const MoveRenovationHub: React.FC = () => {
   const { currentUser } = useAuth();
   const activeRole = (currentUser?.role || '').toLowerCase();
 
   const isAdmin = ['admin', 'secretary'].includes(activeRole);
+  const [isRazorpayOpen, setIsRazorpayOpen] = useState(false);
+  const [depositAmount, setDepositAmount] = useState(5000);
+  const [depositPurpose, setDepositPurpose] = useState('Move-In Refundable Security Deposit');
+  const [_contractorDocUrl, setContractorDocUrl] = useState('');
+  const [isAdOpen, setIsAdOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'MOVES' | 'RENOVATIONS' | 'CALENDAR' | 'SECURITY_SCANNER'>('MOVES');
   const [moves, setMoves] = useState<MoveEvent[]>(() => moveRenovationService.getMoves());
@@ -77,7 +87,15 @@ export const MoveRenovationHub: React.FC = () => {
     const unsubscribe = realTimeSync.subscribe('MOVE_RENOVATION_UPDATED', () => {
       loadData();
     });
-    return () => unsubscribe();
+    const unsubRealtime = realtimeService.subscribe('*', (msg) => {
+      if (['MOVE_RENOVATION_UPDATED', 'MOVE_GATE_CHECKED_IN', 'SOCIETY_SYNC'].includes(msg.topic)) {
+        loadData();
+      }
+    });
+    return () => {
+      unsubscribe();
+      unsubRealtime();
+    };
   }, []);
 
   const handleCreateMove = (e: React.FormEvent) => {
@@ -630,6 +648,13 @@ export const MoveRenovationHub: React.FC = () => {
                     className="w-full px-3 py-2 border rounded-lg text-xs"
                   />
                 </div>
+                <div>
+                  <FileUpload
+                    category="general"
+                    label="Movers Agreement / Gatepass NOC (Optional)"
+                    onUploadSuccess={(url) => setContractorDocUrl(url)}
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end gap-2 pt-3 border-t">
@@ -740,6 +765,14 @@ export const MoveRenovationHub: React.FC = () => {
                 />
               </div>
 
+              <div>
+                <FileUpload
+                  category="kyc"
+                  label="Architectural Layout / Contractor License PDF (Optional)"
+                  onUploadSuccess={(url) => setContractorDocUrl(url)}
+                />
+              </div>
+
               <div className="flex justify-end gap-2 pt-3 border-t">
                 <button
                   type="button"
@@ -747,6 +780,17 @@ export const MoveRenovationHub: React.FC = () => {
                   className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
                 >
                   Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDepositAmount(15000);
+                    setDepositPurpose(`Renovation Security Deposit: Flat ${renovationForm.flatNumber}`);
+                    setIsRazorpayOpen(true);
+                  }}
+                  className="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg shadow-md hover:bg-emerald-500"
+                >
+                  Pay ₹15k Deposit
                 </button>
                 <button
                   type="submit"
@@ -759,6 +803,26 @@ export const MoveRenovationHub: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Razorpay Refundable Deposit Modal */}
+      <RazorpayCheckoutModal
+        isOpen={isRazorpayOpen}
+        onClose={() => setIsRazorpayOpen(false)}
+        amount={depositAmount}
+        purpose={depositPurpose}
+        societyName="Green Valley Society"
+        invoiceNumber={`DEP-${Date.now().toString().slice(-6)}`}
+        userName={currentUser?.name || 'Resident'}
+        userPhone={currentUser?.phone || '9876543210'}
+        onSuccess={() => {
+          setIsRazorpayOpen(false);
+          alert('Security deposit of ₹' + depositAmount.toLocaleString() + ' paid! Society receipt generated.');
+        }}
+      />
+
+      {/* Society Partner Discounts Launcher & Modal */}
+      <OffersLauncherPill onClick={() => setIsAdOpen(true)} label="Movers &amp; Interior Deals" />
+      <AdvertisementPopup isOpen={isAdOpen} onClose={() => setIsAdOpen(false)} />
     </div>
   );
 };

@@ -640,9 +640,9 @@
   text-transform: uppercase;
 }
 
-.tag-mvp { background: #e0e7ff; color: #3730a3; }
+.tag-mvp { background: #EAF6FC; color: #083B56; }
 .tag-v1 { background: #fef3c7; color: #92400e; }
-.tag-v2-preview { background: #f3e8ff; color: #6b21a8; }
+.tag-v2-preview { background: #EAF6FC; color: #176B91; }
 
 .section-header {
   display: flex;

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Wrench } from 'lucide-react';
+import { Wrench, CheckCircle2 } from 'lucide-react';
 import { maintenanceService } from '../../../services/maintenanceService';
+import { realtimeService } from '../../../services/realtimeService';
+import { FileUpload } from '../../../components/ui/FileUpload';
 import type { MaintenanceTicket, TicketStatus } from '../../../types/maintenance';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 
@@ -32,6 +34,14 @@ export const ServiceProviderTaskPage: React.FC = () => {
 
   useEffect(() => {
     reloadData();
+
+    const unsub = realtimeService.subscribe('*', (msg) => {
+      if (['MAINTENANCE_TICKET_CREATED', 'TICKET_STATUS_UPDATED', 'SOCIETY_SYNC'].includes(msg.topic)) {
+        reloadData();
+      }
+    });
+
+    return () => unsub();
   }, []);
 
   const handleAcceptTask = (ticket: MaintenanceTicket) => {
@@ -233,26 +243,30 @@ export const ServiceProviderTaskPage: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-2">
                 <div>
-                  <label className="block font-semibold mb-1">Before Image URL</label>
-                  <input
-                    type="text"
-                    placeholder="https://..."
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                    value={beforeImage}
-                    onChange={(e) => setBeforeImage(e.target.value)}
+                  <FileUpload
+                    category="tickets"
+                    label="Upload Before Work Photo"
+                    onUploadSuccess={(url) => setBeforeImage(url)}
                   />
+                  {beforeImage && (
+                    <p className="text-[11px] text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+                      <CheckCircle2 size={12} /> Before Photo Attached
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <label className="block font-semibold mb-1">After Image URL</label>
-                  <input
-                    type="text"
-                    placeholder="https://..."
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                    value={afterImage}
-                    onChange={(e) => setAfterImage(e.target.value)}
+                  <FileUpload
+                    category="tickets"
+                    label="Upload After Work Photo (Completion Proof)"
+                    onUploadSuccess={(url) => setAfterImage(url)}
                   />
+                  {afterImage && (
+                    <p className="text-[11px] text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+                      <CheckCircle2 size={12} /> After Photo Attached
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

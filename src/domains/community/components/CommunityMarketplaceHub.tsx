@@ -12,6 +12,8 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { communityMarketplaceEngine } from '../services/communityMarketplaceEngine';
+import { FileUpload } from '../../../components/ui/FileUpload';
+import { AdvertisementPopup, OffersLauncherPill } from '../../../components/common/AdvertisementPopup';
 import type {
   MarketplaceListing,
   ListingType,
@@ -63,6 +65,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
   const [lfDesc, setLfDesc] = useState('');
   const [lfType, setLfType] = useState<'LOST' | 'FOUND'>('FOUND');
   const [lfLocation, setLfLocation] = useState('');
+  const [isAdPopupOpen, setIsAdPopupOpen] = useState(false);
 
   const refreshData = () => {
     setListings(
@@ -258,6 +261,25 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
       {/* TAB 1: MARKETPLACE */}
       {activeTab === 'MARKETPLACE' && (
         <div className="space-y-4">
+          {/* Partner Ad Banner */}
+          <div className="bg-gradient-to-r from-[#083B56] to-[#176B91] rounded-2xl p-4 text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm border border-[#1b4b66]">
+            <div className="flex items-center gap-3">
+              <span className="px-2.5 py-1 bg-amber-400 text-slate-900 rounded-lg text-xs font-black uppercase tracking-wide shrink-0">
+                PARTNER DEALS
+              </span>
+              <div>
+                <h4 className="font-bold text-sm text-white">Urban Home Care & QuickFix Services</h4>
+                <p className="text-xs text-sky-200">Exclusive 20% resident discount on home cleaning, deep painting & appliance repairs</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsAdPopupOpen(true)}
+              className="px-4 py-2 bg-white text-[#083B56] hover:bg-sky-50 rounded-xl text-xs font-extrabold whitespace-nowrap shadow-sm transition"
+            >
+              View Offers & Codes
+            </button>
+          </div>
+
           {/* Filter Bar */}
           <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 justify-between items-center">
             <div className="relative w-full md:w-80">
@@ -335,7 +357,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                             : item.type === 'BORROW'
                             ? 'bg-amber-500 text-white'
                             : item.type === 'BUY'
-                            ? 'bg-blue-600 text-white'
+                            ? 'bg-[#176B91] text-white'
                             : 'bg-[#083B56] text-white'
                         }`}
                       >
@@ -472,7 +494,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                 {/* Badges: Carpool / Pet / Volunteer */}
                 <div className="pt-2 border-t border-slate-100 flex flex-wrap gap-2 text-xs">
                   {entry.carpoolOptIn && (
-                    <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                    <span className="px-2.5 py-1 bg-[#EAF6FC] text-[#083B56] rounded-lg font-bold text-[11px] flex items-center gap-1">
                       <Car size={12} /> Carpool Network
                     </span>
                   )}
@@ -580,6 +602,18 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                 />
               </div>
 
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Upload Item Photo</label>
+                <FileUpload
+                  category="general"
+                  label="Take Photo or Upload Product Image"
+                  accept="image/*"
+                  currentUrl={imageUrl}
+                  onUploadSuccess={(url) => setImageUrl(url)}
+                  onRemove={() => setImageUrl('')}
+                />
+              </div>
+
               <div className="flex justify-end gap-2 pt-3">
                 <button
                   type="button"
@@ -642,6 +676,16 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
                 />
               </div>
 
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Attach Photo (Optional)</label>
+                <FileUpload
+                  category="general"
+                  label="Take Photo of Found/Lost Item"
+                  accept="image/*"
+                  onUploadSuccess={(url) => setLfDesc((prev) => `${prev ? prev + ' ' : ''}[Photo: ${url}]`)}
+                />
+              </div>
+
               <div className="flex justify-end gap-2 pt-3">
                 <button
                   type="button"
@@ -661,6 +705,13 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
           </div>
         </div>
       )}
+      {/* Floating Offers Pill Launcher & Popup */}
+      <OffersLauncherPill onOpen={() => setIsAdPopupOpen(true)} />
+      <AdvertisementPopup
+        forceOpen={isAdPopupOpen}
+        onClose={() => setIsAdPopupOpen(false)}
+        societyId="soc-gvs"
+      />
     </div>
   );
 };

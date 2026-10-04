@@ -107,6 +107,9 @@ model Society {
   emergencyIncidents EmergencyIncident[]
   notifications   Notification[]
   auditLogs       AuditLog[]
+  announcements   Announcement[]
+  communityEvents CommunityEvent[]
+  advertisements  Advertisement[]
 
   @@map("societies")
 }
@@ -299,12 +302,15 @@ model Vendor {
   email         String?
   gstNumber     String?      @map("gst_number")
   rating        Decimal?     @default(4.8) @db.Decimal(2, 1)
+  logoUrl       String?      @map("logo_url")
+  documentUrl   String?      @map("document_url")
   status        EntityStatus @default(ACTIVE)
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")
 
-  society       Society      @relation(fields: [societyId], references: [id], onDelete: Cascade)
-  user          User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  society        Society         @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  user           User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  advertisements Advertisement[]
 
   @@map("vendors")
 }
@@ -436,6 +442,7 @@ model MaintenanceTicket {
   status            TicketStatus   @default(OPEN)
   assignedStaffName String?        @map("assigned_staff_name")
   feedbackNotes     String?        @map("feedback_notes")
+  attachmentUrl     String?        @map("attachment_url")
   rating            Int?
   resolvedAt        DateTime?      @map("resolved_at")
   createdAt         DateTime       @default(now()) @map("created_at")
@@ -518,3 +525,67 @@ model AuditLog {
 
   @@map("audit_logs")
 }
+
+model Announcement {
+  id          String   @id @default(uuid())
+  societyId   String   @map("society_id")
+  title       String
+  content     String
+  category    String   @default("GENERAL")
+  authorName  String?  @map("author_name")
+  isUrgent    Boolean  @default(false) @map("is_urgent")
+  attachmentUrl  String?  @map("attachment_url")
+  attachmentName String?  @map("attachment_name")
+  publishedAt DateTime @default(now()) @map("published_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  society     Society  @relation(fields: [societyId], references: [id], onDelete: Cascade)
+
+  @@map("announcements")
+}
+
+model CommunityEvent {
+  id          String    @id @default(uuid())
+  societyId   String    @map("society_id")
+  title       String
+  description String
+  location    String
+  startDate   DateTime  @map("start_date")
+  endDate     DateTime? @map("end_date")
+  rsvpCount   Int       @default(0) @map("rsvp_count")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  society     Society   @relation(fields: [societyId], references: [id], onDelete: Cascade)
+
+  @@map("community_events")
+}
+
+model Advertisement {
+  id           String       @id @default(uuid())
+  societyId    String       @map("society_id")
+  vendorId     String?      @map("vendor_id")
+  title        String
+  tagline      String?
+  description  String
+  imageUrl     String?      @map("image_url")
+  ctaText      String?      @default("Claim Offer") @map("cta_text")
+  ctaLink      String?      @map("cta_link")
+  discountCode String?      @map("discount_code")
+  category     String       @default("SERVICES")
+  status       EntityStatus @default(ACTIVE)
+  startDate    DateTime     @default(now()) @map("start_date")
+  endDate      DateTime?    @map("end_date")
+  viewsCount   Int          @default(0) @map("views_count")
+  clicksCount  Int          @default(0) @map("clicks_count")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  society      Society      @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  vendor       Vendor?      @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+
+  @@map("advertisements")
+}
+
+

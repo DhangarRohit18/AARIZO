@@ -4,7 +4,12 @@
  * Provides multi-tenant context headers (societyId, userId, userRole) and handles fallbacks.
  */
 
-const API_BASE = '/api';
+const API_BASE =
+  (import.meta as any).env?.VITE_BACKEND_URL
+    ? `${(import.meta as any).env.VITE_BACKEND_URL}/api`
+    : (typeof window !== 'undefined' && (window.location.port === '5173' || window.location.port === '5174')
+      ? 'http://localhost:5000/api'
+      : '/api');
 
 interface RequestOptions extends RequestInit {
   societyId?: string;
@@ -128,6 +133,109 @@ export const apiClient = {
 
   // Amenities
   getAmenities: (societyId?: string) => apiRequest<any[]>('/amenities', { societyId }),
+
+  // Announcements
+  getAnnouncements: (societyId?: string) => apiRequest<any[]>('/announcements', { societyId }),
+  createAnnouncement: (data: any) =>
+    apiRequest<any>('/announcements', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // Community Events
+  getCommunityEvents: (societyId?: string) => apiRequest<any[]>('/community-events', { societyId }),
+  createCommunityEvent: (data: any) =>
+    apiRequest<any>('/community-events', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // Emergency Incidents
+  getEmergencyIncidents: (societyId?: string) => apiRequest<any[]>('/emergency-incidents', { societyId }),
+  createEmergencyIncident: (data: any) =>
+    apiRequest<any>('/emergency-incidents', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // Notifications
+  getNotifications: (societyId?: string) => apiRequest<any[]>('/notifications', { societyId }),
+  markNotificationRead: (id: string) =>
+    apiRequest<any>(`/notifications/${id}/read`, {
+      method: 'PATCH',
+    }),
+
+  // File Upload Engine
+  uploadFile: async (file: File, category: string = 'attachments'): Promise<{ success: boolean; url: string; fullUrl: string; filename: string; size: number }> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const fileData = reader.result as string;
+          const res = await apiRequest<{ success: boolean; url: string; filename: string; size: number }>('/upload', {
+            method: 'POST',
+            body: JSON.stringify({
+              filename: file.name,
+              fileData,
+              category,
+            }),
+          });
+          if (!res || !res.url) {
+            throw new Error('Upload failed on server');
+          }
+          const baseUrl = API_BASE.replace(/\/api$/, '');
+          const relativeOrAbsUrl = res.url;
+          resolve({
+            success: Boolean(res.success),
+            url: relativeOrAbsUrl,
+            filename: res.filename || file.name,
+            size: res.size || file.size,
+            fullUrl: relativeOrAbsUrl.startsWith('http') ? relativeOrAbsUrl : `${baseUrl}${relativeOrAbsUrl}`,
+          });
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
+  },
+
+  // Razorpay Payment Engine
+  createRazorpayOrder: (invoiceId: string, amount: number) =>
+    apiRequest<{ orderId: string; amount: number; currency: string; keyId: string; notes?: any }>('/payments/razorpay/create-order', {
+      method: 'POST',
+      body: JSON.stringify({ invoiceId, amount }),
+    }),
+
+  verifyRazorpayPayment: (data: { invoiceId: string; razorpayPaymentId: string; razorpayOrderId: string; amount: number }) =>
+    apiRequest<{ success: boolean; message: string; invoice: any }>('/payments/razorpay/verify', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // Advertisements & Sponsored Offers
+  getAdvertisements: (societyId?: string) => apiRequest<any[]>('/advertisements', { societyId }),
+  createAdvertisement: (data: any) =>
+    apiRequest<any>('/advertisements', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  recordAdView: (id: string) =>
+    apiRequest<any>(`/advertisements/${id}/view`, {
+      method: 'POST',
+    }),
+  recordAdClick: (id: string) =>
+    apiRequest<any>(`/advertisements/${id}/click`, {
+      method: 'POST',
+    }),
+
+  // Vendors
+  registerVendor: (data: any) =>
+    apiRequest<any>('/vendors', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 
   // Generic Query
   queryTable: (table: string, societyId?: string) =>

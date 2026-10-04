@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { safetyCommandService } from '../../../services/safetyCommandService';
+import { realtimeService } from '../../../services/realtimeService';
 import type { EmergencyIncident } from '../../../types/safetyCommand';
 import { Modal } from '../../../components/ui/Modal';
+import { FileUpload } from '../../../components/ui/FileUpload';
 import {
   Siren,
   ShieldAlert,
@@ -10,7 +12,8 @@ import {
   PhoneCall,
   MapPin,
   AlertTriangle,
-  Play
+  Play,
+  FileCheck
 } from 'lucide-react';
 
 export const SecurityEmergencyTerminalPage: React.FC = () => {
@@ -27,11 +30,25 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
   const [responderName, setResponderName] = useState(guardName);
   const [responseNote, setResponseNote] = useState('');
   const [resolutionNote, setResolutionNote] = useState('');
+  const [resolutionProofUrl, setResolutionProofUrl] = useState('');
 
   useEffect(() => {
     loadData();
+    const unsub = realtimeService.subscribe('*', (event) => {
+      if (
+        event.type === 'EMERGENCY_ALERTS' ||
+        event.type === 'CHILD_ALERT_TRIGGERED' ||
+        event.type.includes('EMERGENCY') ||
+        event.type.includes('INCIDENT')
+      ) {
+        loadData();
+      }
+    });
     const interval = setInterval(loadData, 5000);
-    return () => clearInterval(interval);
+    return () => {
+      unsub();
+      clearInterval(interval);
+    };
   }, [societyId]);
 
   const loadData = () => {
@@ -57,6 +74,11 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
       responseNote
     );
 
+    realtimeService.publish({
+      type: 'EMERGENCY_ALERTS',
+      payload: { incidentId: selectedIncident.id, status: 'RESPONDING', responderName }
+    });
+
     setShowRespondModal(false);
     setResponseNote('');
     setSelectedIncident(null);
@@ -67,9 +89,17 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
     e.preventDefault();
     if (!selectedIncident || !resolutionNote) return;
 
-    safetyCommandService.resolveIncident(societyId, selectedIncident.id, guardName, resolutionNote);
+    const fullNote = resolutionProofUrl ? `${resolutionNote} (Proof: ${resolutionProofUrl})` : resolutionNote;
+    safetyCommandService.resolveIncident(societyId, selectedIncident.id, guardName, fullNote);
+
+    realtimeService.publish({
+      type: 'EMERGENCY_ALERTS',
+      payload: { incidentId: selectedIncident.id, status: 'RESOLVED', guardName, proofUrl: resolutionProofUrl }
+    });
+
     setShowResolveModal(false);
     setResolutionNote('');
+    setResolutionProofUrl('');
     setSelectedIncident(null);
     loadData();
   };
@@ -372,6 +402,20 @@ export const SecurityEmergencyTerminalPage: React.FC = () => {
                 onChange={e => setResolutionNote(e.target.value)}
                 style={{ width: '100%', padding: '0.625rem 0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.875rem', color: '#083B56', background: '#FFFFFF' }}
               />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--aarizo-navy, #083B56)', marginBottom: '0.35rem' }}>Resolution Proof Photo / Clearance Slip (Optional)</label>
+              <FileUpload
+                category="tickets"
+                accept="image/*,.pdf"
+                maxSizeMB={10}
+                onUploadSuccess={(url) => setResolutionProofUrl(url)}
+              />
+              {resolutionProofUrl && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.35rem', color: '#059669', fontSize: '0.75rem', fontWeight: 600 }}>
+                  <FileCheck size={14} /> Document attached successfully
+                </div>
+              )}
             </div>
             <div className="pt-4 flex justify-end gap-2">
               <button

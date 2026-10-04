@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, AlertCircle, Info, X } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Info, X, Radio, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { realtimeService } from '../../services/realtimeService';
+import { NotificationEngineHub } from '../../domains/notifications';
+import { apiClient } from '../../services/apiClient';
 
 interface NotificationItem {
   id: string;
@@ -13,78 +15,31 @@ interface NotificationItem {
   read: boolean;
 }
 
-const MOCK_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: '1',
-    type: 'complaint',
-    title: 'New Complaint Submitted',
-    description: 'New Complaint — Light cut',
-    date: '25 Aug',
-    category: 'Complaint',
-    read: false,
-  },
-  {
-    id: '2',
-    type: 'complaint',
-    title: 'New Complaint Submitted',
-    description: 'New Complaint — Leaking water in a bathroom',
-    date: '25 Aug',
-    category: 'Complaint',
-    read: false,
-  },
-  {
-    id: '3',
-    type: 'general',
-    title: 'New Amenity Booking Request',
-    description: 'New Amenity Booking Request — Club house',
-    date: '24 Aug',
-    category: 'General',
-    read: true,
-  },
-  {
-    id: '4',
-    type: 'complaint',
-    title: 'New Complaint Submitted',
-    description: 'New Complaint — Vvvvvv',
-    date: '24 Aug',
-    category: 'Complaint',
-    read: false,
-  },
-  {
-    id: '5',
-    type: 'complaint',
-    title: 'New Complaint Submitted',
-    description: 'New Complaint — Roni',
-    date: '21 Aug',
-    category: 'Complaint',
-    read: true,
-  },
-  {
-    id: '6',
-    type: 'complaint',
-    title: 'New Complaint Submitted',
-    description: 'New Complaint — Èeeeee',
-    date: '21 Aug',
-    category: 'Complaint',
-    read: true,
-  },
-  {
-    id: '7',
-    type: 'complaint',
-    title: 'New Complaint Submitted',
-    description: 'New Complaint — Pppppp',
-    date: '21 Aug',
-    category: 'Complaint',
-    read: true,
-  },
-];
-
 export const NotificationCenterPage: React.FC = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'ALL' | 'UNREAD'>('ALL');
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [viewMode, setViewMode] = useState<'ALERTS' | 'ENGINE_HUB'>('ALERTS');
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   useEffect(() => {
+    // Load live notifications from PostgreSQL
+    apiClient.getNotifications()
+      .then((list) => {
+        if (Array.isArray(list) && list.length > 0) {
+          const live: NotificationItem[] = list.map((n: any) => ({
+            id: n.id,
+            type: n.channel === 'EMERGENCY' ? 'complaint' : 'general',
+            title: n.title,
+            description: n.message,
+            date: new Date(n.createdAt).toLocaleDateString([], { day: 'numeric', month: 'short' }),
+            category: n.category || 'General',
+            read: n.isRead ?? false,
+          }));
+          setNotifications(live);
+        }
+      })
+      .catch((err) => console.warn('[Notifications] Live load failed:', err));
+
     const unsub = realtimeService.subscribe('*', (msg) => {
       let title = 'Realtime Notification';
       let description = '';
@@ -148,46 +103,102 @@ export const NotificationCenterPage: React.FC = () => {
 
   const handleDismiss = (id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
+    apiClient.markNotificationRead(id).catch(() => {});
   };
 
   return (
-    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', paddingBottom: '6rem' }}>
+    <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', paddingBottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}>
       {/* ── Subheader with Back Button & Unread Counter ── */}
       <div
         style={{
           background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
           padding: '1.25rem 1rem',
+          paddingTop: 'calc(1.25rem + env(safe-area-inset-top, 0px))',
           color: '#ffffff',
           boxShadow: '0 2px 8px rgba(8, 59, 86, 0.08)',
         }}
       >
-        <div className="max-w-4xl mx-auto w-full flex items-center gap-3.5">
-          <button
-            onClick={() => navigate(-1)}
-            aria-label="Go Back"
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.15)',
-              border: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
-              cursor: 'pointer',
-            }}
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <div>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>Notifications</h1>
-            <p style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.75)', margin: '0.125rem 0 0' }}>
-              {unreadCount} unread
-            </p>
+        <div className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3.5">
+            <button
+              onClick={() => navigate(-1)}
+              aria-label="Go Back"
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.15)',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <div>
+              <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>Notifications</h1>
+              <p style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.75)', margin: '0.125rem 0 0' }}>
+                {unreadCount} unread
+              </p>
+            </div>
+          </div>
+
+          {/* Mode Switcher */}
+          <div className="flex items-center gap-1.5 w-full sm:w-auto p-1 rounded-xl bg-white/15">
+            <button
+              onClick={() => setViewMode('ALERTS')}
+              className="flex-1 sm:flex-initial"
+              style={{
+                padding: '0.45rem 0.85rem',
+                borderRadius: '8px',
+                border: 'none',
+                background: viewMode === 'ALERTS' ? '#ffffff' : 'transparent',
+                color: viewMode === 'ALERTS' ? '#083B56' : '#ffffff',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.35rem',
+              }}
+            >
+              <Bell size={13} /> Alerts Feed
+            </button>
+            <button
+              onClick={() => setViewMode('ENGINE_HUB')}
+              className="flex-1 sm:flex-initial"
+              style={{
+                padding: '0.45rem 0.85rem',
+                borderRadius: '8px',
+                border: 'none',
+                background: viewMode === 'ENGINE_HUB' ? '#ffffff' : 'transparent',
+                color: viewMode === 'ENGINE_HUB' ? '#083B56' : '#ffffff',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.35rem',
+              }}
+            >
+              <Radio size={13} className={viewMode === 'ENGINE_HUB' ? 'text-[#176B91]' : 'text-white'} /> Real-Time Engine Hub
+            </button>
           </div>
         </div>
       </div>
+
+      {viewMode === 'ENGINE_HUB' ? (
+        <div className="max-w-6xl mx-auto w-full px-4 pt-6">
+          <NotificationEngineHub />
+        </div>
+      ) : (
+        <>
 
       {/* ── Filter Pills: All / Unread ── */}
       <div className="max-w-4xl mx-auto w-full" style={{ padding: '1rem 1rem 0.5rem' }}>
@@ -328,6 +339,8 @@ export const NotificationCenterPage: React.FC = () => {
           );
         })}
       </div>
+      </>
+      )}
     </div>
   );
 };

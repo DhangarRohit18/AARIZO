@@ -42,3 +42,5 @@ export function useRealtimeStream(topicFilter: RealtimeTopic | 'ALL' = 'ALL') {
 
   return { messages, status };
 }
+
+export * from './useFirestoreRealtime';

@@ -39,9 +39,9 @@ export interface Parcel {
   isFlagged24h: boolean;
   isFlagged48h: boolean;
   notes?: string;
-  createdAt: string;
-  expiresAt: string;
-  createdBy: string; // UID of the Guard who received it
+  createdAt?: string;
+  expiresAt?: string;
+  createdBy?: string; // UID of the Guard who received it
 }
 
 export interface DeliveryEntry {

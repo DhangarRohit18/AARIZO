@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck,
@@ -13,12 +12,14 @@ import {
   Building2,
   History,
   UserCheck,
-  X,
 } from 'lucide-react';
 import { assetComplianceService } from '../services/assetComplianceService';
-import type { AssetItem, ComplianceMetrics, AssetCategory, ComplianceStatus, AlertWindow } from '../types';
+import { ComplianceMetricsCards } from './ComplianceMetricsCards';
+import { AssetModals } from './AssetModals';
+import type { AssetItem, ComplianceMetrics, AssetCategory, ComplianceStatus, AlertWindow, AssetStatus } from '../types';
 import { useAuth } from '../../../context/AuthContext';
 import { realTimeSync } from '../../../services/realTimeSync';
+import { realtimeService } from '../../../services/realtimeService';
 
 interface AssetComplianceHubProps {
   userRoleOverride?: string;
@@ -81,7 +82,15 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
     const unsubscribe = realTimeSync.subscribe('COMPLIANCE_UPDATED', () => {
       loadData();
     });
-    return () => unsubscribe();
+    const unsubRealtime = realtimeService.subscribe('*', (msg) => {
+      if (['COMPLIANCE_UPDATED', 'ASSET_INSPECTED', 'AMC_RENEWED', 'SOCIETY_SYNC'].includes(msg.topic)) {
+        loadData();
+      }
+    });
+    return () => {
+      unsubscribe();
+      unsubRealtime();
+    };
   }, []);
 
   const filteredAssets = assets.filter(asset => {
@@ -157,7 +166,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
     alert('AMC / Certificate renewal recorded successfully.');
   };
 
-  const getAlertBadge = (alert: AlertWindow, status: ComplianceStatus) => {
+  const getAlertBadge = (alert: AlertWindow, status: ComplianceStatus | AssetStatus) => {
     if (status === 'EXPIRED' || alert === 'EXPIRED') {
       return (
         <span className="px-2.5 py-1 text-xs font-bold bg-rose-100 text-rose-800 rounded-full flex items-center gap-1">
@@ -167,7 +176,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
     }
     if (status === 'NON_COMPLIANT') {
       return (
-        <span className="px-2.5 py-1 text-xs font-bold bg-purple-100 text-purple-800 rounded-full flex items-center gap-1">
+        <span className="px-2.5 py-1 text-xs font-bold bg-[#EAF6FC] text-[#083B56] rounded-full flex items-center gap-1">
           <AlertTriangle size={13} /> NON-COMPLIANT
         </span>
       );
@@ -188,7 +197,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
     }
     if (alert === '30_DAYS') {
       return (
-        <span className="px-2.5 py-1 text-xs font-bold bg-blue-50 text-blue-700 rounded-full flex items-center gap-1">
+        <span className="px-2.5 py-1 text-xs font-bold bg-[#EAF6FC] text-[#083B56] rounded-full flex items-center gap-1">
           <Clock size={13} /> EXPIRING (30 Days)
         </span>
       );
@@ -266,103 +275,8 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
         </div>
       </div>
 
-      {/* Compliance Metrics Cards - Structured Mobile Layout */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-        {/* Compliance Health Overall Score */}
-        <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #DCE8EF', padding: '1rem', boxShadow: '0 2px 6px rgba(8, 59, 86, 0.04)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-            <div>
-              <span style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#8B9AA5' }}>
-                Compliance Health Score
-              </span>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginTop: '0.15rem' }}>
-                <span style={{ fontSize: '1.75rem', fontWeight: 900, color: '#083B56', lineHeight: 1 }}>
-                  {metrics.complianceScorePercent}%
-                </span>
-                <span style={{
-                  fontSize: '0.6875rem',
-                  fontWeight: 700,
-                  color: metrics.complianceScorePercent >= 80 ? '#059669' : metrics.complianceScorePercent >= 50 ? '#D97706' : '#DC2626',
-                  background: metrics.complianceScorePercent >= 80 ? '#ECFDF5' : metrics.complianceScorePercent >= 50 ? '#FFFBEB' : '#FEF2F2',
-                  padding: '0.15rem 0.5rem',
-                  borderRadius: '12px',
-                }}>
-                  {metrics.complianceScorePercent >= 80 ? 'Good Health' : metrics.complianceScorePercent >= 50 ? 'Needs Attention' : 'Critical Action'}
-                </span>
-              </div>
-            </div>
-            <div style={{ width: 42, height: 42, borderRadius: '12px', background: '#EAF6FC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#176B91' }}>
-              <ShieldCheck size={24} />
-            </div>
-          </div>
-          <div style={{ width: '100%', height: '6px', background: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden' }}>
-            <div
-              style={{
-                height: '100%',
-                borderRadius: '9999px',
-                width: `${metrics.complianceScorePercent}%`,
-                background: metrics.complianceScorePercent >= 80 ? '#059669' : metrics.complianceScorePercent >= 50 ? '#D97706' : '#DC2626',
-                transition: 'width 0.3s ease',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* 2x2 Clean Metrics Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
-          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
-                Active Compliant
-              </span>
-              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <CheckCircle2 size={14} color="#059669" />
-              </div>
-            </div>
-            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#059669', lineHeight: 1.1 }}>{metrics.activeCount}</div>
-            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Valid AMC & Insurance</div>
-          </div>
-
-          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
-                Expiring (30 Days)
-              </span>
-              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Clock size={14} color="#D97706" />
-              </div>
-            </div>
-            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#D97706', lineHeight: 1.1 }}>{metrics.expiringSoonCount}</div>
-            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Needs renewal review</div>
-          </div>
-
-          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
-                Expired Contracts
-              </span>
-              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <XCircle size={14} color="#DC2626" />
-              </div>
-            </div>
-            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#DC2626', lineHeight: 1.1 }}>{metrics.expiredCount}</div>
-            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Action required now</div>
-          </div>
-
-          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #DCE8EF', padding: '0.75rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#657785', letterSpacing: '0.02em' }}>
-                Non-Compliant
-              </span>
-              <div style={{ width: 24, height: 24, borderRadius: '6px', background: '#F5F3FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <AlertTriangle size={14} color="#7C3AED" />
-              </div>
-            </div>
-            <div style={{ fontSize: '1.375rem', fontWeight: 900, color: '#7C3AED', lineHeight: 1.1 }}>{metrics.nonCompliantCount}</div>
-            <div style={{ fontSize: '0.65rem', color: '#8B9AA5', marginTop: '0.2rem' }}>Failed inspection</div>
-          </div>
-        </div>
-      </div>
+      {/* Compliance Metrics Cards */}
+      <ComplianceMetricsCards metrics={metrics} />
 
       {/* Filters & Search - Neat Card */}
       <div style={{ background: '#ffffff', border: '1px solid #DCE8EF', borderRadius: '14px', padding: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', boxShadow: '0 1px 4px rgba(8, 59, 86, 0.04)' }}>
@@ -505,7 +419,7 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
                 <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', fontWeight: 800, color: '#176B91', background: '#EAF6FC', padding: '0.15rem 0.5rem', borderRadius: '6px', border: '1px solid #DCE8EF' }}>
                   {asset.assetCode}
                 </span>
-                {getAlertBadge(asset.alertLevel, asset.status)}
+                {getAlertBadge(asset.alertLevel || 'NONE', asset.status)}
               </div>
 
               {/* Asset Name */}
@@ -533,19 +447,19 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.35rem', background: '#F7FBFE', border: '1px solid #EBF5FA', borderRadius: '10px', padding: '0.5rem' }}>
                 <div style={{ textAlign: 'center' }}>
                   <span style={{ fontSize: '0.6rem', color: '#8B9AA5', display: 'block', fontWeight: 600 }}>AMC EXPIRY</span>
-                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: new Date(asset.amcExpiryDate) < new Date() ? '#DC2626' : '#083B56' }}>
+                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: new Date(asset.amcExpiryDate || Date.now()) < new Date() ? '#DC2626' : '#083B56' }}>
                     {asset.amcExpiryDate}
                   </span>
                 </div>
                 <div style={{ textAlign: 'center', borderLeft: '1px solid #DCE8EF', borderRight: '1px solid #DCE8EF' }}>
                   <span style={{ fontSize: '0.6rem', color: '#8B9AA5', display: 'block', fontWeight: 600 }}>INSURANCE</span>
-                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: new Date(asset.insuranceExpiryDate) < new Date() ? '#DC2626' : '#083B56' }}>
+                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: new Date(asset.insuranceExpiryDate || Date.now()) < new Date() ? '#DC2626' : '#083B56' }}>
                     {asset.insuranceExpiryDate}
                   </span>
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <span style={{ fontSize: '0.6rem', color: '#8B9AA5', display: 'block', fontWeight: 600 }}>CERT EXPIRY</span>
-                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: new Date(asset.certificateExpiryDate) < new Date() ? '#DC2626' : '#083B56' }}>
+                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: new Date(asset.certificateExpiryDate || Date.now()) < new Date() ? '#DC2626' : '#083B56' }}>
                     {asset.certificateExpiryDate}
                   </span>
                 </div>
@@ -640,401 +554,21 @@ export const AssetComplianceHub: React.FC<AssetComplianceHubProps> = ({ userRole
         )}
       </div>
 
-      {/* Add Asset Modal */}
-      {modalMode === 'ADD' && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b pb-3">
-              <h3 className="font-bold text-slate-900 text-lg">Register New Asset</h3>
-              <button
-                type="button"
-                onClick={() => setModalMode(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-                title="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleAddSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Asset Name</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Tower B Lift 2"
-                  value={addForm.name}
-                  onChange={(e) => setAddForm({ ...addForm, name: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Asset Code</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="AST-LIFT-B2"
-                    value={addForm.assetCode}
-                    onChange={(e) => setAddForm({ ...addForm, assetCode: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
-                  <select
-                    value={addForm.category}
-                    onChange={(e) => setAddForm({ ...addForm, category: e.target.value as AssetCategory })}
-                    className="w-full px-3 py-2 border rounded-lg text-sm bg-white"
-                  >
-                    <option value="LIFT">Lift</option>
-                    <option value="GENERATOR">Generator</option>
-                    <option value="PUMP">Pump</option>
-                    <option value="CCTV">CCTV</option>
-                    <option value="FIRE_SYSTEM">Fire System</option>
-                    <option value="SWIMMING_POOL">Swimming Pool</option>
-                    <option value="GYM_EQUIPMENT">Gym Equipment</option>
-                    <option value="ELECTRICAL_EQUIPMENT">Electrical Equipment</option>
-                    <option value="WATER_SYSTEMS">Water Systems</option>
-                    <option value="OTHER">Other</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Location</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Clubhouse Floor 1"
-                  value={addForm.location}
-                  onChange={(e) => setAddForm({ ...addForm, location: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Vendor Name</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Otis Elevator"
-                    value={addForm.vendorName}
-                    onChange={(e) => setAddForm({ ...addForm, vendorName: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Vendor Contact</label>
-                  <input
-                    type="text"
-                    placeholder="+91 98765 00000"
-                    value={addForm.vendorContact}
-                    onChange={(e) => setAddForm({ ...addForm, vendorContact: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">AMC Expiry</label>
-                  <input
-                    type="date"
-                    required
-                    value={addForm.amcExpiryDate}
-                    onChange={(e) => setAddForm({ ...addForm, amcExpiryDate: e.target.value })}
-                    className="w-full px-2 py-1.5 border rounded-lg text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">Insurance Expiry</label>
-                  <input
-                    type="date"
-                    required
-                    value={addForm.insuranceExpiryDate}
-                    onChange={(e) => setAddForm({ ...addForm, insuranceExpiryDate: e.target.value })}
-                    className="w-full px-2 py-1.5 border rounded-lg text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">Cert Expiry</label>
-                  <input
-                    type="date"
-                    required
-                    value={addForm.certificateExpiryDate}
-                    onChange={(e) => setAddForm({ ...addForm, certificateExpiryDate: e.target.value })}
-                    className="w-full px-2 py-1.5 border rounded-lg text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setModalMode(null)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
-                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
-                >
-                  Save & Register
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Record Inspection Modal */}
-      {modalMode === 'INSPECT' && activeAssetForModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
-            <div className="flex justify-between items-center border-b pb-3">
-              <h3 className="font-bold text-slate-900 text-base">Record Maintenance Inspection</h3>
-              <button
-                type="button"
-                onClick={() => setModalMode(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-                title="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-500">
-              Recording inspection for <strong className="text-slate-800">{activeAssetForModal.name}</strong> ({activeAssetForModal.assetCode})
-            </p>
-
-            <form onSubmit={handleInspectSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Inspection Outcome</label>
-                <select
-                  value={inspectForm.result}
-                  onChange={(e) => setInspectForm({ ...inspectForm, result: e.target.value as any })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm bg-white font-medium"
-                >
-                  <option value="PASSED">PASSED (All systems healthy)</option>
-                  <option value="NEEDS_ATTENTION">NEEDS ATTENTION (Minor observations)</option>
-                  <option value="FAILED">FAILED (Non-compliant / Repair needed)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Inspector Notes</label>
-                <textarea
-                  required
-                  rows={3}
-                  placeholder="Record servicing details, replaced parts, pressure levels..."
-                  value={inspectForm.notes}
-                  onChange={(e) => setInspectForm({ ...inspectForm, notes: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Inspection Proof / Document URL</label>
-                <input
-                  type="text"
-                  placeholder="https://example.com/proofs/insp-proof.pdf"
-                  value={inspectForm.proofUrl}
-                  onChange={(e) => setInspectForm({ ...inspectForm, proofUrl: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setModalMode(null)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-emerald-600 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-emerald-500"
-                >
-                  Submit Inspection
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Renew AMC Modal */}
-      {modalMode === 'RENEW' && activeAssetForModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
-            <div className="flex justify-between items-center border-b pb-3">
-              <h3 className="font-bold text-slate-900 text-base">Renew AMC / Insurance / Certificate</h3>
-              <button
-                type="button"
-                onClick={() => setModalMode(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-                title="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleRenewSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Renewal Target</label>
-                <select
-                  value={renewForm.renewalType}
-                  onChange={(e) => setRenewForm({ ...renewForm, renewalType: e.target.value as any })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm bg-white"
-                >
-                  <option value="AMC">AMC Contract</option>
-                  <option value="INSURANCE">Asset Insurance Policy</option>
-                  <option value="CERTIFICATE">Government Safety Certificate</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">New Expiry Date</label>
-                <input
-                  type="date"
-                  required
-                  value={renewForm.newExpiryDate}
-                  onChange={(e) => setRenewForm({ ...renewForm, newExpiryDate: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Contractor / Vendor Name</label>
-                <input
-                  type="text"
-                  placeholder="Vendor Name"
-                  value={renewForm.vendorName}
-                  onChange={(e) => setRenewForm({ ...renewForm, vendorName: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Cost (₹)</label>
-                  <input
-                    type="number"
-                    placeholder="45000"
-                    value={renewForm.cost}
-                    onChange={(e) => setRenewForm({ ...renewForm, cost: Number(e.target.value) })}
-                    className="w-full px-3 py-2 border rounded-lg text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Document Link</label>
-                  <input
-                    type="text"
-                    placeholder="https://..."
-                    value={renewForm.documentUrl}
-                    onChange={(e) => setRenewForm({ ...renewForm, documentUrl: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setModalMode(null)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-white text-xs font-semibold rounded-lg shadow-md hover:opacity-95"
-                  style={{ background: 'var(--aarizo-blue, #176B91)' }}
-                >
-                  Save & Renew
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Audit History Modal */}
-      {modalMode === 'AUDIT' && activeAssetForModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b pb-3">
-              <div>
-                <h3 className="font-bold text-slate-900 text-base">Asset Audit History</h3>
-                <p className="text-xs text-slate-500">{activeAssetForModal.name} ({activeAssetForModal.assetCode})</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setModalMode(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-                title="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Immutable Change Logs</h4>
-              <div className="space-y-2">
-                {activeAssetForModal.auditLogs.map((log) => (
-                  <div key={log.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
-                    <div className="flex justify-between text-slate-500">
-                      <strong className="text-[#083B56] font-semibold">{log.action}</strong>
-                      <span>{new Date(log.timestamp).toLocaleString()}</span>
-                    </div>
-                    <p className="text-slate-800">{log.details}</p>
-                    <div className="text-[11px] text-slate-400">Performed by: {log.performedBy} ({log.performedRole})</div>
-                  </div>
-                ))}
-              </div>
-
-              {activeAssetForModal.inspections.length > 0 && (
-                <>
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-2">Recent Inspections</h4>
-                  <div className="space-y-2">
-                    {activeAssetForModal.inspections.map((insp) => (
-                      <div key={insp.id} className="p-3 bg-emerald-50/50 rounded-xl border border-emerald-100 text-xs space-y-1">
-                        <div className="flex justify-between font-semibold">
-                          <span className={insp.result === 'PASSED' ? 'text-emerald-700' : 'text-rose-700'}>
-                            Result: {insp.result}
-                          </span>
-                          <span className="text-slate-400">{insp.inspectionDate}</span>
-                        </div>
-                        <p className="text-slate-700">{insp.notes}</p>
-                        <div className="text-[11px] text-slate-400">Inspector: {insp.inspectorName}</div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="flex justify-end pt-3 border-t">
-              <button
-                onClick={() => setModalMode(null)}
-                className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Compliance Modals */}
+      <AssetModals
+        modalMode={modalMode}
+        setModalMode={setModalMode}
+        activeAssetForModal={activeAssetForModal}
+        addForm={addForm}
+        setAddForm={setAddForm}
+        handleAddSubmit={handleAddSubmit}
+        inspectForm={inspectForm}
+        setInspectForm={setInspectForm}
+        handleInspectSubmit={handleInspectSubmit}
+        renewForm={renewForm}
+        setRenewForm={setRenewForm}
+        handleRenewSubmit={handleRenewSubmit}
+      />
     </div>
   );
 };

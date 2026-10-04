@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Building2, Users, Bell, CreditCard, UserCheck, X, ShieldCheck } from 'lucide-react';
 import { SecretaryHome } from './home/SecretaryHome';
@@ -8,10 +8,10 @@ import { SecretaryBillingLedger } from './finances/SecretaryBillingLedger';
 import { SecretaryProfile } from './profile/SecretaryProfile';
 import { SecretaryCommitteeRoster } from './committee/SecretaryCommitteeRoster';
 import { SecretaryNotifications } from './notifications/SecretaryNotifications';
+import { apiClient } from '../../services/apiClient';
+import { realtimeService } from '../../services/realtimeService';
 
 import {
-  INITIAL_SECRETARY_RESIDENTS,
-  INITIAL_SECRETARY_NOTICES,
   INITIAL_CANONICAL_BILLING,
   INITIAL_COMMITTEE_ROSTER,
 } from '../../domains/secretary/states';
@@ -22,9 +22,6 @@ import type {
   CanonicalBillingRecord,
   CommitteeMemberRecord,
 } from '../../domains/secretary/types';
-
-import { mockAnnouncements } from '../../mockData/community/announcements';
-import { mockDues } from '../../mockData/payments/dues';
 
 import './secretary.css';
 
@@ -39,11 +36,68 @@ export const SecretaryShell: React.FC = () => {
   const [noticeDrawerOpen, setNoticeDrawerOpen] = useState<boolean>(false);
   const [issueBillModalOpen, setIssueBillModalOpen] = useState<boolean>(false);
 
-  // Prototype Shared Local State
-  const [residents, setResidents] = useState<SecretaryResidentRecord[]>(INITIAL_SECRETARY_RESIDENTS);
-  const [notices, setNotices] = useState<SecretaryNoticeItem[]>(INITIAL_SECRETARY_NOTICES);
+  // Live state loaded from PostgreSQL
+  const [residents, setResidents] = useState<SecretaryResidentRecord[]>([]);
+  const [notices, setNotices] = useState<SecretaryNoticeItem[]>([]);
   const [ledger, setLedger] = useState<CanonicalBillingRecord[]>(INITIAL_CANONICAL_BILLING);
   const [committee] = useState<CommitteeMemberRecord[]>(INITIAL_COMMITTEE_ROSTER);
+
+  const loadSecretaryData = async () => {
+    try {
+      const [resList, annList] = await Promise.all([
+        apiClient.getResidents(),
+        apiClient.getAnnouncements(),
+      ]);
+
+      if (resList && Array.isArray(resList) && resList.length > 0) {
+        const mapped: SecretaryResidentRecord[] = resList.map((r: any) => ({
+          id: r.id,
+          name: r.name,
+          flatNumber: r.flat ? `${r.flat.tower?.blockCode || 'T'}-${r.flat.flatNumber}` : 'B-1204',
+          blockWing: 'Block B' as const,
+          canonicalDisplay: `${r.name} (${r.flat ? `${r.flat.tower?.blockCode || 'T'}-${r.flat.flatNumber}` : 'B-1204'})`,
+          type: (r.residentType === 'OWNER' ? 'Owner' : 'Tenant') as 'Owner' | 'Tenant',
+          status: (r.status === 'ACTIVE' ? 'Active' : 'Pending Verification') as 'Active' | 'Pending Verification',
+          phone: r.phone,
+          email: r.email || `${r.name.toLowerCase().replace(' ', '.')}@aarizo.com`,
+          vehiclesCount: r.vehicles?.length || 1,
+          familyCount: r.familyMembers?.length || 2,
+          submittedAt: r.moveInDate ? new Date(r.moveInDate).toLocaleDateString([], { month: 'short', year: 'numeric' }) : 'Jan 2024',
+        }));
+        setResidents(mapped);
+      }
+
+      if (annList && Array.isArray(annList) && annList.length > 0) {
+        const mappedNotices: SecretaryNoticeItem[] = annList.map((a: any) => ({
+          id: a.id,
+          title: a.title,
+          category: (a.category === 'MAINTENANCE' ? 'Maintenance Alert' : a.category === 'SECURITY' ? 'Security Alert' : 'General Notice') as any,
+          priority: (a.isUrgent ? 'Urgent' : 'Normal') as any,
+          targetAudience: 'All Blocks' as const,
+          content: a.content,
+          status: 'Published' as const,
+          createdAt: new Date(a.createdAt || Date.now()).toISOString().split('T')[0],
+          publishedAt: new Date(a.publishedAt || Date.now()).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }),
+          authorName: a.authorName || 'Managing Committee',
+          authorRole: 'Committee',
+          acknowledgedCount: 42,
+          attachmentUrl: a.attachmentUrl || undefined,
+          attachmentName: a.attachmentName || undefined,
+        }));
+        setNotices(mappedNotices);
+      }
+    } catch (err) {
+      console.error('Error loading secretary data:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadSecretaryData();
+    const unsub = realtimeService.subscribe('*', () => {
+      loadSecretaryData();
+    });
+    return () => unsub();
+  }, []);
 
   // Handlers for Shared Simulated Prototype Synchronization
   const handleApproveResident = (id: string, note?: string) => {
@@ -87,27 +141,33 @@ export const SecretaryShell: React.FC = () => {
 
     setNotices((prev) => [newNotice, ...prev]);
 
-    // Simulated Sync to Resident Community Announcements Feed
-    mockAnnouncements.unshift({
-      id: `ANN-${Date.now()}`,
-      title: newNotice.title,
-      category:
-        newNotice.category === 'Maintenance Alert'
-          ? 'maintenance'
-          : newNotice.category === 'Security Alert'
-          ? 'security'
-          : newNotice.category === 'Event / Celebration'
-          ? 'event'
-          : 'rwa',
-      priority: newNotice.priority === 'Urgent' ? 'urgent' : newNotice.priority === 'Important' ? 'important' : 'normal',
-      publishedDate: 'Just Now',
-      authorName: newNotice.authorName,
-      authorRole: newNotice.authorRole,
-      summary: newNotice.content.substring(0, 140) + '...',
-      content: newNotice.content,
-      isRead: false,
-      locationArea: `Target Audience: ${newNotice.targetAudience}`,
-    });
+    // Persist to PostgreSQL backend database and broadcast in real time
+    apiClient
+      .createAnnouncement({
+        societyId: 'soc-gvs',
+        title: newNotice.title,
+        content: newNotice.content,
+        category: newNotice.category,
+        authorName: newNotice.authorName,
+        isUrgent: newNotice.priority === 'Urgent',
+        attachmentUrl: newNotice.attachmentUrl,
+        attachmentName: newNotice.attachmentName,
+      })
+      .then(() => {
+        realtimeService.publish(
+          'NOTIFICATIONS',
+          {
+            title: newNotice.title,
+            category: newNotice.category,
+          },
+          'soc-gvs',
+          'SECRETARY',
+          'Society Office'
+        );
+      })
+      .catch((err) => {
+        console.error('Failed to create announcement in PostgreSQL:', err);
+      });
   };
 
   const handleSaveDraftNotice = (
@@ -144,19 +204,6 @@ export const SecretaryShell: React.FC = () => {
     };
 
     setLedger((prev) => [newBill, ...prev]);
-
-    // Simulated Sync to Resident Payments Dues
-    mockDues.unshift({
-      id,
-      category: billData.category,
-      title: billData.title,
-      amount: billData.totalAmount,
-      dueDate: billData.dueDate,
-      status: 'DUE',
-      period: billData.billingCycle,
-      description: billData.description,
-      accountReference,
-    });
   };
 
   const handleNavigateFromHome = (action: string) => {

@@ -1,4 +1,3 @@
-﻿// @ts-nocheck
 import { attendanceRepository } from './AttendanceRepository';
 import { staffRepository } from './StaffRepository';
 import { where, orderBy, limit } from 'firebase/firestore';

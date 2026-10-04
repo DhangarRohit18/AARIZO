@@ -47,6 +47,7 @@ export interface SmartVisitorPass {
   usageCount: number;
   maxUsages: number;
   vehicleNumber?: string;
+  photoUrl?: string;
   companyName?: string;
   purpose?: string;
   groupCount?: number;

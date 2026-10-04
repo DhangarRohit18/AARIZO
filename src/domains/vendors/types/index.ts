@@ -1,4 +1,116 @@
-export type VendorStatus = 'APPROVED' | 'SUSPENDED' | 'PREFERRED' | 'BLACKLISTED' | 'PENDING';
+export type VendorStatus = 
+  | 'PENDING' 
+  | 'APPROVED' 
+  | 'SUSPENDED' 
+  | 'REJECTED' 
+  | 'ACTIVE' 
+  | 'PREFERRED' 
+  | 'BLACKLISTED';
+
+export type VendorApprovalStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface VendorProfile {
+  id: string;
+  uid: string;
+  societyId: string;
+  companyName: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  category: string;
+  address?: string;
+  status: VendorStatus;
+  approvalStatus: VendorApprovalStatus;
+  rating?: number;
+  totalReviews?: number;
+  totalJobs?: number;
+  verifiedDocumentsCount?: number;
+  createdAt?: any;
+  updatedAt?: any;
+}
+
+export type PricingType = 'FIXED' | 'STARTING_AT' | 'HOURLY' | 'PER_UNIT';
+export type ServiceAvailability = 'AVAILABLE' | 'UNAVAILABLE' | 'WEEKDAYS_ONLY' | 'WEEKENDS_ONLY';
+
+export interface VendorService {
+  id: string;
+  vendorId: string;
+  vendorName?: string;
+  societyId: string;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  pricingType: PricingType;
+  images: string[];
+  availability: ServiceAvailability;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt?: any;
+  updatedAt?: any;
+}
+
+export type VendorRequestStatus = 
+  | 'PENDING'
+  | 'ACCEPTED'
+  | 'REJECTED'
+  | 'SCHEDULED'
+  | 'IN_PROGRESS'
+  | 'COMPLETED'
+  | 'CANCELLED';
+
+export interface VendorRequest {
+  id: string;
+  orderNumber: string;
+  societyId: string;
+  residentId: string;
+  residentName: string;
+  residentPhone: string;
+  flatCode: string;
+  vendorId: string;
+  vendorName: string;
+  serviceId: string;
+  serviceTitle: string;
+  category: string;
+  price: number;
+  scheduledDate: string;
+  timeSlot?: string;
+  notes?: string;
+  status: VendorRequestStatus;
+  rating?: number;
+  reviewNotes?: string;
+  paymentStatus: 'UNPAID' | 'PAID' | 'REFUNDED';
+  paymentId?: string;
+  createdAt?: any;
+  updatedAt?: any;
+}
+
+export type VendorDocumentType =
+  | 'GST_CERTIFICATE'
+  | 'BUSINESS_LICENSE'
+  | 'INSURANCE'
+  | 'AGREEMENT'
+  | 'IDENTITY_PROOF'
+  | 'CERTIFICATES'
+  | 'OTHER';
+
+export type DocumentVerificationStatus = 'PENDING' | 'VERIFIED' | 'REJECTED' | 'EXPIRED';
+
+export interface VendorDocument {
+  id: string;
+  vendorId: string;
+  societyId: string;
+  documentType: VendorDocumentType;
+  title: string;
+  fileUrl: string;
+  fileName: string;
+  fileSize?: number;
+  status: DocumentVerificationStatus;
+  expiryDate?: string;
+  uploadedAt: any;
+  verifiedAt?: any;
+  verifiedBy?: string;
+  rejectionReason?: string;
+}
 
 export interface VendorPerformanceMetrics {
   vendorId: string;

@@ -1,4 +1,3 @@
-﻿// @ts-nocheck
 import type { FirestoreDataConverter, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { BaseRepository } from '../BaseRepository';

@@ -4,6 +4,7 @@ import { Menu, LogOut, X, ChevronRight, Bell, ChevronDown, Plus } from 'lucide-r
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { App } from '@capacitor/app';
+import { triggerHaptic, useVirtualKeyboard } from '../../utils/nativeMobile';
 
 export interface NavItem {
   icon: LucideIcon | React.ElementType;
@@ -38,6 +39,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
   const mainRef = useRef<HTMLElement | null>(null);
+  const isKeyboardVisible = useVirtualKeyboard();
 
   // Automatically scroll main viewport to top on route navigation
   useEffect(() => {
@@ -148,7 +150,10 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
             {/* Drawer trigger button */}
             <button
-              onClick={() => setDrawerOpen(true)}
+              onClick={() => {
+                triggerHaptic('light');
+                setDrawerOpen(true);
+              }}
               aria-label="Open Navigation Drawer"
               style={{
                 width: 38,
@@ -435,6 +440,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
           boxShadow: '0 -4px 16px rgba(8, 59, 86, 0.08)',
           height: 'calc(62px + env(safe-area-inset-bottom, 0px))',
           boxSizing: 'border-box',
+          display: isKeyboardVisible ? 'none' : 'flex',
         }}
       >
         {/* First 2 items on left */}
@@ -445,6 +451,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
             <Link
               key={item.path}
               to={item.path}
+              onClick={() => triggerHaptic('light')}
               aria-label={item.label}
               style={{
                 display: 'flex',
@@ -473,6 +480,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
           <div style={{ position: 'relative', width: 56, display: 'flex', justifyContent: 'center' }}>
             <button
               onClick={() => {
+                triggerHaptic('medium');
                 if (onFabClick) {
                   onFabClick();
                 } else if (location.pathname.startsWith('/security')) {
@@ -520,6 +528,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
             <Link
               key={item.path}
               to={item.path}
+              onClick={() => triggerHaptic('light')}
               aria-label={item.label}
               style={{
                 display: 'flex',

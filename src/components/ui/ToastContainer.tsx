@@ -48,8 +48,8 @@ const ToastItem: React.FC<{ toast: ToastMessage; onDismiss: (id: string) => void
       icon: <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />,
     },
     info: {
-      bg: 'bg-blue-950/90 border-blue-700/60 text-blue-200',
-      icon: <Info className="w-5 h-5 text-blue-400 shrink-0" />,
+      bg: 'bg-[#062A3D]/90 border-[#176B91]/60 text-[#A3D4E8]',
+      icon: <Info className="w-5 h-5 text-[#3DA4CC] shrink-0" />,
     },
   }[toast.type];
 

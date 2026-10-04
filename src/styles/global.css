@@ -113,6 +113,24 @@ button {
   cursor: pointer;
 }
 
+/* Tactile mobile tap response */
+button:active:not(:disabled),
+a:active,
+[role="button"]:active {
+  transform: scale(0.975);
+  transition: transform 0.08s ease;
+}
+
+/* Prevent unwanted callouts and highlights */
+nav,
+.mobile-app-shell nav,
+.role-card-modern,
+.role-pill-btn {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* Minimum 44px touch targets for interactive elements */
 button,
 input[type="submit"],

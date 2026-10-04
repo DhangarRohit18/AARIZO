@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { Shield, Plus, Users, Home } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Shield, Plus, Users, Home, CheckCircle2 } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
+import { realtimeService } from '../../../services/realtimeService';
+import { FileUpload } from '../../../components/ui/FileUpload';
 import type { Staff, StaffType, DomesticWorker } from '../../../types/society';
 import { DataTable } from '../../../components/ui/DataTable';
 import type { Column } from '../../../components/ui/DataTable';
@@ -11,10 +13,8 @@ import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 
 export const StaffManagementPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
-  const [staff, setStaff] = useState<Staff[]>(societyService.getStaff(currentSocietyId));
-  const [domesticWorkers, setDomesticWorkers] = useState<DomesticWorker[]>(
-    societyService.getDomesticWorkers(currentSocietyId)
-  );
+  const [staff, setStaff] = useState<Staff[]>([]);
+  const [domesticWorkers, setDomesticWorkers] = useState<DomesticWorker[]>([]);
 
   const [activeTab, setActiveTab] = useState<'STAFF' | 'DOMESTIC'>('STAFF');
   const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
@@ -25,11 +25,24 @@ export const StaffManagementPage: React.FC = () => {
   const [staffType, setStaffType] = useState<StaffType>('GUARD');
   const [gateAssigned, setGateAssigned] = useState('Main Gate 1');
   const [shiftTiming] = useState('08:00 AM - 08:00 PM');
+  const [staffDocUrl, setStaffDocUrl] = useState('');
 
   const refreshData = () => {
     setStaff(societyService.getStaff(currentSocietyId));
     setDomesticWorkers(societyService.getDomesticWorkers(currentSocietyId));
   };
+
+  useEffect(() => {
+    refreshData();
+
+    const unsub = realtimeService.subscribe('*', (msg) => {
+      if (['STAFF_DUTY_CHANGED', 'WORKER_ENTRY_EXIT', 'SOCIETY_SYNC'].includes(msg.topic)) {
+        refreshData();
+      }
+    });
+
+    return () => unsub();
+  }, []);
 
   const handleCreateStaff = (e: React.FormEvent) => {
     e.preventDefault();
@@ -255,6 +268,18 @@ export const StaffManagementPage: React.FC = () => {
                   <option value="Basement - A">Basement - A</option>
                 </select>
               </FormField>
+            </div>
+            <div className="pt-2">
+              <FileUpload
+                category="kyc"
+                label="Staff Govt ID / Police Verification Document (Optional)"
+                onUploadSuccess={(url) => setStaffDocUrl(url)}
+              />
+              {staffDocUrl && (
+                <p className="text-xs text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+                  <CheckCircle2 size={13} /> Verification Document Attached
+                </p>
+              )}
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
               <button

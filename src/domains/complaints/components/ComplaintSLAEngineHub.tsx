@@ -18,6 +18,7 @@ import type { Complaint, ComplaintCategory, SLAPolicy, SLAAnalytics } from '../t
 import { useAuth } from '../../../context/AuthContext';
 import { useRBAC } from '../../../hooks/useRBAC';
 import { subscribeToComplaints, createComplaintToDb, updateComplaintInDb } from '../../../repositories/complaintRepository';
+import { RealtimeSyncBadge, FileUploader } from '../../../components/common';
 
 export const ComplaintSLAEngineHub: React.FC = () => {
   const { currentUser } = useAuth();
@@ -136,7 +137,8 @@ export const ComplaintSLAEngineHub: React.FC = () => {
             Category SLA tracking, 4-tier automated escalation (Staff ➔ FM ➔ Admin ➔ Committee), & resident verification
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <RealtimeSyncBadge state="live" label="Live SLA Sync" />
           {(activeRole === 'secretary' || activeRole === 'facility_manager' || activeRole === 'admin') && (
             <button
               onClick={() => setShowPolicyModal(true)}
@@ -193,7 +195,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
               <p className="text-xs text-slate-500 font-medium">Total Helpdesk Tickets</p>
               <h3 className="text-2xl font-bold text-slate-800 mt-1">{analytics.totalComplaints}</h3>
             </div>
-            <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
+            <div className="p-3 bg-[#EAF6FC] rounded-lg text-[#176B91]">
               <Wrench size={24} />
             </div>
           </div>
@@ -477,6 +479,19 @@ export const ComplaintSLAEngineHub: React.FC = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full p-2 border rounded-lg border-slate-300"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold mb-1 text-slate-700">Attach Issue Photo (Optional)</label>
+                <FileUploader
+                  label="Take Photo or Attach Proof"
+                  entityType="maintenance"
+                  societyId="soc-gvs"
+                  accept="image/*"
+                  maxSizeMB={5}
+                  onUploadSuccess={(res) => setPhotoUrl(res.downloadUrl)}
+                  onRemove={() => setPhotoUrl('')}
                 />
               </div>
 

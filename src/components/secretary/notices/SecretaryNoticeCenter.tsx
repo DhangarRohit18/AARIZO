@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { SecretaryNoticeItem, NoticeStatus } from '../../../domains/secretary/types';
-import { Megaphone, Plus, Bell, Clock, FileText, AlertTriangle, X } from 'lucide-react';
+import { Megaphone, Plus, Bell, Clock, FileText, AlertTriangle, X, Paperclip } from 'lucide-react';
 import { CreateNoticeDrawer } from './CreateNoticeDrawer';
 import '../secretary.css';
 
@@ -152,6 +152,30 @@ export const SecretaryNoticeCenter: React.FC<SecretaryNoticeCenterProps> = ({
               <p className="activity-subtext" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {notice.content}
               </p>
+              {notice.attachmentUrl && (
+                <div style={{ marginTop: '0.25rem' }}>
+                  <a
+                    href={notice.attachmentUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      fontSize: '0.6875rem',
+                      color: 'var(--aarizo-blue, #176B91)',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                      background: '#EAF6FC',
+                      padding: '0.15rem 0.5rem',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    <Paperclip size={11} /> Attached Circular
+                  </a>
+                </div>
+              )}
               <div className="activity-meta">
                 {notice.category} • Target: <strong>{notice.targetAudience}</strong> • {notice.authorName}
               </div>
@@ -190,6 +214,26 @@ export const SecretaryNoticeCenter: React.FC<SecretaryNoticeCenterProps> = ({
               <p style={{ fontSize: '0.8125rem', color: '#334155', margin: '0 0 0.75rem 0', whiteSpace: 'pre-wrap' }}>
                 {selectedNotice.content}
               </p>
+              {selectedNotice.attachmentUrl && (
+                <div style={{ marginBottom: '0.75rem', padding: '0.5rem', background: '#ffffff', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                  <a
+                    href={selectedNotice.attachmentUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontSize: '0.75rem',
+                      color: 'var(--aarizo-blue, #176B91)',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <Paperclip size={14} /> Open Official Notice Attachment / Circular
+                  </a>
+                </div>
+              )}
               <div style={{ fontSize: '0.6875rem', color: '#64748b', borderTop: '1px solid #e2e8f0', paddingTop: '0.375rem' }}>
                 Target: <strong>{selectedNotice.targetAudience}</strong> • Posted by {selectedNotice.authorName} ({selectedNotice.authorRole})
               </div>

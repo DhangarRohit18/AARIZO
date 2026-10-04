@@ -416,4 +416,20 @@ export const maintenanceService = {
 
     return events;
   },
+
+  // ========================================================
+  // FIRESTORE-FIRST ASYNC QUERIES & LIVE REALTIME LISTENERS
+  // ========================================================
+  fetchTickets: async (societyId: string): Promise<MaintenanceTicket[]> => {
+    try {
+      const tickets = await maintenanceTicketRepository.list(societyId);
+      if (tickets && tickets.length > 0) return tickets;
+      return maintenanceService.getTickets(societyId);
+    } catch {
+      return maintenanceService.getTickets(societyId);
+    }
+  },
+
+  subscribeTickets: (societyId: string, callback: (tickets: MaintenanceTicket[]) => void): () => void =>
+    maintenanceTicketRepository.subscribe(societyId, callback),
 };

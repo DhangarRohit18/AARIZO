@@ -481,4 +481,20 @@ export const billingService = {
       collectionPercentage,
     };
   },
+
+  // ========================================================
+  // FIRESTORE-FIRST ASYNC QUERIES & LIVE REALTIME LISTENERS
+  // ========================================================
+  fetchInvoices: async (societyId: string): Promise<SocietyInvoice[]> => {
+    try {
+      const records = await billingInvoiceRepository.list(societyId);
+      if (records && records.length > 0) return records;
+      return billingService.getInvoices(societyId);
+    } catch {
+      return billingService.getInvoices(societyId);
+    }
+  },
+
+  subscribeInvoices: (societyId: string, callback: (invoices: SocietyInvoice[]) => void): () => void =>
+    billingInvoiceRepository.subscribe(societyId, callback),
 };

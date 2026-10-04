@@ -1,16 +1,17 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { MobileAppShell } from '../mobile/MobileAppShell';
-import { Store, ShoppingBag, Users, Bell, User } from 'lucide-react';
+import { Store, ShoppingBag, Bell, User, ShieldCheck } from 'lucide-react';
 
 const DRAWER_NAV = [
   { label: 'Vendor Hub', path: '/vendor', icon: Store },
   { label: 'Portal', path: '/vendor/portal', icon: ShoppingBag },
+  { label: 'Onboarding & KYC', path: '/vendor/onboarding', icon: ShieldCheck },
 ];
 
 const BOTTOM_NAV = [
   { label: 'Home', path: '/vendor', icon: Store },
   { label: 'Jobs', path: '/vendor/portal', icon: ShoppingBag },
-  { label: 'Workers', path: '/vendor/workers', icon: Users },
+  { label: 'KYC', path: '/vendor/onboarding', icon: ShieldCheck },
   { label: 'Profile', path: '/vendor/profile', icon: User },
 ];
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { housekeepingService } from '../../../services/housekeepingService';
+import { realtimeService } from '../../../services/realtimeService';
 import type { HousekeepingTask, CommonAreaCategory, GarbagePickupLog } from '../../../types/housekeeping';
 import { Modal } from '../../../components/ui/Modal';
 import { DataTable } from '../../../components/ui/DataTable';
@@ -54,6 +55,14 @@ export const AdminHousekeepingPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
+
+    const unsub = realtimeService.subscribe('*', (msg) => {
+      if (['HOUSEKEEPING_TASK_CREATED', 'TASK_COMPLETED', 'SOCIETY_SYNC'].includes(msg.topic)) {
+        loadData();
+      }
+    });
+
+    return () => unsub();
   }, [societyId]);
 
   const loadData = () => {

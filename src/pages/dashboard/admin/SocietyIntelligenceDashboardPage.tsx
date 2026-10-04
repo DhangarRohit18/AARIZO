@@ -152,7 +152,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Residents</span>
-              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600">
+              <div className="p-2 rounded-lg bg-[#EAF6FC] dark:bg-[#083B56]/30 text-[#176B91]">
                 <Users className="w-4 h-4" />
               </div>
             </div>
@@ -194,7 +194,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Vehicles Inside</span>
-              <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600">
+              <div className="p-2 rounded-lg bg-[#EAF6FC] dark:bg-[#083B56]/30 text-[#176B91]">
                 <Car className="w-4 h-4" />
               </div>
             </div>
@@ -208,7 +208,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Parking Rate</span>
-              <div className="p-2 rounded-lg bg-teal-50 dark:bg-teal-900/30 text-teal-600">
+              <div className="p-2 rounded-lg bg-[#EAF6FC] dark:bg-[#083B56]/30 text-[#083B56]">
                 <BarChart3 className="w-4 h-4" />
               </div>
             </div>
@@ -216,7 +216,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
               <div className="text-2xl font-extrabold text-slate-900 dark:text-white">{kpis.parkingOccupancyRate}%</div>
               <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
                 <div
-                  className="bg-teal-500 h-full rounded-full"
+                  className="bg-[#176B91] h-full rounded-full"
                   style={{ width: `${Math.min(100, kpis.parkingOccupancyRate)}%` }}
                 ></div>
               </div>
@@ -255,12 +255,12 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Pending Approvals</span>
-              <div className="p-2 rounded-lg bg-violet-50 dark:bg-violet-900/30 text-violet-600">
+              <div className="p-2 rounded-lg bg-[#EAF6FC] dark:bg-[#083B56]/30 text-[#176B91]">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
             </div>
             <div className="mt-3">
-              <div className="text-2xl font-extrabold text-violet-600 dark:text-violet-400">{kpis.pendingApprovals}</div>
+              <div className="text-2xl font-extrabold text-[#176B91] dark:text-[#3DA4CC]">{kpis.pendingApprovals}</div>
               <div className="text-[11px] text-slate-500 mt-1">Action Required</div>
             </div>
           </div>
@@ -297,7 +297,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Active Vendors</span>
-              <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/30 text-purple-600">
+              <div className="p-2 rounded-lg bg-[#EAF6FC] dark:bg-[#083B56]/30 text-[#176B91]">
                 <Store className="w-4 h-4" />
               </div>
             </div>
@@ -311,7 +311,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Worker Entries</span>
-              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600">
+              <div className="p-2 rounded-lg bg-[#EAF6FC] dark:bg-[#083B56]/30 text-[#176B91]">
                 <HardHat className="w-4 h-4" />
               </div>
             </div>
@@ -339,7 +339,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Amenity Usage</span>
-              <div className="p-2 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-900/30 text-fuchsia-600">
+              <div className="p-2 rounded-lg bg-[#EAF6FC] dark:bg-[#083B56]/30 text-[#083B56]">
                 <Sparkles className="w-4 h-4" />
               </div>
             </div>
@@ -489,7 +489,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Car className="w-4 h-4 text-teal-500" /> 4. Parking Space Allocation & Occupancy
+                  <Car className="w-4 h-4 text-[#176B91]" /> 4. Parking Space Allocation & Occupancy
                 </h3>
                 <p className="text-xs text-slate-500">Distribution across resident, visitor, and vacant slots</p>
               </div>
@@ -526,7 +526,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-fuchsia-500" /> 5. Amenity Booking Breakdown
+                  <Sparkles className="w-4 h-4 text-[#083B56]" /> 5. Amenity Booking Breakdown
                 </h3>
                 <p className="text-xs text-slate-500">Total reservations logged per amenity facility</p>
               </div>
@@ -541,7 +541,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
                     <span className="w-32 font-medium text-slate-700 dark:text-slate-300 truncate">{pt.label}</span>
                     <div className="flex-1 bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
                       <div
-                        className="bg-fuchsia-500 h-full rounded-full transition-all duration-300"
+                        className="bg-[#083B56] h-full rounded-full transition-all duration-300"
                         style={{ width: `${pct}%` }}
                       ></div>
                     </div>
@@ -557,7 +557,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-blue-500" /> 6. Complaint Categories Breakdown
+                  <BarChart3 className="w-4 h-4 text-[#176B91]" /> 6. Complaint Categories Breakdown
                 </h3>
                 <p className="text-xs text-slate-500">Issues reported by operational domain</p>
               </div>
@@ -572,7 +572,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
                     <span className="w-36 font-medium text-slate-700 dark:text-slate-300 truncate">{pt.label}</span>
                     <div className="flex-1 bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
                       <div
-                        className="bg-blue-500 h-full rounded-full transition-all duration-300"
+                        className="bg-[#176B91] h-full rounded-full transition-all duration-300"
                         style={{ width: `${pct}%` }}
                       ></div>
                     </div>
@@ -594,8 +594,8 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
               <p className="text-xs text-slate-500">Daily present staff vs absent count</p>
             </div>
             <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1 text-blue-600 font-medium">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Present
+              <span className="flex items-center gap-1 text-[#176B91] font-medium">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#176B91] inline-block"></span> Present
               </span>
               <span className="flex items-center gap-1 text-slate-400 font-medium">
                 <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700 inline-block"></span> Absent
@@ -614,7 +614,7 @@ export const SocietyIntelligenceDashboardPage: React.FC = () => {
                   </div>
                   <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t h-full flex items-end">
                     <div
-                      className="w-full bg-gradient-to-t from-blue-600 to-cyan-400 rounded-t transition-all duration-300"
+                      className="w-full bg-gradient-to-t from-[#083B56] to-[#3DA4CC] rounded-t transition-all duration-300"
                       style={{ height: `${presentPct}%` }}
                     ></div>
                   </div>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { amenityService } from '../../../services/amenityService';
+import { realtimeService } from '../../../services/realtimeService';
+import { FileUpload } from '../../../components/ui/FileUpload';
 import type { SocietyAmenity, AmenityBooking, AmenityType } from '../../../types/amenity';
 import { Modal } from '../../../components/ui/Modal';
 import { DataTable } from '../../../components/ui/DataTable';
@@ -86,6 +88,14 @@ export const AdminAmenityManagementPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
+
+    const unsub = realtimeService.subscribe('*', (msg) => {
+      if (['AMENITY_BOOKED', 'AMENITY_AVAILABILITY', 'SOCIETY_SYNC'].includes(msg.topic)) {
+        loadData();
+      }
+    });
+
+    return () => unsub();
   }, [societyId]);
 
   const loadData = () => {
@@ -454,6 +464,13 @@ export const AdminAmenityManagementPage: React.FC = () => {
                 className="w-full px-3 py-2 border rounded-lg text-sm"
               />
             </div>
+          </div>
+          <div>
+            <FileUpload
+              category="general"
+              label="Upload Amenity Photo Banner"
+              onUploadSuccess={(url) => setNewAmenity({ ...newAmenity, imageUrl: url })}
+            />
           </div>
           <div className="flex items-center gap-4 pt-2">
             <label className="flex items-center gap-2 text-xs font-medium text-slate-700">

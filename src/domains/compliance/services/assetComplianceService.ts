@@ -1,4 +1,3 @@
-﻿// @ts-nocheck
 import type { AssetItem, ComplianceMetrics, AlertWindow, ComplianceStatus, InspectionRecord, RenewalRecord, ComplianceAuditLog } from '../types';
 import { realTimeSync } from '../../../services/realTimeSync';
 
@@ -175,10 +174,12 @@ class AssetComplianceService {
     
     // Find the earliest upcoming expiry date among AMC, Insurance, and Certificate
     const expiries = [
-      { type: 'AMC', date: new Date(asset.amcExpiryDate) },
-      { type: 'INSURANCE', date: new Date(asset.insuranceExpiryDate) },
-      { type: 'CERTIFICATE', date: new Date(asset.certificateExpiryDate) },
-    ];
+      { type: 'AMC', dateStr: asset.amcExpiryDate },
+      { type: 'INSURANCE', dateStr: asset.insuranceExpiryDate },
+      { type: 'CERTIFICATE', dateStr: asset.certificateExpiryDate },
+    ]
+      .filter((exp): exp is { type: string; dateStr: string } => !!exp.dateStr)
+      .map(exp => ({ type: exp.type, date: new Date(exp.dateStr) }));
 
     let minDaysLeft = Infinity;
     let isExpired = false;
@@ -400,7 +401,7 @@ class AssetComplianceService {
       details: `Renewed ${renewalType} contract with ${vendorName}. Extended expiry from ${previousExpiryDate} to ${newExpiryDate}.`,
     };
 
-    const docUrls = [...asset.documentUrls];
+    const docUrls = [...(asset.documentUrls || [])];
     if (documentUrl && !docUrls.includes(documentUrl)) {
       docUrls.push(documentUrl);
     }

@@ -24,7 +24,7 @@ const INITIAL_SOCIETIES: SocietyRecord[] = [
 const statCards = [
   { icon: Building2, label: 'Provisioned Societies', valueKey: 'societies', color: '#176B91', bg: '#EBF5FA' },
   { icon: Users, label: 'Total Platform Residents', value: '803', color: '#059669', bg: '#ECFDF5' },
-  { icon: Server, label: 'System Uptime', value: '99.9%', color: '#7C3AED', bg: '#F5F3FF' },
+  { icon: Server, label: 'System Uptime', value: '99.9%', color: '#176B91', bg: '#EAF6FC' },
   { icon: TrendingUp, label: 'Monthly Active Users', value: '641', color: '#D97706', bg: '#FFFBEB' },
 ];
 

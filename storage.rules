@@ -36,10 +36,43 @@ service firebase.storage {
       // 4. Invoices & Vendor Docs
       match /invoices/{allPaths=**} {
         allow read: if isAuthenticated() && getSocietyId() == societyId && (isAdmin() || isSecretary());
-        // Vendors can upload to the general invoice bucket (ideally bucketed by vendorId, but this closes the major hole)
         allow write: if isAuthenticated() && getSocietyId() == societyId && (isAdmin() || isSecretary() || getRole() == 'VENDOR');
       }
 
+      // 5. Vendor KYC, Contracts & Catalogs
+      match /vendor/{allPaths=**} {
+        allow read: if isAuthenticated() && getSocietyId() == societyId;
+        allow write: if isAuthenticated() && getSocietyId() == societyId && (isAdmin() || isSecretary() || getRole() == 'VENDOR');
+      }
+
+      // 6. Resident Documents (Agreements, KYC, Receipts)
+      match /resident/{allPaths=**} {
+        allow read: if isAuthenticated() && getSocietyId() == societyId;
+        allow write: if isAuthenticated() && getSocietyId() == societyId;
+      }
+
+      // 7. Maintenance & Ticket Photos/Invoices
+      match /maintenance/{allPaths=**} {
+        allow read: if isAuthenticated() && getSocietyId() == societyId;
+        allow write: if isAuthenticated() && getSocietyId() == societyId;
+      }
+
+      // 8. Admin & Society Governance Docs
+      match /admin/{allPaths=**} {
+        allow read: if isAuthenticated() && getSocietyId() == societyId;
+        allow write: if isAuthenticated() && getSocietyId() == societyId && (isAdmin() || isSecretary());
+      }
+
+      // 9. General Society Documents & Vault
+      match /documents/{allPaths=**} {
+        allow read: if isAuthenticated() && getSocietyId() == societyId;
+        allow write: if isAuthenticated() && getSocietyId() == societyId;
+      }
+
+      match /general/{allPaths=**} {
+        allow read: if isAuthenticated() && getSocietyId() == societyId;
+        allow write: if isAuthenticated() && getSocietyId() == societyId;
+      }
     }
     
     match /{allPaths=**} {

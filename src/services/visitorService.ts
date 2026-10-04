@@ -183,12 +183,17 @@ export const visitorService = {
       validUntil?: string;
       maxUsages?: number;
       vehicleNumber?: string;
+      photoUrl?: string;
       companyName?: string;
       deliveryVendor?: string;
       packageReferenceNumber?: string;
       maxAllowedDurationMinutes?: number;
       purpose?: string;
       groupCount?: number;
+      status?: any;
+      gateName?: string;
+      gateOfficerName?: string;
+      checkedInAt?: string;
     },
     actor: { id: string; name: string; role: string }
   ): SmartVisitorPass => {
@@ -203,10 +208,10 @@ export const visitorService = {
       qrDataString: `COMMUNITYOS:${passCode}:${data.societyId}:${data.flatCode}`,
       validFrom: data.validFrom || new Date().toISOString(),
       validUntil: data.validUntil || new Date(Date.now() + 86400000).toISOString(),
-      usageCount: 0,
+      usageCount: data.status === 'CHECKED_IN' ? 1 : 0,
       maxUsages: data.maxUsages || (data.passLifecycle === 'ONE_TIME' ? 1 : 999),
-      status: 'EXPECTED',
-      lifecycleState: 'EXPECTED',
+      status: data.status || 'EXPECTED',
+      lifecycleState: data.status === 'CHECKED_IN' ? 'INSIDE' : 'EXPECTED',
       maxAllowedDurationMinutes: data.maxAllowedDurationMinutes || (data.category === 'DELIVERY' ? 30 : 180),
       isOverdue: false,
       createdAt: new Date().toISOString(),
@@ -225,8 +230,9 @@ export const visitorService = {
         visitorName: newPass.visitorName,
         flatCode: newPass.flatCode,
         category: newPass.category,
-        gate: 'Gate 1',
-        status: 'EXPECTED',
+        photoUrl: newPass.photoUrl,
+        gate: data.gateName || 'Gate 1',
+        status: newPass.status,
       },
       data.societyId,
       actor.role,
@@ -555,4 +561,20 @@ export const visitorService = {
       dailyVisitorTrend,
     };
   },
+
+  // ========================================================
+  // FIRESTORE-FIRST ASYNC QUERIES & LIVE REALTIME LISTENERS
+  // ========================================================
+  fetchPasses: async (societyId: string): Promise<SmartVisitorPass[]> => {
+    try {
+      const passes = await visitorRepository.list(societyId);
+      if (passes && passes.length > 0) return passes;
+      return visitorService.getPasses(societyId);
+    } catch {
+      return visitorService.getPasses(societyId);
+    }
+  },
+
+  subscribePasses: (societyId: string, callback: (passes: SmartVisitorPass[]) => void): () => void =>
+    visitorRepository.subscribe(societyId, callback),
 };

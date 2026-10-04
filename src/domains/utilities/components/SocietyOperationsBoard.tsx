@@ -130,7 +130,7 @@ export const SocietyOperationsBoard: React.FC = () => {
         );
       case 'MAINTENANCE':
         return (
-          <span className="px-2.5 py-1 text-xs font-bold bg-blue-50 text-blue-700 rounded-full flex items-center gap-1">
+          <span className="px-2.5 py-1 text-xs font-bold bg-[#EAF6FC] text-[#083B56] rounded-full flex items-center gap-1">
             <Clock size={13} /> MAINTENANCE
           </span>
         );

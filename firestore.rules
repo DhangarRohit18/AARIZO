@@ -223,6 +223,22 @@ service cloud.firestore {
       allow update, delete: if isAdmin() || isSecretary();
     }
 
+    // --- Payments Collection --- //
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isCommittee() || 
+        (resource.data.residentId != null && isResident() && isOwner(resource.data.residentId)) ||
+        (resource.data.userId != null && request.auth.uid == resource.data.userId)
+      );
+      // Only server or admin can mutate status to SUCCESS/REFUNDED; clients cannot directly forge SUCCESS payments
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || 
+        (isResident() && request.auth.uid == request.resource.data.userId && request.resource.data.status in ['CREATED', 'PENDING'])
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (isAdmin() || isSecretary());
+      allow delete: if isAdmin();
+    }
+
     // --- Maintenance Tickets --- //
     match /maintenanceTickets/{ticketId} {
       allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
@@ -426,8 +442,98 @@ service cloud.firestore {
       allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
         isAdmin() || isSecretary() || isGuard()
       );
-      // No client can forge QR tokens
-      allow write: if false;
+      allow write: if false; // Cloud Functions only
+    }
+
+    // --- Vendors Directory & Profiles --- //
+    match /vendors/{vendorId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isFacilityManager() ||
+        (isVendor() && (request.auth.uid == vendorId || request.auth.uid == resource.data.uid)) ||
+        (isResident() && resource.data.status == 'ACTIVE')
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isVendor() && (request.auth.uid == vendorId || request.auth.uid == request.resource.data.uid))
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isVendor() && (request.auth.uid == vendorId || request.auth.uid == resource.data.uid))
+      );
+      allow delete: if isAdmin();
+    }
+
+    // --- Vendor Services Collection --- //
+    match /vendorServices/{serviceId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() ||
+        (isVendor() && request.auth.uid == resource.data.vendorId) ||
+        (resource.data.status == 'ACTIVE')
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isVendor() && request.auth.uid == request.resource.data.vendorId)
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isVendor() && request.auth.uid == resource.data.vendorId)
+      );
+      allow delete: if isAdmin() || (isVendor() && request.auth.uid == resource.data.vendorId);
+    }
+
+    // --- Vendor Requests & Orders --- //
+    match /vendorRequests/{requestId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() ||
+        (isResident() && request.auth.uid == resource.data.residentId) ||
+        (isVendor() && request.auth.uid == resource.data.vendorId)
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || (isResident() && request.auth.uid == request.resource.data.residentId)
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() ||
+        (isVendor() && request.auth.uid == resource.data.vendorId) ||
+        (isResident() && request.auth.uid == resource.data.residentId)
+      );
+      allow delete: if isAdmin();
+    }
+
+    // --- Vendor Compliance Documents --- //
+    match /vendorDocuments/{docId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isVendor() && request.auth.uid == resource.data.vendorId)
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || (isVendor() && request.auth.uid == request.resource.data.vendorId)
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || (isVendor() && request.auth.uid == resource.data.vendorId)
+      );
+      allow delete: if isAdmin() || (isVendor() && request.auth.uid == resource.data.vendorId);
+    }
+
+    // --- Documents Vault & Storage Metadata --- //
+    match /documents/{docId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || isCommittee() || isFacilityManager() ||
+        (isResident() && resource.data.entityType in ['resident', 'general', 'admin']) ||
+        (isVendor() && resource.data.entityType == 'vendor')
+      );
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId);
+      allow update, delete: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || request.auth.uid == resource.data.uploadedBy
+      );
+    }
+
+    // --- Advertisements & Resident Deals --- //
+    match /advertisements/{adId} {
+      allow read: if isAuthenticated() && isSocietyMatch(resource.data.societyId);
+      allow create: if isAuthenticated() && isSocietyMatch(request.resource.data.societyId) && (
+        isAdmin() || isSecretary() || isVendor()
+      );
+      allow update: if isAuthenticated() && isSocietyMatch(resource.data.societyId) && (
+        isAdmin() || isSecretary() || 
+        (isVendor() && request.auth.uid == resource.data.vendorId) ||
+        request.resource.data.diff(resource.data).affectedKeys().hasAny(['impressionsCount', 'clicksCount', 'viewsCount'])
+      );
+      allow delete: if isAdmin() || isSecretary() || (isVendor() && request.auth.uid == resource.data.vendorId);
     }
 
     // 9. Unauthenticated Firestore access → denied

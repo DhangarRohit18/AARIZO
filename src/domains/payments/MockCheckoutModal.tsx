@@ -60,7 +60,7 @@ export const MockCheckoutModal: React.FC<MockCheckoutModalProps> = ({
               A
             </div>
             <div>
-              <div className="text-xs font-semibold text-blue-200 uppercase tracking-wider flex items-center gap-1">
+              <div className="text-xs font-semibold text-[#A3D4E8] uppercase tracking-wider flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" /> Razorpay Test Gateway
               </div>
               <div className="font-bold text-base">{societyName}</div>

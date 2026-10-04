@@ -6,8 +6,11 @@ import { Modal } from '../../../components/ui/Modal';
 import {
   CheckSquare,
   Building,
-  Sparkles
+  Sparkles,
+  CheckCircle2,
 } from 'lucide-react';
+import { realtimeService } from '../../../services/realtimeService';
+import { FileUpload } from '../../../components/ui/FileUpload';
 
 export const StaffHousekeepingTaskPage: React.FC = () => {
   const { currentUser } = useAuth();
@@ -23,6 +26,14 @@ export const StaffHousekeepingTaskPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
+
+    const unsub = realtimeService.subscribe('*', (msg) => {
+      if (['HOUSEKEEPING_TASK_CREATED', 'TASK_COMPLETED', 'SOCIETY_SYNC'].includes(msg.topic)) {
+        loadData();
+      }
+    });
+
+    return () => unsub();
   }, [societyId]);
 
   const loadData = () => {
@@ -148,15 +159,16 @@ export const StaffHousekeepingTaskPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Photo Proof Image URL</label>
-              <input
-                type="text"
-                required
-                placeholder="https://..."
-                value={photoUrl}
-                onChange={e => setPhotoUrl(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
+              <FileUpload
+                category="tickets"
+                label="Upload Cleaning / Inspection Photo Proof"
+                onUploadSuccess={(url) => setPhotoUrl(url)}
               />
+              {photoUrl && (
+                <p className="text-xs text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+                  <CheckCircle2 size={13} /> Photo Proof Attached
+                </p>
+              )}
             </div>
 
             <div>

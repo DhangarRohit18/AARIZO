@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePrototype } from '../../../context/PrototypeContext';
 import type { ResidentNotification } from '../../../domains/notifications';
-import { initialMockNotifications } from '../../../mockData/notifications/notifications';
+import { multiChannelNotificationService } from '../../../domains/notifications';
+import { realTimeSync } from '../../../services/realTimeSync';
 import { NotificationCard } from './NotificationCard';
 import { LoadingState, EmptyState, ErrorState, Tabs } from '../../common';
 import { Bell, ArrowLeft, CheckCheck } from 'lucide-react';
@@ -19,8 +20,33 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 }) => {
   const { uiState } = usePrototype();
 
-  const [notifications, setNotifications] = useState<ResidentNotification[]>(initialMockNotifications);
+  const [notifications, setNotifications] = useState<ResidentNotification[]>([]);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
+
+  useEffect(() => {
+    const loadResidentNotifs = () => {
+      const items = multiChannelNotificationService.getNotificationsForUser('res-1');
+      if (items.length > 0) {
+        const mapped: ResidentNotification[] = items.map((item) => ({
+          id: item.id,
+          category: item.category as any,
+          title: item.title || '',
+          message: item.message || item.body || '',
+          timestamp: new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isRead: item.isRead || false,
+          actionRoute: item.linkUrl,
+          actionLabel: item.linkUrl ? 'View' : undefined,
+        }));
+        setNotifications(mapped);
+      }
+    };
+
+    loadResidentNotifs();
+    const unsub = realTimeSync.subscribe('NOTIFICATIONS_UPDATED', () => {
+      loadResidentNotifs();
+    });
+    return () => unsub();
+  }, []);
 
   // Handle Prototype UI State
   if (uiState === 'loading') {
@@ -61,12 +87,14 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   }
 
   const handleMarkRead = (id: string) => {
+    multiChannelNotificationService.markAsRead(id, 'res-1');
     setNotifications(
       notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n))
     );
   };
 
   const handleMarkAllRead = () => {
+    multiChannelNotificationService.markAllAsRead('res-1');
     setNotifications(notifications.map((n) => ({ ...n, isRead: true })));
   };
 
@@ -85,7 +113,13 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h2 className="vis-screen-title">Notifications</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <h2 className="vis-screen-title">Notifications</h2>
+              <span style={{ fontSize: '0.6875rem', fontWeight: 700, padding: '0.15rem 0.5rem', borderRadius: '12px', background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981' }} />
+                Real-Time
+              </span>
+            </div>
             <p className="vis-screen-subtitle">
               {unreadCount > 0 ? `${unreadCount} unread alerts` : 'All caught up'}
             </p>

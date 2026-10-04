@@ -1,30 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   UserCheck, CreditCard, Wrench, Package, AlertCircle,
-  CheckCircle2, Bell, Clock,
+  Bell, Clock, Paperclip, Download,
 } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
+import { multiChannelNotificationService } from '../../../domains/notifications/services/multiChannelNotificationService';
+import { realtimeService } from '../../../services/realtimeService';
+import { AdvertisementPopup, OffersLauncherPill } from '../../../components/common/AdvertisementPopup';
 
-const ALL_ACTIVITIES = [
-  { id: 1, text: 'Rajesh Singh checked in — Visitor pass used', time: '2 min ago', icon: UserCheck, color: '#176B91', category: 'visitors' },
-  { id: 2, text: 'Water tank maintenance completed', time: '1 hr ago', icon: CheckCircle2, color: '#3F8F58', category: 'maintenance' },
-  { id: 3, text: 'Society AGM Notice: 25 Sep at 6PM, Club House', time: '3 hrs ago', icon: AlertCircle, color: '#D99A2B', category: 'notices' },
-  { id: 4, text: 'Monthly maintenance levy auto-paid ₹2,400', time: 'Yesterday', icon: CreditCard, color: '#176B91', category: 'payments' },
-  { id: 5, text: 'Plumbing repair request closed — Flat B-301', time: 'Yesterday', icon: Wrench, color: '#176B91', category: 'maintenance' },
-  { id: 6, text: 'Parcel arrived at gate: Amazon — Pending pickup', time: '2 days ago', icon: Package, color: '#176B91', category: 'parcels' },
-  { id: 7, text: 'Gym booking confirmed: Saturday 7AM - 8AM', time: '2 days ago', icon: CheckCircle2, color: '#3F8F58', category: 'amenities' },
-  { id: 8, text: 'Priya Sharma left — Visitor stay: 2hrs 30min', time: '3 days ago', icon: UserCheck, color: '#176B91', category: 'visitors' },
-  { id: 9, text: 'Power bill payment received: ₹1,850', time: '4 days ago', icon: CreditCard, color: '#176B91', category: 'payments' },
-  { id: 10, text: 'Emergency alert: Lift malfunction in Tower A (resolved)', time: '5 days ago', icon: AlertCircle, color: '#D9535B', category: 'notices' },
-];
-
-const FILTERS = ['all', 'visitors', 'payments', 'maintenance', 'notices', 'parcels', 'amenities'];
+const FILTERS = ['all', 'security', 'billing', 'maintenance', 'community', 'emergency'];
 
 export const ResidentActivityPage: React.FC = () => {
+  const { currentUser } = useAuth();
+  const userId = currentUser?.id || 'res-1';
+
   const [activeFilter, setActiveFilter] = useState('all');
+  const [activities, setActivities] = useState<any[]>([]);
+  const [isOffersOpen, setIsOffersOpen] = useState(false);
+
+  const loadActivities = () => {
+    const notifs = multiChannelNotificationService.getNotificationsForUser(userId);
+    const mapped = notifs.map((n) => {
+      let icon = Bell;
+      let color = '#176B91';
+      const cat = (n.category || 'COMMUNITY').toUpperCase();
+
+      if (cat === 'SECURITY' || n.eventType === 'VISITOR_ARRIVAL') {
+        icon = UserCheck;
+        color = '#176B91';
+      } else if (cat === 'BILLING' || n.eventType === 'PAYMENT_DUE') {
+        icon = CreditCard;
+        color = '#059669';
+      } else if (cat === 'MAINTENANCE' || n.eventType === 'COMPLAINT_UPDATE') {
+        icon = Wrench;
+        color = '#D97706';
+      } else if (cat === 'EMERGENCY' || n.isCritical) {
+        icon = AlertCircle;
+        color = '#DC2626';
+      } else if (n.eventType === 'PARCEL_ARRIVAL') {
+        icon = Package;
+        color = '#7C3AED';
+      }
+
+      return {
+        id: n.id,
+        text: n.message ? `${n.title}: ${n.message}` : n.title,
+        title: n.title,
+        message: n.message,
+        time: new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' }),
+        icon,
+        color,
+        category: (n.category || 'community').toLowerCase(),
+        attachmentUrl: n.attachmentUrl,
+        attachmentName: n.attachmentName,
+        isCritical: n.isCritical,
+      };
+    });
+
+    setActivities(mapped);
+  };
+
+  useEffect(() => {
+    loadActivities();
+    const unsub = realtimeService.subscribe('*', () => {
+      loadActivities();
+    });
+    return () => unsub();
+  }, [userId]);
 
   const filtered = activeFilter === 'all'
-    ? ALL_ACTIVITIES
-    : ALL_ACTIVITIES.filter((a) => a.category === activeFilter);
+    ? activities
+    : activities.filter((a) => a.category === activeFilter);
 
   return (
     <div style={{ backgroundColor: 'var(--aarizo-page, #F7FBFE)', minHeight: '100%' }}>
@@ -128,6 +174,31 @@ export const ResidentActivityPage: React.FC = () => {
                       <p style={{ fontSize: '0.875rem', color: 'var(--aarizo-text, #203746)', lineHeight: 1.4, margin: 0, fontWeight: 600 }}>
                         {item.text}
                       </p>
+                      {item.attachmentUrl && (
+                        <div style={{ marginTop: '0.35rem' }}>
+                          <a
+                            href={item.attachmentUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.35rem',
+                              padding: '0.2rem 0.5rem',
+                              borderRadius: '0.375rem',
+                              background: '#e0f2fe',
+                              color: '#0284c7',
+                              fontSize: '0.6875rem',
+                              fontWeight: 600,
+                              textDecoration: 'none',
+                            }}
+                          >
+                            <Paperclip size={12} />
+                            <span>{item.attachmentName || 'View Attachment'}</span>
+                            <Download size={11} style={{ opacity: 0.7 }} />
+                          </a>
+                        </div>
+                      )}
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.35rem' }}>
                         <Clock size={12} style={{ color: 'var(--aarizo-text-muted, #8B9AA5)' }} />
                         <span style={{ fontSize: '0.72rem', color: 'var(--aarizo-text-muted, #8B9AA5)', fontWeight: 600 }}>
@@ -142,6 +213,14 @@ export const ResidentActivityPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Floating Offers Pill Launcher & Popup */}
+      <OffersLauncherPill onOpen={() => setIsOffersOpen(true)} />
+      <AdvertisementPopup
+        forceOpen={isOffersOpen}
+        onClose={() => setIsOffersOpen(false)}
+        societyId={currentUser?.societyId || 'soc-gvs'}
+      />
     </div>
   );
 };

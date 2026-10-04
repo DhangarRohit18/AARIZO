@@ -68,7 +68,7 @@ export class ErrorBoundary extends Component<Props, State> {
               alignItems: 'center',
               gap: '8px',
               padding: '10px 20px',
-              backgroundColor: '#4f46e5',
+              backgroundColor: '#083B56',
               color: '#ffffff',
               borderRadius: '8px',
               border: 'none',

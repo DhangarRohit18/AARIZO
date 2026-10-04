@@ -126,6 +126,8 @@ export interface Vendor {
   contactPerson: string;
   phone: string;
   email?: string;
+  documentUrl?: string;
+  logoUrl?: string;
   contractStatus: ContractStatus;
   contractExpiryDate?: string;
 }

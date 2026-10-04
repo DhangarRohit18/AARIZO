@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { childSafetyService } from '../../../services/childSafetyService';
+import { realtimeService } from '../../../services/realtimeService';
 import type { ChildProfile, ChildPickupQR, PickupLog, ChildSafetyAlert } from '../../../types/childSafety';
 import {
   QrCode,
@@ -31,6 +32,17 @@ export const ChildGateScannerPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
+    const unsub = realtimeService.subscribe('*', (event) => {
+      if (
+        event.type === 'CHILD_SAFETY_UPDATED' ||
+        event.type === 'CHILD_ALERT_TRIGGERED' ||
+        event.type === 'CHILD_EXIT_SCANNED' ||
+        event.type === 'EMERGENCY_ALERTS'
+      ) {
+        loadData();
+      }
+    });
+    return () => unsub();
   }, [societyId]);
 
   const loadData = () => {
@@ -50,12 +62,22 @@ export const ChildGateScannerPage: React.FC = () => {
       child: res.child,
       pickupPersonName: res.pickupPersonName
     });
+
+    realtimeService.publish({
+      type: 'CHILD_EXIT_SCANNED',
+      payload: { code: codeStr.trim(), allowed: res.allowed, childId: res.child?.id, timestamp: new Date().toISOString() }
+    });
+
     setQrInput('');
     loadData();
   };
 
   const handleResolveAlert = (alertId: string) => {
     childSafetyService.resolveSafetyAlert(societyId, alertId, currentUser?.name || 'Security Guard');
+    realtimeService.publish({
+      type: 'CHILD_SAFETY_UPDATED',
+      payload: { action: 'ALERT_RESOLVED', alertId, timestamp: new Date().toISOString() }
+    });
     loadData();
   };
 

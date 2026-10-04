@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { Package, QrCode, Search, ShieldCheck, Clock, AlertTriangle, Plus, Filter } from 'lucide-react';
 import { parcelRoomService } from '../../../domains/deliveries/services/parcelRoomService';
@@ -151,7 +150,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
               {parcels.filter((p) => p.status === 'COLLECTED').length}
             </h3>
           </div>
-          <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
+          <div className="p-3 bg-[#EAF6FC] rounded-lg text-[#176B91]">
             <ShieldCheck size={24} />
           </div>
         </div>
@@ -235,7 +234,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
               render: (p: any) => (
                 <div className="flex flex-col gap-1 items-start">
                   <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${
-                    p.status === 'COLLECTED' ? 'bg-blue-100 text-blue-800' :
+                    p.status === 'COLLECTED' ? 'bg-[#EAF6FC] text-[#083B56]' :
                     p.status === 'READY_FOR_PICKUP' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-800'
                   }`}>
                     {p.status}
@@ -285,7 +284,7 @@ export const ParcelRoomSecurityHub: React.FC = () => {
               status={
                 <div className="flex flex-col gap-1 items-end">
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    p.status === 'COLLECTED' ? 'bg-blue-100 text-blue-800' :
+                    p.status === 'COLLECTED' ? 'bg-[#EAF6FC] text-[#083B56]' :
                     p.status === 'READY_FOR_PICKUP' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-800'
                   }`}>
                     {p.status}

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import type { Parcel, ParcelPickup, ParcelNotification } from '../types';
 import { realtimeService } from '../../../services/realtimeService';
 import { filterBySociety } from '../../../utils/societyIsolation';

@@ -98,7 +98,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
     switch (action) {
       case 'LOGIN':
       case 'LOGOUT':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300';
+        return 'bg-[#EAF6FC] text-[#083B56] dark:bg-[#083B56]/40 dark:text-[#A3D4E8]';
       case 'APPROVE':
       case 'VISITOR_ENTRY':
       case 'WORKER_VERIFICATION':
@@ -109,7 +109,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
       case 'EMERGENCY_ACTION':
         return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300 font-bold';
       case 'QR_SCAN':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300';
+        return 'bg-[#EAF6FC] text-[#083B56] dark:bg-[#083B56]/20 dark:text-[#A3D4E8]';
       case 'PAYMENT':
         return 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300';
       default:
@@ -408,7 +408,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
                 role: 'SUPER_ADMIN',
                 permissions: ['All Platform Permissions (*)'],
                 desc: 'Full global system administration & multi-society configuration',
-                color: 'bg-purple-50 text-purple-700 border-purple-200',
+                color: 'bg-[#062A3D] text-[#A3D4E8] border-[#176B91]',
               },
               {
                 role: 'SOCIETY_ADMIN',
@@ -426,7 +426,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
                   'view:audit_logs',
                 ],
                 desc: 'Society management, financial control, and resident approvals',
-                color: 'bg-blue-50 text-blue-700 border-blue-200',
+                color: 'bg-[#EAF6FC] text-[#083B56] border-[#DCE8EF]',
               },
               {
                 role: 'resident',
@@ -570,7 +570,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => handleDispatchTestAudit('LOGIN')}
-                  className="px-2.5 py-1 bg-blue-600 text-white text-[10px] font-semibold rounded"
+                  className="px-2.5 py-1 bg-[#083B56] hover:bg-[#176B91] text-white text-[10px] font-semibold rounded-lg transition"
                 >
                   Dispatch LOGIN
                 </button>
@@ -582,7 +582,7 @@ export const SecurityAuditCenterPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleDispatchTestAudit('WORKER_VERIFICATION')}
-                  className="px-2.5 py-1 bg-purple-600 text-white text-[10px] font-semibold rounded"
+                  className="px-2.5 py-1 bg-[#083B56] text-white text-[10px] font-semibold rounded"
                 >
                   Dispatch WORKER_VERIFICATION
                 </button>

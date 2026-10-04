@@ -1,4 +1,3 @@
-﻿// @ts-nocheck
 import { staffRepository } from './StaffRepository';
 import { qrTokenRepository } from '../qr/QRTokenRepository';
 import { qrService } from '../../domains/qr/services/QRService';

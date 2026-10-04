@@ -23,10 +23,8 @@ import {
 } from 'lucide-react';
 import { ResidentParcelWidget } from '../../domains/deliveries/components/ResidentParcelWidget';
 import { Skeleton, EmptyState, ErrorState } from '../common';
-import {
-  mockUrgentAlert,
-  mockAnnouncements,
-} from '../../mockData/residentHomeData';
+import { apiClient } from '../../services/apiClient';
+import { AdvertisementPopup, OffersLauncherPill } from '../common/AdvertisementPopup';
 
 const QUICK_ACTIONS = [
   { id: 'visitors', label: 'Visitors', icon: UserCheck, path: '/resident/visitors', color: '#176B91', bg: '#EAF6FC' },
@@ -77,6 +75,21 @@ export const ResidentHome: React.FC = () => {
   const { currentUser } = useAuth();
   const { uiState } = usePrototype();
   const [alertDismissed, setAlertDismissed] = useState(false);
+  const [announcements, setAnnouncements] = useState<any[]>([]);
+  const [urgentAlert, setUrgentAlert] = useState<{ title: string; message: string } | null>(null);
+  const [showOffersModal, setShowOffersModal] = useState(false);
+
+  React.useEffect(() => {
+    apiClient.getAnnouncements().then((res) => {
+      if (res && res.length > 0) {
+        setAnnouncements(res);
+        const urgent = res.find((a: any) => a.isUrgent);
+        if (urgent) {
+          setUrgentAlert({ title: urgent.title, message: urgent.content });
+        }
+      }
+    });
+  }, []);
 
   if (uiState === 'loading') {
     return (
@@ -139,10 +152,13 @@ export const ResidentHome: React.FC = () => {
             {currentUser?.flatDetails || 'Tower B · Flat 301 · Green Valley'}
           </p>
         </div>
+
+        {/* Sponsored Offers Quick-Pill */}
+        <OffersLauncherPill onOpen={() => setShowOffersModal(true)} />
       </div>
 
       {/* ── Urgent Alert ── */}
-      {mockUrgentAlert && !alertDismissed && (
+      {urgentAlert && !alertDismissed && (
         <div
           style={{
             margin: '0.75rem 1rem 0',
@@ -159,10 +175,10 @@ export const ResidentHome: React.FC = () => {
           <AlertCircle size={18} style={{ color: 'var(--aarizo-warning, #D99A2B)', flexShrink: 0, marginTop: 1 }} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--aarizo-navy, #083B56)' }}>
-              {mockUrgentAlert.title}
+              {urgentAlert.title}
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--aarizo-text-secondary, #657785)', marginTop: '0.125rem' }}>
-              {mockUrgentAlert.message}
+              {urgentAlert.message}
             </div>
           </div>
           <button
@@ -382,22 +398,20 @@ export const ResidentHome: React.FC = () => {
               </button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {mockAnnouncements.slice(0, 2).map((ann, i) => (
+              {announcements.slice(0, 3).map((ann, i) => (
                 <div
-                  key={i}
+                  key={ann.id || i}
                   style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid var(--aarizo-border-soft, #E8F1F5)', padding: '0.875rem 1rem', boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)' }}
                 >
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
                     <TrendingUp size={16} style={{ color: 'var(--aarizo-blue, #176B91)', flexShrink: 0, marginTop: 2 }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontWeight: 700, fontSize: '0.84375rem', color: 'var(--aarizo-navy, #083B56)', marginBottom: '0.25rem' }}>
-                        {'title' in ann ? (ann as { title: string }).title : String(ann)}
+                        {ann.title}
                       </div>
-                      {'summary' in ann && (
-                        <p style={{ fontSize: '0.75rem', color: 'var(--aarizo-text-secondary, #657785)', margin: 0, lineHeight: 1.4 }}>
-                          {(ann as { summary: string }).summary}
-                        </p>
-                      )}
+                      <p style={{ fontSize: '0.75rem', color: 'var(--aarizo-text-secondary, #657785)', margin: 0, lineHeight: 1.4 }}>
+                        {ann.content || ann.summary}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -406,6 +420,14 @@ export const ResidentHome: React.FC = () => {
           </section>
         </div>
       </div>
+
+      {/* ── Advertisement & Sponsored Offers Pop-up ── */}
+      <OffersLauncherPill onOpen={() => setShowOffersModal(true)} />
+      <AdvertisementPopup
+        societyId={currentUser?.societyId || 'soc-gvs'}
+        forceOpen={showOffersModal}
+        onClose={() => setShowOffersModal(false)}
+      />
     </div>
   );
 };

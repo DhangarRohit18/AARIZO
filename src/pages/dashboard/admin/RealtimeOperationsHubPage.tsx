@@ -62,9 +62,9 @@ export const RealtimeOperationsHubPage: React.FC = () => {
       case 'VISITOR_APPROVAL':
         return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
       case 'QR_SCAN':
-        return <QrCode className="w-4 h-4 text-purple-500" />;
+        return <QrCode className="w-4 h-4 text-[#083B56]" />;
       case 'PARKING_OCCUPANCY':
-        return <Car className="w-4 h-4 text-teal-500" />;
+        return <Car className="w-4 h-4 text-[#176B91]" />;
       case 'EMERGENCY_ALERTS':
         return <ShieldAlert className="w-4 h-4 text-red-500" />;
       case 'MAINTENANCE_STATUS':
@@ -74,11 +74,11 @@ export const RealtimeOperationsHubPage: React.FC = () => {
       case 'DELIVERY_STATUS':
         return <Package className="w-4 h-4 text-orange-500" />;
       case 'WORKER_ENTRY_EXIT':
-        return <HardHat className="w-4 h-4 text-cyan-500" />;
+        return <HardHat className="w-4 h-4 text-[#083B56]" />;
       case 'AMENITY_AVAILABILITY':
-        return <Sparkles className="w-4 h-4 text-fuchsia-500" />;
+        return <Sparkles className="w-4 h-4 text-[#083B56]" />;
       case 'NOTIFICATIONS':
-        return <Bell className="w-4 h-4 text-blue-500" />;
+        return <Bell className="w-4 h-4 text-[#176B91]" />;
       default:
         return <Activity className="w-4 h-4 text-slate-500" />;
     }
@@ -94,7 +94,7 @@ export const RealtimeOperationsHubPage: React.FC = () => {
       case 'PAYMENT_STATUS':
         return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300';
       case 'PARKING_OCCUPANCY':
-        return 'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300';
+        return 'bg-[#EAF6FC] text-[#083B56] dark:bg-[#083B56]/40 dark:text-[#83CBEA]';
       default:
         return 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300';
     }

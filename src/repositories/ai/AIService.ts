@@ -1,4 +1,3 @@
-﻿// @ts-nocheck
 import { aiInsightRepository } from './AIInsightRepository';
 import type { AIPromptPayload } from '../../domains/ai/types';
 

@@ -48,12 +48,12 @@ export const VisitorAnalyticsWidget: React.FC<VisitorAnalyticsWidgetProps> = ({ 
         </div>
 
         <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#EAF6FC] dark:bg-[#062A3D] flex items-center justify-center text-[#176B91] dark:text-[#3DA4CC] shrink-0">
             <TrendingUp className="w-5 h-5" />
           </div>
           <div>
             <span className="text-[11px] text-slate-500 font-medium">Peak Hour</span>
-            <div className="text-xs font-bold text-purple-600 dark:text-purple-400 mt-0.5">
+            <div className="text-xs font-bold text-[#176B91] dark:text-[#3DA4CC] mt-0.5">
               6PM - 8PM
             </div>
           </div>

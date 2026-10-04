@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { guestStayService } from '../../../services/guestStayService';
+import { realtimeService } from '../../../services/realtimeService';
 import type { GuestReservation } from '../../../types/guestStay';
 import {
   Hotel,
@@ -27,6 +28,12 @@ export const GuestStayScannerPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
+    const unsub = realtimeService.subscribe('*', (event) => {
+      if (event.type === 'GUEST_STAY_BOOKED' || event.type === 'GUEST_STAY_UPDATED' || event.type.includes('GUEST')) {
+        loadData();
+      }
+    });
+    return () => unsub();
   }, [societyId]);
 
   const loadData = () => {
@@ -43,6 +50,12 @@ export const GuestStayScannerPage: React.FC = () => {
       message: res.message,
       reservation: res.reservation
     });
+
+    realtimeService.publish({
+      type: 'GUEST_STAY_UPDATED',
+      payload: { action: 'CHECKED_IN', code: codeStr.trim(), timestamp: new Date().toISOString() }
+    });
+
     setQrInput('');
     loadData();
   };

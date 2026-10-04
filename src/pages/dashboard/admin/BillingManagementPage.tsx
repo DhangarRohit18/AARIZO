@@ -8,8 +8,12 @@ import {
   FileText,
   RefreshCw,
   Receipt,
+  CheckCircle,
+  Printer,
+  Filter,
 } from 'lucide-react';
 import { billingService } from '../../../services/billingService';
+import { paymentRepository } from '../../../repositories/payments/PaymentRepository';
 import type {
   SocietyInvoice,
   BillingCycle,
@@ -22,6 +26,9 @@ import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { ReceiptModal } from '../../../components/billing/ReceiptModal';
 import { DataTable } from '../../../components/ui/DataTable';
 import { MobileDataCard } from '../../../components/ui/MobileDataCard';
+import { apiClient } from '../../../services/apiClient';
+import { realtimeService } from '../../../services/realtimeService';
+import { FileUpload } from '../../../components/ui/FileUpload';
 
 export const BillingManagementPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -39,9 +46,21 @@ export const BillingManagementPage: React.FC = () => {
     collectionPercentage: 0,
   });
 
-  // Filter state
+  // Invoice Filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+
+  // Transaction Filters (Part 7)
+  const [txnSearch, setTxnSearch] = useState('');
+  const [txnStatus, setTxnStatus] = useState<string>('ALL');
+  const [txnDate, setTxnDate] = useState('');
+  const [txnMinAmount, setTxnMinAmount] = useState<number | ''>('');
+
+  // Refund Modal State (Part 9)
+  const [refundTarget, setRefundTarget] = useState<PaymentTransaction | null>(null);
+  const [refundReasonInput, setRefundReasonInput] = useState('Admin Authorized Refund');
+  const [refundAmountInput, setRefundAmountInput] = useState<number>(0);
+  const [isProcessingRefund, setIsProcessingRefund] = useState(false);
 
   // Modal State for New Cycle
   const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
@@ -54,6 +73,7 @@ export const BillingManagementPage: React.FC = () => {
   const [manualAmount, setManualAmount] = useState<number>(0);
   const [manualMethod, setManualMethod] = useState<PaymentMethod>('CASH');
   const [manualNotes, setManualNotes] = useState('');
+  const [manualReceiptUrl, setManualReceiptUrl] = useState('');
 
   // Modal State for Penalty / Adjustment
   const [penaltyInvoice, setPenaltyInvoice] = useState<SocietyInvoice | null>(null);
@@ -63,9 +83,41 @@ export const BillingManagementPage: React.FC = () => {
 
   // Receipt Modal State
   const [receiptInvoice, setReceiptInvoice] = useState<SocietyInvoice | null>(null);
+  const [receiptTxn, setReceiptTxn] = useState<PaymentTransaction | undefined>(undefined);
 
-  const reloadData = () => {
-    setInvoices(billingService.getInvoices(currentSocietyId));
+  const reloadData = async () => {
+    try {
+      const dbInvoices = await apiClient.getBillingInvoices();
+      if (dbInvoices && Array.isArray(dbInvoices) && dbInvoices.length > 0) {
+        const mapped: SocietyInvoice[] = dbInvoices.map((inv: any) => ({
+          id: inv.id,
+          invoiceNumber: inv.invoiceNumber,
+          societyId: inv.societyId || 'soc-gvs',
+          flatId: inv.flatId || 'flat-1204',
+          flatCode: inv.flat?.flatNumber ? `B-${inv.flat.flatNumber}` : 'B-1204',
+          residentId: inv.residentId || 'res-1',
+          residentName: inv.resident?.name || 'Vikram Joshi',
+          billingCycleId: inv.cycleId || 'cycle-2026-09',
+          cycleName: 'September 2026 Maintenance & Utility Bill',
+          lineItems: [
+            { id: 'li-1', component: 'MAINTENANCE', description: 'Monthly Society Maintenance Fee', amount: Number(inv.maintenanceAmount || 0) },
+            { id: 'li-2', component: 'WATER', description: 'Water & Common Utility Charges', amount: Number(inv.utilityAmount || 0) },
+          ],
+          totalAmount: Number(inv.totalAmount || 0),
+          paidAmount: Number(inv.paidAmount || 0),
+          outstandingBalance: inv.status === 'PAID' ? 0 : Number(inv.totalAmount || 0) - Number(inv.paidAmount || 0),
+          status: inv.status as any,
+          dueDate: new Date(inv.dueDate).toISOString().split('T')[0],
+          createdAt: new Date(inv.createdAt).toISOString(),
+          updatedAt: new Date(inv.updatedAt).toISOString(),
+        }));
+        setInvoices(mapped);
+      } else {
+        setInvoices(billingService.getInvoices(currentSocietyId));
+      }
+    } catch {
+      setInvoices(billingService.getInvoices(currentSocietyId));
+    }
     setCycles(billingService.getBillingCycles(currentSocietyId));
     setTransactions(billingService.getTransactions(currentSocietyId));
     setAnalytics(billingService.getAnalytics(currentSocietyId));
@@ -73,7 +125,54 @@ export const BillingManagementPage: React.FC = () => {
 
   useEffect(() => {
     reloadData();
-  }, []);
+
+    // Live Firestore payments listener for admin billing dashboard
+    const unsubPayments = paymentRepository.subscribeBySociety(currentSocietyId, (livePayments) => {
+      if (livePayments && livePayments.length > 0) {
+        const mappedTxns: PaymentTransaction[] = livePayments.map((p) => {
+          let dateStr = new Date().toLocaleString('en-IN');
+          if (p.createdAt) {
+            try {
+              dateStr = typeof p.createdAt?.toDate === 'function'
+                ? p.createdAt.toDate().toLocaleString('en-IN')
+                : new Date(p.createdAt).toLocaleString('en-IN');
+            } catch {
+              dateStr = new Date().toLocaleString('en-IN');
+            }
+          }
+          return {
+            id: p.id,
+            invoiceId: p.invoiceId,
+            invoiceNumber: p.invoiceNumber || p.invoiceId,
+            societyId: p.societyId,
+            flatCode: p.flatCode || '',
+            residentName: p.residentName || 'Resident',
+            transactionId: p.razorpayPaymentId || p.id,
+            amount: p.amount,
+            paymentMethod: (p.paymentMethod as any) || 'RAZORPAY',
+            status: p.status === 'SUCCESS' ? 'SUCCESS' : p.status === 'REFUNDED' ? 'REFUNDED' : 'FAILED',
+            gatewayReference: p.razorpayPaymentId || p.razorpayOrderId || 'N/A',
+            gatewayResponseNotes: p.refundReason || p.failureReason || (p.status === 'SUCCESS' ? 'Cryptographically verified via Razorpay' : ''),
+            paymentDate: dateStr,
+          };
+        });
+
+        setTransactions((prev) => {
+          const liveIds = new Set(mappedTxns.map((t) => t.id));
+          const nonDupes = prev.filter((p) => !liveIds.has(p.id) && !liveIds.has(p.transactionId));
+          return [...mappedTxns, ...nonDupes];
+        });
+      }
+    });
+
+    const unsub = realtimeService.subscribe('*', () => {
+      reloadData();
+    });
+    return () => {
+      unsubPayments();
+      unsub();
+    };
+  }, [currentSocietyId]);
 
   const handleCreateCycle = (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,17 +197,22 @@ export const BillingManagementPage: React.FC = () => {
     e.preventDefault();
     if (!manualInvoice || manualAmount <= 0) return;
 
+    const finalNotes = manualReceiptUrl
+      ? `${manualNotes ? manualNotes + ' - ' : ''}Receipt: ${manualReceiptUrl}`
+      : manualNotes;
+
     billingService.recordManualPayment(
       manualInvoice.id,
       manualAmount,
       manualMethod,
-      manualNotes,
+      finalNotes,
       adminActor
     );
 
     setManualInvoice(null);
     setManualAmount(0);
     setManualNotes('');
+    setManualReceiptUrl('');
     reloadData();
   };
 
@@ -130,15 +234,6 @@ export const BillingManagementPage: React.FC = () => {
     reloadData();
   };
 
-  const handleRefund = async (txn: PaymentTransaction) => {
-    try {
-      const res = await billingService.processRefund(txn.id, txn.amount, 'Admin Initiated Refund', adminActor);
-      alert(res.message);
-      reloadData();
-    } catch (err: any) {
-      alert(err.message || 'Refund failed');
-    }
-  };
 
   const exportReport = () => {
     const csvContent =
@@ -167,6 +262,18 @@ export const BillingManagementPage: React.FC = () => {
       i.residentName.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'ALL' || i.status === statusFilter;
     return matchesSearch && matchesStatus;
+  });
+
+  const filteredTransactions = transactions.filter((t) => {
+    const matchesSearch =
+      (t.transactionId || '').toLowerCase().includes(txnSearch.toLowerCase()) ||
+      (t.invoiceNumber || '').toLowerCase().includes(txnSearch.toLowerCase()) ||
+      (t.residentName || '').toLowerCase().includes(txnSearch.toLowerCase()) ||
+      (t.flatCode || '').toLowerCase().includes(txnSearch.toLowerCase());
+    const matchesStatus = txnStatus === 'ALL' || t.status === txnStatus;
+    const matchesDate = !txnDate || (t.paymentDate && t.paymentDate.includes(txnDate));
+    const matchesAmount = txnMinAmount === '' || t.amount >= Number(txnMinAmount);
+    return matchesSearch && matchesStatus && matchesDate && matchesAmount;
   });
 
   const getStatusVariant = (status: InvoiceStatus): 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'purple' => {
@@ -466,13 +573,98 @@ export const BillingManagementPage: React.FC = () => {
 
       {/* Tab 3: Transactions & Refunds */}
       {activeTab === 'TRANSACTIONS' && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 space-y-4">
+          {/* Payment & Transaction Filters (Part 7) */}
+          <div className="p-3.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700/80 flex flex-wrap items-center gap-3 text-xs">
+            <div className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300 shrink-0">
+              <Filter className="w-4 h-4 text-[#176B91]" />
+              <span>Payment Filters:</span>
+            </div>
+
+            {/* Resident / ID / Invoice Search */}
+            <div className="flex-1 min-w-[180px] relative">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+              <input
+                type="text"
+                placeholder="Search Txn ID, Resident, Flat, Invoice..."
+                value={txnSearch}
+                onChange={(e) => setTxnSearch(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+              />
+            </div>
+
+            {/* Status Filter */}
+            <select
+              value={txnStatus}
+              onChange={(e) => setTxnStatus(e.target.value)}
+              className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="SUCCESS">Success</option>
+              <option value="REFUNDED">Refunded</option>
+              <option value="FAILED">Failed</option>
+              <option value="PENDING">Pending</option>
+            </select>
+
+            {/* Date Filter */}
+            <input
+              type="date"
+              value={txnDate}
+              onChange={(e) => setTxnDate(e.target.value)}
+              className="px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+              title="Filter by payment date"
+            />
+
+            {/* Min Amount Filter */}
+            <div className="flex items-center gap-1">
+              <span className="text-slate-400">Min ₹:</span>
+              <input
+                type="number"
+                placeholder="0"
+                value={txnMinAmount}
+                onChange={(e) => setTxnMinAmount(e.target.value ? Number(e.target.value) : '')}
+                className="w-20 px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+              />
+            </div>
+
+            {(txnSearch || txnStatus !== 'ALL' || txnDate || txnMinAmount !== '') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setTxnSearch('');
+                  setTxnStatus('ALL');
+                  setTxnDate('');
+                  setTxnMinAmount('');
+                }}
+                className="px-2.5 py-1.5 text-rose-600 font-bold hover:underline"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+
           <DataTable
             columns={[
-              { key: 'transactionId', header: 'Txn ID', render: (t: PaymentTransaction) => <span className="font-semibold text-[#083B56] dark:text-[#83CBEA]">{t.transactionId}</span> },
+              {
+                key: 'transactionId',
+                header: 'Txn ID',
+                render: (t: PaymentTransaction) => (
+                  <span className="font-semibold text-[#083B56] dark:text-[#83CBEA] font-mono select-all">
+                    {t.transactionId}
+                  </span>
+                ),
+              },
               { key: 'invoiceNumber', header: 'Invoice' },
-              { key: 'flatResident', header: 'Flat & Resident', render: (t: PaymentTransaction) => `Flat ${t.flatCode} (${t.residentName})` },
-              { key: 'amount', header: 'Amount (₹)', render: (t: PaymentTransaction) => <span className="font-bold">₹{t.amount.toLocaleString()}</span> },
+              {
+                key: 'flatResident',
+                header: 'Flat & Resident',
+                render: (t: PaymentTransaction) => `Flat ${t.flatCode} (${t.residentName})`,
+              },
+              {
+                key: 'amount',
+                header: 'Amount (₹)',
+                render: (t: PaymentTransaction) => <span className="font-bold">₹{t.amount.toLocaleString()}</span>,
+              },
               { key: 'paymentMethod', header: 'Method' },
               {
                 key: 'status',
@@ -482,25 +674,67 @@ export const BillingManagementPage: React.FC = () => {
                     variant={t.status === 'SUCCESS' ? 'success' : t.status === 'REFUNDED' ? 'purple' : 'danger'}
                     label={t.status}
                   />
-                )
+                ),
               },
-              { key: 'gatewayReference', header: 'Gateway Ref', render: (t: PaymentTransaction) => t.gatewayReference || 'N/A' },
+              { key: 'paymentDate', header: 'Date' },
+              {
+                key: 'receipt',
+                header: 'Receipt',
+                render: (t: PaymentTransaction) => (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const matchInv = invoices.find((i) => i.id === t.invoiceId || i.invoiceNumber === t.invoiceNumber) || {
+                        id: t.invoiceId,
+                        invoiceNumber: t.invoiceNumber || 'INV-PAID',
+                        societyId: currentSocietyId,
+                        flatId: 'flat-1204',
+                        flatCode: t.flatCode,
+                        residentId: 'res-unknown',
+                        residentName: t.residentName,
+                        billingCycleId: 'cycle-admin',
+                        cycleName: 'Society Maintenance Dues',
+                        lineItems: [{ id: 'li-1', component: 'MAINTENANCE', description: 'Maintenance Dues', amount: t.amount }],
+                        totalAmount: t.amount,
+                        paidAmount: t.amount,
+                        outstandingBalance: 0,
+                        status: 'PAID',
+                        dueDate: t.paymentDate,
+                        createdAt: t.paymentDate,
+                        updatedAt: t.paymentDate,
+                      };
+                      setReceiptInvoice(matchInv);
+                      setReceiptTxn(t);
+                    }}
+                    className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#176B91] hover:text-[#083B56] transition flex items-center gap-1 text-xs font-bold"
+                    title="View & Print Official Receipt"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Receipt</span>
+                  </button>
+                ),
+              },
               {
                 key: 'actions',
                 header: 'Refund Action',
                 render: (t: PaymentTransaction) => (
                   t.status === 'SUCCESS' ? (
                     <button
-                      onClick={() => handleRefund(t)}
+                      type="button"
+                      onClick={() => {
+                        setRefundTarget(t);
+                        setRefundAmountInput(t.amount);
+                        setRefundReasonInput('Admin Approved Refund / Settlement Adjustment');
+                      }}
                       className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded font-semibold text-[11px]"
                     >
                       Refund
                     </button>
                   ) : null
-                )
-              }
+                ),
+              },
             ]}
-            data={transactions}
+            data={filteredTransactions}
             keyExtractor={(t: PaymentTransaction) => t.id}
             pageSize={10}
             mobileRender={(t: PaymentTransaction) => (
@@ -516,23 +750,61 @@ export const BillingManagementPage: React.FC = () => {
                 attributes={[
                   { label: 'Amount', value: `₹${t.amount.toLocaleString()}` },
                   { label: 'Payment Method', value: t.paymentMethod },
-                  { label: 'Gateway Reference', value: t.gatewayReference || 'N/A' }
+                  { label: 'Gateway Reference', value: t.gatewayReference || 'N/A' },
+                  { label: 'Date', value: t.paymentDate },
                 ]}
                 actions={
-                  t.status === 'SUCCESS' ? (
+                  <div className="flex items-center gap-2 w-full">
                     <button
-                      onClick={() => handleRefund(t)}
-                      className="w-full py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                      type="button"
+                      onClick={() => {
+                        const matchInv = invoices.find((i) => i.id === t.invoiceId || i.invoiceNumber === t.invoiceNumber) || {
+                          id: t.invoiceId,
+                          invoiceNumber: t.invoiceNumber || 'INV-PAID',
+                          societyId: currentSocietyId,
+                          flatId: 'flat-1204',
+                          flatCode: t.flatCode,
+                          residentId: 'res-unknown',
+                          residentName: t.residentName,
+                          billingCycleId: 'cycle-admin',
+                          cycleName: 'Society Maintenance Dues',
+                          lineItems: [{ id: 'li-1', component: 'MAINTENANCE', description: 'Maintenance Dues', amount: t.amount }],
+                          totalAmount: t.amount,
+                          paidAmount: t.amount,
+                          outstandingBalance: 0,
+                          status: 'PAID',
+                          dueDate: t.paymentDate,
+                          createdAt: t.paymentDate,
+                          updatedAt: t.paymentDate,
+                        };
+                        setReceiptInvoice(matchInv);
+                        setReceiptTxn(t);
+                      }}
+                      className="flex-1 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-lg min-h-[44px] flex items-center justify-center gap-1"
                     >
-                      Process Refund
+                      <Printer className="w-4 h-4" /> Receipt
                     </button>
-                  ) : undefined
+                    {t.status === 'SUCCESS' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setRefundTarget(t);
+                          setRefundAmountInput(t.amount);
+                          setRefundReasonInput('Admin Approved Refund / Settlement Adjustment');
+                        }}
+                        className="flex-1 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg min-h-[44px]"
+                      >
+                        Process Refund
+                      </button>
+                    )}
+                  </div>
                 }
               />
             )}
           />
         </div>
       )}
+
 
       {/* Modal: New Billing Cycle */}
       {isCycleModalOpen && (
@@ -640,6 +912,25 @@ export const BillingManagementPage: React.FC = () => {
                   onChange={(e) => setManualNotes(e.target.value)}
                 />
               </div>
+
+              <div>
+                <label className="block font-semibold mb-1">
+                  Cheque / NEFT Counterfoil Photo (Optional)
+                </label>
+                <FileUpload
+                  category="receipts"
+                  label="Upload Bank Cheque Photo or NEFT Counterfoil"
+                  onUploadSuccess={(url: string) => {
+                    setManualReceiptUrl(url);
+                  }}
+                />
+                {manualReceiptUrl && (
+                  <div className="mt-1 text-emerald-600 flex items-center gap-1 font-medium text-[11px]">
+                    <CheckCircle size={12} />
+                    <span>Receipt proof attached</span>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
@@ -724,15 +1015,111 @@ export const BillingManagementPage: React.FC = () => {
         </div>
       )}
 
+      {/* Modal: Admin Refund Processor (Part 9) */}
+      {refundTarget && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setIsProcessingRefund(true);
+              try {
+                const res = await billingService.processRefund(
+                  refundTarget.id,
+                  refundAmountInput,
+                  refundReasonInput,
+                  adminActor
+                );
+                alert(res.message || 'Refund successfully processed.');
+                setRefundTarget(null);
+                reloadData();
+              } catch (err: any) {
+                alert(err?.message || 'Refund failed');
+              } finally {
+                setIsProcessingRefund(false);
+              }
+            }}
+            className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-5 space-y-4 border border-slate-200 dark:border-slate-700 shadow-2xl"
+          >
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="font-bold text-slate-900 dark:text-white text-base">
+                Process Razorpay Refund
+              </h3>
+              <button
+                type="button"
+                onClick={() => setRefundTarget(null)}
+                className="text-slate-400 hover:text-slate-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl text-xs space-y-1">
+              <div>Transaction ID: <span className="font-mono font-bold text-[#176B91]">{refundTarget.transactionId}</span></div>
+              <div>Resident: <strong>{refundTarget.residentName} (Flat {refundTarget.flatCode})</strong></div>
+              <div>Invoice: <strong>{refundTarget.invoiceNumber}</strong></div>
+              <div>Original Amount Paid: <strong className="text-emerald-600">₹{refundTarget.amount.toLocaleString()}</strong></div>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="block font-semibold mb-1">Refund Amount (₹) *</label>
+                <input
+                  type="number"
+                  required
+                  min={1}
+                  max={refundTarget.amount}
+                  value={refundAmountInput}
+                  onChange={(e) => setRefundAmountInput(Number(e.target.value))}
+                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold mb-1">Reason for Refund *</label>
+                <input
+                  type="text"
+                  required
+                  value={refundReasonInput}
+                  onChange={(e) => setRefundReasonInput(e.target.value)}
+                  placeholder="e.g. Duplicate transaction or billing dispute adjustment"
+                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t">
+              <button
+                type="button"
+                onClick={() => setRefundTarget(null)}
+                className="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isProcessingRefund}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition disabled:opacity-50"
+              >
+                {isProcessingRefund ? 'Processing via Razorpay...' : `Confirm Refund of ₹${refundAmountInput}`}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* Modal: Printable Receipt */}
       {receiptInvoice && (
         <ReceiptModal
           invoice={receiptInvoice}
-          transaction={transactions.find((t) => t.invoiceId === receiptInvoice.id)}
-          onClose={() => setReceiptInvoice(null)}
+          transaction={receiptTxn || transactions.find((t) => t.invoiceId === receiptInvoice.id)}
+          onClose={() => {
+            setReceiptInvoice(null);
+            setReceiptTxn(undefined);
+          }}
         />
       )}
     </div>
   );
 };
+
 

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePrototype } from '../../../context/PrototypeContext';
 import type { VisitorType, VisitorPass, VisitorPassStatus } from '../../../domains/visitors';
-import { initialMockVisitorPasses } from '../../../mockData/visitors/visitorPasses';
 import { mockFrequentVisitors } from '../../../mockData/visitors/visitors';
 import { mockVisitorHistory } from '../../../mockData/visitors/visitorHistory';
+import { apiClient } from '../../../services/apiClient';
+import { realtimeService } from '../../../services/realtimeService';
 
 import { VisitorTypeSelector } from './VisitorTypeSelector';
 import { VisitorForm } from './VisitorForm';
@@ -23,9 +24,47 @@ export const VisitorHome: React.FC = () => {
 
   const [viewMode, setViewMode] = useState<VisitorViewMode>('home');
   const [selectedVisitorType, setSelectedVisitorType] = useState<VisitorType>('guest');
-  const [activePasses, setActivePasses] = useState<VisitorPass[]>(initialMockVisitorPasses);
+  const [activePasses, setActivePasses] = useState<VisitorPass[]>([]);
   const [recentlyCreatedPass, setRecentlyCreatedPass] = useState<VisitorPass | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const loadPasses = async () => {
+    try {
+      const dbPasses = await apiClient.getVisitorPasses();
+      if (dbPasses && Array.isArray(dbPasses) && dbPasses.length > 0) {
+        const mapped: VisitorPass[] = dbPasses.map((p: any) => ({
+          id: p.id,
+          passcode: (p.id.slice(-4) || '8492'),
+          visitorType: (p.passType?.toLowerCase() || 'guest') as any,
+          visitorName: p.visitorName,
+          visitorPhone: p.phone,
+          vehicleNumber: p.vehicleNumber || undefined,
+          purpose: p.purpose || undefined,
+          flatCode: '1204',
+          tower: 'Tower B',
+          societyName: 'Green Valley Society',
+          expectedDate: new Date(p.validFrom).toLocaleDateString([], { month: 'short', day: 'numeric' }),
+          expectedTimeSlot: new Date(p.validFrom).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          status: p.status === 'CHECKED_IN' ? 'active' : (p.status?.toLowerCase() || 'active'),
+          createdAt: new Date(p.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          validUntil: new Date(p.validTo).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          gateName: 'Main Gate #1',
+          notes: p.purpose,
+        }));
+        setActivePasses(mapped);
+      }
+    } catch {
+      // Fallback
+    }
+  };
+
+  useEffect(() => {
+    loadPasses();
+    const unsub = realtimeService.subscribe('*', () => {
+      loadPasses();
+    });
+    return () => unsub();
+  }, []);
 
   // Handle Prototype UI States
   if (uiState === 'loading') {
@@ -89,7 +128,7 @@ export const VisitorHome: React.FC = () => {
     return (
       <VisitorForm
         visitorType={selectedVisitorType}
-        onSubmit={(newPassData) => {
+        onSubmit={async (newPassData) => {
           const generatedPass: VisitorPass = {
             id: `pass-${Date.now().toString().slice(-4)}`,
             passcode: newPassData.passcode || '8492',
@@ -101,7 +140,7 @@ export const VisitorHome: React.FC = () => {
             serviceCategory: newPassData.serviceCategory,
             flatCode: '1204',
             tower: 'Tower B',
-            societyName: 'Lakeview Residency',
+            societyName: 'Green Valley Society',
             expectedDate: newPassData.expectedDate || 'Today',
             expectedTimeSlot: newPassData.expectedTimeSlot || 'Just now',
             status: 'active',
@@ -115,6 +154,37 @@ export const VisitorHome: React.FC = () => {
           setRecentlyCreatedPass(generatedPass);
           setViewMode('pass_created');
           setToastMessage(`Gate pass generated for ${generatedPass.visitorName}`);
+
+          // Persist to PostgreSQL backend database
+          try {
+            await apiClient.createVisitorPass({
+              societyId: 'soc-gvs',
+              visitorName: generatedPass.visitorName,
+              phone: generatedPass.visitorPhone || '9876543210',
+              passType: (generatedPass.visitorType || 'GUEST').toUpperCase(),
+              vehicleNumber: generatedPass.vehicleNumber || null,
+              purpose: generatedPass.notes || 'Guest Visitor',
+              validFrom: new Date(),
+              validTo: new Date(Date.now() + 86400000),
+              status: 'APPROVED',
+            });
+
+            // Broadcast real-time event across network & local tabs
+            realtimeService.publish(
+              'VISITOR_ARRIVAL',
+              {
+                visitorName: generatedPass.visitorName,
+                flatCode: 'B-1204',
+                passType: (generatedPass.visitorType || 'GUEST').toUpperCase(),
+                gate: 'Main Gate #1',
+              },
+              'soc-gvs',
+              'RESIDENT',
+              'Resident Portal'
+            );
+          } catch (err) {
+            console.error('Failed to persist visitor pass to PostgreSQL:', err);
+          }
         }}
         onBack={() => setViewMode('invite_type')}
       />

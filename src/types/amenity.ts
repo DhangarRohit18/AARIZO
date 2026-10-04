@@ -44,6 +44,7 @@ export interface SocietyAmenity {
   isBookable: boolean;
   isActive: boolean;
   imageUrl?: string;
+  bookingFee?: number;
   rules?: string[];
   blackoutDates: BlackoutDate[];
   maintenanceSchedules: AmenityMaintenance[];
@@ -64,6 +65,9 @@ export interface AmenityBooking {
   endTime: string; // HH:mm
   guestCount: number;
   purpose?: string;
+  bookingFee?: number;
+  paymentStatus?: 'FREE' | 'PAID' | 'PENDING';
+  paymentId?: string;
   status: BookingStatus;
   adminNotes?: string;
   createdAt: string;

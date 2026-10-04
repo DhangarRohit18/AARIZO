@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { mockEmergencyContacts, mockSafetyInstructions } from '../../../mockData/safety/safetyData';
+import { apiClient } from '../../../services/apiClient';
+import { realtimeService } from '../../../services/realtimeService';
 import { Modal, Button } from '../../common';
 import { AlertOctagon, PhoneCall, ShieldAlert, ArrowLeft, Info } from 'lucide-react';
 import '../resident.css';
@@ -14,10 +16,38 @@ export const SafetyHome: React.FC<SafetyHomeProps> = ({ onBackToMore }) => {
   const [isSOSActive, setIsSOSActive] = useState(false);
   const [sosTimestamp, setSosTimestamp] = useState<string | null>(null);
 
-  const handleTriggerSOS = () => {
+  const handleTriggerSOS = async () => {
     setIsSOSConfirmModalOpen(false);
     setIsSOSActive(true);
-    setSosTimestamp(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setSosTimestamp(timeStr);
+
+    try {
+      // 1. Persist emergency incident to PostgreSQL
+      await apiClient.createEmergencyIncident({
+        societyId: 'soc-gvs',
+        incidentType: 'SOS_MEDICAL_OR_SECURITY',
+        severity: 'CRITICAL',
+        location: 'Tower B · Flat 1204',
+        description: `Emergency SOS triggered by resident at ${timeStr}. Gate Security & Ambulance alerted.`,
+      });
+
+      // 2. Broadcast priority real-time emergency alert
+      realtimeService.publish(
+        'EMERGENCY_ALERTS',
+        {
+          emergencyId: `SOS-${Date.now().toString().slice(-4)}`,
+          type: 'SECURITY_SOS',
+          location: 'Flat B-1204',
+          priority: 'CRITICAL',
+        },
+        'soc-gvs',
+        'RESIDENT',
+        'Resident Emergency App'
+      );
+    } catch (err) {
+      console.error('Error logging emergency incident to PostgreSQL:', err);
+    }
   };
 
   const handleResolveSOS = () => {

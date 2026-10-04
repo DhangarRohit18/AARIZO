@@ -1,10 +1,10 @@
-﻿// @ts-nocheck
 import type {
-  NotificationEvent,
-  string,
+  NotificationRecord,
   DeliveryLog,
   NotificationItemWithLogs,
   NotificationPreference,
+  NotificationCategory,
+  NotificationEventType,
   InAppNotificationAdapter,
   PushNotificationAdapter,
   WhatsAppNotificationAdapter,
@@ -12,6 +12,8 @@ import type {
   EmailNotificationAdapter,
 } from '../types/index';
 import { realTimeSync } from '../../../services/realTimeSync';
+import { realtimeService } from '../../../services/realtimeService';
+import type { RealtimeMessage } from '../../../types/realtime';
 
 const STORAGE_KEY_NOTIF_EVENTS = 'aarizo_notification_events_v2';
 const STORAGE_KEY_NOTIF_LOGS = 'aarizo_notification_logs_v2';
@@ -25,7 +27,7 @@ class MockInAppAdapter implements InAppNotificationAdapter {
     return {
       id: `log-inapp-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       eventId: event.id,
-      recipientUserId: event.recipientUserId,
+      recipientUserId: event.recipientUserId || event.recipientId,
       channel: 'IN_APP',
       providerName: this.name,
       providerRefId: `inapp_msg_${Date.now()}`,
@@ -44,7 +46,7 @@ class MockPushAdapter implements PushNotificationAdapter {
     return {
       id: `log-push-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       eventId: event.id,
-      recipientUserId: event.recipientUserId,
+      recipientUserId: event.recipientUserId || event.recipientId,
       channel: 'PUSH',
       providerName: this.name,
       providerRefId: `fcm_msg_id_${Date.now()}`,
@@ -59,11 +61,11 @@ class MockWhatsAppAdapter implements WhatsAppNotificationAdapter {
   name = 'Meta Business Cloud API (WhatsApp Adapter)';
   async sendWhatsApp(event: NotificationRecord, phoneNumber: string = '+91 98765 43210'): Promise<DeliveryLog> {
     const timestamp = new Date().toISOString();
-    console.log(`[WHATSAPP ADAPTER] Dispatching HSM template to ${phoneNumber}: ${event.message}`);
+    console.log(`[WHATSAPP ADAPTER] Dispatching HSM template to ${phoneNumber}: ${event.message || event.body}`);
     return {
       id: `log-wa-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       eventId: event.id,
-      recipientUserId: event.recipientUserId,
+      recipientUserId: event.recipientUserId || event.recipientId,
       channel: 'WHATSAPP',
       providerName: this.name,
       providerRefId: `wamid.HBgL${Date.now()}`,
@@ -78,11 +80,11 @@ class MockSMSAdapter implements SMSNotificationAdapter {
   name = 'Twilio / Fast2SMS DLT SMS Gateway';
   async sendSMS(event: NotificationRecord, phoneNumber: string = '+91 98765 43210'): Promise<DeliveryLog> {
     const timestamp = new Date().toISOString();
-    console.log(`[SMS ADAPTER] Dispatching DLT SMS to ${phoneNumber}: ${event.message}`);
+    console.log(`[SMS ADAPTER] Dispatching DLT SMS to ${phoneNumber}: ${event.message || event.body}`);
     return {
       id: `log-sms-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       eventId: event.id,
-      recipientUserId: event.recipientUserId,
+      recipientUserId: event.recipientUserId || event.recipientId,
       channel: 'SMS',
       providerName: this.name,
       providerRefId: `sms_sid_${Date.now()}`,
@@ -101,7 +103,7 @@ class MockEmailAdapter implements EmailNotificationAdapter {
     return {
       id: `log-email-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       eventId: event.id,
-      recipientUserId: event.recipientUserId,
+      recipientUserId: event.recipientUserId || event.recipientId,
       channel: 'EMAIL',
       providerName: this.name,
       providerRefId: `sg_msg_id_${Date.now()}`,
@@ -127,6 +129,152 @@ class MultiChannelNotificationService {
   private whatsAppAdapter: WhatsAppNotificationAdapter = new MockWhatsAppAdapter();
   private smsAdapter: SMSNotificationAdapter = new MockSMSAdapter();
   private emailAdapter: EmailNotificationAdapter = new MockEmailAdapter();
+  private isListening = false;
+
+  constructor() {
+    this.initRealtimeListener();
+  }
+
+  public initRealtimeListener() {
+    if (this.isListening || typeof window === 'undefined') return;
+    this.isListening = true;
+
+    realtimeService.subscribe('*', (msg: RealtimeMessage) => {
+      if (msg.senderName === 'MultiChannelNotificationEngine') return;
+      if ((msg.topic as string) === 'NOTIFICATIONS_UPDATED') return;
+      this.ingestRealtimeMessage(msg);
+    });
+  }
+
+  private ingestRealtimeMessage(msg: RealtimeMessage) {
+    let title = 'Society Live Alert';
+    let message = '';
+    let category: NotificationCategory = 'SECURITY';
+    let eventType: NotificationEventType = 'VISITOR_ARRIVAL';
+    let isCritical = false;
+
+    switch (msg.topic) {
+      case 'VISITOR_ARRIVAL':
+        eventType = 'VISITOR_ARRIVAL';
+        category = 'SECURITY';
+        title = `Visitor Arrival: ${msg.payload?.visitorName || 'Guest'}`;
+        message = `${msg.payload?.visitorName || 'Guest'} (${msg.payload?.category || msg.payload?.passType || 'GUEST'}) arrived at ${msg.payload?.gate || 'Gate 1'} for Flat ${msg.payload?.flatCode || 'your unit'}.`;
+        isCritical = true;
+        break;
+      case 'VISITOR_ENTRY':
+        eventType = 'VISITOR_ARRIVAL';
+        category = 'SECURITY';
+        title = `Visitor Checked In: ${msg.payload?.visitorName || 'Guest'}`;
+        message = `${msg.payload?.visitorName || 'Guest'} entered through ${msg.payload?.gateName || 'Main Gate'}.`;
+        break;
+      case 'VISITOR_EXIT':
+        eventType = 'VISITOR_ARRIVAL';
+        category = 'SECURITY';
+        title = `Visitor Departed: ${msg.payload?.visitorName || 'Guest'}`;
+        message = `${msg.payload?.visitorName || 'Guest'} checked out of society premises.`;
+        break;
+      case 'EMERGENCY_ALERTS':
+        eventType = 'EMERGENCY';
+        category = 'EMERGENCY';
+        isCritical = true;
+        title = `🚨 SOS EMERGENCY ALERT: ${msg.payload?.type || 'Security'}`;
+        message = `Urgent alert at ${msg.payload?.location || msg.payload?.flatNumber || 'Community'}. Details: ${msg.payload?.reason || msg.payload?.details || 'Immediate attention required'}.`;
+        break;
+      case 'DELIVERY_STATUS':
+        eventType = 'PARCEL_ARRIVAL';
+        category = 'SECURITY';
+        title = `📦 Parcel Status: ${msg.payload?.recipient || 'Delivered'}`;
+        message = msg.payload?.message || `Package for Flat ${msg.payload?.flatCode || msg.payload?.unitNumber || ''} is ready in Locker #${msg.payload?.lockerNumber || '01'}.`;
+        break;
+      case 'PARKING_OCCUPANCY':
+        eventType = 'VISITOR_ARRIVAL';
+        category = 'SECURITY';
+        title = `Vehicle Parking Update`;
+        message = `Slot ${msg.payload?.slotId || msg.payload?.slotNumber || 'P-1'} marked ${msg.payload?.status || msg.payload?.occupancyState || 'Occupied'} (Vehicle: ${msg.payload?.vehicleNumber || 'Unregistered'}).`;
+        break;
+      case 'WORKER_ENTRY_EXIT':
+        eventType = 'WORKER_ENTRY';
+        category = 'COMMUNITY';
+        title = `Domestic Staff ${msg.payload?.action === 'IN' ? 'Check-in' : 'Check-out'}`;
+        message = `${msg.payload?.workerName || 'Staff'} recorded ${msg.payload?.action === 'IN' ? 'entry' : 'exit'} at security gate.`;
+        break;
+      case 'MAINTENANCE_STATUS':
+        eventType = 'COMPLAINT_UPDATE';
+        category = 'MAINTENANCE';
+        title = `Maintenance Update`;
+        message = msg.payload?.message || `Work order updated for ${msg.payload?.area || 'Society Facility'}. Status: ${msg.payload?.status || 'In Progress'}.`;
+        break;
+      case 'PAYMENT_STATUS':
+        eventType = 'PAYMENT_DUE';
+        category = 'BILLING';
+        title = `Society Billing Receipt`;
+        message = msg.payload?.message || `Payment of ₹${msg.payload?.amount || '0'} confirmed for society dues.`;
+        break;
+      case 'NOTIFICATIONS':
+        title = msg.payload?.title || 'Society Notice';
+        message = msg.payload?.message || 'New announcement received.';
+        category = msg.payload?.category || 'COMMUNITY';
+        eventType = msg.payload?.eventType || 'COMMUNITY';
+        isCritical = !!msg.payload?.isCritical;
+        break;
+      case 'PAYMENT_COMPLETED':
+        eventType = 'PAYMENT_DUE';
+        category = 'BILLING';
+        title = `Razorpay Payment Verified: ₹${msg.payload?.amount || 0}`;
+        message = `Online payment received for ${msg.payload?.billId || 'invoice'}. Reference ID: ${msg.payload?.paymentId || msg.payload?.razorpayPaymentId || 'Verified'}`;
+        break;
+      case 'ANNOUNCEMENT_CREATED':
+        eventType = 'COMMUNITY';
+        category = 'COMMUNITY';
+        title = `Society Broadcast: ${msg.payload?.title || 'New Announcement'}`;
+        message = msg.payload?.content || 'A new official committee circular has been published.';
+        isCritical = !!msg.payload?.isUrgent;
+        break;
+      case 'AMENITY_BOOKED':
+        eventType = 'COMMUNITY';
+        category = 'COMMUNITY';
+        title = `Amenity Booked: ${msg.payload?.amenityName || 'Facility'}`;
+        message = `Reservation by ${msg.payload?.residentName || 'Resident'} for ${msg.payload?.bookingDate || 'upcoming slot'} (${msg.payload?.timeSlot || ''}).`;
+        break;
+      case 'ADVERTISEMENT_PUBLISHED':
+        eventType = 'COMMUNITY';
+        category = 'COMMUNITY';
+        title = `Partner Offer: ${msg.payload?.title || 'Resident Discount'}`;
+        message = msg.payload?.tagline || msg.payload?.description || 'Special resident promotion available in society marketplace.';
+        break;
+      case 'VENDOR_REGISTERED':
+        eventType = 'COMMUNITY';
+        category = 'COMMUNITY';
+        title = `New Society Vendor: ${msg.payload?.businessName || 'Verified Partner'}`;
+        message = `${msg.payload?.businessName || 'Partner'} registered for ${msg.payload?.serviceCategory || 'society services'}.`;
+        break;
+      case 'FILE_UPLOADED':
+        eventType = 'COMMUNITY';
+        category = 'MAINTENANCE';
+        title = `Document Uploaded: ${msg.payload?.filename || 'File'}`;
+        message = `Uploaded to society repository under ${msg.payload?.category || 'general'}.`;
+        break;
+      default:
+        return;
+    }
+
+    const recipientUserId = msg.payload?.recipientUserId || 'res-1';
+
+    this.dispatchEvent(
+      {
+        societyId: msg.societyId || 'soc-1',
+        recipientUserId,
+        eventType,
+        category,
+        title,
+        message,
+        isCritical,
+        attachmentUrl: msg.payload?.attachmentUrl || msg.payload?.url,
+        attachmentName: msg.payload?.attachmentName || msg.payload?.filename,
+      },
+      { phone: '+91 98765 43210', email: 'resident@aarizo.com' }
+    );
+  }
 
   private getStoredEvents(): NotificationRecord[] {
     const raw = localStorage.getItem(STORAGE_KEY_NOTIF_EVENTS);
@@ -148,7 +296,11 @@ class MultiChannelNotificationService {
 
   private getStoredLogs(): DeliveryLog[] {
     const raw = localStorage.getItem(STORAGE_KEY_NOTIF_LOGS);
-    if (!raw) return [];
+    if (!raw) {
+      const seedLogs = this.generateSeedLogs();
+      localStorage.setItem(STORAGE_KEY_NOTIF_LOGS, JSON.stringify(seedLogs));
+      return seedLogs;
+    }
     try {
       return JSON.parse(raw);
     } catch {
@@ -189,7 +341,7 @@ class MultiChannelNotificationService {
   }
 
   public async dispatchEvent(
-    data: Omit<NotificationEvent, 'id' | 'createdAt'>,
+    data: Omit<NotificationRecord, 'id' | 'createdAt'>,
     recipientContact?: { phone?: string; email?: string }
   ): Promise<NotificationItemWithLogs> {
     const timestamp = new Date().toISOString();
@@ -207,8 +359,10 @@ class MultiChannelNotificationService {
     this.saveEvents(events);
 
     // Fetch User Preferences
-    const prefs = this.getPreferences(event.recipientUserId);
-    const categoryPref = prefs.categories[event.category] || DEFAULT_PREFERENCES.SECURITY;
+    const recipientUserId = event.recipientUserId || event.recipientId || 'res-1';
+    const prefs = this.getPreferences(recipientUserId);
+    const categoryKey = event.category || 'SECURITY';
+    const categoryPref = prefs.categories[categoryKey] || DEFAULT_PREFERENCES.SECURITY;
 
     const deliveryLogs: DeliveryLog[] = [];
 
@@ -249,7 +403,7 @@ class MultiChannelNotificationService {
     const existingLogs = this.getStoredLogs();
     this.saveLogs([...deliveryLogs, ...existingLogs]);
 
-    realTimeSync.publish('NOTIFICATIONS_UPDATED', { eventId: event.id, recipientUserId: event.recipientUserId });
+    realTimeSync.publish('NOTIFICATIONS_UPDATED', { eventId: event.id, recipientUserId });
 
     return {
       ...event,
@@ -259,7 +413,7 @@ class MultiChannelNotificationService {
   }
 
   public getNotificationsForUser(userId: string): NotificationItemWithLogs[] {
-    const events = this.getStoredEvents().filter(e => e.recipientUserId === userId || e.recipientUserId === 'ALL');
+    const events = this.getStoredEvents().filter(e => (e.recipientUserId || e.recipientId) === userId || (e.recipientUserId || e.recipientId) === 'ALL');
     const logs = this.getStoredLogs();
 
     return events.map(evt => {
@@ -274,6 +428,10 @@ class MultiChannelNotificationService {
         deliveryLogs: eventLogs,
       };
     });
+  }
+
+  public getAllAuditLogs(): DeliveryLog[] {
+    return this.getStoredLogs();
   }
 
   public getDeliveryLogsForEvent(eventId: string): DeliveryLog[] {
@@ -300,7 +458,7 @@ class MultiChannelNotificationService {
   }
 
   public markAllAsRead(userId: string): void {
-    const userEvents = this.getStoredEvents().filter(e => e.recipientUserId === userId);
+    const userEvents = this.getStoredEvents().filter(e => (e.recipientUserId || e.recipientId) === userId);
     const userEventIds = new Set(userEvents.map(e => e.id));
     const logs = this.getStoredLogs();
     const timestamp = new Date().toISOString();
@@ -369,10 +527,175 @@ class MultiChannelNotificationService {
       },
     ];
   }
+
+  private generateSeedLogs(): DeliveryLog[] {
+    const now = Date.now();
+    return [
+      {
+        id: 'log-seed-1',
+        eventId: 'evt-seed-1',
+        recipientUserId: 'res-1',
+        channel: 'IN_APP',
+        providerName: 'AARIZO Real-Time Websocket In-App Engine',
+        providerRefId: 'inapp_seed_101',
+        status: 'DELIVERED',
+        sentAt: new Date(now - 10 * 60 * 1000).toISOString(),
+        deliveredAt: new Date(now - 10 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'log-seed-2',
+        eventId: 'evt-seed-1',
+        recipientUserId: 'res-1',
+        channel: 'PUSH',
+        providerName: 'Firebase Cloud Messaging (FCM / APNS Adapter)',
+        providerRefId: 'fcm_seed_102',
+        status: 'DELIVERED',
+        sentAt: new Date(now - 10 * 60 * 1000).toISOString(),
+        deliveredAt: new Date(now - 10 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'log-seed-3',
+        eventId: 'evt-seed-1',
+        recipientUserId: 'res-1',
+        channel: 'WHATSAPP',
+        providerName: 'Meta Business Cloud API (WhatsApp Adapter)',
+        providerRefId: 'wamid.seed_103',
+        status: 'DELIVERED',
+        sentAt: new Date(now - 10 * 60 * 1000).toISOString(),
+        deliveredAt: new Date(now - 10 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'log-seed-4',
+        eventId: 'evt-seed-2',
+        recipientUserId: 'res-1',
+        channel: 'IN_APP',
+        providerName: 'AARIZO Real-Time Websocket In-App Engine',
+        providerRefId: 'inapp_seed_201',
+        status: 'DELIVERED',
+        sentAt: new Date(now - 45 * 60 * 1000).toISOString(),
+        deliveredAt: new Date(now - 45 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'log-seed-5',
+        eventId: 'evt-seed-2',
+        recipientUserId: 'res-1',
+        channel: 'PUSH',
+        providerName: 'Firebase Cloud Messaging (FCM / APNS Adapter)',
+        providerRefId: 'fcm_seed_202',
+        status: 'DELIVERED',
+        sentAt: new Date(now - 45 * 60 * 1000).toISOString(),
+        deliveredAt: new Date(now - 45 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'log-seed-6',
+        eventId: 'evt-seed-3',
+        recipientUserId: 'res-1',
+        channel: 'IN_APP',
+        providerName: 'AARIZO Real-Time Websocket In-App Engine',
+        providerRefId: 'inapp_seed_301',
+        status: 'DELIVERED',
+        sentAt: new Date(now - 120 * 60 * 1000).toISOString(),
+        deliveredAt: new Date(now - 120 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'log-seed-7',
+        eventId: 'evt-seed-3',
+        recipientUserId: 'res-1',
+        channel: 'SMS',
+        providerName: 'Twilio / Fast2SMS DLT SMS Gateway',
+        providerRefId: 'sms_seed_302',
+        status: 'DELIVERED',
+        sentAt: new Date(now - 120 * 60 * 1000).toISOString(),
+        deliveredAt: new Date(now - 120 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'log-seed-8',
+        eventId: 'evt-seed-4',
+        recipientUserId: 'res-1',
+        channel: 'EMAIL',
+        providerName: 'SendGrid / AWS SES Email Gateway',
+        providerRefId: 'sg_seed_401',
+        status: 'DELIVERED',
+        sentAt: new Date(now - 300 * 60 * 1000).toISOString(),
+        deliveredAt: new Date(now - 300 * 60 * 1000).toISOString(),
+      },
+    ];
+  }
+
+  public async simulateLiveEvent(targetUserId: string = 'res-1'): Promise<NotificationItemWithLogs> {
+    const simPool = [
+      {
+        eventType: 'VISITOR_ARRIVAL' as NotificationEventType,
+        category: 'SECURITY' as NotificationCategory,
+        title: 'Visitor Arrived at Gate 1',
+        message: 'Cab passenger Ramesh Verma arrived for Flat B-402 (Vehicle: KA-01-MJ-8821).',
+        isCritical: true,
+      },
+      {
+        eventType: 'PARCEL_ARRIVAL' as NotificationEventType,
+        category: 'SECURITY' as NotificationCategory,
+        title: '📦 BlueDart Express Parcel Arrived',
+        message: 'Package placed into Smart Locker #14 at Security Desk. One-Time Passcode: 7309.',
+        isCritical: false,
+      },
+      {
+        eventType: 'WORKER_ENTRY' as NotificationEventType,
+        category: 'COMMUNITY' as NotificationCategory,
+        title: 'Domestic Help Check-In',
+        message: 'Housekeeping assistant Sunita Bai (ID #SH-302) punched in at Service Gate 2.',
+        isCritical: false,
+      },
+      {
+        eventType: 'EMERGENCY' as NotificationEventType,
+        category: 'EMERGENCY' as NotificationCategory,
+        title: '🚨 Elevator Alarm Intercom Alert',
+        message: 'Tower B Passenger Elevator emergency intercom activated. Security responding.',
+        isCritical: true,
+      },
+      {
+        eventType: 'COMPLAINT_UPDATE' as NotificationEventType,
+        category: 'MAINTENANCE' as NotificationCategory,
+        title: 'Plumbing SLA Update: In Progress',
+        message: 'Ticket #PL-204 (Bathroom leak) assigned to AquaFix Technologies. Technician arriving at 11:30 AM.',
+        isCritical: false,
+      },
+      {
+        eventType: 'PAYMENT_DUE' as NotificationEventType,
+        category: 'BILLING' as NotificationCategory,
+        title: 'Society Maintenance Invoice Ready',
+        message: 'Invoice #INV-2026-10 for October (₹4,250) has been generated. Due date: 10th Oct.',
+        isCritical: false,
+      },
+      {
+        eventType: 'UTILITY_OUTAGE' as NotificationEventType,
+        category: 'MAINTENANCE' as NotificationCategory,
+        title: 'DG Backup Genset #2 Auto-Started',
+        message: 'Grid switchover detected. Diesel Generator 2 active. Full society backup operational.',
+        isCritical: false,
+      },
+      {
+        eventType: 'AMC_EXPIRY' as NotificationEventType,
+        category: 'COMPLIANCE' as NotificationCategory,
+        title: 'AMC Expiry Warning (7 Days Left)',
+        message: 'Wing A Fire Extinguisher Refill & Inspection validity expires on 8th Oct.',
+        isCritical: false,
+      },
+    ];
+
+    const pick = simPool[Math.floor(Math.random() * simPool.length)];
+    return this.dispatchEvent(
+      {
+        societyId: 'soc-1',
+        recipientUserId: targetUserId,
+        eventType: pick.eventType,
+        category: pick.category,
+        title: pick.title,
+        message: pick.message,
+        isCritical: pick.isCritical,
+      },
+      { phone: '+91 98765 43210', email: 'resident@aarizo.com' }
+    );
+  }
 }
 
 export const multiChannelNotificationService = new MultiChannelNotificationService();
-
-
-
-

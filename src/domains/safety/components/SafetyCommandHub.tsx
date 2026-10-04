@@ -150,13 +150,13 @@ export const SafetyCommandHub: React.FC = () => {
       case 'SECURITY':
         return <ShieldCheck className="text-[#083B56]" size={24} />;
       case 'CHILD_SAFETY':
-        return <Users className="text-purple-600" size={24} />;
+        return <Users className="text-[#083B56]" size={24} />;
       case 'LIFT':
-        return <AlertTriangle className="text-blue-600" size={24} />;
+        return <AlertTriangle className="text-[#176B91]" size={24} />;
       case 'ELECTRICAL':
         return <Zap className="text-yellow-600" size={24} />;
       case 'WATER':
-        return <Droplet className="text-cyan-600" size={24} />;
+        return <Droplet className="text-[#176B91]" size={24} />;
       default:
         return <AlertTriangle className="text-slate-600" size={24} />;
     }
@@ -169,7 +169,7 @@ export const SafetyCommandHub: React.FC = () => {
       case 'ACKNOWLEDGED':
         return <span className="px-3 py-1 bg-amber-500 text-white font-bold text-xs rounded-full">ACKNOWLEDGED</span>;
       case 'RESPONDING':
-        return <span className="px-3 py-1 bg-blue-600 text-white font-bold text-xs rounded-full">RESPONDING</span>;
+        return <span className="px-3 py-1 bg-[#176B91] text-white font-bold text-xs rounded-full">RESPONDING</span>;
       case 'RESOLVED':
         return <span className="px-3 py-1 bg-emerald-600 text-white font-bold text-xs rounded-full">RESOLVED</span>;
       case 'CLOSED':
@@ -371,7 +371,7 @@ export const SafetyCommandHub: React.FC = () => {
                           setSelectedIncident(inc);
                           setModalMode('ASSIGN_RESPONDER');
                         }}
-                        className="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg shadow-sm"
+                        className="px-3 py-1.5 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-semibold rounded-lg shadow-sm transition"
                       >
                         Assign Responder
                       </button>
