@@ -1,6 +1,8 @@
-import React from 'react';
-import { X } from 'lucide-react';
+import React, { useState } from 'react';
 import type { SocietyRequestCategory } from '../types';
+import { FileUpload } from '../../../components/ui/FileUpload';
+import { Modal } from '../../../components/ui/Modal';
+import { FileText, CheckCircle2 } from 'lucide-react';
 
 interface SubmitRequestModalProps {
   isOpen: boolean;
@@ -16,6 +18,8 @@ interface SubmitRequestModalProps {
   setNewPriority: (v: any) => void;
   newFileName: string;
   setNewFileName: (v: string) => void;
+  newFileUrl?: string;
+  setNewFileUrl?: (v: string) => void;
 }
 
 export const SubmitRequestModal: React.FC<SubmitRequestModalProps> = ({
@@ -32,164 +36,130 @@ export const SubmitRequestModal: React.FC<SubmitRequestModalProps> = ({
   setNewPriority,
   newFileName,
   setNewFileName,
+  newFileUrl,
+  setNewFileUrl,
 }) => {
-  if (!isOpen) return null;
+  const [uploadedUrl, setUploadedUrl] = useState<string>(newFileUrl || '');
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(8, 59, 86, 0.6)',
-        backdropFilter: 'blur(3px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1rem',
-        zIndex: 1000,
-        overflowY: 'auto',
-      }}
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Submit New Request / NOC"
+      subtitle="Apply for society certificates, approvals, and permissions"
+      maxWidth="540px"
     >
-      <div
-        style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '20px',
-          maxWidth: '520px',
-          width: '100%',
-          boxShadow: '0 20px 40px rgba(8,59,86,0.25)',
-          border: '1px solid #E2E8F0',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          maxHeight: '90vh',
-          margin: 'auto',
-        }}
-      >
-        {/* Modal Header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid #E2E8F0',
-            background: '#F8FAFC',
-            flexShrink: 0,
-          }}
-        >
-          <h3 style={{ fontSize: '1.0625rem', fontWeight: 800, color: '#083B56', margin: 0 }}>
-            Submit New Request / NOC
-          </h3>
-          <button
-            type="button"
-            onClick={onClose}
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: '10px',
-              background: '#ffffff',
-              border: '1px solid #E2E8F0',
-              color: '#64748B',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-            }}
-            title="Close"
-          >
-            <X size={18} />
-          </button>
+      <form onSubmit={handleCreateRequest} id="societyRequestForm" className="space-y-4">
+        <div>
+          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            Request Title <span className="text-rose-500">*</span>
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. Balcony Grill Expansion Permission"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91] transition-all"
+            required
+          />
         </div>
 
-        {/* Modal Body */}
-        <form onSubmit={handleCreateRequest} id="societyRequestForm" style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.8125rem', overflowY: 'auto', flex: 1 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
-            <label style={{ display: 'block', fontWeight: 700, color: '#083B56', marginBottom: '0.35rem' }}>Request Title</label>
-            <input
-              type="text"
-              placeholder="e.g. Balcony Grill Expansion Permission"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.8125rem', color: '#083B56', outline: 'none', boxSizing: 'border-box' }}
-              required
-            />
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Category</label>
+            <select
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value as any)}
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91] transition-all"
+            >
+              <option value="NOC">No Objection Certificate (NOC)</option>
+              <option value="TENANT_REGISTRATION">Tenant Registration</option>
+              <option value="OWNERSHIP_CHANGE">Ownership Transfer</option>
+              <option value="RENOVATION_PERMISSION">Renovation Permit</option>
+              <option value="EVENT_PERMISSION">Lawn / Hall Event</option>
+              <option value="PARKING_REQUEST">Parking Allocation</option>
+              <option value="SOCIETY_CERTIFICATE">Society Certificate</option>
+            </select>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-            <div>
-              <label style={{ display: 'block', fontWeight: 700, color: '#083B56', marginBottom: '0.35rem' }}>Category</label>
-              <select
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value as any)}
-                style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', background: '#ffffff', fontSize: '0.78125rem', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
-              >
-                <option value="NOC">No Objection Certificate (NOC)</option>
-                <option value="TENANT_REGISTRATION">Tenant Registration</option>
-                <option value="OWNERSHIP_CHANGE">Ownership Transfer</option>
-                <option value="RENOVATION_PERMISSION">Renovation Permit</option>
-                <option value="EVENT_PERMISSION">Lawn / Hall Event</option>
-                <option value="PARKING_REQUEST">Parking Allocation</option>
-                <option value="SOCIETY_CERTIFICATE">Society Certificate</option>
-              </select>
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Priority Level</label>
+            <select
+              value={newPriority}
+              onChange={(e) => setNewPriority(e.target.value as any)}
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91] transition-all"
+            >
+              <option value="LOW">Low (72 hrs)</option>
+              <option value="MEDIUM">Medium (48 hrs)</option>
+              <option value="HIGH">High (24 hrs)</option>
+              <option value="URGENT">Urgent (Immediate)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            Description &amp; Details <span className="text-rose-500">*</span>
+          </label>
+          <textarea
+            rows={3}
+            placeholder="Provide complete explanation for committee review..."
+            value={newDescription}
+            onChange={(e) => setNewDescription(e.target.value)}
+            className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91] transition-all"
+            required
+          />
+        </div>
+
+        {/* Real Interactive File Upload Section */}
+        <div>
+          <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+            <FileText size={14} className="text-[#176B91]" />
+            Upload Supporting Document / Agreement
+          </label>
+
+          <FileUpload
+            label="Upload Document (PDF, PNG, JPG up to 10MB)"
+            category="general"
+            accept="application/pdf,image/*"
+            currentUrl={uploadedUrl}
+            onUploadSuccess={(url, filename) => {
+              setUploadedUrl(url);
+              setNewFileName(filename);
+              if (setNewFileUrl) setNewFileUrl(url);
+            }}
+            onRemove={() => {
+              setUploadedUrl('');
+              setNewFileName('');
+              if (setNewFileUrl) setNewFileUrl('');
+            }}
+          />
+
+          {newFileName && (
+            <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg font-medium">
+              <CheckCircle2 size={14} className="text-emerald-600" />
+              <span>Attached: <strong>{newFileName}</strong></span>
             </div>
+          )}
+        </div>
 
-            <div>
-              <label style={{ display: 'block', fontWeight: 700, color: '#083B56', marginBottom: '0.35rem' }}>Priority</label>
-              <select
-                value={newPriority}
-                onChange={(e) => setNewPriority(e.target.value as any)}
-                style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #CBD5E1', background: '#ffffff', fontSize: '0.78125rem', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
-              >
-                <option value="LOW">Low</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
-                <option value="URGENT">Urgent</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', fontWeight: 700, color: '#083B56', marginBottom: '0.35rem' }}>Description &amp; Details</label>
-            <textarea
-              rows={3}
-              placeholder="Provide complete explanation for committee review..."
-              value={newDescription}
-              onChange={(e) => setNewDescription(e.target.value)}
-              style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.8125rem', color: '#083B56', outline: 'none', boxSizing: 'border-box', resize: 'vertical' }}
-              required
-            />
-          </div>
-
-          <div>
-            <label style={{ display: 'block', fontWeight: 700, color: '#083B56', marginBottom: '0.35rem' }}>Upload Supporting Document / Agreement</label>
-            <input
-              type="text"
-              placeholder="e.g. Registered_Agreement.pdf or Architectural_Plan.pdf"
-              value={newFileName}
-              onChange={(e) => setNewFileName(e.target.value)}
-              style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.75rem', fontFamily: 'monospace', color: '#083B56', outline: 'none', boxSizing: 'border-box' }}
-            />
-          </div>
-        </form>
-
-        {/* Modal Footer */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', padding: '1rem 1.5rem', borderTop: '1px solid #E2E8F0', background: '#F8FAFC', flexShrink: 0 }}>
+        <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
           <button
             type="button"
             onClick={onClose}
-            style={{ padding: '0.55rem 1rem', fontSize: '0.78125rem', fontWeight: 700, borderRadius: '10px', border: '1px solid #E2E8F0', background: '#ffffff', color: '#475569', cursor: 'pointer' }}
+            className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-all"
           >
             Cancel
           </button>
           <button
             type="submit"
             form="societyRequestForm"
-            style={{ padding: '0.55rem 1.25rem', fontSize: '0.78125rem', fontWeight: 700, borderRadius: '10px', border: 'none', background: '#176B91', color: '#ffffff', cursor: 'pointer', boxShadow: '0 2px 6px rgba(23,107,145,0.25)' }}
+            className="px-5 py-2.5 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition-all"
           >
             Submit Request
           </button>
         </div>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 };
