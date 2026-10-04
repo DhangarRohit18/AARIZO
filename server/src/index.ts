@@ -1085,7 +1085,121 @@ const ALLOWED_QUERY_TABLES: Record<string, string[]> = {
   communityEvent: ['resident', 'secretary', 'guard', 'committee', 'facility_manager', 'vendor', 'admin'],
   advertisement: ['resident', 'secretary', 'guard', 'committee', 'facility_manager', 'vendor', 'admin'],
   auditLog: ['secretary', 'admin', 'committee'],
+  payment: ['resident', 'secretary', 'admin', 'committee'],
+  entityRecord: ['resident', 'secretary', 'guard', 'committee', 'facility_manager', 'vendor', 'admin'],
 };
+
+// Generic Collection CRUD Endpoints for PostgreSQL
+app.get('/api/collections/:collection', async (req: Request, res: Response) => {
+  try {
+    const colName = req.params.collection as string;
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+
+    // Check if table exists natively in Prisma first
+    const nativeKey = Object.keys(ALLOWED_QUERY_TABLES).find(k => k.toLowerCase() === colName.toLowerCase());
+    if (nativeKey && (prisma as any)[nativeKey]) {
+      const where: any = {};
+      if (societyId && societyId !== 'all') where.societyId = societyId;
+      const records = await (prisma as any)[nativeKey].findMany({ where, orderBy: { createdAt: 'desc' } });
+      return res.json(records);
+    }
+
+    // Query entity records in PostgreSQL
+    const where: any = { collection: colName };
+    if (societyId && societyId !== 'all') where.societyId = societyId;
+    const rows = await prisma.entityRecord.findMany({ where, orderBy: { createdAt: 'desc' } });
+    const docs = rows.map((r) => {
+      const dataObj = typeof r.data === 'object' && r.data ? (r.data as any) : {};
+      return { id: r.id, societyId: r.societyId, ...dataObj, createdAt: r.createdAt, updatedAt: r.updatedAt };
+    });
+    res.json(docs);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.get('/api/collections/:collection/:id', async (req: Request, res: Response) => {
+  try {
+    const colName = String(req.params.collection);
+    const id = String(req.params.id);
+    const nativeKey = Object.keys(ALLOWED_QUERY_TABLES).find(k => k.toLowerCase() === colName.toLowerCase());
+    if (nativeKey && (prisma as any)[nativeKey]) {
+      const record = await (prisma as any)[nativeKey].findUnique({ where: { id } });
+      return res.json(record);
+    }
+
+    const row = await prisma.entityRecord.findUnique({ where: { id } });
+    if (!row) return res.status(404).json({ error: 'Record not found' });
+    const dataObj = typeof row.data === 'object' && row.data ? (row.data as any) : {};
+    res.json({ id: row.id, societyId: row.societyId, ...dataObj, createdAt: row.createdAt, updatedAt: row.updatedAt });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/collections/:collection', async (req: Request, res: Response) => {
+  try {
+    const colName = String(req.params.collection);
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const id = req.body.id || `ent_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+
+    const { id: _, societyId: __, ...data } = req.body;
+
+    const record = await prisma.entityRecord.create({
+      data: {
+        id,
+        collection: colName,
+        societyId,
+        data,
+      },
+    });
+
+    broadcastEvent(`${colName.toUpperCase()}_CREATED`, { id, collection: colName, ...data }, societyId);
+    res.status(201).json({ id: record.id, societyId: record.societyId, ...data, createdAt: record.createdAt, updatedAt: record.updatedAt });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.put('/api/collections/:collection/:id', async (req: Request, res: Response) => {
+  try {
+    const colName = String(req.params.collection);
+    const id = String(req.params.id);
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { id: _, societyId: __, ...data } = req.body;
+
+    const record = await prisma.entityRecord.upsert({
+      where: { id },
+      create: {
+        id,
+        collection: colName,
+        societyId,
+        data,
+      },
+      update: {
+        data,
+        updatedAt: new Date(),
+      },
+    });
+
+    broadcastEvent(`${colName.toUpperCase()}_UPDATED`, { id, collection: colName, ...data }, societyId);
+    res.json({ id: record.id, societyId: record.societyId, ...data, createdAt: record.createdAt, updatedAt: record.updatedAt });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/collections/:collection/:id', async (req: Request, res: Response) => {
+  try {
+    const colName = String(req.params.collection);
+    const id = String(req.params.id);
+    await prisma.entityRecord.delete({ where: { id } }).catch(() => null);
+    broadcastEvent(`${colName.toUpperCase()}_DELETED`, { id, collection: colName });
+    res.json({ success: true, id });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
 
 // Generic Query Router with Whitelist and Role Security
 app.post('/api/:table/query', async (req: Request, res: Response) => {

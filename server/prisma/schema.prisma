@@ -111,6 +111,7 @@ model Society {
   communityEvents CommunityEvent[]
   advertisements  Advertisement[]
   payments        Payment[]
+  entityRecords   EntityRecord[]
 
   @@map("societies")
 }
@@ -621,6 +622,21 @@ model Payment {
 
   @@map("payments")
 }
+
+model EntityRecord {
+  id          String    @id @default(uuid())
+  collection  String
+  societyId   String    @map("society_id")
+  data        Json
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  society     Society   @relation(fields: [societyId], references: [id], onDelete: Cascade)
+
+  @@index([collection, societyId])
+  @@map("entity_records")
+}
+
 
 
 

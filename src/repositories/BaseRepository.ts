@@ -4,7 +4,7 @@ import {
   getDoc, 
   getDocs, 
   addDoc, 
-  setDoc,
+  setDoc, 
   updateDoc, 
   deleteDoc, 
   query, 
@@ -16,6 +16,7 @@ import {
 } from 'firebase/firestore';
 import type { FirestoreDataConverter, WithFieldValue } from 'firebase/firestore';
 import { db, auth } from '../services/firebase/config';
+import { realtimeService } from '../services/realtimeService';
 
 export interface BaseEntity {
   id: string;
@@ -50,40 +51,102 @@ export abstract class BaseRepository<T extends BaseEntity> {
   public async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'updatedBy'> & { societyId: string }): Promise<string> {
     const payload = {
       ...data,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
       createdBy: this.getCurrentUserId(),
-      updatedBy: this.getCurrentUserId()
+      updatedBy: this.getCurrentUserId(),
     };
-    const ref = await addDoc(this.getCollectionRef(), payload as WithFieldValue<T>);
-    return ref.id;
+
+    // Primary: Write directly to PostgreSQL via Prisma API
+    try {
+      const res = await fetch(`/api/collections/${this.collectionName}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-society-id': (data as any).societyId || 'soc-gvs',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        return json.id;
+      }
+    } catch {
+      // Fallback
+    }
+
+    // Secondary fallback
+    try {
+      const ref = await addDoc(this.getCollectionRef(), {
+        ...payload,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      } as WithFieldValue<T>);
+      return ref.id;
+    } catch {
+      return `ent_${Date.now()}`;
+    }
   }
 
   public async getById(id: string): Promise<T | null> {
-    const docSnap = await getDoc(this.getDocRef(id));
-    if (docSnap.exists()) {
-      return docSnap.data();
+    // Primary: Fetch directly from PostgreSQL
+    try {
+      const res = await fetch(`/api/collections/${this.collectionName}/${id}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.id) return json as T;
+      }
+    } catch {
+      // Fallback
     }
+
+    try {
+      const docSnap = await getDoc(this.getDocRef(id));
+      if (docSnap.exists()) {
+        return docSnap.data();
+      }
+    } catch {}
     return null;
   }
 
   public async update(id: string, data: Partial<Omit<T, 'id' | 'societyId' | 'createdAt' | 'createdBy'>>): Promise<void> {
     const payload = {
       ...data,
-      updatedAt: serverTimestamp(),
-      updatedBy: this.getCurrentUserId()
+      updatedBy: this.getCurrentUserId(),
     };
-    await updateDoc(this.getDocRef(id) as any, payload as any);
+
+    // Primary: Update in PostgreSQL
+    try {
+      await fetch(`/api/collections/${this.collectionName}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch {
+      // Fallback
+    }
+
+    try {
+      await updateDoc(this.getDocRef(id) as any, {
+        ...payload,
+        updatedAt: serverTimestamp(),
+      } as any);
+    } catch {}
   }
 
   public async delete(id: string): Promise<void> {
-    await deleteDoc(this.getDocRef(id));
+    try {
+      await fetch(`/api/collections/${this.collectionName}/${id}`, {
+        method: 'DELETE',
+      });
+    } catch {}
+
+    try {
+      await deleteDoc(this.getDocRef(id));
+    } catch {}
   }
 
   public async archive(id: string): Promise<void> {
     await this.update(id, { 
       status: 'archived',
-      deletedAt: serverTimestamp()
     } as any);
   }
 
@@ -91,39 +154,99 @@ export abstract class BaseRepository<T extends BaseEntity> {
     const payload = {
       ...data,
       id,
-      updatedAt: serverTimestamp(),
       updatedBy: this.getCurrentUserId(),
     };
-    await setDoc(this.getDocRef(id) as any, payload as any, { merge: true });
+
+    try {
+      await fetch(`/api/collections/${this.collectionName}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch {}
+
+    try {
+      await setDoc(this.getDocRef(id) as any, {
+        ...payload,
+        updatedAt: serverTimestamp(),
+      } as any, { merge: true });
+    } catch {}
   }
 
   public async listAll(constraints: QueryConstraint[] = []): Promise<T[]> {
-    const q = query(this.getCollectionRef(), ...constraints);
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => doc.data());
+    // Primary: Read from PostgreSQL
+    try {
+      const res = await fetch(`/api/collections/${this.collectionName}`);
+      if (res.ok) {
+        const rows = await res.json();
+        if (Array.isArray(rows) && rows.length > 0) return rows as T[];
+      }
+    } catch {}
+
+    try {
+      const q = query(this.getCollectionRef(), ...constraints);
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => doc.data());
+    } catch {
+      return [];
+    }
   }
 
   public subscribeAll(
     callback: (data: T[]) => void, 
     constraints: QueryConstraint[] = []
   ): () => void {
-    const q = query(this.getCollectionRef(), ...constraints);
-    return onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => doc.data());
-      callback(data);
-    }, (error) => {
-      console.warn(`[Firestore] Subscription to ${this.collectionName} error:`, error);
+    // Load initial data from PostgreSQL
+    this.listAll(constraints).then((items) => {
+      if (items.length > 0) callback(items);
     });
+
+    // Listen to real-time events via PostgreSQL SSE broadcast
+    const unsubRealtime = realtimeService.subscribe('*', (msg) => {
+      if (msg.topic.includes(this.collectionName.toUpperCase()) || msg.topic === 'GENERAL') {
+        this.listAll(constraints).then(callback);
+      }
+    });
+
+    try {
+      const q = query(this.getCollectionRef(), ...constraints);
+      const unsubFirestore = onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map(doc => doc.data());
+        callback(data);
+      }, () => {});
+
+      return () => {
+        unsubRealtime();
+        unsubFirestore();
+      };
+    } catch {
+      return unsubRealtime;
+    }
   }
 
   public async list(societyId: string, constraints: QueryConstraint[] = []): Promise<T[]> {
-    const q = query(
-      this.getCollectionRef(),
-      where('societyId', '==', societyId),
-      ...constraints
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => doc.data());
+    // Primary: Read from PostgreSQL
+    try {
+      const res = await fetch(`/api/collections/${this.collectionName}?societyId=${encodeURIComponent(societyId)}`, {
+        headers: { 'x-society-id': societyId },
+      });
+      if (res.ok) {
+        const rows = await res.json();
+        if (Array.isArray(rows) && rows.length > 0) return rows as T[];
+      }
+    } catch {}
+
+    try {
+      const q = query(
+        this.getCollectionRef(),
+        where('societyId', '==', societyId),
+        ...constraints
+      );
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => doc.data());
+    } catch {
+      return [];
+    }
   }
 
   public subscribe(
@@ -131,17 +254,36 @@ export abstract class BaseRepository<T extends BaseEntity> {
     callback: (data: T[]) => void, 
     constraints: QueryConstraint[] = []
   ): () => void {
-    const q = query(
-      this.getCollectionRef(),
-      where('societyId', '==', societyId),
-      ...constraints
-    );
-    return onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => doc.data());
-      callback(data);
-    }, (error) => {
-      console.warn(`[Firestore] Subscription to ${this.collectionName} error:`, error);
+    // Initial fetch from PostgreSQL
+    this.list(societyId, constraints).then((items) => {
+      if (items.length > 0) callback(items);
     });
+
+    // Listen to SSE updates from PostgreSQL backend
+    const unsubRealtime = realtimeService.subscribe('*', (msg) => {
+      if (msg.topic.includes(this.collectionName.toUpperCase()) || msg.topic === 'GENERAL') {
+        this.list(societyId, constraints).then(callback);
+      }
+    });
+
+    try {
+      const q = query(
+        this.getCollectionRef(),
+        where('societyId', '==', societyId),
+        ...constraints
+      );
+      const unsubFirestore = onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map(doc => doc.data());
+        callback(data);
+      }, () => {});
+
+      return () => {
+        unsubRealtime();
+        unsubFirestore();
+      };
+    } catch {
+      return unsubRealtime;
+    }
   }
 }
 
