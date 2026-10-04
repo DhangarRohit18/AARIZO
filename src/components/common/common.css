@@ -498,23 +498,27 @@
 .modal-overlay, .drawer-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(2px);
+  background: rgba(8, 26, 42, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 99999;
+  padding: 0.75rem;
 }
 
 .modal-content {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  width: 90%;
-  max-width: 500px;
-  max-height: 85vh;
+  background: var(--color-surface, #ffffff);
+  border-radius: var(--radius-lg, 20px);
+  width: 95%;
+  max-width: 520px;
+  max-height: min(88vh, 760px);
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 24px 60px -12px rgba(8, 59, 86, 0.35);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  overflow: hidden;
 }
 
 .modal-header, .drawer-header {

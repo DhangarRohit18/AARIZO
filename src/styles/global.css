@@ -503,4 +503,40 @@ input, select, textarea {
 .space-x-3 > :not([hidden]) ~ :not([hidden]) { margin-left: 0.75rem; }
 .space-x-4 > :not([hidden]) ~ :not([hidden]) { margin-left: 1rem; }
 
+/* ============================================================
+   Universal Modal Overlay System (Guarantees no UI clipping)
+   ============================================================ */
+.fixed.inset-0[class*="z-50"],
+.fixed.inset-0.z-50,
+.modal-overlay,
+.auth-modal-overlay {
+  z-index: 99999 !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  padding: 0.75rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Modal Content Card Safety */
+.aarizo-general-modal,
+.modal-content,
+.auth-modal-card {
+  max-height: min(88vh, 760px) !important;
+  margin-bottom: 0 !important;
+  box-shadow: 0 24px 60px -12px rgba(8, 59, 86, 0.35) !important;
+}
+
+@media (max-width: 640px) {
+  .fixed.inset-0[class*="z-50"] > div,
+  .modal-overlay > div,
+  .aarizo-general-modal {
+    max-height: 85vh !important;
+    width: 100% !important;
+    margin: auto !important;
+  }
+}
+
+
 
