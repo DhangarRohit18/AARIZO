@@ -115,11 +115,34 @@ export const BillingManagementPage: React.FC = () => {
       } else {
         setInvoices(billingService.getInvoices(currentSocietyId));
       }
+
+      // Fetch payments from Prisma/PostgreSQL
+      const dbPayments = await apiClient.getPayments(currentSocietyId);
+      if (dbPayments && Array.isArray(dbPayments) && dbPayments.length > 0) {
+        const mappedTxns: PaymentTransaction[] = dbPayments.map((p: any) => ({
+          id: p.id,
+          invoiceId: p.invoiceId || 'inv-unknown',
+          invoiceNumber: p.invoice?.invoiceNumber || p.metadata?.invoiceNumber || p.invoiceId || 'INV-PAYMENT',
+          societyId: p.societyId,
+          flatCode: p.invoice?.flat?.flatNumber ? `B-${p.invoice.flat.flatNumber}` : 'B-1204',
+          residentName: p.resident?.name || 'Resident',
+          transactionId: p.razorpayPaymentId || p.razorpayOrderId || p.id,
+          amount: Number(p.amount || 0),
+          paymentMethod: (p.paymentMethod as any) || 'RAZORPAY',
+          status: p.status === 'SUCCESS' ? 'SUCCESS' : p.status === 'REFUNDED' ? 'REFUNDED' : 'FAILED',
+          gatewayReference: p.razorpayPaymentId || p.razorpayOrderId || 'N/A',
+          gatewayResponseNotes: p.refundReason || p.failureReason || (p.status === 'SUCCESS' ? 'Verified by PostgreSQL/Prisma' : ''),
+          paymentDate: new Date(p.createdAt).toLocaleString('en-IN'),
+        }));
+        setTransactions(mappedTxns);
+      } else {
+        setTransactions(billingService.getTransactions(currentSocietyId));
+      }
     } catch {
       setInvoices(billingService.getInvoices(currentSocietyId));
+      setTransactions(billingService.getTransactions(currentSocietyId));
     }
     setCycles(billingService.getBillingCycles(currentSocietyId));
-    setTransactions(billingService.getTransactions(currentSocietyId));
     setAnalytics(billingService.getAnalytics(currentSocietyId));
   };
 

@@ -605,6 +605,28 @@ app.post('/api/payments/razorpay/create-order', async (req: Request, res: Respon
       }
     }
 
+    // Persist Payment record in PostgreSQL with status PENDING
+    try {
+      await prisma.payment.create({
+        data: {
+          societyId: req.societyId || 'soc-gvs',
+          invoiceId,
+          userId: req.userId || undefined,
+          amount: actualAmount,
+          currency,
+          status: 'PENDING',
+          razorpayOrderId: orderId,
+          paymentMethod: 'RAZORPAY',
+          metadata: {
+            invoiceNumber,
+            createdAt: new Date().toISOString(),
+          },
+        },
+      });
+    } catch (e) {
+      console.warn('Could not persist pending payment in Prisma:', e);
+    }
+
     res.json({
       orderId,
       amount: Math.round(actualAmount * 100), // amount in paise
@@ -664,6 +686,52 @@ app.post('/api/payments/razorpay/verify', async (req: Request, res: Response) =>
           resident: true,
         },
       });
+
+      // Update or create Payment record in PostgreSQL
+      try {
+        const existingPayment = await prisma.payment.findFirst({
+          where: { razorpayOrderId },
+        });
+
+        if (existingPayment) {
+          await prisma.payment.update({
+            where: { id: existingPayment.id },
+            data: {
+              status: 'SUCCESS',
+              razorpayPaymentId,
+              razorpaySignatureVerified: true,
+              paymentMethod: 'RAZORPAY',
+              metadata: {
+                ...(typeof existingPayment.metadata === 'object' && existingPayment.metadata ? (existingPayment.metadata as any) : {}),
+                paidAt: new Date().toISOString(),
+                invoiceNumber: updatedInvoice?.invoiceNumber,
+              },
+            },
+          });
+        } else {
+          await prisma.payment.create({
+            data: {
+              societyId: updatedInvoice.societyId,
+              invoiceId,
+              userId: req.userId || undefined,
+              residentId: updatedInvoice.residentId || undefined,
+              amount: updatedInvoice.totalAmount,
+              currency: 'INR',
+              status: 'SUCCESS',
+              razorpayOrderId,
+              razorpayPaymentId,
+              razorpaySignatureVerified: true,
+              paymentMethod: 'RAZORPAY',
+              metadata: {
+                paidAt: new Date().toISOString(),
+                invoiceNumber: updatedInvoice?.invoiceNumber,
+              },
+            },
+          });
+        }
+      } catch (payErr) {
+        console.warn('Could not record successful payment record in Prisma:', payErr);
+      }
 
       // Create Audit Log entry
       await prisma.auditLog.create({
@@ -740,6 +808,29 @@ app.post('/api/payments/razorpay/refund', requireRole(['admin', 'secretary']), a
       });
     } catch {}
 
+    // Update Payment record in PostgreSQL if exists
+    try {
+      const existingPay = await prisma.payment.findFirst({
+        where: {
+          OR: [{ id: paymentId }, { razorpayPaymentId: paymentId }],
+        },
+      });
+      if (existingPay) {
+        await prisma.payment.update({
+          where: { id: existingPay.id },
+          data: {
+            status: 'REFUNDED',
+            refundId,
+            refundAmount: amount,
+            refundReason: reason,
+            refundedAt: new Date(),
+          },
+        });
+      }
+    } catch (e) {
+      console.warn('Could not update payment record with refund details in Prisma:', e);
+    }
+
     broadcastEvent('PAYMENT_REFUNDED', {
       paymentId,
       refundId,
@@ -754,6 +845,34 @@ app.post('/api/payments/razorpay/refund', requireRole(['admin', 'secretary']), a
       amount,
       message: `Refund of ₹${amount} processed successfully.`,
     });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Query all payments from PostgreSQL via Prisma
+app.get('/api/payments', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const residentId = (req.query.residentId as string) || undefined;
+    const invoiceId = (req.query.invoiceId as string) || undefined;
+
+    const whereClause: any = {};
+    if (societyId && societyId !== 'all') whereClause.societyId = societyId;
+    if (residentId) whereClause.residentId = residentId;
+    if (invoiceId) whereClause.invoiceId = invoiceId;
+
+    const payments = await prisma.payment.findMany({
+      where: whereClause,
+      include: {
+        invoice: true,
+        resident: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    });
+
+    res.json(payments);
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }

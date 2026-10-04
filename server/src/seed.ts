@@ -8,6 +8,7 @@ async function seed() {
   await prisma.auditLog.deleteMany({});
   await prisma.advertisement.deleteMany({});
   await prisma.notification.deleteMany({});
+  await prisma.payment.deleteMany({});
   await prisma.emergencyIncident.deleteMany({});
   await prisma.maintenanceTicket.deleteMany({});
   await prisma.billingInvoice.deleteMany({});
@@ -869,6 +870,49 @@ async function seed() {
         status: 'PAID',
         paymentMode: 'NET_BANKING',
         paidAt: new Date('2026-10-01'),
+      },
+    ],
+  });
+
+  // 18b. Payments
+  console.log('💳 Seeding Payment Transactions...');
+  await prisma.payment.createMany({
+    data: [
+      {
+        id: 'pay-101',
+        societyId: socGVS.id,
+        invoiceId: 'inv-101',
+        residentId: resVikram.id,
+        userId: userVikram.id,
+        amount: 4250.0,
+        currency: 'INR',
+        status: 'SUCCESS',
+        razorpayOrderId: 'order_GVS_101_OCT',
+        razorpayPaymentId: 'pay_rzp_oct_001_success',
+        razorpaySignatureVerified: true,
+        paymentMethod: 'RAZORPAY_UPI',
+        metadata: {
+          invoiceNumber: 'GVS-INV-2026-10-001',
+          bank: 'HDFC',
+        },
+      },
+      {
+        id: 'pay-103',
+        societyId: socGVS.id,
+        invoiceId: 'inv-103',
+        residentId: resMayuri.id,
+        userId: userSecretary.id,
+        amount: 5500.0,
+        currency: 'INR',
+        status: 'SUCCESS',
+        razorpayOrderId: 'order_GVS_103_OCT',
+        razorpayPaymentId: 'pay_rzp_oct_003_success',
+        razorpaySignatureVerified: true,
+        paymentMethod: 'RAZORPAY_NETBANKING',
+        metadata: {
+          invoiceNumber: 'GVS-INV-2026-10-003',
+          bank: 'ICICI',
+        },
       },
     ],
   });

@@ -110,6 +110,7 @@ model Society {
   announcements   Announcement[]
   communityEvents CommunityEvent[]
   advertisements  Advertisement[]
+  payments        Payment[]
 
   @@map("societies")
 }
@@ -185,6 +186,7 @@ model User {
   vendors     Vendor[]
   notifications Notification[]
   auditLogs   AuditLog[]
+  payments    Payment[]
 
   @@map("users")
 }
@@ -215,6 +217,7 @@ model Resident {
   parcels               Parcel[]
   billingInvoices       BillingInvoice[]
   maintenanceTickets    MaintenanceTicket[]
+  payments              Payment[]
 
   @@map("residents")
 }
@@ -407,6 +410,7 @@ model BillingInvoice {
   cycle             BillingCycle?   @relation(fields: [cycleId], references: [id], onDelete: SetNull)
   resident          Resident        @relation(fields: [residentId], references: [id], onDelete: Cascade)
   flat              Flat            @relation(fields: [flatId], references: [id], onDelete: Cascade)
+  payments          Payment[]
 
   @@map("billing_invoices")
 }
@@ -587,5 +591,36 @@ model Advertisement {
 
   @@map("advertisements")
 }
+
+model Payment {
+  id                        String        @id @default(uuid())
+  societyId                 String        @map("society_id")
+  invoiceId                 String?       @map("invoice_id")
+  residentId                String?       @map("resident_id")
+  userId                    String?       @map("user_id")
+  amount                    Decimal       @db.Decimal(10, 2)
+  currency                  String        @default("INR")
+  status                    String        @default("PENDING") // PENDING, SUCCESS, FAILED, REFUNDED
+  razorpayOrderId           String?       @map("razorpay_order_id")
+  razorpayPaymentId         String?       @map("razorpay_payment_id")
+  razorpaySignatureVerified Boolean       @default(false) @map("razorpay_signature_verified")
+  paymentMethod             String?       @default("RAZORPAY") @map("payment_method")
+  failureReason             String?       @map("failure_reason")
+  refundId                  String?       @map("refund_id")
+  refundAmount              Decimal?      @default(0.00) @map("refund_amount") @db.Decimal(10, 2)
+  refundReason              String?       @map("refund_reason")
+  refundedAt                DateTime?     @map("refunded_at")
+  metadata                  Json?         @default("{}")
+  createdAt                 DateTime      @default(now()) @map("created_at")
+  updatedAt                 DateTime      @updatedAt @map("updated_at")
+
+  society                   Society       @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  invoice                   BillingInvoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  resident                  Resident?     @relation(fields: [residentId], references: [id], onDelete: SetNull)
+  user                      User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("payments")
+}
+
 
 

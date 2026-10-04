@@ -76,6 +76,27 @@ export const ResidentBillingPage: React.FC = () => {
           updatedAt: new Date(inv.updatedAt).toISOString(),
         }));
         setInvoices(mapped);
+      }
+
+      // Fetch payment ledger records directly from Prisma / PostgreSQL
+      const dbPayments = await apiClient.getPayments(currentSocietyId);
+      if (dbPayments && Array.isArray(dbPayments) && dbPayments.length > 0) {
+        const mappedTxns: PaymentTransaction[] = dbPayments.map((p: any) => ({
+          id: p.id,
+          invoiceId: p.invoiceId || 'inv-unknown',
+          invoiceNumber: p.invoice?.invoiceNumber || p.metadata?.invoiceNumber || p.invoiceId || 'INV-SETTLED',
+          societyId: p.societyId,
+          flatCode: currentResident.flatCode,
+          residentName: p.resident?.name || currentResident.name,
+          transactionId: p.razorpayPaymentId || p.razorpayOrderId || p.id,
+          amount: Number(p.amount || 0),
+          paymentMethod: (p.paymentMethod as any) || 'RAZORPAY',
+          status: p.status === 'SUCCESS' ? 'SUCCESS' : p.status === 'REFUNDED' ? 'REFUNDED' : 'FAILED',
+          gatewayReference: p.razorpayPaymentId || p.razorpayOrderId || 'N/A',
+          gatewayResponseNotes: p.failureReason || (p.status === 'SUCCESS' ? 'Verified by PostgreSQL/Prisma' : ''),
+          paymentDate: new Date(p.createdAt).toLocaleString('en-IN'),
+        }));
+        setTransactions(mappedTxns);
         return;
       }
     } catch (e) {
@@ -89,8 +110,8 @@ export const ResidentBillingPage: React.FC = () => {
       .getTransactions(currentSocietyId)
       .filter((t) => t.flatCode === currentResident.flatCode || t.residentName === currentResident.name);
 
-    setInvoices(invList);
-    setTransactions(txnList);
+    setInvoices((prev) => (prev.length > 0 ? prev : invList));
+    setTransactions((prev) => (prev.length > 0 ? prev : txnList));
   };
 
   useEffect(() => {

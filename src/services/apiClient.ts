@@ -208,11 +208,26 @@ export const apiClient = {
       body: JSON.stringify({ invoiceId, amount }),
     }),
 
-  verifyRazorpayPayment: (data: { invoiceId: string; razorpayPaymentId: string; razorpayOrderId: string; amount: number }) =>
-    apiRequest<{ success: boolean; message: string; invoice: any }>('/payments/razorpay/verify', {
+  verifyRazorpayPayment: (data: { invoiceId: string; razorpayPaymentId: string; razorpayOrderId: string; amount: number; razorpaySignature?: string }) =>
+    apiRequest<{ success: boolean; message: string; invoice: any; transactionId: string }>('/payments/razorpay/verify', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+
+  refundRazorpayPayment: (data: { paymentId: string; amount: number; reason: string }) =>
+    apiRequest<{ success: boolean; refundId: string; amount: number; message: string }>('/payments/razorpay/refund', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  getPayments: (societyId?: string, residentId?: string, invoiceId?: string) => {
+    const params = new URLSearchParams();
+    if (societyId) params.append('societyId', societyId);
+    if (residentId) params.append('residentId', residentId);
+    if (invoiceId) params.append('invoiceId', invoiceId);
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return apiRequest<any[]>(`/payments${queryString}`, { societyId });
+  },
 
   // Advertisements & Sponsored Offers
   getAdvertisements: (societyId?: string) => apiRequest<any[]>('/advertisements', { societyId }),
