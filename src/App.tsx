@@ -3,6 +3,8 @@ import { BrowserRouter, Link } from 'react-router-dom';
 import { PrototypeProvider } from './context/PrototypeContext';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { ThemeSwitcherModal } from './components/ui/ThemeSwitcherModal';
 import { AppRoutes } from './routes';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { initNativeMobileFeatures } from './utils/nativeMobile';
@@ -16,6 +18,7 @@ export const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <BrowserRouter>
+      <ThemeProvider>
       <PrototypeProvider>
         <AuthProvider>
           <ToastProvider>
@@ -71,10 +74,14 @@ export const App: React.FC = () => {
                 <Database size={13} />
                 <span>DB Studio</span>
               </Link>
+
+              {/* 4-Color Theme Selector Quick-Button and Modal */}
+              <ThemeSwitcherModal />
             </div>
           </ToastProvider>
         </AuthProvider>
       </PrototypeProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </ErrorBoundary>
   );

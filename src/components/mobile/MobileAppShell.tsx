@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, LogOut, X, ChevronRight, Bell, ChevronDown, Plus } from 'lucide-react';
+import { Menu, LogOut, X, ChevronRight, Bell, ChevronDown, Plus, Palette } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { App } from '@capacitor/app';
@@ -215,15 +215,44 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
             })}
           </nav>
 
-          {/* Top Right Actions: Notification + Logout */}
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          {/* Top Right Actions: Theme + Notification + Logout */}
+          <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center' }}>
+            <button
+              onClick={() => {
+                triggerHaptic('light');
+                const themeBtn = document.querySelector('button[title="Try 4 Color Themes"]') as HTMLButtonElement | null;
+                if (themeBtn) {
+                  themeBtn.click();
+                }
+              }}
+              aria-label="Switch Theme Palette"
+              title="Switch Theme Palette (4 Themes)"
+              style={{
+                height: 34,
+                padding: '0 0.65rem',
+                borderRadius: '17px',
+                background: 'rgba(255, 255, 255, 0.15)',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+              }}
+            >
+              <Palette size={14} style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+              <span className="hidden sm:inline">Theme</span>
+            </button>
+
             {topRightActions || (
               <button
                 onClick={() => navigate('/notifications')}
                 aria-label="Notifications"
                 style={{
-                  width: 38,
-                  height: 38,
+                  width: 36,
+                  height: 36,
                   borderRadius: '50%',
                   background: 'rgba(255, 255, 255, 0.12)',
                   color: '#ffffff',
@@ -234,7 +263,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                   cursor: 'pointer',
                 }}
               >
-                <Bell size={18} />
+                <Bell size={17} />
               </button>
             )}
             <button
@@ -242,8 +271,8 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
               aria-label="Sign Out"
               title="Sign Out"
               style={{
-                width: 38,
-                height: 38,
+                width: 36,
+                height: 36,
                 borderRadius: '50%',
                 background: 'rgba(255, 255, 255, 0.12)',
                 color: 'rgba(255, 255, 255, 0.85)',
@@ -254,7 +283,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 cursor: 'pointer',
               }}
             >
-              <LogOut size={16} />
+              <LogOut size={15} />
             </button>
           </div>
         </div>
