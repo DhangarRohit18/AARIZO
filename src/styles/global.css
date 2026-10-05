@@ -74,16 +74,22 @@ p {
 
 /* High-Contrast Guard for Dark / Hero Banners (Scoped only to explicit dark banners, never modals/drawers) */
 .dark-hero-banner,
-.dark-banner {
-  color: #FFFFFF;
+.dark-banner,
+.aarizo-hero-banner,
+[data-banner="dark"] {
+  color: #FFFFFF !important;
 }
 .dark-hero-banner h1, .dark-hero-banner h2, .dark-hero-banner h3, .dark-hero-banner h4,
-.dark-banner h1, .dark-banner h2, .dark-banner h3, .dark-banner h4 {
-  color: #FFFFFF;
+.dark-banner h1, .dark-banner h2, .dark-banner h3, .dark-banner h4,
+.aarizo-hero-banner h1, .aarizo-hero-banner h2, .aarizo-hero-banner h3, .aarizo-hero-banner h4,
+[data-banner="dark"] h1, [data-banner="dark"] h2, [data-banner="dark"] h3, [data-banner="dark"] h4 {
+  color: #FFFFFF !important;
 }
 .dark-hero-banner p,
-.dark-banner p {
-  color: var(--aarizo-sky, #83CBEA);
+.dark-banner p,
+.aarizo-hero-banner p,
+[data-banner="dark"] p {
+  color: var(--aarizo-sky, #83CBEA) !important;
 }
 
 a {
@@ -131,11 +137,11 @@ nav,
   user-select: none;
 }
 
-/* Minimum 44px touch targets for interactive elements */
-button,
-input[type="submit"],
-input[type="button"],
-[role="button"] {
+/* Minimum 44px touch targets for primary action and navigation items, without distorting compact card chips */
+.touch-target,
+.mobile-nav-item,
+.role-pill-btn,
+.mobile-app-shell nav button {
   min-height: 44px;
 }
 

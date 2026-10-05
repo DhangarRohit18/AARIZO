@@ -131,28 +131,29 @@ export const ComplaintSLAEngineHub: React.FC = () => {
     <div className="p-4 md:p-8 pb-28 space-y-6 max-w-7xl mx-auto">
       {/* Header Banner - Single unified high contrast bar */}
       <div
-        className="p-6 md:p-7 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-5 text-white"
+        className="aarizo-hero-banner p-6 md:p-7 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-5 text-white"
         style={{
           background: 'linear-gradient(135deg, #06283D 0%, #083B56 50%, #0D4767 100%)',
           border: '1px solid rgba(131, 203, 234, 0.25)',
-          boxShadow: '0 10px 25px -5px rgba(8, 59, 86, 0.3)'
+          boxShadow: '0 10px 25px -5px rgba(8, 59, 86, 0.3)',
+          color: '#FFFFFF'
         }}
       >
         <div className="space-y-1.5">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-[#83CBEA]">
-              <Wrench className="w-6 h-6" />
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-[#83CBEA] shrink-0">
+              <Wrench className="w-6 h-6 text-[#83CBEA]" />
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#83CBEA]">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[#83CBEA]" style={{ color: '#83CBEA' }}>
                 Operations &bull; Maintenance Dispatch
               </p>
-              <h1 className="text-xl md:text-2xl font-black text-white tracking-tight">
+              <h1 className="text-xl md:text-2xl font-black text-white tracking-tight" style={{ color: '#FFFFFF' }}>
                 Helpdesk &amp; SLA Engine
               </h1>
             </div>
           </div>
-          <p className="text-xs md:text-sm text-slate-200 pl-1 max-w-2xl font-normal leading-relaxed">
+          <p className="text-xs md:text-sm pl-1 max-w-2xl font-normal leading-relaxed text-slate-200" style={{ color: '#CBE7F5' }}>
             Multi-tier SLA monitoring with automatic escalation matrix (Staff &rarr; FM &rarr; Admin &rarr; Committee) &amp; resident verification.
           </p>
         </div>
@@ -164,7 +165,8 @@ export const ComplaintSLAEngineHub: React.FC = () => {
           {(activeRole === 'secretary' || activeRole === 'facility_manager' || activeRole === 'admin') && (
             <button
               onClick={() => setShowPolicyModal(true)}
-              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-white/25 transition shadow-sm"
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-white/25 transition shadow-sm"
+              style={{ color: '#FFFFFF' }}
             >
               <Sliders size={15} className="text-[#83CBEA]" /> Configure SLA Targets
             </button>
@@ -174,7 +176,8 @@ export const ComplaintSLAEngineHub: React.FC = () => {
             className="px-5 py-2.5 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg hover:shadow-cyan-500/20 active:scale-95 transition"
             style={{
               background: 'linear-gradient(135deg, #176B91 0%, #104C68 100%)',
-              border: '1px solid rgba(131, 203, 234, 0.4)'
+              border: '1px solid rgba(131, 203, 234, 0.4)',
+              color: '#FFFFFF'
             }}
           >
             <Plus size={16} /> File New Complaint
@@ -289,55 +292,55 @@ export const ComplaintSLAEngineHub: React.FC = () => {
             return (
               <div
                 key={c.id}
-                className={`p-4 md:p-5 rounded-2xl border transition-all duration-150 hover:shadow-md ${
+                className={`p-5 md:p-6 rounded-2xl border transition-all duration-150 hover:shadow-lg ${
                   isBreached
-                    ? 'border-rose-300 bg-rose-50/30'
+                    ? 'border-rose-300 bg-white ring-1 ring-rose-200'
                     : isWarning
-                    ? 'border-amber-300 bg-amber-50/20'
-                    : 'border-slate-200/90 bg-white'
+                    ? 'border-amber-300 bg-white ring-1 ring-amber-200'
+                    : 'border-slate-200 bg-white shadow-xs'
                 }`}
               >
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                  {/* Left Column: Title & details */}
-                  <div className="space-y-2 flex-1">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
+                  {/* Left Column: Title, tags & details */}
+                  <div className="space-y-2.5 flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono font-bold text-[11px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
+                      <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
                         {c.id}
                       </span>
-                      <h3 className="font-bold text-slate-900 text-sm md:text-base leading-snug">
+                      <h3 className="font-bold text-slate-900 text-base md:text-lg leading-snug tracking-tight">
                         {c.title}
                       </h3>
-                      <span className="px-2.5 py-0.5 bg-[#EAF6FC] text-[#083B56] font-bold text-[10px] rounded-full border border-[#DCE8EF] uppercase tracking-wider">
+                      <span className="px-3 py-0.5 bg-[#EAF6FC] text-[#083B56] font-extrabold text-[11px] rounded-full border border-[#DCE8EF] uppercase tracking-wider">
                         {c.category}
                       </span>
                       {c.reopenCount > 0 && (
-                        <span className="px-2 py-0.5 bg-rose-100 text-rose-800 font-extrabold text-[10px] rounded-full flex items-center gap-1">
-                          <RotateCcw size={10} /> Reopened x{c.reopenCount}
+                        <span className="px-2.5 py-0.5 bg-rose-100 text-rose-800 font-extrabold text-[11px] rounded-full flex items-center gap-1 border border-rose-200">
+                          <RotateCcw size={11} /> Reopened x{c.reopenCount}
                         </span>
                       )}
                     </div>
 
-                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                    <p className="text-xs md:text-sm text-slate-600 line-clamp-2 leading-relaxed">
                       {c.description}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] text-slate-500 pt-1">
-                      <span className="flex items-center gap-1.5">
-                        <MapPin size={13} className="text-slate-400" />
-                        Location: <strong className="text-slate-800 font-semibold">{c.location}</strong>
+                    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500 pt-1">
+                      <span className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-150">
+                        <MapPin size={13} className="text-[#176B91]" />
+                        <span>Location:</span> <strong className="text-slate-900 font-bold">{c.location}</strong>
+                      </span>
+                      <span className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-150">
+                        <User size={13} className="text-[#176B91]" />
+                        <span>Assigned:</span> <strong className="text-slate-900 font-bold">{c.assignedToName || 'Unassigned'}</strong>
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <User size={13} className="text-slate-400" />
-                        Assigned: <strong className="text-slate-800 font-semibold">{c.assignedToName || 'Unassigned'}</strong>
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        Urgency:
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        <span className="text-slate-500 font-semibold">Urgency:</span>
+                        <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-black tracking-wide uppercase ${
                           c.urgency === 'CRITICAL' || c.urgency === 'HIGH'
-                            ? 'bg-rose-100 text-rose-700'
+                            ? 'bg-rose-100 text-rose-800 border border-rose-200'
                             : c.urgency === 'MEDIUM'
-                            ? 'bg-amber-100 text-amber-700'
-                            : 'bg-emerald-100 text-emerald-700'
+                            ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                            : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                         }`}>
                           {c.urgency}
                         </span>
@@ -345,23 +348,25 @@ export const ComplaintSLAEngineHub: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Right Column: Escalation & Actions */}
-                  <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
-                    <div className="text-left md:text-right">
-                      <span className="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">
+                  {/* Right Column: Escalation Matrix & Action Buttons */}
+                  <div className="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-4 w-full lg:w-auto pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-100 shrink-0">
+                    <div className="bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-2.5 text-left lg:text-right">
+                      <span className="text-[10px] font-extrabold text-slate-400 block uppercase tracking-wider">
                         Escalation Matrix
                       </span>
-                      <span className="inline-block mt-0.5 px-2.5 py-0.5 bg-slate-100 text-slate-700 font-extrabold text-xs rounded-lg border border-slate-200">
-                        Level: {c.escalationLevel}
-                      </span>
-                      <div className="mt-1">
+                      <div className="mt-1 flex items-center lg:justify-end gap-1.5">
+                        <span className="px-2 py-0.5 bg-white text-slate-800 font-extrabold text-xs rounded border border-slate-200 shadow-2xs">
+                          Level: {c.escalationLevel}
+                        </span>
+                      </div>
+                      <div className="mt-1.5">
                         {isBreached ? (
-                          <span className="text-rose-600 font-black text-xs inline-flex items-center gap-1">
-                            <AlertTriangle size={13} /> SLA BREACHED
+                          <span className="text-rose-600 font-black text-xs inline-flex items-center gap-1 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">
+                            <AlertTriangle size={13} className="text-rose-600" /> SLA BREACHED
                           </span>
                         ) : (
-                          <span className="text-emerald-700 font-bold text-xs inline-flex items-center gap-1">
-                            <Timer size={13} className="text-emerald-500" /> SLA: {c.slaMinutes}m
+                          <span className="text-emerald-700 font-bold text-xs inline-flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+                            <Timer size={13} className="text-emerald-600" /> SLA: {c.slaMinutes}m
                           </span>
                         )}
                       </div>
@@ -371,7 +376,8 @@ export const ComplaintSLAEngineHub: React.FC = () => {
                       {c.status === 'VERIFICATION_REQUIRED' && activeRole === 'resident' && (
                         <button
                           onClick={() => setVerifyComplaint(c)}
-                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm transition"
+                          className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm transition whitespace-nowrap cursor-pointer"
+                          style={{ color: '#FFFFFF' }}
                         >
                           <CheckSquare size={15} /> Confirm Resolution
                         </button>
@@ -380,7 +386,8 @@ export const ComplaintSLAEngineHub: React.FC = () => {
                       {c.status !== 'CLOSED' && c.status !== 'VERIFICATION_REQUIRED' && (
                         <button
                           onClick={() => handleResolveTicket(c.id)}
-                          className="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 active:scale-95 text-white rounded-xl font-bold text-xs shadow-sm transition"
+                          className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white rounded-xl font-bold text-xs shadow-sm transition whitespace-nowrap cursor-pointer"
+                          style={{ color: '#FFFFFF' }}
                         >
                           Mark Resolved
                         </button>
