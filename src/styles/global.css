@@ -72,23 +72,32 @@ p {
   color: var(--aarizo-text-secondary);
 }
 
-/* High-Contrast Guard for Dark / Hero Banners (Scoped only to explicit dark banners, never modals/drawers) */
+/* High-Contrast Guard for Dark / Hero Banners */
 .dark-hero-banner,
 .dark-banner,
 .aarizo-hero-banner,
-[data-banner="dark"] {
-  color: #FFFFFF !important;
+[data-banner="dark"],
+[style*="linear-gradient"],
+[style*="background: linear-gradient"],
+[style*="var(--aarizo-navy)"] {
+  --aarizo-text: #FFFFFF;
 }
+
+.text-white,
+[class*="text-white"],
 .dark-hero-banner h1, .dark-hero-banner h2, .dark-hero-banner h3, .dark-hero-banner h4,
 .dark-banner h1, .dark-banner h2, .dark-banner h3, .dark-banner h4,
 .aarizo-hero-banner h1, .aarizo-hero-banner h2, .aarizo-hero-banner h3, .aarizo-hero-banner h4,
-[data-banner="dark"] h1, [data-banner="dark"] h2, [data-banner="dark"] h3, [data-banner="dark"] h4 {
+[data-banner="dark"] h1, [data-banner="dark"] h2, [data-banner="dark"] h3, [data-banner="dark"] h4,
+[style*="linear-gradient"] h1, [style*="linear-gradient"] h2, [style*="linear-gradient"] h3 {
   color: #FFFFFF !important;
 }
+
 .dark-hero-banner p,
 .dark-banner p,
 .aarizo-hero-banner p,
-[data-banner="dark"] p {
+[data-banner="dark"] p,
+[style*="linear-gradient"] p {
   color: var(--aarizo-sky, #83CBEA) !important;
 }
 

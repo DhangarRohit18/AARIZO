@@ -185,15 +185,15 @@ export const AdminAmenityManagementPage: React.FC = () => {
         className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
         style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
       >
-        <div>
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
-            <h1 className="text-xl md:text-2xl font-extrabold text-white">Amenity & Facility Management</h1>
+          <div>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
+              <h1 className="text-xl md:text-2xl font-extrabold" style={{ color: '#FFFFFF' }}>Amenity & Facility Management</h1>
+            </div>
+            <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
+              Configure timings, capacities, maintenance schedules, blackout dates, and approve resident slot bookings.
+            </p>
           </div>
-          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
-            Configure timings, capacities, maintenance schedules, blackout dates, and approve resident slot bookings.
-          </p>
-        </div>
         <button
           onClick={() => setShowCreateModal(true)}
           className="px-4 py-2.5 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition flex-shrink-0"
