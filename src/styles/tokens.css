@@ -128,22 +128,22 @@
    Theme 2: Coral Sunrise (Coral, Coral Red & Soft Warm Yellow)
    ============================================================ */
 [data-theme="coral"] {
-  --aarizo-navy: #4A1E1B;
-  --aarizo-navy-dark: #381412;
+  --aarizo-navy: #2B1816;
+  --aarizo-navy-dark: #1F100E;
   --aarizo-blue: #E76F51;
   --aarizo-blue-deep: #D45B3D;
   --aarizo-sky: #F4A261;
   --aarizo-light-blue: #FFF3EB;
   --aarizo-pale-blue: #FFF8F3;
-  --aarizo-page: #FFFDF9;
+  --aarizo-page: #FAF7F5;
   --aarizo-white: #FFFFFF;
 
-  --aarizo-text: #3D2321;
-  --aarizo-text-secondary: #855C58;
-  --aarizo-text-muted: #B38E8A;
+  --aarizo-text: #2D1E1D;
+  --aarizo-text-secondary: #705856;
+  --aarizo-text-muted: #9E8583;
 
-  --aarizo-border: #F7D7CB;
-  --aarizo-border-soft: #FDE8E0;
+  --aarizo-border: #F0D5CC;
+  --aarizo-border-soft: #F9EBE6;
 
   --aarizo-warning: #E9C46A;
   --aarizo-warning-bg: #FEF9E7;

@@ -133,9 +133,9 @@ export const ComplaintSLAEngineHub: React.FC = () => {
       <div
         className="aarizo-hero-banner p-6 md:p-7 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-5 text-white"
         style={{
-          background: 'linear-gradient(135deg, #06283D 0%, #083B56 50%, #0D4767 100%)',
-          border: '1px solid rgba(131, 203, 234, 0.25)',
-          boxShadow: '0 10px 25px -5px rgba(8, 59, 86, 0.3)',
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, var(--aarizo-navy-dark, #062F45) 50%, var(--aarizo-blue-deep, #0E5578) 100%)',
+          border: '1px solid rgba(255, 255, 255, 0.18)',
+          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25)',
           color: '#FFFFFF'
         }}
       >
