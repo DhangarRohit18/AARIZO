@@ -504,35 +504,83 @@ input, select, textarea {
 .space-x-4 > :not([hidden]) ~ :not([hidden]) { margin-left: 1rem; }
 
 /* ============================================================
-   Universal Modal Overlay System (Guarantees no UI clipping)
+   Universal Modal Overlay & Aesthetic Safety System
    ============================================================ */
 .fixed.inset-0[class*="z-50"],
 .fixed.inset-0.z-50,
 .modal-overlay,
 .auth-modal-overlay {
   z-index: 99999 !important;
-  backdrop-filter: blur(6px) !important;
-  -webkit-backdrop-filter: blur(6px) !important;
-  padding: 0.75rem !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background-color: rgba(8, 26, 42, 0.72) !important;
+  padding: 0.875rem !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 
-/* Modal Content Card Safety */
+/* Modal Content Card Safety & Elegance */
 .aarizo-general-modal,
 .modal-content,
-.auth-modal-card {
+.auth-modal-card,
+.fixed.inset-0[class*="z-50"] > div,
+.fixed.inset-0.z-50 > div,
+.modal-overlay > div {
   max-height: min(88vh, 760px) !important;
   margin-bottom: 0 !important;
-  box-shadow: 0 24px 60px -12px rgba(8, 59, 86, 0.35) !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 25px 65px -12px rgba(6, 40, 61, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Automatic input and select styling inside all modals */
+.fixed.inset-0 input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="color"]),
+.fixed.inset-0 select,
+.fixed.inset-0 textarea,
+.aarizo-general-modal input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="color"]),
+.aarizo-general-modal select,
+.aarizo-general-modal textarea {
+  font-family: inherit;
+  font-size: 0.8125rem !important;
+  font-weight: 500;
+  border-radius: 0.75rem !important;
+  border: 1px solid #E2E8F0 !important;
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+.fixed.inset-0 input:focus,
+.fixed.inset-0 select:focus,
+.fixed.inset-0 textarea:focus,
+.aarizo-general-modal input:focus,
+.aarizo-general-modal select:focus,
+.aarizo-general-modal textarea:focus {
+  background-color: #FFFFFF !important;
+  border-color: #176B91 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(23, 107, 145, 0.18) !important;
+}
+
+/* Primary Modal Action Buttons Uniform Aesthetics */
+.fixed.inset-0 button[type="submit"],
+.aarizo-general-modal button[type="submit"] {
+  border-radius: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em;
+  transition: transform 0.1s ease, box-shadow 0.15s ease !important;
+}
+
+.fixed.inset-0 button[type="submit"]:active,
+.aarizo-general-modal button[type="submit"]:active {
+  transform: scale(0.98);
 }
 
 @media (max-width: 640px) {
   .fixed.inset-0[class*="z-50"] > div,
   .modal-overlay > div,
   .aarizo-general-modal {
-    max-height: 85vh !important;
+    max-height: 86vh !important;
     width: 100% !important;
     margin: auto !important;
   }

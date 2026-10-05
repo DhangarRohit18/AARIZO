@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Wrench, CheckCircle2 } from 'lucide-react';
+import { Wrench } from 'lucide-react';
 import { maintenanceService } from '../../../services/maintenanceService';
 import { realtimeService } from '../../../services/realtimeService';
 import { FileUpload } from '../../../components/ui/FileUpload';
 import type { MaintenanceTicket, TicketStatus } from '../../../types/maintenance';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
+import { Modal } from '../../../components/ui/Modal';
 
 export const ServiceProviderTaskPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -205,90 +206,88 @@ export const ServiceProviderTaskPage: React.FC = () => {
       </div>
 
       </div>
-      {selectedTicket && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form
-            onSubmit={handleUpdateTaskSubmit}
-            className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-4 md:p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl"
-          >
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">
-              Update Work Status - Flat {selectedTicket.flatCode}
-            </h3>
+      {/* Task Update Modal */}
+      <Modal
+        isOpen={Boolean(selectedTicket)}
+        onClose={() => setSelectedTicket(null)}
+        title={selectedTicket ? `Update Work Status · Unit ${selectedTicket.flatCode}` : 'Update Work Status'}
+        subtitle="Record progress notes, update ticket status, and attach photo proof"
+        maxWidth="480px"
+      >
+        {selectedTicket && (
+          <form onSubmit={handleUpdateTaskSubmit} className="space-y-4 pt-1">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                Work Status *
+              </label>
+              <select
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+                value={statusUpdate}
+                onChange={(e) => setStatusUpdate(e.target.value as TicketStatus)}
+              >
+                <option value="ACCEPTED">ACCEPTED (Acknowledged by Technician)</option>
+                <option value="IN_PROGRESS">IN_PROGRESS (Currently Servicing)</option>
+                <option value="ON_HOLD">ON_HOLD (Awaiting Parts/Approval)</option>
+                <option value="COMPLETED">COMPLETED (Ready for Resident Verification)</option>
+                <option value="VERIFIED">VERIFIED (Work Confirmed)</option>
+              </select>
+            </div>
 
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold mb-1">Status *</label>
-                <select
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                  value={statusUpdate}
-                  onChange={(e) => setStatusUpdate(e.target.value as TicketStatus)}
-                >
-                  <option value="ACCEPTED">ACCEPTED</option>
-                  <option value="IN_PROGRESS">IN_PROGRESS</option>
-                  <option value="ON_HOLD">ON_HOLD</option>
-                  <option value="COMPLETED">COMPLETED</option>
-                  <option value="VERIFIED">VERIFIED</option>
-                </select>
-              </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                Technician Work Notes *
+              </label>
+              <textarea
+                rows={3}
+                required
+                placeholder="Describe actions taken, replaced parts, or reason for delay..."
+                className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </div>
 
+            <div className="space-y-3 pt-1">
               <div>
-                <label className="block font-semibold mb-1">Technician Work Notes *</label>
-                <textarea
-                  rows={3}
-                  required
-                  placeholder="Describe work completed or reasons for delay..."
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
+                <FileUpload
+                  category="tickets"
+                  label="Upload Before-Work Photo"
+                  currentUrl={beforeImage}
+                  onUploadSuccess={(url) => setBeforeImage(url)}
+                  onRemove={() => setBeforeImage('')}
                 />
               </div>
 
-              <div className="space-y-2">
-                <div>
-                  <FileUpload
-                    category="tickets"
-                    label="Upload Before Work Photo"
-                    onUploadSuccess={(url) => setBeforeImage(url)}
-                  />
-                  {beforeImage && (
-                    <p className="text-[11px] text-emerald-600 font-semibold mt-1 flex items-center gap-1">
-                      <CheckCircle2 size={12} /> Before Photo Attached
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <FileUpload
-                    category="tickets"
-                    label="Upload After Work Photo (Completion Proof)"
-                    onUploadSuccess={(url) => setAfterImage(url)}
-                  />
-                  {afterImage && (
-                    <p className="text-[11px] text-emerald-600 font-semibold mt-1 flex items-center gap-1">
-                      <CheckCircle2 size={12} /> After Photo Attached
-                    </p>
-                  )}
-                </div>
+              <div>
+                <FileUpload
+                  category="tickets"
+                  label="Upload After-Work Photo (Completion Proof)"
+                  currentUrl={afterImage}
+                  onUploadSuccess={(url) => setAfterImage(url)}
+                  onRemove={() => setAfterImage('')}
+                />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setSelectedTicket(null)}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold"
+                className="px-4 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-xs transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white rounded-lg text-xs font-semibold"
+                className="px-5 py-2.5 text-white font-bold rounded-xl text-xs shadow-md transition"
+                style={{ background: 'var(--aarizo-blue, #176B91)' }}
               >
                 Save Progress
               </button>
             </div>
           </form>
-        </div>
-      )}
+        )}
+      </Modal>
     </div>
   );
 };

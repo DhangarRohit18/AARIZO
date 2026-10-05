@@ -8,7 +8,6 @@ import {
   FileText,
   RefreshCw,
   Receipt,
-  CheckCircle,
   Printer,
   Filter,
 } from 'lucide-react';
@@ -29,6 +28,7 @@ import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 import { apiClient } from '../../../services/apiClient';
 import { realtimeService } from '../../../services/realtimeService';
 import { FileUpload } from '../../../components/ui/FileUpload';
+import { Modal } from '../../../components/ui/Modal';
 
 export const BillingManagementPage: React.FC = () => {
   const currentSocietyId = 'soc-gvs';
@@ -830,217 +830,219 @@ export const BillingManagementPage: React.FC = () => {
 
 
       {/* Modal: New Billing Cycle */}
-      {isCycleModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form
-            onSubmit={handleCreateCycle}
-            className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-4 md:p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl"
-          >
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Create New Billing Cycle</h3>
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold mb-1">Cycle Title *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. October 2026 Maintenance Bill"
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                  value={cycleName}
-                  onChange={(e) => setCycleName(e.target.value)}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-semibold mb-1">Cycle Month</label>
-                  <input
-                    type="month"
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                    value={cycleMonth}
-                    onChange={(e) => setCycleMonth(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold mb-1">Due Date</label>
-                  <input
-                    type="date"
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                  />
-                </div>
-              </div>
+      <Modal
+        isOpen={isCycleModalOpen}
+        onClose={() => setIsCycleModalOpen(false)}
+        title="Create New Billing Cycle"
+        subtitle="Publish society-wide recurring maintenance invoices"
+        maxWidth="500px"
+      >
+        <form onSubmit={handleCreateCycle} className="space-y-4 pt-1">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Cycle Title *</label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. October 2026 Maintenance Bill"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+              value={cycleName}
+              onChange={(e) => setCycleName(e.target.value)}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Cycle Month</label>
+              <input
+                type="month"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+                value={cycleMonth}
+                onChange={(e) => setCycleMonth(e.target.value)}
+              />
             </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsCycleModalOpen(false)}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-[#083B56] hover:bg-[#176B91] text-white rounded-lg text-xs font-semibold"
-              >
-                Publish Cycle & Generate Invoices
-              </button>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Due Date</label>
+              <input
+                type="date"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+              />
             </div>
-          </form>
-        </div>
-      )}
+          </div>
+          <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <button
+              type="button"
+              onClick={() => setIsCycleModalOpen(false)}
+              className="px-4 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-xs transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2.5 text-white font-bold rounded-xl text-xs shadow-md transition"
+              style={{ background: 'var(--aarizo-blue, #176B91)' }}
+            >
+              Publish Cycle &amp; Generate Invoices
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Modal: Manual Offline Payment */}
-      {manualInvoice && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form
-            onSubmit={handleManualPaymentSubmit}
-            className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-4 md:p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl"
-          >
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">
-              Mark Manual Offline Payment - Flat {manualInvoice.flatCode}
-            </h3>
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold mb-1">Amount Received (₹) *</label>
-                <input
-                  type="number"
-                  required
-                  min={1}
-                  max={manualInvoice.outstandingBalance}
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                  value={manualAmount}
-                  onChange={(e) => setManualAmount(Number(e.target.value))}
-                />
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Payment Method *</label>
-                <select
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                  value={manualMethod}
-                  onChange={(e) => setManualMethod(e.target.value as PaymentMethod)}
-                >
-                  <option value="CASH">Cash</option>
-                  <option value="CHEQUE">Cheque</option>
-                  <option value="BANK_TRANSFER">Bank Transfer (NEFT/RTGS)</option>
-                  <option value="UPI">UPI Direct</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Cheque No / Reference Notes</label>
-                <input
-                  type="text"
-                  placeholder="e.g. HDFC Cheque #009210"
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                  value={manualNotes}
-                  onChange={(e) => setManualNotes(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold mb-1">
-                  Cheque / NEFT Counterfoil Photo (Optional)
-                </label>
-                <FileUpload
-                  category="receipts"
-                  label="Upload Bank Cheque Photo or NEFT Counterfoil"
-                  onUploadSuccess={(url: string) => {
-                    setManualReceiptUrl(url);
-                  }}
-                />
-                {manualReceiptUrl && (
-                  <div className="mt-1 text-emerald-600 flex items-center gap-1 font-medium text-[11px]">
-                    <CheckCircle size={12} />
-                    <span>Receipt proof attached</span>
-                  </div>
-                )}
-              </div>
+      <Modal
+        isOpen={Boolean(manualInvoice)}
+        onClose={() => setManualInvoice(null)}
+        title={manualInvoice ? `Record Offline Payment · Unit ${manualInvoice.flatCode}` : 'Record Offline Payment'}
+        subtitle="Acknowledge cash, physical cheque, or direct bank transfer"
+        maxWidth="500px"
+      >
+        {manualInvoice && (
+          <form onSubmit={handleManualPaymentSubmit} className="space-y-4 pt-1">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs flex justify-between items-center border border-slate-200 dark:border-slate-700">
+              <span className="text-slate-500 font-medium">Outstanding Balance:</span>
+              <span className="font-extrabold text-slate-900 dark:text-white text-sm">₹{manualInvoice.outstandingBalance.toLocaleString()}</span>
             </div>
-            <div className="flex justify-end gap-2 pt-2">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Amount Received (₹) *</label>
+              <input
+                type="number"
+                required
+                min={1}
+                max={manualInvoice.outstandingBalance}
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+                value={manualAmount}
+                onChange={(e) => setManualAmount(Number(e.target.value))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Payment Method *</label>
+              <select
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+                value={manualMethod}
+                onChange={(e) => setManualMethod(e.target.value as PaymentMethod)}
+              >
+                <option value="CASH">Cash</option>
+                <option value="CHEQUE">Cheque</option>
+                <option value="BANK_TRANSFER">Bank Transfer (NEFT/RTGS)</option>
+                <option value="UPI">UPI Direct</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Cheque No / Reference Notes</label>
+              <input
+                type="text"
+                placeholder="e.g. HDFC Cheque #009210 or UTR Number"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+                value={manualNotes}
+                onChange={(e) => setManualNotes(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                Cheque / Counterfoil Photo (Optional)
+              </label>
+              <FileUpload
+                category="receipts"
+                label="Upload Cheque Photo or Counterfoil"
+                currentUrl={manualReceiptUrl}
+                onUploadSuccess={(url: string) => setManualReceiptUrl(url)}
+                onRemove={() => setManualReceiptUrl('')}
+              />
+            </div>
+
+            <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setManualInvoice(null)}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold"
+                className="px-4 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-xs transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold"
+                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md transition"
               >
                 Record Payment
               </button>
             </div>
           </form>
-        </div>
-      )}
+        )}
+      </Modal>
 
       {/* Modal: Penalty or Adjustment */}
-      {penaltyInvoice && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form
-            onSubmit={handlePenaltySubmit}
-            className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-4 md:p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-xl"
-          >
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">
-              Apply Charge / Penalty - Flat {penaltyInvoice.flatCode}
-            </h3>
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold mb-1">Charge Type</label>
-                <select
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                  value={penaltyType}
-                  onChange={(e) => setPenaltyType(e.target.value as any)}
-                >
-                  <option value="PENALTY">Late Penalty Charge</option>
-                  <option value="SPECIAL_CONTRIBUTION">Special Contribution Fund</option>
-                  <option value="OTHER">Other Adjustment</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Amount (₹) *</label>
-                <input
-                  type="number"
-                  required
-                  min={1}
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                  value={penaltyAmount}
-                  onChange={(e) => setPenaltyAmount(Number(e.target.value))}
-                />
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Reason / Description</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Overdue payment penalty"
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg"
-                  value={penaltyReason}
-                  onChange={(e) => setPenaltyReason(e.target.value)}
-                />
-              </div>
+      {/* Modal: Penalty or Adjustment */}
+      <Modal
+        isOpen={Boolean(penaltyInvoice)}
+        onClose={() => setPenaltyInvoice(null)}
+        title={penaltyInvoice ? `Apply Charge / Penalty · Unit ${penaltyInvoice.flatCode}` : 'Apply Charge / Penalty'}
+        subtitle="Impose overdue late fee or special society contribution fund"
+        maxWidth="480px"
+      >
+        {penaltyInvoice && (
+          <form onSubmit={handlePenaltySubmit} className="space-y-4 pt-1">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Charge Type</label>
+              <select
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+                value={penaltyType}
+                onChange={(e) => setPenaltyType(e.target.value as any)}
+              >
+                <option value="PENALTY">Late Penalty Charge</option>
+                <option value="SPECIAL_CONTRIBUTION">Special Contribution Fund</option>
+                <option value="OTHER">Other Adjustment</option>
+              </select>
             </div>
-            <div className="flex justify-end gap-2 pt-2">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Amount (₹) *</label>
+              <input
+                type="number"
+                required
+                min={1}
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+                value={penaltyAmount}
+                onChange={(e) => setPenaltyAmount(Number(e.target.value))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Reason / Description</label>
+              <input
+                type="text"
+                placeholder="e.g. Overdue payment penalty"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+                value={penaltyReason}
+                onChange={(e) => setPenaltyReason(e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setPenaltyInvoice(null)}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold"
+                className="px-4 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-xs transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold"
+                className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow-md transition"
               >
                 Apply Charge
               </button>
             </div>
           </form>
-        </div>
-      )}
+        )}
+      </Modal>
 
-      {/* Modal: Admin Refund Processor (Part 9) */}
-      {refundTarget && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+      {/* Modal: Admin Refund Processor */}
+      <Modal
+        isOpen={Boolean(refundTarget)}
+        onClose={() => setRefundTarget(null)}
+        title="Process Razorpay Refund"
+        subtitle="Initiate instant gateway refund back to source instrument"
+        maxWidth="500px"
+      >
+        {refundTarget && (
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -1061,31 +1063,18 @@ export const BillingManagementPage: React.FC = () => {
                 setIsProcessingRefund(false);
               }
             }}
-            className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-5 space-y-4 border border-slate-200 dark:border-slate-700 shadow-2xl"
+            className="space-y-4 pt-1"
           >
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-bold text-slate-900 dark:text-white text-base">
-                Process Razorpay Refund
-              </h3>
-              <button
-                type="button"
-                onClick={() => setRefundTarget(null)}
-                className="text-slate-400 hover:text-slate-600"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl text-xs space-y-1">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs space-y-1.5 border border-slate-200 dark:border-slate-700">
               <div>Transaction ID: <span className="font-mono font-bold text-[#176B91]">{refundTarget.transactionId}</span></div>
               <div>Resident: <strong>{refundTarget.residentName} (Flat {refundTarget.flatCode})</strong></div>
               <div>Invoice: <strong>{refundTarget.invoiceNumber}</strong></div>
               <div>Original Amount Paid: <strong className="text-emerald-600">₹{refundTarget.amount.toLocaleString()}</strong></div>
             </div>
 
-            <div className="space-y-3 text-xs">
+            <div className="space-y-3">
               <div>
-                <label className="block font-semibold mb-1">Refund Amount (₹) *</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Refund Amount (₹) *</label>
                 <input
                   type="number"
                   required
@@ -1093,42 +1082,42 @@ export const BillingManagementPage: React.FC = () => {
                   max={refundTarget.amount}
                   value={refundAmountInput}
                   onChange={(e) => setRefundAmountInput(Number(e.target.value))}
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-bold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold mb-1">Reason for Refund *</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Reason for Refund *</label>
                 <input
                   type="text"
                   required
                   value={refundReasonInput}
                   onChange={(e) => setRefundReasonInput(e.target.value)}
                   placeholder="e.g. Duplicate transaction or billing dispute adjustment"
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t">
+            <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setRefundTarget(null)}
-                className="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300"
+                className="px-4 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-xs transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isProcessingRefund}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition disabled:opacity-50"
+                className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow-md transition disabled:opacity-50"
               >
                 {isProcessingRefund ? 'Processing via Razorpay...' : `Confirm Refund of ₹${refundAmountInput}`}
               </button>
             </div>
           </form>
-        </div>
-      )}
+        )}
+      </Modal>
 
       {/* Modal: Printable Receipt */}
       {receiptInvoice && (

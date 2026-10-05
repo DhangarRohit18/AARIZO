@@ -5,6 +5,7 @@ import type { Parcel } from '../../../domains/deliveries/types';
 import { realtimeService } from '../../../services/realtimeService';
 import { DataTable } from '../../../components/ui/DataTable';
 import { MobileDataCard } from '../../../components/ui/MobileDataCard';
+import { Modal } from '../../../components/ui/Modal';
 
 export const ParcelRoomSecurityHub: React.FC = () => {
   const [parcels, setParcels] = useState<Parcel[]>([]);
@@ -320,140 +321,143 @@ export const ParcelRoomSecurityHub: React.FC = () => {
       </div>
 
       {/* Add Parcel Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-md w-full shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-slate-900">Register Incoming Parcel</h3>
-            <form onSubmit={handleRegisterParcel} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold mb-1 text-slate-700">Resident Name</label>
-                <input
-                  type="text"
-                  value={residentName}
-                  onChange={(e) => setResidentName(e.target.value)}
-                  className="w-full p-2 border rounded-lg border-slate-300"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block font-semibold mb-1 text-slate-700">Flat Code</label>
-                <input
-                  type="text"
-                  value={flatCode}
-                  onChange={(e) => setFlatCode(e.target.value)}
-                  className="w-full p-2 border rounded-lg border-slate-300"
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold mb-1 text-slate-700">Courier Partner</label>
-                  <select
-                    value={courierCompany}
-                    onChange={(e) => setCourierCompany(e.target.value)}
-                    className="w-full p-2 border rounded-lg border-slate-300"
-                  >
-                    <option value="Amazon">Amazon</option>
-                    <option value="Flipkart">Flipkart</option>
-                    <option value="Blinkit">Blinkit</option>
-                    <option value="Zepto">Zepto</option>
-                    <option value="Swiggy Instamart">Swiggy Instamart</option>
-                    <option value="DHL">DHL</option>
-                    <option value="FedEx">FedEx</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-semibold mb-1 text-slate-700">Storage Location</label>
-                  <select
-                    value={storageLocation}
-                    onChange={(e) => setStorageLocation(e.target.value)}
-                    className="w-full p-2 border rounded-lg border-slate-300"
-                  >
-                    <option value="Rack A-1">Rack A-1</option>
-                    <option value="Rack A-2">Rack A-2</option>
-                    <option value="Rack B-1">Rack B-1</option>
-                    <option value="Locker 101">Locker 101</option>
-                    <option value="Locker 102">Locker 102</option>
-                    <option value="Reception Desk">Reception Desk</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block font-semibold mb-1 text-slate-700">Tracking Number / AWB</label>
-                <input
-                  type="text"
-                  placeholder="Optional AWB tracking number"
-                  value={trackingNumber}
-                  onChange={(e) => setTrackingNumber(e.target.value)}
-                  className="w-full p-2 border rounded-lg border-slate-300"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 border rounded-lg text-slate-600 font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold hover:bg-emerald-700"
-                >
-                  Save & Generate OTP
-                </button>
-              </div>
-            </form>
+      <Modal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        title="Register Incoming Parcel"
+        subtitle="Log parcel details into secure holding and issue resident OTP"
+        maxWidth="500px"
+      >
+        <form onSubmit={handleRegisterParcel} className="space-y-4 pt-1">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">Resident Name *</label>
+            <input
+              type="text"
+              value={residentName}
+              onChange={(e) => setResidentName(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+              required
+            />
           </div>
-        </div>
-      )}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">Flat Code *</label>
+            <input
+              type="text"
+              value={flatCode}
+              onChange={(e) => setFlatCode(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+              required
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">Courier Partner</label>
+              <select
+                value={courierCompany}
+                onChange={(e) => setCourierCompany(e.target.value)}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+              >
+                <option value="Amazon">Amazon</option>
+                <option value="Flipkart">Flipkart</option>
+                <option value="Blinkit">Blinkit</option>
+                <option value="Zepto">Zepto</option>
+                <option value="Swiggy Instamart">Swiggy Instamart</option>
+                <option value="DHL">DHL</option>
+                <option value="FedEx">FedEx</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">Storage Location</label>
+              <select
+                value={storageLocation}
+                onChange={(e) => setStorageLocation(e.target.value)}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+              >
+                <option value="Rack A-1">Rack A-1</option>
+                <option value="Rack A-2">Rack A-2</option>
+                <option value="Rack B-1">Rack B-1</option>
+                <option value="Locker 101">Locker 101</option>
+                <option value="Locker 102">Locker 102</option>
+                <option value="Reception Desk">Reception Desk</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">Tracking Number / AWB</label>
+            <input
+              type="text"
+              placeholder="Optional AWB tracking number"
+              value={trackingNumber}
+              onChange={(e) => setTrackingNumber(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91]"
+            />
+          </div>
+          <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => setShowAddModal(false)}
+              className="px-4 py-2.5 border border-slate-200 hover:bg-slate-100 text-slate-600 font-bold rounded-xl text-xs transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md transition"
+            >
+              Save &amp; Generate OTP
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Verify Modal */}
-      {showVerifyModal && selectedParcel && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-4 md:p-6 max-w-sm w-full shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-slate-900">Verify Pickup OTP</h3>
-            <p className="text-xs text-slate-500">
-              Parcel #{selectedParcel.id} for <strong>{selectedParcel.residentName} ({selectedParcel.flatCode})</strong>
-            </p>
-            <form onSubmit={handleVerifyPickup} className="space-y-3">
-              <input
-                type="text"
-                placeholder="Enter 6-digit OTP or scan QR"
-                value={verifyOtpInput}
-                onChange={(e) => setVerifyOtpInput(e.target.value)}
-                className="w-full p-3 text-center tracking-widest text-lg font-bold border-2 rounded-xl border-[#176B91] focus:outline-none"
-                required
-              />
-              {verifyResult.message && (
-                <div className={`p-2 rounded text-xs text-center font-bold ${verifyResult.success ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
-                  {verifyResult.message}
-                </div>
-              )}
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowVerifyModal(false);
-                    setVerifyOtpInput('');
-                    setVerifyResult({});
-                  }}
-                  className="px-4 py-2 border rounded-lg text-slate-600 font-semibold text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-[#083B56] text-white rounded-lg font-bold text-xs hover:bg-[#176B91]"
-                >
-                  Confirm Pickup
-                </button>
-              </div>
-            </form>
+      <Modal
+        isOpen={showVerifyModal && Boolean(selectedParcel)}
+        onClose={() => {
+          setShowVerifyModal(false);
+          setVerifyOtpInput('');
+          setVerifyResult({});
+        }}
+        title="Verify Pickup OTP"
+        subtitle={selectedParcel ? `Parcel #${selectedParcel.id} for ${selectedParcel.residentName} (${selectedParcel.flatCode})` : 'Verify Pickup OTP'}
+        maxWidth="440px"
+      >
+        <form onSubmit={handleVerifyPickup} className="space-y-4 pt-1">
+          <input
+            type="text"
+            placeholder="Enter 6-digit OTP"
+            value={verifyOtpInput}
+            onChange={(e) => setVerifyOtpInput(e.target.value)}
+            className="w-full py-3.5 text-center tracking-[0.3em] text-2xl font-black border-2 rounded-2xl border-[#176B91] focus:ring-4 focus:ring-[#176B91]/15 focus:outline-none"
+            required
+          />
+          {verifyResult.message && (
+            <div className={`p-3 rounded-xl text-xs text-center font-bold ${verifyResult.success ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+              {verifyResult.message}
+            </div>
+          )}
+          <div className="flex justify-end gap-2.5 pt-3 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => {
+                setShowVerifyModal(false);
+                setVerifyOtpInput('');
+                setVerifyResult({});
+              }}
+              className="px-4 py-2.5 border border-slate-200 hover:bg-slate-100 text-slate-600 font-bold rounded-xl text-xs transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2.5 bg-[#083B56] hover:bg-[#176B91] text-white font-bold rounded-xl text-xs shadow-md transition"
+            >
+              Confirm Pickup
+            </button>
           </div>
-        </div>
-      )}
+        </form>
+      </Modal>
     </div>
   );
 };
