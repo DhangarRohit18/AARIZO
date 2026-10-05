@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Wrench,
   Clock,
@@ -41,7 +41,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<ComplaintCategory>('PLUMBING');
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('Tower B Â· Flat B-1204');
+  const [location, setLocation] = useState('Tower B · Flat B-1204');
   const [urgency, setUrgency] = useState<'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'>('MEDIUM');
   const [photoUrl, setPhotoUrl] = useState('');
 
@@ -84,7 +84,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
       societyId: 'soc-gvs',
       residentId: currentUser?.id || 'res-1',
       residentName: currentUser?.name || 'Vikram Joshi',
-      flatCode: currentUser?.flatDetails || 'Tower B Â· B-1204',
+      flatCode: currentUser?.flatDetails || 'Tower B · B-1204',
       category,
       title,
       description,
@@ -128,140 +128,334 @@ export const ComplaintSLAEngineHub: React.FC = () => {
   });
 
   return (
-    <div className="p-3 md:p-6 pb-28 space-y-5 max-w-7xl mx-auto">
+    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '1rem 1rem 6rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
 
-      {/* â”€â”€ Hero Banner â”€â”€ */}
+      {/* ── 1. Top Executive Banner (Matching Admin Layout standard) ── */}
       <div
-        className="rounded-2xl p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
         style={{
-          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #062F45 60%, #0E5578 100%)',
-          border: '1px solid rgba(255,255,255,0.12)',
-          boxShadow: '0 8px 24px -4px rgba(8,59,86,0.30)',
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          borderRadius: '16px',
+          padding: '1.25rem 1.5rem',
+          color: '#ffffff',
+          boxShadow: '0 4px 14px rgba(8, 59, 86, 0.08)',
+          border: '1px solid rgba(131, 203, 234, 0.2)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
         }}
       >
-        {/* Left */}
-        <div className="flex items-start gap-3 min-w-0 flex-1">
-          <div className="p-2.5 rounded-xl shrink-0" style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.15)' }}>
-            <Wrench className="w-5 h-5" style={{ color: '#83CBEA' }} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+            <div
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: '12px',
+                background: 'rgba(131, 203, 234, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#83CBEA',
+                flexShrink: 0,
+              }}
+            >
+              <Wrench size={20} />
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#83CBEA', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Operations · Maintenance Dispatch
+              </div>
+              <h1 style={{ fontSize: '1.125rem', fontWeight: 800, color: '#ffffff', margin: '0.125rem 0 0' }}>
+                Helpdesk &amp; SLA Engine
+              </h1>
+            </div>
           </div>
-          <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: '#83CBEA' }}>
-              Operations Â· Maintenance Dispatch
-            </p>
-            <h1 className="text-lg md:text-xl font-black tracking-tight text-white leading-tight">
-              Helpdesk &amp; SLA Engine
-            </h1>
-            <p className="text-xs font-medium mt-1 leading-relaxed max-w-lg" style={{ color: '#CBE7F5' }}>
-              Multi-tier SLA monitoring with auto-escalation: Staff â†’ FM â†’ Admin â†’ Committee, with resident verification.
-            </p>
+
+          {/* Right Action buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <RealtimeSyncBadge state="live" label="Realtime SLA Sync" />
+            {(activeRole === 'secretary' || activeRole === 'facility_manager' || activeRole === 'admin') && (
+              <button
+                type="button"
+                onClick={() => setShowPolicyModal(true)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  padding: '0.45rem 0.875rem',
+                  borderRadius: '10px',
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  border: '1px solid rgba(255, 255, 255, 0.25)',
+                  color: '#ffffff',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <Sliders size={14} color="#83CBEA" />
+                <span>Configure SLA</span>
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowSubmitModal(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.45rem 1rem',
+                borderRadius: '10px',
+                background: 'var(--aarizo-blue, #176B91)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#ffffff',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Plus size={15} />
+              <span>File New Complaint</span>
+            </button>
           </div>
         </div>
 
-        {/* Right: Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2 shrink-0 w-full md:w-auto">
-          <div className="px-2.5 py-1.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.15)' }}>
-            <RealtimeSyncBadge state="live" label="Realtime SLA Sync" />
-          </div>
-          {(activeRole === 'secretary' || activeRole === 'facility_manager' || activeRole === 'admin') && (
-            <button
-              onClick={() => setShowPolicyModal(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-white transition-all hover:scale-105 active:scale-95"
-              style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.22)', color: '#FFFFFF' }}
-            >
-              <Sliders size={14} style={{ color: '#83CBEA' }} />
-              Configure SLA
-            </button>
-          )}
-          <button
-            onClick={() => setShowSubmitModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-lg transition-all hover:scale-105 active:scale-95"
-            style={{
-              background: 'linear-gradient(135deg, #176B91 0%, #104C68 100%)',
-              border: '1px solid rgba(131,203,234,0.35)',
-              color: '#FFFFFF'
-            }}
-          >
-            <Plus size={15} />
-            File Complaint
-          </button>
-        </div>
+        <p style={{ fontSize: '0.75rem', color: '#CBE7F5', margin: 0, lineHeight: 1.5 }}>
+          Multi-tier SLA monitoring with automatic escalation (Staff → FM → Admin → Committee) and mandatory resident verification.
+        </p>
       </div>
 
-      {/* â”€â”€ Analytics Metric Cards â”€â”€ */}
+      {/* ── 2. Standard 4-Grid Metric Cards ── */}
       {analytics && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-
-          {/* SLA Compliance */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition p-4">
-            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 leading-tight">SLA Compliance</p>
-            <h3 className="text-2xl font-black text-emerald-600 mt-1.5 leading-none">{analytics.slaComplianceRate}%</h3>
-            <div className="flex items-center justify-between mt-2">
-              <p className="text-[10px] text-slate-400">Target â‰¥ 90%</p>
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
-                <ShieldCheck size={16} className="text-emerald-600" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+          {/* Card 1: SLA Compliance */}
+          <div
+            style={{
+              background: '#ffffff',
+              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              borderRadius: '16px',
+              padding: '1rem 1.25rem',
+              boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--aarizo-text-secondary, #657785)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                SLA Compliance
               </div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#059669', margin: '0.25rem 0 0.125rem' }}>
+                {analytics.slaComplianceRate}%
+              </div>
+              <div style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>
+                Target ≥ 90%
+              </div>
+            </div>
+            <div
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: '12px',
+                background: '#ECFDF5',
+                border: '1px solid #A7F3D0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#059669',
+              }}
+            >
+              <ShieldCheck size={20} />
             </div>
           </div>
 
-          {/* Breached */}
-          <div className="bg-white rounded-2xl border border-rose-200/80 shadow-xs hover:shadow-md transition p-4">
-            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 leading-tight">SLA Breached</p>
-            <h3 className="text-2xl font-black text-rose-600 mt-1.5 leading-none">{analytics.breachedCount}</h3>
-            <div className="flex items-center justify-between mt-2">
-              <p className="text-[10px] text-rose-500 font-semibold">FM action needed</p>
-              <div className="w-8 h-8 rounded-xl bg-rose-50 flex items-center justify-center border border-rose-100">
-                <AlertTriangle size={16} className="text-rose-600" />
+          {/* Card 2: SLA Breached */}
+          <div
+            style={{
+              background: '#ffffff',
+              border: analytics.breachedCount > 0 ? '1px solid #FECDD3' : '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              borderRadius: '16px',
+              padding: '1rem 1.25rem',
+              boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--aarizo-text-secondary, #657785)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                SLA Breached
               </div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#E11D48', margin: '0.25rem 0 0.125rem' }}>
+                {analytics.breachedCount}
+              </div>
+              <div style={{ fontSize: '0.6875rem', color: '#E11D48', fontWeight: 600 }}>
+                Requires FM Action
+              </div>
+            </div>
+            <div
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: '12px',
+                background: '#FFF1F2',
+                border: '1px solid #FECDD3',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#E11D48',
+              }}
+            >
+              <AlertTriangle size={20} />
             </div>
           </div>
 
-          {/* Avg Resolution */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition p-4">
-            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 leading-tight">Avg Resolution</p>
-            <h3 className="text-2xl font-black mt-1.5 leading-none" style={{ color: 'var(--aarizo-navy, #083B56)' }}>
-              {analytics.avgResolutionTimeHours} <span className="text-sm font-bold">hrs</span>
-            </h3>
-            <div className="flex items-center justify-between mt-2">
-              <p className="text-[10px] text-slate-400">All categories</p>
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center border" style={{ background: '#EAF6FC', borderColor: '#DCE8EF' }}>
-                <Clock size={16} style={{ color: '#176B91' }} />
+          {/* Card 3: Avg Resolution */}
+          <div
+            style={{
+              background: '#ffffff',
+              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              borderRadius: '16px',
+              padding: '1rem 1.25rem',
+              boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--aarizo-text-secondary, #657785)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Avg Resolution
               </div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: '0.25rem 0 0.125rem' }}>
+                {analytics.avgResolutionTimeHours} <span style={{ fontSize: '0.875rem', fontWeight: 700 }}>hrs</span>
+              </div>
+              <div style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>
+                Across all categories
+              </div>
+            </div>
+            <div
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: '12px',
+                background: 'var(--aarizo-light-blue, #EAF6FC)',
+                border: '1px solid var(--aarizo-border, #DCE8EF)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--aarizo-blue, #176B91)',
+              }}
+            >
+              <Clock size={20} />
             </div>
           </div>
 
-          {/* Total Tickets */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition p-4">
-            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 leading-tight">Total Tickets</p>
-            <h3 className="text-2xl font-black text-slate-800 mt-1.5 leading-none">{analytics.totalComplaints}</h3>
-            <div className="flex items-center justify-between mt-2">
-              <p className="text-[10px] text-slate-400">Active pool</p>
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center border" style={{ background: '#EAF6FC', borderColor: '#DCE8EF' }}>
-                <Wrench size={16} style={{ color: '#176B91' }} />
+          {/* Card 4: Total Tickets */}
+          <div
+            style={{
+              background: '#ffffff',
+              border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+              borderRadius: '16px',
+              padding: '1rem 1.25rem',
+              boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--aarizo-text-secondary, #657785)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Total Tickets
+              </div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--aarizo-text, #203746)', margin: '0.25rem 0 0.125rem' }}>
+                {analytics.totalComplaints}
+              </div>
+              <div style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-muted, #8B9AA5)' }}>
+                Active society pool
               </div>
             </div>
+            <div
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: '12px',
+                background: 'var(--aarizo-light-blue, #EAF6FC)',
+                border: '1px solid var(--aarizo-border, #DCE8EF)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--aarizo-blue, #176B91)',
+              }}
+            >
+              <Wrench size={20} />
+            </div>
           </div>
-
         </div>
       )}
 
-      {/* â”€â”€ Filter & Search Bar â”€â”€ */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-3 flex flex-col sm:flex-row gap-2.5 items-center">
-        <div className="relative flex-1 w-full">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+      {/* ── 3. Search & Filter Bar (Clean standard pill/box design) ── */}
+      <div
+        style={{
+          background: '#ffffff',
+          borderRadius: '16px',
+          border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+          padding: '0.75rem 1rem',
+          boxShadow: '0 2px 8px rgba(8, 59, 86, 0.03)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: '0.75rem',
+          flexWrap: 'wrap',
+        }}
+      >
+        <div style={{ flex: 1, minWidth: '220px', position: 'relative' }}>
+          <Search size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--aarizo-text-secondary, #657785)' }} />
           <input
             type="text"
-            placeholder="Search by ID, title, resident or unit..."
+            placeholder="Search tickets by ID, title, resident, or unit..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-[#176B91] focus:ring-2 focus:ring-[#176B91]/15 rounded-xl text-xs text-slate-800 transition outline-none"
+            style={{
+              width: '100%',
+              padding: '0.625rem 0.875rem 0.625rem 2.5rem',
+              borderRadius: '12px',
+              border: '1px solid var(--aarizo-border, #DCE8EF)',
+              background: 'var(--aarizo-pale-blue, #F4FAFE)',
+              fontSize: '0.8125rem',
+              color: 'var(--aarizo-text, #203746)',
+              outline: 'none',
+              boxSizing: 'border-box',
+            }}
           />
         </div>
-        <div className="flex items-center gap-2 px-3 py-2.5 bg-slate-50 rounded-xl border border-slate-200 shrink-0 w-full sm:w-auto">
-          <Filter size={14} className="text-[#176B91] shrink-0" />
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.5rem 0.875rem',
+            borderRadius: '12px',
+            border: '1px solid var(--aarizo-border, #DCE8EF)',
+            background: 'var(--aarizo-pale-blue, #F4FAFE)',
+          }}
+        >
+          <Filter size={15} color="var(--aarizo-blue, #176B91)" />
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="bg-transparent border-none text-xs font-semibold text-slate-800 focus:outline-none cursor-pointer"
+            style={{
+              border: 'none',
+              background: 'transparent',
+              fontSize: '0.8125rem',
+              fontWeight: 700,
+              color: 'var(--aarizo-text, #203746)',
+              outline: 'none',
+              cursor: 'pointer',
+            }}
           >
             <option value="ALL">All Categories</option>
             <option value="SECURITY">Security (15m SLA)</option>
@@ -274,21 +468,66 @@ export const ComplaintSLAEngineHub: React.FC = () => {
         </div>
       </div>
 
-      {/* â”€â”€ Tickets List â”€â”€ */}
-      <div className="space-y-3">
+      {/* ── 4. Tickets Section Header ── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0.25rem 0' }}>
+        <h2 style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: 0 }}>
+          Active Tickets ({filtered.length})
+        </h2>
+      </div>
+
+      {/* ── 5. Standard Clean Ticket Cards (Fully Aligned, No Outlines, Matched Design System) ── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {filtered.length === 0 ? (
-          <div className="p-12 bg-white rounded-3xl border border-dashed border-slate-300 text-center space-y-3 shadow-xs">
-            <div className="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center" style={{ background: '#EAF6FC', color: '#176B91' }}>
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '16px',
+              border: '1px dashed var(--aarizo-border, #DCE8EF)',
+              padding: '3rem 1.5rem',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.75rem',
+            }}
+          >
+            <div
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: '16px',
+                background: 'var(--aarizo-light-blue, #EAF6FC)',
+                color: 'var(--aarizo-blue, #176B91)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Sparkles size={26} />
             </div>
-            <h4 className="font-bold text-slate-800 text-base">No Tickets Found</h4>
-            <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
-              Everything is operating within SLA standards. File a ticket if you notice any issue.
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)' }}>
+              No Tickets Found
+            </div>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text-secondary, #657785)', margin: 0, maxWidth: '340px' }}>
+              Everything is operating within SLA standard. File a ticket if you notice any maintenance malfunction.
             </p>
             <button
+              type="button"
               onClick={() => setShowSubmitModal(true)}
-              className="px-5 py-2.5 text-white font-bold rounded-xl text-xs inline-flex items-center gap-2 shadow-md hover:opacity-95 transition"
-              style={{ background: 'var(--aarizo-blue, #176B91)' }}
+              style={{
+                marginTop: '0.5rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                background: 'var(--aarizo-navy, #083B56)',
+                color: '#ffffff',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                border: 'none',
+                cursor: 'pointer',
+              }}
             >
               <Plus size={15} /> File New Complaint
             </button>
@@ -296,109 +535,244 @@ export const ComplaintSLAEngineHub: React.FC = () => {
         ) : (
           filtered.map((c) => {
             const isBreached = c.isBreached;
-            const isWarning = c.isWarningState && !isBreached;
 
             return (
               <div
                 key={c.id}
-                className={`bg-white rounded-2xl border transition-all duration-150 hover:shadow-md overflow-hidden ${
-                  isBreached
-                    ? 'border-rose-300 ring-1 ring-rose-200'
-                    : isWarning
-                    ? 'border-amber-300 ring-1 ring-amber-200'
-                    : 'border-slate-200 shadow-xs'
-                }`}
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '16px',
+                  border: isBreached ? '1px solid #FECDD3' : '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                  padding: '1rem 1.25rem',
+                  boxShadow: '0 2px 10px rgba(8, 59, 86, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                  transition: 'all 0.15s ease',
+                }}
               >
-                <div className="p-4 md:p-5 flex flex-col lg:flex-row gap-4">
-
-                  {/* â”€â”€ Left: Ticket Info â”€â”€ */}
-                  <div className="flex-1 min-w-0 space-y-2.5">
-
-                    {/* ID Â· Title Â· Category */}
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono font-bold text-[11px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
+                {/* Top Row: Ticket ID, Title, Badges, and Escalation Matrix Header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <div style={{ flex: 1, minWidth: '260px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.375rem' }}>
+                      <span
+                        style={{
+                          fontFamily: 'monospace',
+                          fontSize: '0.6875rem',
+                          fontWeight: 800,
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '6px',
+                          background: 'var(--aarizo-pale-blue, #F4FAFE)',
+                          border: '1px solid var(--aarizo-border, #DCE8EF)',
+                          color: 'var(--aarizo-navy, #083B56)',
+                        }}
+                      >
                         {c.id}
                       </span>
-                      <h3 className="font-bold text-slate-900 text-sm md:text-base leading-snug tracking-tight">
+                      <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--aarizo-text, #203746)', margin: 0 }}>
                         {c.title}
                       </h3>
-                      <span className="px-2.5 py-0.5 font-extrabold text-[10px] rounded-full uppercase tracking-wider shrink-0" style={{ background: '#EAF6FC', color: '#083B56', border: '1px solid #DCE8EF' }}>
+                      <span
+                        style={{
+                          fontSize: '0.625rem',
+                          fontWeight: 800,
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '6px',
+                          background: 'var(--aarizo-light-blue, #EAF6FC)',
+                          color: 'var(--aarizo-blue, #176B91)',
+                          border: '1px solid var(--aarizo-border, #DCE8EF)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                        }}
+                      >
                         {c.category}
                       </span>
                       {c.reopenCount > 0 && (
-                        <span className="px-2 py-0.5 bg-rose-100 text-rose-800 font-extrabold text-[10px] rounded-full flex items-center gap-1 border border-rose-200 shrink-0">
-                          <RotateCcw size={10} /> Ã—{c.reopenCount}
+                        <span
+                          style={{
+                            fontSize: '0.625rem',
+                            fontWeight: 800,
+                            padding: '0.2rem 0.5rem',
+                            borderRadius: '6px',
+                            background: '#FFF1F2',
+                            color: '#E11D48',
+                            border: '1px solid #FECDD3',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                          }}
+                        >
+                          <RotateCcw size={10} /> ×{c.reopenCount}
                         </span>
                       )}
                     </div>
 
-                    {/* Description */}
-                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{c.description}</p>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--aarizo-text-secondary, #657785)', margin: '0 0 0.5rem 0', lineHeight: 1.4 }}>
+                      {c.description}
+                    </p>
+                  </div>
 
-                    {/* Meta pills */}
-                    <div className="flex flex-wrap gap-2">
-                      <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-700 bg-slate-50 border border-slate-150 px-2.5 py-1 rounded-lg">
-                        <MapPin size={12} className="text-[#176B91] shrink-0" />
-                        {c.location}
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-700 bg-slate-50 border border-slate-150 px-2.5 py-1 rounded-lg">
-                        <User size={12} className="text-[#176B91] shrink-0" />
-                        {c.assignedToName || 'Unassigned'}
-                      </span>
-                      <span className={`inline-flex items-center text-[11px] font-black uppercase tracking-wide px-2.5 py-1 rounded-lg border ${
-                        c.urgency === 'CRITICAL' || c.urgency === 'HIGH'
-                          ? 'bg-rose-50 text-rose-800 border-rose-200'
-                          : c.urgency === 'MEDIUM'
-                          ? 'bg-amber-50 text-amber-800 border-amber-200'
-                          : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                      }`}>
-                        {c.urgency}
-                      </span>
+                  {/* Right Escalation Badge Container */}
+                  <div
+                    style={{
+                      background: isBreached ? '#FFF1F2' : 'var(--aarizo-pale-blue, #F4FAFE)',
+                      border: isBreached ? '1px solid #FECDD3' : '1px solid var(--aarizo-border, #DCE8EF)',
+                      borderRadius: '12px',
+                      padding: '0.5rem 0.875rem',
+                      textAlign: 'right',
+                      minWidth: '150px',
+                    }}
+                  >
+                    <div style={{ fontSize: '0.625rem', fontWeight: 800, color: 'var(--aarizo-text-secondary, #657785)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Escalation Matrix
+                    </div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--aarizo-text, #203746)', marginTop: '0.125rem' }}>
+                      {c.escalationLevel}
+                    </div>
+                    {isBreached ? (
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#E11D48', fontSize: '0.6875rem', fontWeight: 800, marginTop: '0.25rem' }}>
+                        <AlertTriangle size={12} />
+                        <span>SLA BREACHED</span>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#059669', fontSize: '0.6875rem', fontWeight: 700, marginTop: '0.25rem' }}>
+                        <Timer size={12} />
+                        <span>SLA: {c.slaMinutes}m</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Bottom Row: Metadata Pills + Action Buttons */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '0.625rem',
+                    paddingTop: '0.625rem',
+                    borderTop: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                  }}
+                >
+                  {/* Pills */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        color: 'var(--aarizo-text, #203746)',
+                        background: 'var(--aarizo-pale-blue, #F4FAFE)',
+                        border: '1px solid var(--aarizo-border, #DCE8EF)',
+                        borderRadius: '8px',
+                        padding: '0.3rem 0.625rem',
+                      }}
+                    >
+                      <MapPin size={13} color="var(--aarizo-blue, #176B91)" />
+                      <span>{c.location}</span>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        color: 'var(--aarizo-text, #203746)',
+                        background: 'var(--aarizo-pale-blue, #F4FAFE)',
+                        border: '1px solid var(--aarizo-border, #DCE8EF)',
+                        borderRadius: '8px',
+                        padding: '0.3rem 0.625rem',
+                      }}
+                    >
+                      <User size={13} color="var(--aarizo-blue, #176B91)" />
+                      <span>{c.assignedToName || 'Unassigned'}</span>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        fontSize: '0.6875rem',
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                        borderRadius: '8px',
+                        padding: '0.3rem 0.625rem',
+                        background:
+                          c.urgency === 'CRITICAL' || c.urgency === 'HIGH'
+                            ? '#FFF1F2'
+                            : c.urgency === 'MEDIUM'
+                            ? '#FFFBEB'
+                            : '#ECFDF5',
+                        color:
+                          c.urgency === 'CRITICAL' || c.urgency === 'HIGH'
+                            ? '#E11D48'
+                            : c.urgency === 'MEDIUM'
+                            ? '#D97706'
+                            : '#059669',
+                        border:
+                          c.urgency === 'CRITICAL' || c.urgency === 'HIGH'
+                            ? '1px solid #FECDD3'
+                            : c.urgency === 'MEDIUM'
+                            ? '1px solid #FDE68A'
+                            : '1px solid #A7F3D0',
+                      }}
+                    >
+                      {c.urgency}
                     </div>
                   </div>
 
-                  {/* â”€â”€ Right: Escalation + Actions â”€â”€ */}
-                  <div className="flex flex-row lg:flex-col items-center lg:items-end justify-between lg:justify-center gap-3 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-100 shrink-0 lg:w-44">
+                  {/* Actions */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {c.status === 'VERIFICATION_REQUIRED' && activeRole === 'resident' && (
+                      <button
+                        type="button"
+                        onClick={() => setVerifyComplaint(c)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          padding: '0.4rem 0.875rem',
+                          borderRadius: '8px',
+                          background: '#059669',
+                          color: '#ffffff',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          border: 'none',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 6px rgba(5, 150, 105, 0.25)',
+                        }}
+                      >
+                        <CheckSquare size={13} /> Confirm Resolution
+                      </button>
+                    )}
 
-                    {/* Escalation Badge */}
-                    <div className={`rounded-xl px-3 py-2 text-center w-full lg:w-auto ${
-                      isBreached ? 'bg-rose-50 border border-rose-200' : 'bg-slate-50 border border-slate-200'
-                    }`}>
-                      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Escalation Matrix</p>
-                      <p className="text-[11px] font-extrabold text-slate-800 leading-tight truncate">
-                        {c.escalationLevel}
-                      </p>
-                      {isBreached ? (
-                        <span className="mt-1 inline-flex items-center gap-1 text-rose-700 font-black text-[10px]">
-                          <AlertTriangle size={11} className="shrink-0" /> SLA BREACHED
-                        </span>
-                      ) : (
-                        <span className="mt-1 inline-flex items-center gap-1 text-emerald-700 font-bold text-[10px]">
-                          <Timer size={11} className="shrink-0" /> SLA: {c.slaMinutes}m
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-col gap-2 w-full lg:w-auto">
-                      {c.status === 'VERIFICATION_REQUIRED' && activeRole === 'resident' && (
-                        <button
-                          onClick={() => setVerifyComplaint(c)}
-                          className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold text-[11px] flex items-center justify-center gap-1.5 shadow-sm transition whitespace-nowrap w-full cursor-pointer"
-                        >
-                          <CheckSquare size={13} /> Confirm Resolution
-                        </button>
-                      )}
-                      {c.status !== 'CLOSED' && c.status !== 'VERIFICATION_REQUIRED' && (
-                        <button
-                          onClick={() => handleResolveTicket(c.id)}
-                          className="px-3 py-2 bg-slate-900 hover:bg-slate-700 active:scale-95 text-white rounded-xl font-bold text-[11px] shadow-sm transition whitespace-nowrap w-full cursor-pointer"
-                        >
-                          Mark Resolved
-                        </button>
-                      )}
-                    </div>
-
+                    {c.status !== 'CLOSED' && c.status !== 'VERIFICATION_REQUIRED' && (
+                      <button
+                        type="button"
+                        onClick={() => handleResolveTicket(c.id)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          padding: '0.4rem 0.875rem',
+                          borderRadius: '8px',
+                          background: 'var(--aarizo-navy, #083B56)',
+                          color: '#ffffff',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          border: 'none',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 6px rgba(8, 59, 86, 0.2)',
+                        }}
+                      >
+                        <CheckCircle size={13} /> Mark Resolved
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -407,7 +781,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
         )}
       </div>
 
-      {/* â”€â”€ SLA Policy Modal â”€â”€ */}
+      {/* ── SLA Policy Modal ── */}
       <Modal
         isOpen={showPolicyModal}
         onClose={() => setShowPolicyModal(false)}
@@ -459,7 +833,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
         </form>
       </Modal>
 
-      {/* â”€â”€ Resident Verification Modal â”€â”€ */}
+      {/* ── Resident Verification Modal ── */}
       <Modal
         isOpen={Boolean(verifyComplaint)}
         onClose={() => setVerifyComplaint(null)}
@@ -506,7 +880,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
         )}
       </Modal>
 
-      {/* â”€â”€ File New Complaint Modal â”€â”€ */}
+      {/* ── File New Complaint Modal ── */}
       <Modal
         isOpen={showSubmitModal}
         onClose={() => setShowSubmitModal(false)}
@@ -555,7 +929,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
                 <option value="LOW">Low Priority</option>
                 <option value="MEDIUM">Medium Priority</option>
                 <option value="HIGH">High (Fast-track FM)</option>
-                <option value="CRITICAL">Critical â€“ Emergency</option>
+                <option value="CRITICAL">Critical – Emergency</option>
               </select>
             </div>
           </div>
@@ -567,7 +941,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
               required
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="e.g. Tower B Â· Flat B-1204 or Basement 1"
+              placeholder="e.g. Tower B · Flat B-1204 or Basement 1"
               className="w-full px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]/20 focus:border-[#176B91] transition"
             />
           </div>
@@ -619,4 +993,3 @@ export const ComplaintSLAEngineHub: React.FC = () => {
     </div>
   );
 };
-
