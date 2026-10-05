@@ -154,7 +154,7 @@ export const CreateNoticeDrawer: React.FC<CreateNoticeDrawerProps> = ({
               <label className="form-group-label" style={{ fontSize: '0.75rem' }}>Attach Circular / File (Optional)</label>
               <FileUpload
                 category="general"
-                label="Upload Circular PDF / Image"
+                label=""
                 accept="image/*,application/pdf"
                 currentUrl={attachmentUrl}
                 onUploadSuccess={(url, name) => {

@@ -115,11 +115,11 @@ export const SubmitRequestModal: React.FC<SubmitRequestModalProps> = ({
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
             <FileText size={14} className="text-[#176B91]" />
-            Upload Supporting Document / Agreement
+            Supporting Document / Agreement (Optional)
           </label>
 
           <FileUpload
-            label="Upload Document (PDF, PNG, JPG up to 10MB)"
+            label=""
             category="general"
             accept="application/pdf,image/*"
             currentUrl={uploadedUrl}
@@ -137,24 +137,25 @@ export const SubmitRequestModal: React.FC<SubmitRequestModalProps> = ({
 
           {newFileName && (
             <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg font-medium">
-              <CheckCircle2 size={14} className="text-emerald-600" />
-              <span>Attached: <strong>{newFileName}</strong></span>
+              <CheckCircle2 size={14} className="text-emerald-600 shrink-0" />
+              <span className="truncate">Attached: <strong>{newFileName}</strong></span>
             </div>
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-3 pt-3.5 border-t border-slate-150">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-all"
+            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-all"
           >
             Cancel
           </button>
           <button
             type="submit"
             form="societyRequestForm"
-            className="px-5 py-2.5 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition-all"
+            className="px-5 py-2 bg-[#083B56] hover:bg-[#176B91] text-white text-xs font-bold rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.99]"
+            style={{ backgroundColor: 'var(--aarizo-navy, #083B56)' }}
           >
             Submit Request
           </button>

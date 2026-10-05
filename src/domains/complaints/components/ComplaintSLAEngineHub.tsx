@@ -608,7 +608,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
               Attach Issue Photo or Proof (Optional)
             </label>
             <FileUpload
-              label="Upload Photo or Document"
+              label=""
               category="tickets"
               accept="image/*,application/pdf"
               maxSizeMB={5}

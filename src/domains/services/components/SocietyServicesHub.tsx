@@ -835,7 +835,7 @@ export const SocietyServicesHub: React.FC<SocietyServicesHubProps> = ({ userRole
                 </label>
                 <FileUpload
                   category="general"
-                  label="Upload Service Photo or Menu/Rate Card"
+                  label=""
                   onUploadSuccess={(url: string) => {
                     setNewItemForm((prev) => ({ ...prev, imageUrl: url }));
                   }}

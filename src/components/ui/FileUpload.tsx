@@ -101,8 +101,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
   return (
     <div className={`w-full ${className}`}>
-      {label && (
-        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+      {label && label.trim() !== '' && (
+        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 tracking-tight">
           {label}
         </label>
       )}
@@ -128,23 +128,23 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
       {/* Upload Zone or Preview */}
       {previewUrl || uploadedName ? (
-        <div className="relative overflow-hidden rounded-2xl border-2 border-emerald-500/40 bg-emerald-50/20 dark:bg-emerald-950/20 p-3 transition-all">
+        <div className="relative overflow-hidden rounded-2xl border-2 border-emerald-500/30 bg-emerald-50/30 dark:bg-emerald-950/20 p-3.5 transition-all shadow-xs">
           <div className="flex items-center gap-3">
             {previewUrl && (previewUrl.startsWith('http') || previewUrl.startsWith('blob:') || previewUrl.startsWith('/uploads')) ? (
               <img
                 src={previewUrl}
                 alt="Upload preview"
-                className="w-14 h-14 rounded-xl object-cover border border-emerald-200 dark:border-emerald-800 shadow-sm shrink-0"
+                className="w-12 h-12 rounded-xl object-cover border border-emerald-200 dark:border-emerald-800 shadow-xs shrink-0"
               />
             ) : (
-              <div className="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0">
-                <FileText className="w-7 h-7 text-emerald-600" />
+              <div className="w-12 h-12 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/40 flex items-center justify-center shrink-0 border border-emerald-200/50">
+                <FileText className="w-6 h-6 text-emerald-700 dark:text-emerald-400" />
               </div>
             )}
 
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
                 <span>Uploaded Successfully</span>
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-300 truncate mt-0.5 font-medium">
@@ -155,7 +155,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             <button
               type="button"
               onClick={handleClear}
-              className="p-1.5 rounded-lg bg-rose-100 dark:bg-rose-950/40 text-rose-600 hover:bg-rose-200 transition-colors shrink-0"
+              className="p-1.5 rounded-lg bg-white/80 hover:bg-rose-50 text-slate-400 hover:text-rose-600 border border-slate-200/80 hover:border-rose-200 transition-colors shrink-0 shadow-2xs"
               title="Remove file"
             >
               <X className="w-4 h-4" />
@@ -171,43 +171,44 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
           onClick={() => !isUploading && fileInputRef.current?.click()}
-          className={`relative cursor-pointer rounded-2xl border-2 border-dashed p-4 transition-all flex flex-col items-center justify-center text-center ${
+          className={`group relative cursor-pointer rounded-2xl border-2 border-dashed py-4 px-4 transition-all duration-200 flex flex-col items-center justify-center text-center ${
             isDragging
-              ? 'border-[#176B91] bg-sky-50 dark:bg-sky-950/30'
-              : 'border-slate-300 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/40 hover:border-[#176B91] hover:bg-slate-50'
+              ? 'border-[#176B91] bg-sky-50/70 dark:bg-sky-950/30 ring-4 ring-[#176B91]/10'
+              : 'border-slate-250 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/30 hover:border-[#176B91] hover:bg-slate-50/90 hover:shadow-xs'
           }`}
+          style={{ borderColor: isDragging ? 'var(--aarizo-blue, #176B91)' : undefined }}
         >
           {isUploading ? (
-            <div className="flex flex-col items-center py-2">
-              <Loader2 className="w-8 h-8 text-[#176B91] animate-spin mb-2" />
+            <div className="flex flex-col items-center py-2.5">
+              <Loader2 className="w-7 h-7 text-[#176B91] animate-spin mb-2" />
               <p className="text-xs font-bold text-slate-700 dark:text-slate-200">
                 Uploading to Server...
               </p>
-              <p className="text-[11px] text-slate-400 mt-0.5">Storing in PostgreSQL real-time storage</p>
+              <p className="text-[11px] text-slate-400 mt-0.5 font-medium">Storing in real-time encrypted vault</p>
             </div>
           ) : (
             <>
-              <div className="w-10 h-10 rounded-xl bg-[#EBF3F7] dark:bg-slate-700 flex items-center justify-center text-[#176B91] dark:text-[#83CBEA] mb-2 shadow-xs">
-                <Upload className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-700 flex items-center justify-center text-[#176B91] dark:text-[#83CBEA] mb-2 shadow-xs border border-slate-150 dark:border-slate-600 group-hover:scale-105 group-hover:bg-[#176B91] group-hover:text-white transition-all">
+                <Upload className="w-5 h-5 transition-colors" />
               </div>
 
-              <p className="text-xs font-bold text-slate-800 dark:text-slate-200 mb-0.5">
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-200 mb-0.5 group-hover:text-[#176B91] transition-colors">
                 Click or drag &amp; drop file here
               </p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              <p className="text-[11px] font-medium text-slate-400 dark:text-slate-400">
                 JPG, PNG, PDF up to {maxSizeMB}MB
               </p>
 
-              {/* Mobile Camera Quick-Action */}
+              {/* Mobile / Camera Quick Action Chips */}
               {showCameraOption && (
-                <div className="mt-3 flex items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-700/60 w-full justify-center">
+                <div className="mt-3 flex items-center gap-2 pt-2.5 border-t border-slate-200/80 dark:border-slate-700/60 w-full justify-center">
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       cameraInputRef.current?.click();
                     }}
-                    className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[11px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700/90 border border-slate-200 dark:border-slate-600 text-[11px] font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 hover:text-[#176B91] hover:border-[#176B91]/30 transition-all shadow-2xs"
                   >
                     <Camera className="w-3.5 h-3.5 text-[#176B91]" />
                     <span>Take Photo</span>
@@ -218,7 +219,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                       e.stopPropagation();
                       fileInputRef.current?.click();
                     }}
-                    className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[11px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700/90 border border-slate-200 dark:border-slate-600 text-[11px] font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 hover:text-[#176B91] hover:border-[#176B91]/30 transition-all shadow-2xs"
                   >
                     <ImageIcon className="w-3.5 h-3.5 text-[#176B91]" />
                     <span>Gallery</span>
@@ -231,8 +232,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       )}
 
       {error && (
-        <p className="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-medium">
-          {error}
+        <p className="mt-2 text-xs text-rose-600 dark:text-rose-400 font-medium flex items-center gap-1">
+          <span>•</span> {error}
         </p>
       )}
     </div>
