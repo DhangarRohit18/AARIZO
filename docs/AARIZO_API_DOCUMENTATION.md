@@ -34,3 +34,4 @@ All protected routes require an Authorization Bearer token:
 * `GET /api/attendance` & `POST /api/attendance/check-in`: Guard & staff attendance tracking.
 * `GET /api/compliance-documents` & `POST /api/compliance-documents`: Digital vault for society NOCs and audits.
 * `GET /api/move-requests` & `POST /api/move-requests`: Moving scheduling, elevator reservation, and gate pass generation.
+

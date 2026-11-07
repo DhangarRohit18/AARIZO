@@ -34,3 +34,4 @@ graph TD
 5. **Resident:** QR gate pass creation, maintenance billing, SOS alerts, amenity booking.
 6. **Guard:** Gate terminal scanning, visitor verification, child exit checks.
 7. **Vendor:** KYC verification, job completion uploads, invoice settlement.
+

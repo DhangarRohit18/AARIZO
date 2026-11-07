@@ -45,3 +45,4 @@ The Universal Provisioning Service (`server/src/provisioning.ts`) provides trans
      - `guard` / `facility_manager`: Creates `Staff` entry.
      - `vendor`: Creates `Vendor` entry.
   5. Emits `USER_PROVISIONED` outbox event.
+

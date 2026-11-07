@@ -38,3 +38,4 @@ With an Android smartphone or emulator connected over USB/Wi-Fi:
 ```powershell
 & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" install -r "android/app/build/outputs/apk/debug/app-debug.apk"
 ```
+

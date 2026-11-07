@@ -26,3 +26,4 @@ Tests:       46 passed, 46 total
 Snapshots:   0 total
 Time:        3.385 s
 ```
+

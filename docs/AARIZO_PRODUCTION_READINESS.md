@@ -35,3 +35,4 @@ VITE_FIREBASE_PROJECT_ID="aarizo-community"
 VITE_RAZORPAY_KEY_ID="rzp_live_your_actual_key"
 VITE_BACKEND_URL="https://api.aarizo.com"
 ```
+

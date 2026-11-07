@@ -50,3 +50,4 @@ erDiagram
 
 ### Real-Time Infrastructure
 * `outbox_events`: Transactional outbox records (`eventId`, `eventType`, `payload`, `status`).
+

@@ -27,3 +27,4 @@ This document provides a technical audit of the AARIZO residential society manag
 3. **Competing Databases:** Consolidated business state onto PostgreSQL (Prisma ORM), relegating Firebase solely to Auth, Storage, and Cloud Messaging.
 4. **Fragile In-Memory SSE:** Replaced unpersisted event arrays with a persistent PostgreSQL Transactional Outbox pattern (`outbox_events`).
 5. **Payment Insecurities:** Implemented timing-safe HMAC SHA-256 signature verification and server-side balance lookups.
+

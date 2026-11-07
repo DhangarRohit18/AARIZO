@@ -27,3 +27,4 @@
 ### 1.5 Payment Cryptographic Integrity
 * Razorpay payment signatures are validated using constant-time `crypto.timingSafeEqual` over HMAC-SHA256 (`order_id + "|" + payment_id`).
 * Invoices can never be marked paid without cryptographic server confirmation.
+

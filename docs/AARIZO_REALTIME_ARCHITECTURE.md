@@ -40,3 +40,4 @@ sequenceDiagram
 2. **Exponential Reconnect:** On network drop, client reconnects using `1000 * Math.pow(1.5, attempts)` backoff up to 15s.
 3. **Last-Event-ID Replay:** When reconnecting, the client sends its last received event ID; the server queries `outbox_events` and replays all missed events in chronological order.
 4. **Tenant Scoping:** Events are strictly filtered by `societyId` and verified target `role`.
+
