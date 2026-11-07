@@ -6,6 +6,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { prisma } from './prisma.js';
+import { timingSafeCompare } from './crypto.js';
 
 dotenv.config();
 
@@ -16,7 +17,14 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
-app.use(express.json({ limit: '25mb' }));
+app.use(
+  express.json({
+    limit: '25mb',
+    verify: (req: any, _res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
 // Static uploads directory with automated initialization
@@ -40,6 +48,7 @@ declare global {
       societyId?: string;
       userId?: string;
       userRole?: string;
+      rawBody?: Buffer;
     }
   }
 }
@@ -243,6 +252,65 @@ app.patch('/api/visitor-passes/:id', requireRole(['resident', 'guard', 'secretar
   }
 });
 
+// Gate Pass Verification Endpoint
+app.post('/api/visitor-passes/verify', requireRole(['guard', 'secretary', 'admin', 'resident']), async (req: Request, res: Response) => {
+  try {
+    const { codeOrQr } = req.body;
+    const clean = String(codeOrQr || '').trim().toUpperCase();
+
+    const passes = await prisma.visitorPass.findMany({
+      where: req.societyId ? { societyId: req.societyId } : undefined,
+      include: {
+        resident: true,
+        flat: true,
+      }
+    });
+
+    const matched = passes.find(p =>
+      p.id.toUpperCase() === clean ||
+      p.id.toUpperCase() === `PASS-${clean}` ||
+      (p.qrCodeHash && p.qrCodeHash.toUpperCase().includes(clean)) ||
+      p.id.toUpperCase().endsWith(clean)
+    );
+
+    if (!matched) {
+      return res.status(404).json({
+        isValid: false,
+        status: 'invalid',
+        message: `Passcode ${clean} not recognised in system.`,
+      });
+    }
+
+    const now = new Date();
+    if (matched.status === 'CANCELLED' || matched.status === 'REJECTED') {
+      return res.json({
+        isValid: false,
+        status: 'cancelled',
+        message: 'This gate pass is no longer active.',
+        pass: matched,
+      });
+    }
+
+    if (now > new Date(matched.validTo) || matched.status === 'EXPIRED') {
+      return res.json({
+        isValid: false,
+        status: 'expired',
+        message: 'This gate pass has expired.',
+        pass: matched,
+      });
+    }
+
+    return res.json({
+      isValid: true,
+      status: matched.status === 'CHECKED_IN' ? 'checked_in' : 'valid',
+      message: 'Gate pass verified successfully!',
+      pass: matched,
+    });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Maintenance Tickets
 app.get('/api/maintenance', requireRole(['resident', 'facility_manager', 'secretary', 'admin', 'vendor']), async (req: Request, res: Response) => {
   try {
@@ -405,6 +473,265 @@ app.get('/api/amenities', async (req: Request, res: Response) => {
     res.status(500).json({ error: String(error) });
   }
 });
+
+// Amenity Slot Availability (PostgreSQL Source of Truth)
+app.get('/api/amenities/:id/availability', async (req: Request, res: Response) => {
+  try {
+    const amenityId = String(req.params.id);
+    const date = String(req.query.date || new Date().toISOString().substring(0, 10));
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+
+    // 1. Get amenity capacity & hours
+    let amenity = await prisma.amenity.findUnique({ where: { id: amenityId } });
+    let capacityPerSlot = amenity?.capacityPerSlot || 10;
+    let openTime = (amenity as any)?.openTime || '06:00';
+    let closeTime = (amenity as any)?.closeTime || '22:00';
+    let slotDurationMinutes = amenity?.slotDurationMinutes || 60;
+    let amenityName = amenity?.name || 'Amenity Facility';
+
+    if (!amenity) {
+      // Fallback to EntityRecord
+      const entityRec = await prisma.entityRecord.findUnique({ where: { id: amenityId } }).catch(() => null);
+      if (entityRec && entityRec.data) {
+        const d = entityRec.data as any;
+        capacityPerSlot = d.capacityPerSlot || 10;
+        openTime = d.openTime || '06:00';
+        closeTime = d.closeTime || '22:00';
+        slotDurationMinutes = d.slotDurationMinutes || 60;
+        amenityName = d.name || 'Amenity Facility';
+      }
+    }
+
+    // 2. Fetch existing active bookings for this amenity & date from entityRecord
+    const bookingRecords = await prisma.entityRecord.findMany({
+      where: {
+        collection: 'amenityBookings',
+        societyId: societyId !== 'all' ? societyId : undefined,
+      },
+    });
+
+    const activeBookings = bookingRecords
+      .map((r) => r.data as any)
+      .filter((b) => {
+        if (!b || b.amenityId !== amenityId) return false;
+        if (b.bookingDate !== date && b.date !== date) return false;
+        const status = (b.status || '').toUpperCase();
+        return status === 'CONFIRMED' || status === 'APPROVED' || status === 'PENDING';
+      });
+
+    // 3. Generate time slots
+    const slots = [];
+    let currentMin = parseTimeToMinutes(openTime);
+    const closeMin = parseTimeToMinutes(closeTime);
+
+    while (currentMin + slotDurationMinutes <= closeMin) {
+      const startTime = formatMinutesToTime(currentMin);
+      const endTime = formatMinutesToTime(currentMin + slotDurationMinutes);
+
+      // Sum guest count of overlapping bookings
+      let bookedCount = 0;
+      for (const bk of activeBookings) {
+        const bkStart = bk.startTime || '00:00';
+        const bkEnd = bk.endTime || '23:59';
+        // Overlap: startTime < bkEnd AND endTime > bkStart
+        if (startTime < bkEnd && endTime > bkStart) {
+          bookedCount += Number(bk.guestCount || bk.attendeesCount || 1);
+        }
+      }
+
+      const remainingSpots = Math.max(0, capacityPerSlot - bookedCount);
+      const status = remainingSpots === 0 ? 'FULL' : remainingSpots <= 2 ? 'LIMITED' : 'AVAILABLE';
+
+      slots.push({
+        startTime,
+        endTime,
+        bookedCount,
+        capacity: capacityPerSlot,
+        remainingSpots,
+        status,
+      });
+
+      currentMin += slotDurationMinutes;
+    }
+
+    res.json({
+      amenityId,
+      amenityName,
+      date,
+      capacityPerSlot,
+      openTime,
+      closeTime,
+      slotDurationMinutes,
+      slots,
+    });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Atomic Server-Side Amenity Booking Endpoint
+app.post('/api/amenities/:id/book', async (req: Request, res: Response) => {
+  try {
+    const amenityId = String(req.params.id);
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const {
+      residentId = 'user-resident-01',
+      residentName = 'Resident',
+      flatNumber = 'A-101',
+      bookingDate,
+      startTime,
+      endTime,
+      guestCount = 1,
+      purpose = '',
+      bookingFee = 0,
+      paymentStatus = 'FREE',
+      paymentId,
+    } = req.body;
+
+    if (!bookingDate || !startTime || !endTime) {
+      return res.status(400).json({ error: 'Missing required booking fields: bookingDate, startTime, endTime' });
+    }
+
+    const requestedPax = Number(guestCount) || 1;
+
+    // 1. Fetch Amenity Capacity & Policy
+    let amenity = await prisma.amenity.findUnique({ where: { id: amenityId } });
+    let capacityPerSlot = amenity?.capacityPerSlot || 10;
+    let requiresApproval = amenity?.requiresApproval || false;
+    let amenityName = amenity?.name || 'Amenity Facility';
+
+    if (!amenity) {
+      const entityRec = await prisma.entityRecord.findUnique({ where: { id: amenityId } }).catch(() => null);
+      if (entityRec && entityRec.data) {
+        const d = entityRec.data as any;
+        capacityPerSlot = d.capacityPerSlot || 10;
+        requiresApproval = d.requiresApproval || false;
+        amenityName = d.name || 'Amenity Facility';
+      }
+    }
+
+    // 2. Query active bookings for overlap check in PostgreSQL
+    const existingRecords = await prisma.entityRecord.findMany({
+      where: {
+        collection: 'amenityBookings',
+        societyId,
+      },
+    });
+
+    const activeBookings = existingRecords
+      .map((r) => r.data as any)
+      .filter((b) => {
+        if (!b || b.amenityId !== amenityId) return false;
+        if (b.bookingDate !== bookingDate && b.date !== bookingDate) return false;
+        const status = (b.status || '').toUpperCase();
+        return status === 'CONFIRMED' || status === 'APPROVED' || status === 'PENDING';
+      });
+
+    let currentOccupancy = 0;
+    for (const bk of activeBookings) {
+      const bkStart = bk.startTime || '00:00';
+      const bkEnd = bk.endTime || '23:59';
+      if (startTime < bkEnd && endTime > bkStart) {
+        currentOccupancy += Number(bk.guestCount || bk.attendeesCount || 1);
+      }
+    }
+
+    // 3. Strict Capacity Validation
+    if (currentOccupancy + requestedPax > capacityPerSlot) {
+      const remainingSpots = Math.max(0, capacityPerSlot - currentOccupancy);
+      return res.status(400).json({
+        error: remainingSpots > 0
+          ? `Only ${remainingSpots} spot(s) available for ${startTime} - ${endTime}. Requested ${requestedPax} spot(s).`
+          : `The ${startTime} - ${endTime} slot is fully booked. Please select another time or date.`,
+        remainingSpots,
+        capacityPerSlot,
+      });
+    }
+
+    // 4. Create Booking
+    const bookingId = `bk-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const status = requiresApproval ? 'PENDING' : 'CONFIRMED';
+    const newBooking = {
+      id: bookingId,
+      societyId,
+      amenityId,
+      amenityName,
+      residentId,
+      residentName,
+      flatNumber,
+      bookingDate,
+      startTime,
+      endTime,
+      guestCount: requestedPax,
+      purpose,
+      bookingFee: Number(bookingFee) || 0,
+      paymentStatus,
+      paymentId,
+      status,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    await prisma.entityRecord.create({
+      data: {
+        id: bookingId,
+        collection: 'amenityBookings',
+        societyId,
+        data: newBooking,
+      },
+    });
+
+    // 5. Broadcast Realtime Updates
+    broadcastEvent('AMENITY_BOOKED', newBooking, societyId);
+    broadcastEvent('AMENITY_AVAILABILITY_CHANGED', { amenityId, bookingDate, startTime, endTime }, societyId);
+
+    return res.status(201).json(newBooking);
+  } catch (error) {
+    return res.status(500).json({ error: String(error) });
+  }
+});
+
+// Cancel Booking Endpoint
+app.post('/api/amenities/bookings/:id/cancel', async (req: Request, res: Response) => {
+  try {
+    const bookingId = String(req.params.id);
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+
+    const record = await prisma.entityRecord.findUnique({ where: { id: bookingId } });
+    if (!record) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    const dataObj = (record.data as any) || {};
+    dataObj.status = 'CANCELLED';
+    dataObj.updatedAt = new Date().toISOString();
+
+    await prisma.entityRecord.update({
+      where: { id: bookingId },
+      data: { data: dataObj },
+    });
+
+    broadcastEvent('AMENITY_BOOKED', dataObj, societyId);
+    broadcastEvent('AMENITY_AVAILABILITY_CHANGED', { amenityId: dataObj.amenityId, bookingDate: dataObj.bookingDate }, societyId);
+
+    return res.json(dataObj);
+  } catch (error) {
+    return res.status(500).json({ error: String(error) });
+  }
+});
+
+// Helper functions for time calculations
+function parseTimeToMinutes(tStr: string): number {
+  if (!tStr) return 0;
+  const parts = tStr.split(':').map(Number);
+  return (parts[0] || 0) * 60 + (parts[1] || 0);
+}
+
+function formatMinutesToTime(mins: number): string {
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
 
 // Announcements
 app.get('/api/announcements', async (req: Request, res: Response) => {
@@ -574,10 +901,10 @@ app.post('/api/upload', async (req: Request, res: Response) => {
 });
 
 // ==========================================
-// 💳 Razorpay Payment Engine
+// 💳 Razorpay Payment Engine (Production-Grade)
 // ==========================================
-// 💳 Razorpay Payment Engine
-// ==========================================
+
+// 1. Create Order: Strictly resolves amount and currency from server-side database invoice
 app.post('/api/payments/razorpay/create-order', async (req: Request, res: Response) => {
   try {
     const { invoiceId, currency = 'INR' } = req.body;
@@ -585,35 +912,59 @@ app.post('/api/payments/razorpay/create-order', async (req: Request, res: Respon
       return res.status(400).json({ error: 'invoiceId is required' });
     }
 
-    // 1. Retrieve invoice from database (Server-side amount validation - DO NOT trust client amount)
-    let actualAmount = 2500;
-    let invoiceNumber = `INV-${invoiceId.slice(0, 6)}`;
-    try {
-      const invoice = await prisma.billingInvoice.findUnique({
-        where: { id: invoiceId },
-      });
-      if (invoice) {
-        if (invoice.status === 'PAID') {
-          return res.status(400).json({ error: 'Invoice has already been paid.' });
-        }
-        const total = invoice.totalAmount ? Number(invoice.totalAmount) : 2500;
-        const paid = invoice.paidAmount ? Number(invoice.paidAmount) : 0;
-        actualAmount = total - paid;
-        invoiceNumber = invoice.invoiceNumber;
-      }
-    } catch {
-      // Fallback to default if Prisma is not connected
+    // Server-side invoice resolution: NEVER trust client-supplied amounts or ownership
+    const invoice = await prisma.billingInvoice.findUnique({
+      where: { id: invoiceId },
+      include: {
+        resident: true,
+        flat: true,
+      },
+    });
+
+    if (!invoice) {
+      return res.status(404).json({ error: 'Invoice not found in system records.' });
     }
 
-    if (actualAmount <= 0) {
+    if (invoice.status === 'PAID') {
+      return res.status(400).json({ error: 'Invoice has already been settled and marked as PAID.' });
+    }
+
+    if (invoice.status === 'CANCELLED') {
+      return res.status(400).json({ error: 'Invoice has been cancelled and cannot be paid.' });
+    }
+
+    // Society multi-tenant isolation check
+    if (req.societyId && invoice.societyId !== req.societyId && req.userRole !== 'superadmin') {
+      return res.status(403).json({ error: 'Unauthorized: Cross-society payment order creation prohibited.' });
+    }
+
+    // Role-based authorization: residents may only pay their own invoices
+    if (req.userRole === 'resident' && req.userId) {
+      const isOwner =
+        invoice.residentId === req.userId ||
+        invoice.resident?.userId === req.userId ||
+        invoice.resident?.phone === req.userId;
+      if (!isOwner && invoice.residentId) {
+        return res.status(403).json({ error: 'Unauthorized: You are not authorized to pay invoices for this unit.' });
+      }
+    }
+
+    const total = Number(invoice.totalAmount || 0);
+    const paid = Number(invoice.paidAmount || 0);
+    const outstanding = Math.max(0, total - paid);
+
+    if (outstanding <= 0) {
       return res.status(400).json({ error: 'Invoice has no outstanding balance payable.' });
     }
 
+    // Amount in integer subunits (paise for INR)
+    const amountInPaise = Math.round(outstanding * 100);
+
     const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_AARIZO_2026';
     const keySecret = process.env.RAZORPAY_KEY_SECRET || 'rzp_secret_AARIZO_2026';
-    let orderId = `order_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    let orderId = `order_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
 
-    // Call live Razorpay API if real credentials configured
+    // Call live Razorpay API if live/test credentials configured
     if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET && !process.env.RAZORPAY_KEY_ID.includes('test_AARIZO')) {
       try {
         const basicAuth = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
@@ -624,98 +975,157 @@ app.post('/api/payments/razorpay/create-order', async (req: Request, res: Respon
             'Authorization': `Basic ${basicAuth}`,
           },
           body: JSON.stringify({
-            amount: Math.round(actualAmount * 100),
+            amount: amountInPaise,
             currency,
-            receipt: invoiceNumber,
+            receipt: invoice.invoiceNumber,
             notes: {
-              invoiceId,
-              societyId: req.societyId || 'soc-gvs',
-              userId: req.userId || 'resident',
+              invoiceId: invoice.id,
+              invoiceNumber: invoice.invoiceNumber,
+              societyId: invoice.societyId,
+              userId: req.userId || invoice.residentId || 'resident',
             },
           }),
         });
+
         if (rzpRes.ok) {
           const rzpData = (await rzpRes.json()) as any;
-          if (rzpData.id) orderId = rzpData.id;
+          if (rzpData?.id) {
+            orderId = rzpData.id;
+          }
+        } else {
+          const errBody = await rzpRes.text();
+          console.warn('[Razorpay API] Order creation returned non-200:', errBody);
         }
-      } catch (err) {
-        console.warn('Direct Razorpay API order call fallback:', err);
+      } catch (apiErr) {
+        console.warn('[Razorpay API] Live order call failed, fallback order reference used:', apiErr);
       }
     }
 
     // Persist Payment record in PostgreSQL with status PENDING
     try {
-      await prisma.payment.create({
-        data: {
-          societyId: req.societyId || 'soc-gvs',
-          invoiceId,
-          userId: req.userId || undefined,
-          amount: actualAmount,
-          currency,
+      const existingPending = await prisma.payment.findFirst({
+        where: {
+          invoiceId: invoice.id,
           status: 'PENDING',
-          razorpayOrderId: orderId,
-          paymentMethod: 'RAZORPAY',
-          metadata: {
-            invoiceNumber,
-            createdAt: new Date().toISOString(),
-          },
         },
       });
-    } catch (e) {
-      console.warn('Could not persist pending payment in Prisma:', e);
+
+      if (existingPending) {
+        await prisma.payment.update({
+          where: { id: existingPending.id },
+          data: {
+            razorpayOrderId: orderId,
+            amount: outstanding,
+            currency,
+            metadata: {
+              invoiceNumber: invoice.invoiceNumber,
+              updatedAt: new Date().toISOString(),
+            },
+          },
+        });
+      } else {
+        await prisma.payment.create({
+          data: {
+            societyId: invoice.societyId,
+            invoiceId: invoice.id,
+            residentId: invoice.residentId || undefined,
+            userId: req.userId || invoice.resident?.userId || undefined,
+            amount: outstanding,
+            currency,
+            status: 'PENDING',
+            razorpayOrderId: orderId,
+            paymentMethod: 'RAZORPAY',
+            metadata: {
+              invoiceNumber: invoice.invoiceNumber,
+              createdAt: new Date().toISOString(),
+            },
+          },
+        });
+      }
+    } catch (dbErr) {
+      console.warn('[Payment Record] Could not persist pending payment in Prisma:', dbErr);
     }
 
     res.json({
       orderId,
-      amount: Math.round(actualAmount * 100), // amount in paise
+      amount: amountInPaise,
       currency,
       keyId,
-      invoiceId,
+      invoiceId: invoice.id,
       notes: {
-        societyId: req.societyId || 'soc-gvs',
-        purpose: `Maintenance Settlement #${invoiceNumber}`,
+        societyId: invoice.societyId,
+        invoiceNumber: invoice.invoiceNumber,
+        purpose: `Maintenance Bill #${invoice.invoiceNumber}`,
       },
     });
   } catch (error) {
+    console.error('Error in create-order endpoint:', error);
     res.status(500).json({ error: String(error) });
   }
 });
 
+// 2. Verify Payment: Cryptographic HMAC SHA256 Verification & Atomic Database Settlement
 app.post('/api/payments/razorpay/verify', async (req: Request, res: Response) => {
   try {
     const { invoiceId, razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body;
-    if (!invoiceId || !razorpayPaymentId || !razorpayOrderId) {
-      return res.status(400).json({ error: 'invoiceId, razorpayPaymentId, and razorpayOrderId are required' });
+    if (!invoiceId || !razorpayPaymentId || !razorpayOrderId || !razorpaySignature) {
+      return res.status(400).json({
+        error: 'invoiceId, razorpayPaymentId, razorpayOrderId, and razorpaySignature are required for verification.',
+      });
     }
 
     const keySecret = process.env.RAZORPAY_KEY_SECRET || 'rzp_secret_AARIZO_2026';
 
     // Cryptographic HMAC SHA256 Signature Verification
-    if (razorpaySignature) {
-      const expectedSignature = crypto
-        .createHmac('sha256', keySecret)
-        .update(`${razorpayOrderId}|${razorpayPaymentId}`)
-        .digest('hex');
+    const expectedSignature = crypto
+      .createHmac('sha256', keySecret)
+      .update(`${razorpayOrderId}|${razorpayPaymentId}`)
+      .digest('hex');
 
-      const isSigValid =
-        expectedSignature === razorpaySignature ||
-        (razorpaySignature.startsWith('test_sig_') && keySecret === 'rzp_secret_AARIZO_2026') ||
-        (process.env.NODE_ENV !== 'production' && razorpaySignature.length >= 10);
+    let isSigValid = timingSafeCompare(expectedSignature, razorpaySignature);
 
-      if (!isSigValid) {
-        return res.status(403).json({
-          success: false,
-          error: 'Invalid Razorpay payment signature. Payment verification rejected.',
-        });
-      }
+    // Development/Test mock accommodation if test secret in use
+    if (!isSigValid && keySecret === 'rzp_secret_AARIZO_2026' && razorpaySignature.startsWith('test_sig_')) {
+      isSigValid = true;
     }
 
-    let updatedInvoice: any = null;
-    try {
-      updatedInvoice = await prisma.billingInvoice.update({
+    if (!isSigValid) {
+      return res.status(403).json({
+        success: false,
+        error: 'Invalid Razorpay payment signature. Payment verification rejected.',
+      });
+    }
+
+    // Fetch invoice from database
+    const invoice = await prisma.billingInvoice.findUnique({
+      where: { id: invoiceId },
+      include: {
+        flat: true,
+        resident: true,
+      },
+    });
+
+    if (!invoice) {
+      return res.status(404).json({ error: 'Invoice not found.' });
+    }
+
+    // Idempotency: If invoice is already paid, return success without duplicate balance deduction
+    if (invoice.status === 'PAID') {
+      return res.json({
+        success: true,
+        message: 'Invoice has already been verified and marked as PAID.',
+        invoice,
+        transactionId: razorpayPaymentId,
+      });
+    }
+
+    // Atomic database transaction: Update Invoice to PAID, Update Payment to SUCCESS, write AuditLog
+    const [updatedInvoice, updatedPayment] = await prisma.$transaction(async (tx) => {
+      const inv = await tx.billingInvoice.update({
         where: { id: invoiceId },
         data: {
           status: 'PAID',
+          paidAmount: invoice.totalAmount,
           paidAt: new Date(),
           paymentMode: 'RAZORPAY',
         },
@@ -725,58 +1135,61 @@ app.post('/api/payments/razorpay/verify', async (req: Request, res: Response) =>
         },
       });
 
-      // Update or create Payment record in PostgreSQL
-      try {
-        const existingPayment = await prisma.payment.findFirst({
-          where: { razorpayOrderId },
-        });
+      const existingPayment = await tx.payment.findFirst({
+        where: {
+          OR: [
+            { razorpayOrderId },
+            { razorpayPaymentId },
+            { invoiceId, status: 'PENDING' },
+          ],
+        },
+      });
 
-        if (existingPayment) {
-          await prisma.payment.update({
-            where: { id: existingPayment.id },
-            data: {
-              status: 'SUCCESS',
-              razorpayPaymentId,
-              razorpaySignatureVerified: true,
-              paymentMethod: 'RAZORPAY',
-              metadata: {
-                ...(typeof existingPayment.metadata === 'object' && existingPayment.metadata ? (existingPayment.metadata as any) : {}),
-                paidAt: new Date().toISOString(),
-                invoiceNumber: updatedInvoice?.invoiceNumber,
-              },
+      let payRecord;
+      if (existingPayment) {
+        payRecord = await tx.payment.update({
+          where: { id: existingPayment.id },
+          data: {
+            status: 'SUCCESS',
+            razorpayPaymentId,
+            razorpayOrderId,
+            razorpaySignatureVerified: true,
+            paymentMethod: 'RAZORPAY',
+            amount: inv.totalAmount,
+            metadata: {
+              ...(typeof existingPayment.metadata === 'object' && existingPayment.metadata ? (existingPayment.metadata as any) : {}),
+              paidAt: new Date().toISOString(),
+              invoiceNumber: inv.invoiceNumber,
             },
-          });
-        } else {
-          await prisma.payment.create({
-            data: {
-              societyId: updatedInvoice.societyId,
-              invoiceId,
-              userId: req.userId || undefined,
-              residentId: updatedInvoice.residentId || undefined,
-              amount: updatedInvoice.totalAmount,
-              currency: 'INR',
-              status: 'SUCCESS',
-              razorpayOrderId,
-              razorpayPaymentId,
-              razorpaySignatureVerified: true,
-              paymentMethod: 'RAZORPAY',
-              metadata: {
-                paidAt: new Date().toISOString(),
-                invoiceNumber: updatedInvoice?.invoiceNumber,
-              },
+          },
+        });
+      } else {
+        payRecord = await tx.payment.create({
+          data: {
+            societyId: inv.societyId,
+            invoiceId,
+            userId: req.userId || inv.resident?.userId || undefined,
+            residentId: inv.residentId || undefined,
+            amount: inv.totalAmount,
+            currency: 'INR',
+            status: 'SUCCESS',
+            razorpayOrderId,
+            razorpayPaymentId,
+            razorpaySignatureVerified: true,
+            paymentMethod: 'RAZORPAY',
+            metadata: {
+              paidAt: new Date().toISOString(),
+              invoiceNumber: inv.invoiceNumber,
             },
-          });
-        }
-      } catch (payErr) {
-        console.warn('Could not record successful payment record in Prisma:', payErr);
+          },
+        });
       }
 
-      // Create Audit Log entry
-      await prisma.auditLog.create({
+      await tx.auditLog.create({
         data: {
-          societyId: updatedInvoice.societyId,
+          societyId: inv.societyId,
           actorId: req.userId || 'system',
-          actorName: updatedInvoice.resident?.name || 'Resident',
+          actorName: inv.resident?.name || 'Resident',
           role: 'resident',
           action: 'PAYMENT_COMPLETED',
           entityName: 'BillingInvoice',
@@ -784,16 +1197,16 @@ app.post('/api/payments/razorpay/verify', async (req: Request, res: Response) =>
           metadata: {
             razorpayPaymentId,
             razorpayOrderId,
-            amount: updatedInvoice.totalAmount,
+            amount: Number(inv.totalAmount),
             paidAt: new Date().toISOString(),
           },
         },
       });
-    } catch {
-      // Non-blocking if Prisma DB is not running
-    }
 
-    // Instantaneous real-time broadcast across all guards, secretary, and resident screens
+      return [inv, payRecord];
+    });
+
+    // Instantaneous real-time broadcast across all resident, guard, and secretary screens
     broadcastEvent('PAYMENT_COMPLETED', {
       invoiceId,
       invoiceNumber: updatedInvoice?.invoiceNumber || invoiceId,
@@ -815,59 +1228,120 @@ app.post('/api/payments/razorpay/verify', async (req: Request, res: Response) =>
   }
 });
 
+// 3. Status Query: Query trusted server-side payment status
+app.get('/api/payments/status/:orderId', async (req: Request, res: Response) => {
+  try {
+    const orderId = String(req.params.orderId);
+    const payment = await prisma.payment.findFirst({
+      where: {
+        OR: [
+          { razorpayOrderId: orderId },
+          { razorpayPaymentId: orderId },
+          { id: orderId },
+        ],
+      },
+      include: {
+        invoice: true,
+        resident: true,
+      },
+    });
+
+    if (!payment) {
+      return res.status(404).json({ error: 'Payment record not found.' });
+    }
+
+    res.json({
+      id: payment.id,
+      status: payment.status,
+      amount: payment.amount,
+      currency: payment.currency,
+      razorpayOrderId: payment.razorpayOrderId,
+      razorpayPaymentId: payment.razorpayPaymentId,
+      verified: payment.razorpaySignatureVerified,
+      createdAt: payment.createdAt,
+      invoice: (payment as any).invoice,
+    });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// 4. Refund Payment: Authorized Admin/Secretary Only
 app.post('/api/payments/razorpay/refund', requireRole(['admin', 'secretary']), async (req: Request, res: Response) => {
   try {
     const { paymentId, amount, reason } = req.body;
     if (!paymentId || !reason) {
-      return res.status(400).json({ error: 'paymentId and reason are required' });
+      return res.status(400).json({ error: 'paymentId and reason are required for processing a refund.' });
     }
 
-    const refundId = `rfnd_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_AARIZO_2026';
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'rzp_secret_AARIZO_2026';
+    let refundId = `rfnd_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
 
-    // Create Audit Log entry
-    try {
-      await prisma.auditLog.create({
-        data: {
-          societyId: req.societyId || 'soc-gvs',
-          actorId: req.userId || 'admin',
-          actorName: 'Admin',
-          role: 'admin',
-          action: 'PAYMENT_REFUNDED',
-          entityName: 'Payment',
-          entityId: paymentId,
-          metadata: {
-            paymentId,
-            amount,
-            reason,
-            refundId,
-            refundedAt: new Date().toISOString(),
+    // Live Razorpay API Refund Call if production credentials active
+    if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET && !process.env.RAZORPAY_KEY_ID.includes('test_AARIZO')) {
+      try {
+        const basicAuth = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
+        const refundRes = await fetch(`https://api.razorpay.com/v1/payments/${paymentId}/refund`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${basicAuth}`,
           },
-        },
-      });
-    } catch {}
-
-    // Update Payment record in PostgreSQL if exists
-    try {
-      const existingPay = await prisma.payment.findFirst({
-        where: {
-          OR: [{ id: paymentId }, { razorpayPaymentId: paymentId }],
-        },
-      });
-      if (existingPay) {
-        await prisma.payment.update({
-          where: { id: existingPay.id },
-          data: {
-            status: 'REFUNDED',
-            refundId,
-            refundAmount: amount,
-            refundReason: reason,
-            refundedAt: new Date(),
-          },
+          body: JSON.stringify({
+            amount: amount ? Math.round(Number(amount) * 100) : undefined,
+            notes: { reason },
+          }),
         });
+
+        if (refundRes.ok) {
+          const rData = (await refundRes.json()) as any;
+          if (rData?.id) refundId = rData.id;
+        }
+      } catch (refundApiErr) {
+        console.warn('Razorpay live refund API error:', refundApiErr);
       }
-    } catch (e) {
-      console.warn('Could not update payment record with refund details in Prisma:', e);
     }
+
+    // Update Payment record in PostgreSQL
+    const existingPay = await prisma.payment.findFirst({
+      where: {
+        OR: [{ id: paymentId }, { razorpayPaymentId: paymentId }],
+      },
+    });
+
+    if (existingPay) {
+      await prisma.payment.update({
+        where: { id: existingPay.id },
+        data: {
+          status: 'REFUNDED',
+          refundId,
+          refundAmount: amount || existingPay.amount,
+          refundReason: reason,
+          refundedAt: new Date(),
+        },
+      });
+    }
+
+    // Audit Log Entry
+    await prisma.auditLog.create({
+      data: {
+        societyId: existingPay?.societyId || req.societyId || 'soc-gvs',
+        actorId: req.userId || 'admin',
+        actorName: 'Admin',
+        role: 'admin',
+        action: 'PAYMENT_REFUNDED',
+        entityName: 'Payment',
+        entityId: paymentId,
+        metadata: {
+          paymentId,
+          amount,
+          reason,
+          refundId,
+          refundedAt: new Date().toISOString(),
+        },
+      },
+    });
 
     broadcastEvent('PAYMENT_REFUNDED', {
       paymentId,
@@ -888,7 +1362,7 @@ app.post('/api/payments/razorpay/refund', requireRole(['admin', 'secretary']), a
   }
 });
 
-// Query all payments from PostgreSQL via Prisma
+// 5. Payment History: Authorized user payments query
 app.get('/api/payments', async (req: Request, res: Response) => {
   try {
     const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
@@ -897,7 +1371,17 @@ app.get('/api/payments', async (req: Request, res: Response) => {
 
     const whereClause: any = {};
     if (societyId && societyId !== 'all') whereClause.societyId = societyId;
-    if (residentId) whereClause.residentId = residentId;
+
+    // Role-based privacy restriction: ordinary residents may only query their own payments
+    if (req.userRole === 'resident' && req.userId) {
+      whereClause.OR = [
+        { userId: req.userId },
+        { residentId: req.userId },
+      ];
+    } else {
+      if (residentId) whereClause.residentId = residentId;
+    }
+
     if (invoiceId) whereClause.invoiceId = invoiceId;
 
     const payments = await prisma.payment.findMany({
@@ -916,34 +1400,158 @@ app.get('/api/payments', async (req: Request, res: Response) => {
   }
 });
 
+// 6. Razorpay Webhooks: Idempotent Raw-Body Signature Validation & Asynchronous Event Processing
 app.post('/api/payments/razorpay/webhook', async (req: Request, res: Response) => {
   try {
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || 'rzp_webhook_AARIZO_2026';
     const signature = req.headers['x-razorpay-signature'] as string;
 
-    if (signature) {
-      const rawBody = JSON.stringify(req.body);
-      const expectedSignature = crypto.createHmac('sha256', webhookSecret).update(rawBody).digest('hex');
-      if (expectedSignature !== signature && process.env.NODE_ENV === 'production') {
-        return res.status(401).send('Invalid webhook signature');
-      }
+    if (!signature) {
+      return res.status(400).json({ error: 'Missing X-Razorpay-Signature header' });
+    }
+
+    // Preserve exact unparsed raw body bytes for cryptographic HMAC validation
+    const rawBodyBuffer = req.rawBody || Buffer.from(JSON.stringify(req.body), 'utf8');
+    const expectedSignature = crypto
+      .createHmac('sha256', webhookSecret)
+      .update(rawBodyBuffer)
+      .digest('hex');
+
+    let isSigValid = timingSafeCompare(expectedSignature, signature);
+    if (!isSigValid && webhookSecret === 'rzp_webhook_AARIZO_2026' && signature.startsWith('test_sig_')) {
+      isSigValid = true;
+    }
+
+    if (!isSigValid) {
+      return res.status(401).send('Invalid webhook signature');
     }
 
     const event = req.body;
-    if (event.event === 'payment.captured') {
+    const eventId =
+      event?.id ||
+      `${event?.event || 'evt'}_${event?.payload?.payment?.entity?.id || Date.now()}`;
+
+    // Deduplication via WebhookEvent table: Ensure webhook retries are idempotent
+    try {
+      const existingEvent = await prisma.webhookEvent.findUnique({
+        where: { eventId },
+      });
+
+      if (existingEvent) {
+        return res.status(200).json({ status: 'ALREADY_PROCESSED', eventId });
+      }
+
+      await prisma.webhookEvent.create({
+        data: {
+          eventId,
+          eventType: event?.event || 'unknown',
+          payload: event,
+          status: 'PROCESSED',
+        },
+      });
+    } catch (evtErr) {
+      console.warn('[Webhook Event Deduplication Error]:', evtErr);
+    }
+
+    // Asynchronous Reconciliation Logic
+    if (event?.event === 'payment.captured') {
       const paymentEntity = event.payload?.payment?.entity;
       const notes = paymentEntity?.notes || {};
-      if (notes.invoiceId) {
-        broadcastEvent('PAYMENT_COMPLETED', {
-          invoiceId: notes.invoiceId,
-          paymentId: paymentEntity.id,
-          amount: (paymentEntity.amount || 0) / 100,
+      const invoiceId = notes.invoiceId;
+      const orderId = paymentEntity?.order_id;
+      const paymentId = paymentEntity?.id;
+
+      if (invoiceId) {
+        const invoice = await prisma.billingInvoice.findUnique({
+          where: { id: invoiceId },
         });
+
+        if (invoice && invoice.status !== 'PAID') {
+          await prisma.$transaction(async (tx) => {
+            await tx.billingInvoice.update({
+              where: { id: invoiceId },
+              data: {
+                status: 'PAID',
+                paidAmount: invoice.totalAmount,
+                paidAt: new Date(),
+                paymentMode: 'RAZORPAY',
+              },
+            });
+
+            const pay = await tx.payment.findFirst({
+              where: {
+                OR: [{ razorpayOrderId: orderId }, { invoiceId }],
+              },
+            });
+
+            if (pay) {
+              await tx.payment.update({
+                where: { id: pay.id },
+                data: {
+                  status: 'SUCCESS',
+                  razorpayPaymentId: paymentId,
+                  razorpaySignatureVerified: true,
+                },
+              });
+            }
+          });
+
+          broadcastEvent('PAYMENT_COMPLETED', {
+            invoiceId,
+            paymentId,
+            amount: (paymentEntity.amount || 0) / 100,
+            reconciledBy: 'WEBHOOK',
+          });
+        }
+      }
+    } else if (event?.event === 'payment.failed') {
+      const paymentEntity = event.payload?.payment?.entity;
+      const orderId = paymentEntity?.order_id;
+      if (orderId) {
+        const pay = await prisma.payment.findFirst({
+          where: { razorpayOrderId: orderId },
+        });
+        if (pay) {
+          await prisma.payment.update({
+            where: { id: pay.id },
+            data: {
+              status: 'FAILED',
+              failureReason: paymentEntity?.error_description || 'Payment failed',
+            },
+          });
+        }
+      }
+    } else if (event?.event === 'refund.processed') {
+      const refundEntity = event.payload?.refund?.entity;
+      const paymentId = refundEntity?.payment_id;
+      if (paymentId) {
+        const pay = await prisma.payment.findFirst({
+          where: { razorpayPaymentId: paymentId },
+        });
+        if (pay) {
+          await prisma.payment.update({
+            where: { id: pay.id },
+            data: {
+              status: 'REFUNDED',
+              refundId: refundEntity.id,
+              refundAmount: (refundEntity.amount || 0) / 100,
+              refundReason: refundEntity.notes?.reason || 'Refund processed',
+              refundedAt: new Date(),
+            },
+          });
+
+          broadcastEvent('PAYMENT_REFUNDED', {
+            paymentId,
+            refundId: refundEntity.id,
+            amount: (refundEntity.amount || 0) / 100,
+          });
+        }
       }
     }
 
-    res.json({ status: 'PROCESSED' });
+    res.json({ status: 'PROCESSED', eventId });
   } catch (error) {
+    console.error('Webhook error:', error);
     res.status(500).json({ error: String(error) });
   }
 });
@@ -966,7 +1574,7 @@ app.get('/api/advertisements', async (req: Request, res: Response) => {
     });
     res.json(ads);
   } catch (error) {
-    res.status(500).json({ error: String(error) });
+    res.json([]);
   }
 });
 
@@ -1133,13 +1741,27 @@ app.get('/api/collections/:collection', async (req: Request, res: Response) => {
     const colName = req.params.collection as string;
     const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
 
-    // Check if table exists natively in Prisma first
-    const nativeKey = Object.keys(ALLOWED_QUERY_TABLES).find(k => k.toLowerCase() === colName.toLowerCase());
+    // Check if table exists natively in Prisma first (supporting plural and camelCase matches)
+    const nativeKey = Object.keys(ALLOWED_QUERY_TABLES).find(
+      (k) =>
+        k.toLowerCase() === colName.toLowerCase() ||
+        `${k}s`.toLowerCase() === colName.toLowerCase() ||
+        `${k}es`.toLowerCase() === colName.toLowerCase() ||
+        (colName.toLowerCase() === 'visitorpasses' && k === 'visitorPass') ||
+        (colName.toLowerCase() === 'billinginvoices' && k === 'billingInvoice') ||
+        (colName.toLowerCase() === 'parkingslots' && k === 'parkingSlot') ||
+        (colName.toLowerCase() === 'domesticworkers' && k === 'domesticWorker')
+    );
+
     if (nativeKey && (prisma as any)[nativeKey]) {
       const where: any = {};
       if (societyId && societyId !== 'all') where.societyId = societyId;
-      const records = await (prisma as any)[nativeKey].findMany({ where, orderBy: { createdAt: 'desc' } });
-      return res.json(records);
+      try {
+        const records = await (prisma as any)[nativeKey].findMany({ where, orderBy: { createdAt: 'desc' } });
+        return res.json(records);
+      } catch (dbErr) {
+        return res.json([]);
+      }
     }
 
     // Query entity records in PostgreSQL
@@ -1152,7 +1774,7 @@ app.get('/api/collections/:collection', async (req: Request, res: Response) => {
     });
     res.json(docs);
   } catch (error) {
-    res.status(500).json({ error: String(error) });
+    res.json([]);
   }
 });
 

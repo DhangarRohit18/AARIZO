@@ -1,6 +1,6 @@
 @import "tailwindcss";
 /* ============================================================
-   AARIZO Mobile App — Global CSS
+   Dwellora Mobile App — Global CSS
    Canonical Blue + White Mobile-First Design System
    ============================================================ */
 @import './tokens.css';
@@ -72,32 +72,23 @@ p {
   color: var(--aarizo-text-secondary);
 }
 
-/* High-Contrast Guard for Dark / Hero Banners */
+/* High-Contrast Guard for Dark / Hero Banners (Scoped only to explicit dark banners, never modals/drawers) */
 .dark-hero-banner,
 .dark-banner,
 .aarizo-hero-banner,
-[data-banner="dark"],
-[style*="linear-gradient"],
-[style*="background: linear-gradient"],
-[style*="var(--aarizo-navy)"] {
-  --aarizo-text: #FFFFFF;
+[data-banner="dark"] {
+  color: #FFFFFF !important;
 }
-
-.text-white,
-[class*="text-white"],
 .dark-hero-banner h1, .dark-hero-banner h2, .dark-hero-banner h3, .dark-hero-banner h4,
 .dark-banner h1, .dark-banner h2, .dark-banner h3, .dark-banner h4,
 .aarizo-hero-banner h1, .aarizo-hero-banner h2, .aarizo-hero-banner h3, .aarizo-hero-banner h4,
-[data-banner="dark"] h1, [data-banner="dark"] h2, [data-banner="dark"] h3, [data-banner="dark"] h4,
-[style*="linear-gradient"] h1, [style*="linear-gradient"] h2, [style*="linear-gradient"] h3 {
+[data-banner="dark"] h1, [data-banner="dark"] h2, [data-banner="dark"] h3, [data-banner="dark"] h4 {
   color: #FFFFFF !important;
 }
-
 .dark-hero-banner p,
 .dark-banner p,
 .aarizo-hero-banner p,
-[data-banner="dark"] p,
-[style*="linear-gradient"] p {
+[data-banner="dark"] p {
   color: var(--aarizo-sky, #83CBEA) !important;
 }
 
@@ -572,9 +563,9 @@ input, select, textarea {
 .aarizo-general-modal select:focus,
 .aarizo-general-modal textarea:focus {
   background-color: #FFFFFF !important;
-  border-color: #176B91 !important;
+  border-color: var(--aarizo-coral, #F06543) !important;
   outline: none !important;
-  box-shadow: 0 0 0 3px rgba(23, 107, 145, 0.18) !important;
+  box-shadow: 0 0 0 3px rgba(240, 101, 67, 0.18) !important;
 }
 
 /* Primary Modal Action Buttons Uniform Aesthetics */
