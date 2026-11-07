@@ -44,86 +44,84 @@ class RealtimeService {
    * Initialize Server-Sent Events (SSE) for true cross-device network real-time sync
    */
   private sseErrorCount = 0;
+  private reconnectTimeout: any = null;
+  private currentSocietyId = 'soc-gvs';
 
-  private initSseStream() {
-    if (typeof window !== 'undefined' && 'EventSource' in window) {
+  /**
+   * Initialize Server-Sent Events (SSE) with resilient auto-reconnect for production deployment
+   */
+  public initSseStream(societyId = 'soc-gvs', userId?: string, userRole?: string) {
+    this.currentSocietyId = societyId;
+    if (typeof window === 'undefined' || !('EventSource' in window)) return;
+
+    if (this.sseSource) {
       try {
-        const streamUrl = '/api/realtime/stream';
-        this.sseSource = new EventSource(streamUrl);
+        this.sseSource.close();
+      } catch {}
+      this.sseSource = null;
+    }
 
-        this.sseSource.onopen = () => {
-          this.sseErrorCount = 0;
-        };
+    try {
+      const baseUrl = this.backendBaseUrl || '';
+      const params = new URLSearchParams({
+        societyId,
+        ...(userId ? { userId } : {}),
+        ...(userRole ? { role: userRole } : {}),
+      });
 
-        this.sseSource.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            if (data && data.topic && !this.seenMessageIds.has(data.id)) {
-              this.handleIncomingMessage(data);
-            }
-          } catch {
-            // Heartbeat or ping frame
+      const streamUrl = `${baseUrl}/api/realtime/stream?${params.toString()}`;
+      this.sseSource = new EventSource(streamUrl);
+
+      this.sseSource.onopen = () => {
+        this.isConnected = true;
+        this.sseErrorCount = 0;
+      };
+
+      this.sseSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data && (data.topic || data.eventType || data.type)) {
+            const topic = data.topic || data.eventType || data.type;
+            this.handleIncomingMessage({
+              id: data.id || data.eventId || `sse_${Date.now()}`,
+              topic,
+              type: topic,
+              societyId: data.societyId || societyId,
+              payload: data.payload || data,
+              timestamp: data.timestamp || new Date().toISOString(),
+              senderRole: data.senderRole || 'SYSTEM',
+              senderName: data.senderName || 'Server Realtime',
+            });
           }
-        };
+        } catch {
+          // Heartbeat or ping frame
+        }
+      };
 
-        this.sseSource.onerror = () => {
-          this.sseErrorCount += 1;
-          if (this.sseErrorCount >= 3 && this.sseSource) {
-            this.sseSource.close();
-            this.sseSource = null;
-          }
-        };
-      } catch {
-        // Fallback gracefully
-      }
+      this.sseSource.onerror = () => {
+        this.isConnected = false;
+        try {
+          this.sseSource?.close();
+        } catch {}
+        this.sseSource = null;
+
+        // Exponential backoff auto-reconnect (1s, 2s, 4s, up to 15s)
+        const delay = Math.min(1000 * Math.pow(1.5, Math.min(this.sseErrorCount, 8)), 15000);
+        this.sseErrorCount += 1;
+        clearTimeout(this.reconnectTimeout);
+        this.reconnectTimeout = setTimeout(() => {
+          this.initSseStream(societyId, userId, userRole);
+        }, delay);
+      };
+    } catch {
+      // Graceful fallback to local broadcast bus
     }
   }
 
   private seedRecentMessages() {
-    const now = Date.now();
-    this.recentMessages = [
-      {
-        id: 'rt-101',
-        topic: 'VISITOR_ARRIVAL',
-        type: 'VISITOR_ARRIVAL',
-        societyId: 'soc-gvs',
-        payload: { visitorName: 'Rohan Sharma', flatCode: 'A-302', passType: 'GUEST', gate: 'Gate 1' },
-        timestamp: new Date(now - 120000).toISOString(),
-        senderRole: 'SECURITY',
-        senderName: 'Guard Ramesh Shinde',
-      },
-      {
-        id: 'rt-102',
-        topic: 'VISITOR_APPROVAL',
-        type: 'VISITOR_APPROVAL',
-        societyId: 'soc-gvs',
-        payload: { visitorName: 'Rohan Sharma', flatCode: 'A-302', status: 'APPROVED' },
-        timestamp: new Date(now - 90000).toISOString(),
-        senderRole: 'RESIDENT',
-        senderName: 'Amit Shah',
-      },
-      {
-        id: 'rt-103',
-        topic: 'EMERGENCY_ALERTS',
-        type: 'EMERGENCY_ALERTS',
-        societyId: 'soc-gvs',
-        payload: { emergencyId: 'SOS-991', type: 'MEDICAL', location: 'Clubhouse Gym', priority: 'HIGH' },
-        timestamp: new Date(now - 60000).toISOString(),
-        senderRole: 'RESIDENT',
-        senderName: 'Ananya Roy',
-      },
-      {
-        id: 'rt-104',
-        topic: 'PARKING_OCCUPANCY',
-        type: 'PARKING_OCCUPANCY',
-        societyId: 'soc-gvs',
-        payload: { slotId: 'V-12', status: 'OCCUPIED', vehicleNumber: 'MH-12-AB-9901' },
-        timestamp: new Date(now - 30000).toISOString(),
-        senderRole: 'SECURITY',
-        senderName: 'Guard Suresh Kumar',
-      },
-    ];
-    this.totalMessagesReceived = this.recentMessages.length;
+    // In production deployment mode, events are dynamically populated from live SSE stream
+    this.recentMessages = [];
+    this.totalMessagesReceived = 0;
   }
 
   /**

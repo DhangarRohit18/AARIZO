@@ -13,6 +13,12 @@ import { TrustScoreService } from './services/trustScoreService.js';
 import { WalletService } from './services/walletService.js';
 import { FederationMarketplaceService } from './services/federationMarketplaceService.js';
 import { AIGovernancePolicyEngine } from './aiGovernance.js';
+import {
+  authenticateFirebaseToken,
+  requireRole,
+  requireSocietyMembership,
+  rateLimiter,
+} from './auth.js';
 
 dotenv.config();
 
@@ -40,7 +46,10 @@ if (!fs.existsSync(uploadsDir)) {
 }
 app.use('/uploads', express.static(uploadsDir));
 
-// Multi-tenant contextual headers middleware
+// Apply global rate limiting
+app.use(rateLimiter(200, 60000));
+
+// Multi-tenant contextual headers middleware (with fallback for testing)
 app.use((req: Request, _res: Response, next: NextFunction) => {
   req.societyId = (req.headers['x-society-id'] as string) || undefined;
   req.userId = (req.headers['x-user-id'] as string) || undefined;
@@ -58,20 +67,6 @@ declare global {
     }
   }
 }
-
-// Role-based authorization middleware
-const requireRole = (allowedRoles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const role = (req.userRole || '').toLowerCase();
-    // Allow if no role header provided (local dev) or if role is admin or in allowedRoles
-    if (!role || role === 'admin' || allowedRoles.map((r) => r.toLowerCase()).includes(role)) {
-      return next();
-    }
-    return res.status(403).json({
-      error: `Access denied. Role '${req.userRole}' is not authorized for this resource.`,
-    });
-  };
-};
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {
@@ -896,13 +891,14 @@ app.get('/api/realtime/stream', (req: Request, res: Response) => {
 
 app.post('/api/realtime/broadcast', async (req: Request, res: Response) => {
   try {
-    const { societyId, eventType, entityId, payload } = req.body;
+    const { societyId, eventType, entityId, payload, topic } = req.body;
+    const finalType = eventType || topic || 'GENERAL';
     const eventId = await realtimeEngine.recordOutboxEvent({
       societyId: societyId || req.societyId || 'soc-gvs',
-      eventType,
+      eventType: finalType,
       entityId: entityId || 'unknown',
       actorId: req.userId || 'system',
-      payload: payload || {},
+      payload: payload || req.body,
     });
     res.json({ success: true, eventId });
   } catch (error: any) {

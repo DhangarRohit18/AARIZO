@@ -160,10 +160,17 @@ export class RealtimeEngine {
   private sendToClient(client: SSEClient, eventType: string, data: any): void {
     try {
       const id = data.eventId || crypto.randomUUID();
-      const payloadString = JSON.stringify(data);
+      const payloadString = JSON.stringify({
+        ...data,
+        id,
+        topic: eventType,
+        eventType,
+        societyId: client.societyId,
+        timestamp: data.timestamp || new Date().toISOString(),
+      });
       client.res.write(`id: ${id}\n`);
-      client.res.write(`event: ${eventType}\n`);
       client.res.write(`data: ${payloadString}\n\n`);
+      (client.res as any).flush?.();
     } catch (err) {
       this.clients.delete(client.id);
     }
