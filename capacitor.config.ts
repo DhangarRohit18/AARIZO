@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.aarizo.app',
-  appName: 'AARIZO',
+  appName: 'Dwellora',
   webDir: 'dist',
   backgroundColor: '#000000',
   server: {

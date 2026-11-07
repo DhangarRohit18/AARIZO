@@ -7,6 +7,12 @@ import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { prisma } from './prisma.js';
 import { timingSafeCompare } from './crypto.js';
+import { UniversalProvisioningService } from './provisioning.js';
+import { realtimeEngine } from './realtimeEngine.js';
+import { TrustScoreService } from './services/trustScoreService.js';
+import { WalletService } from './services/walletService.js';
+import { FederationMarketplaceService } from './services/federationMarketplaceService.js';
+import { AIGovernancePolicyEngine } from './aiGovernance.js';
 
 dotenv.config();
 
@@ -843,6 +849,238 @@ app.patch('/api/notifications/:id/read', async (req: Request, res: Response) => 
     res.json(notif);
   } catch (error) {
     res.status(500).json({ error: String(error) });
+  }
+});
+
+// ==========================================
+// 🚀 SAFEGATE 2.0: UNIVERSAL PROVISIONING
+// ==========================================
+app.post('/api/admin/provision-society', async (req: Request, res: Response) => {
+  try {
+    const result = await UniversalProvisioningService.provisionSociety(req.body);
+    res.status(201).json(result);
+  } catch (error: any) {
+    res.status(400).json({ error: error?.message || 'Provisioning failed' });
+  }
+});
+
+app.post('/api/secretary/provision-user', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId;
+    if (!societyId) {
+      return res.status(400).json({ error: 'Society ID context is required' });
+    }
+    const result = await UniversalProvisioningService.provisionUser({
+      ...req.body,
+      societyId,
+      creatorId: req.userId || 'secretary',
+    });
+    res.status(201).json(result);
+  } catch (error: any) {
+    res.status(400).json({ error: error?.message || 'User provisioning failed' });
+  }
+});
+
+// ==========================================
+// ⚡ SAFEGATE 2.0: REAL-TIME OUTBOX & SSE
+// ==========================================
+app.get('/api/realtime/stream', (req: Request, res: Response) => {
+  const societyId = (req.query.societyId as string) || req.societyId || 'soc-gvs';
+  const userId = (req.query.userId as string) || req.userId;
+  const role = (req.query.role as string) || req.userRole || 'resident';
+  const lastEventId = (req.headers['last-event-id'] as string) || (req.query.lastEventId as string);
+  const clientId = `client_${crypto.randomUUID()}`;
+
+  realtimeEngine.registerClient(clientId, res, societyId, userId, role, lastEventId);
+});
+
+app.post('/api/realtime/broadcast', async (req: Request, res: Response) => {
+  try {
+    const { societyId, eventType, entityId, payload } = req.body;
+    const eventId = await realtimeEngine.recordOutboxEvent({
+      societyId: societyId || req.societyId || 'soc-gvs',
+      eventType,
+      entityId: entityId || 'unknown',
+      actorId: req.userId || 'system',
+      payload: payload || {},
+    });
+    res.json({ success: true, eventId });
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+// ==========================================
+// ⭐ SAFEGATE 2.0: ADVANCED DIFFERENTIATORS
+// ==========================================
+
+// Trust Score API
+app.get('/api/trust-score/:entityType/:entityId', async (req: Request, res: Response) => {
+  try {
+    const entityType = String(req.params.entityType || '');
+    const entityId = String(req.params.entityId || '');
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    if (entityType.toUpperCase() === 'SOCIETY') {
+      const score = await TrustScoreService.calculateSocietyTrustScore(societyId);
+      return res.json(score);
+    }
+    const score = await TrustScoreService.calculateResidentTrustScore(societyId, entityId);
+    res.json(score);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+// Society Ledger Wallet API
+app.get('/api/wallet/balance/:residentId', async (req: Request, res: Response) => {
+  try {
+    const residentId = String(req.params.residentId || '');
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const balance = await WalletService.getBalance(societyId, residentId);
+    res.json({ residentId, balance, currency: 'INR' });
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+app.post('/api/wallet/transaction', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const tx = await WalletService.executeTransaction({
+      ...req.body,
+      societyId,
+    });
+    res.status(201).json(tx);
+  } catch (error: any) {
+    res.status(400).json({ error: error?.message });
+  }
+});
+
+// Federation Marketplace API
+app.get('/api/marketplace/federated-vendors', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const category = req.query.category as string | undefined;
+    const vendors = await FederationMarketplaceService.getFederatedVendors(societyId, category);
+    res.json(vendors);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+// AI Governance Check API
+app.post('/api/ai/governance-check', (req: Request, res: Response) => {
+  try {
+    const { action, actorType, userRole } = req.body;
+    const check = AIGovernancePolicyEngine.evaluateAction(action, actorType, userRole || req.userRole);
+    res.json(check);
+  } catch (error: any) {
+    res.status(400).json({ error: error?.message });
+  }
+});
+
+// SafeGate 2.0 Work Orders & Facility Operations
+app.get('/api/work-orders', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string);
+    const orders = await prisma.workOrder.findMany({
+      where: societyId ? { societyId } : undefined,
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(orders);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+app.post('/api/work-orders', async (req: Request, res: Response) => {
+  try {
+    const order = await prisma.workOrder.create({ data: req.body });
+    await realtimeEngine.recordOutboxEvent({
+      societyId: order.societyId,
+      eventType: 'WORK_ORDER_ASSIGNED',
+      entityId: order.id,
+      payload: order,
+    });
+    res.status(201).json(order);
+  } catch (error: any) {
+    res.status(400).json({ error: error?.message });
+  }
+});
+
+// Staff Attendance
+app.get('/api/attendance', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string);
+    const records = await prisma.attendance.findMany({
+      where: societyId ? { societyId } : undefined,
+      orderBy: { checkIn: 'desc' },
+      take: 50,
+    });
+    res.json(records);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+app.post('/api/attendance/check-in', async (req: Request, res: Response) => {
+  try {
+    const att = await prisma.attendance.create({ data: req.body });
+    await realtimeEngine.recordOutboxEvent({
+      societyId: att.societyId,
+      eventType: 'STAFF_ATTENDANCE_LOGGED',
+      entityId: att.id,
+      payload: att,
+    });
+    res.status(201).json(att);
+  } catch (error: any) {
+    res.status(400).json({ error: error?.message });
+  }
+});
+
+// Compliance Documents
+app.get('/api/compliance-documents', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string);
+    const docs = await prisma.complianceDocument.findMany({
+      where: societyId ? { societyId } : undefined,
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(docs);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+app.post('/api/compliance-documents', async (req: Request, res: Response) => {
+  try {
+    const doc = await prisma.complianceDocument.create({ data: req.body });
+    res.status(201).json(doc);
+  } catch (error: any) {
+    res.status(400).json({ error: error?.message });
+  }
+});
+
+// Move Requests & Concierge
+app.get('/api/move-requests', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string);
+    const moves = await prisma.moveRequest.findMany({
+      where: societyId ? { societyId } : undefined,
+      orderBy: { scheduledDate: 'asc' },
+    });
+    res.json(moves);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+app.post('/api/move-requests', async (req: Request, res: Response) => {
+  try {
+    const move = await prisma.moveRequest.create({ data: req.body });
+    res.status(201).json(move);
+  } catch (error: any) {
+    res.status(400).json({ error: error?.message });
   }
 });
 

@@ -653,3 +653,293 @@ model EntityRecord {
 
 
 
+
+
+// ==========================================
+// SAFEGATE 2.0 EXTENDED DOMAIN MODELS
+// ==========================================
+
+model SocietyMembership {
+  id        String   @id @default(uuid())
+  societyId String   @map("society_id")
+  userId    String   @map("user_id")
+  role      UserRole @default(resident)
+  status    String   @default("ACTIVE") // ACTIVE, SUSPENDED, INVITED
+  joinedAt  DateTime @default(now()) @map("joined_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([societyId, userId])
+  @@index([userId])
+  @@index([societyId])
+  @@map("society_memberships")
+}
+
+model VisitorLog {
+  id            String    @id @default(uuid())
+  societyId     String    @map("society_id")
+  passId        String?   @map("pass_id")
+  visitorName   String    @map("visitor_name")
+  visitorPhone  String?   @map("visitor_phone")
+  flatNumber    String    @map("flat_number")
+  vehicleNumber String?   @map("vehicle_number")
+  category      String    @default("GUEST") // GUEST, DELIVERY, CAB, SERVICE
+  entryGate     String    @default("MAIN_GATE") @map("entry_gate")
+  exitGate      String?   @map("exit_gate")
+  guardId       String?   @map("guard_id")
+  checkIn       DateTime  @default(now()) @map("check_in")
+  checkOut      DateTime? @map("check_out")
+  status        String    @default("INSIDE") // INSIDE, EXITED, OVERSTAY
+  qrToken       String?   @map("qr_token")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([societyId, status])
+  @@index([passId])
+  @@map("visitor_logs")
+}
+
+model WorkOrder {
+  id                String    @id @default(uuid())
+  societyId         String    @map("society_id")
+  ticketId          String?   @map("ticket_id")
+  title             String
+  description       String
+  category          String    @default("PLUMBING")
+  priority          String    @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  status            String    @default("ASSIGNED") // ASSIGNED, IN_PROGRESS, RESOLVED, CANCELLED
+  facilityManagerId String?   @map("facility_manager_id")
+  assignedStaffId   String?   @map("assigned_staff_id")
+  vendorId          String?   @map("vendor_id")
+  slaDeadline       DateTime? @map("sla_deadline")
+  estimatedCost     Decimal?  @default(0.00) @map("estimated_cost") @db.Decimal(10, 2)
+  actualCost        Decimal?  @default(0.00) @map("actual_cost") @db.Decimal(10, 2)
+  completionNotes   String?   @map("completion_notes")
+  completedAt       DateTime? @map("completed_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@index([societyId, status])
+  @@index([assignedStaffId])
+  @@map("work_orders")
+}
+
+model Attendance {
+  id         String    @id @default(uuid())
+  societyId  String    @map("society_id")
+  staffId    String    @map("staff_id")
+  staffName  String    @map("staff_name")
+  role       String    @default("SECURITY_GUARD")
+  date       DateTime  @default(now()) @db.Date
+  checkIn    DateTime  @default(now()) @map("check_in")
+  checkOut   DateTime? @map("check_out")
+  status     String    @default("PRESENT") // PRESENT, LATE, HALF_DAY, ABSENT
+  gateId     String?   @default("MAIN_GATE") @map("gate_id")
+  verifiedBy String?   @map("verified_by")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([societyId, date])
+  @@index([staffId])
+  @@map("attendances")
+}
+
+model Shift {
+  id          String   @id @default(uuid())
+  societyId   String   @map("society_id")
+  shiftName   String   @map("shift_name") // MORNING, AFTERNOON, NIGHT, GENERAL
+  startTime   String   @map("start_time") // e.g., "08:00"
+  endTime     String   @map("end_time")   // e.g., "16:00"
+  daysOfWeek  String   @default("MON,TUE,WED,THU,FRI,SAT,SUN") @map("days_of_week")
+  staffCount  Int      @default(1) @map("staff_count")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([societyId])
+  @@map("shifts")
+}
+
+model AmenityBooking {
+  id           String    @id @default(uuid())
+  societyId    String    @map("society_id")
+  amenityId    String    @map("amenity_id")
+  residentId   String    @map("resident_id")
+  residentName String    @map("resident_name")
+  flatNumber   String    @map("flat_number")
+  slotDate     DateTime  @map("slot_date") @db.Date
+  startTime    String    @map("start_time")
+  endTime      String    @map("end_time")
+  guestCount   Int       @default(1) @map("guest_count")
+  totalCharge  Decimal   @default(0.00) @map("total_charge") @db.Decimal(10, 2)
+  status       String    @default("CONFIRMED") // PENDING, CONFIRMED, CANCELLED, COMPLETED
+  paymentId    String?   @map("payment_id")
+  cancelledAt  DateTime? @map("cancelled_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@index([societyId, amenityId, slotDate])
+  @@index([residentId])
+  @@map("amenity_bookings")
+}
+
+model Refund {
+  id               String    @id @default(uuid())
+  societyId        String    @map("society_id")
+  paymentId        String    @map("payment_id")
+  invoiceId        String?   @map("invoice_id")
+  amount           Decimal   @db.Decimal(10, 2)
+  currency         String    @default("INR")
+  status           String    @default("PENDING") // PENDING, PROCESSED, FAILED
+  reason           String
+  razorpayRefundId String?   @unique @map("razorpay_refund_id")
+  initiatedBy      String?   @map("initiated_by")
+  settledAt        DateTime? @map("settled_at")
+  metadata         Json?     @default("{}")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  @@index([societyId])
+  @@index([paymentId])
+  @@map("refunds")
+}
+
+model ComplianceDocument {
+  id         String    @id @default(uuid())
+  societyId  String    @map("society_id")
+  title      String
+  category   String    @default("FIRE_SAFETY") // FIRE_SAFETY, ELEVATOR_NOC, AUDIT_REPORT, BYLAWS
+  docNumber  String?   @map("doc_number")
+  fileUrl    String    @map("file_url")
+  expiryDate DateTime? @map("expiry_date")
+  status     String    @default("VALID") // VALID, EXPIRING_SOON, EXPIRED
+  verifiedBy String?   @map("verified_by")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  @@index([societyId, status])
+  @@map("compliance_documents")
+}
+
+model AMCContract {
+  id               String   @id @default(uuid())
+  societyId        String   @map("society_id")
+  vendorId         String   @map("vendor_id")
+  vendorName       String   @map("vendor_name")
+  serviceCategory  String   @map("service_category") // ELEVATOR, DG_SET, CCTV, PUMP, SOLAR
+  contractValue    Decimal  @db.Decimal(10, 2) @map("contract_value")
+  startDate        DateTime @map("start_date")
+  endDate          DateTime @map("end_date")
+  slaDetails       String?  @map("sla_details")
+  status           String   @default("ACTIVE") // ACTIVE, EXPIRED, TERMINATED
+  renewalAlertSent Boolean  @default(false) @map("renewal_alert_sent")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@index([societyId, status])
+  @@map("amc_contracts")
+}
+
+model MoveRequest {
+  id              String    @id @default(uuid())
+  societyId       String    @map("society_id")
+  residentId      String    @map("resident_id")
+  flatNumber      String    @map("flat_number")
+  moveType        String    @default("MOVE_IN") @map("move_type") // MOVE_IN, MOVE_OUT
+  scheduledDate   DateTime  @map("scheduled_date")
+  vehicleType     String?   @default("TRUCK") @map("vehicle_type")
+  securityDeposit Decimal   @default(0.00) @map("security_deposit") @db.Decimal(10, 2)
+  status          String    @default("PENDING") // PENDING, APPROVED, REJECTED, COMPLETED
+  approvedBy      String?   @map("approved_by")
+  checklist       Json?     @default("[]")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([societyId, status])
+  @@map("move_requests")
+}
+
+model RenovationRequest {
+  id             String   @id @default(uuid())
+  societyId      String   @map("society_id")
+  residentId     String   @map("resident_id")
+  flatNumber     String   @map("flat_number")
+  title          String
+  description    String
+  contractorName String?  @map("contractor_name")
+  workerCount    Int      @default(2) @map("worker_count")
+  startDate      DateTime @map("start_date")
+  endDate        DateTime @map("end_date")
+  status         String   @default("PENDING") // PENDING, APPROVED, IN_PROGRESS, COMPLETED
+  approvedBy     String?  @map("approved_by")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([societyId, status])
+  @@map("renovation_requests")
+}
+
+model Approval {
+  id           String   @id @default(uuid())
+  societyId    String   @map("society_id")
+  entityType   String   @map("entity_type") // MOVE_REQUEST, RENOVATION, EXPENSE, NOC
+  entityId     String   @map("entity_id")
+  approverId   String   @map("approver_id")
+  approverRole String   @map("approver_role")
+  status       String   @default("APPROVED") // APPROVED, REJECTED, CONDITIONAL
+  comments     String?
+  decidedAt    DateTime @default(now()) @map("decided_at")
+
+  @@index([societyId, entityType, entityId])
+  @@map("approvals")
+}
+
+model TrustScore {
+  id               String   @id @default(uuid())
+  societyId        String   @map("society_id")
+  entityType       String   @map("entity_type") // SOCIETY, RESIDENT, VENDOR, GUARD
+  entityId         String   @map("entity_id")
+  score            Int      @default(85) // 0 - 100
+  paymentScore     Int      @default(90) @map("payment_score")
+  slaScore         Int      @default(80) @map("sla_score")
+  securityScore    Int      @default(85) @map("security_score")
+  communityRating  Decimal  @default(4.5) @map("community_rating") @db.Decimal(3, 2)
+  factors          Json?    @default("[]")
+  lastCalculatedAt DateTime @default(now()) @map("last_calculated_at")
+
+  @@unique([societyId, entityType, entityId])
+  @@index([societyId, score])
+  @@map("trust_scores")
+}
+
+model WalletTransaction {
+  id           String   @id @default(uuid())
+  societyId    String   @map("society_id")
+  residentId   String   @map("resident_id")
+  type         String // CREDIT, DEBIT
+  category     String   @default("AMENITY_FEE") // AMENITY_FEE, CLUBHOUSE, MAINTENANCE, RECHARGE
+  amount       Decimal  @db.Decimal(10, 2)
+  balanceAfter Decimal  @map("balance_after") @db.Decimal(10, 2)
+  referenceId  String?  @map("reference_id")
+  description  String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([societyId, residentId])
+  @@map("wallet_transactions")
+}
+
+model OutboxEvent {
+  id          String    @id @default(uuid())
+  eventId     String    @unique @map("event_id")
+  societyId   String    @map("society_id")
+  eventType   String    @map("event_type")
+  entityId    String    @map("entity_id")
+  actorId     String?   @map("actor_id")
+  payload     Json
+  status      String    @default("PENDING") // PENDING, PUBLISHED, FAILED
+  retryCount  Int       @default(0) @map("retry_count")
+  error       String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  processedAt DateTime? @map("processed_at")
+
+  @@index([status, createdAt])
+  @@index([societyId, eventType])
+  @@map("outbox_events")
+}
