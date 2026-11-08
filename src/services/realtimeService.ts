@@ -45,7 +45,7 @@ class RealtimeService {
    */
   private sseErrorCount = 0;
   private reconnectTimeout: any = null;
-  private currentSocietyId = 'soc-gvs';
+  public currentSocietyId = 'soc-gvs';
 
   /**
    * Initialize Server-Sent Events (SSE) with resilient auto-reconnect for production deployment
