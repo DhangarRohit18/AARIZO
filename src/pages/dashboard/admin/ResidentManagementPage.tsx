@@ -71,7 +71,40 @@ export const ResidentManagementPage: React.FC = () => {
   const [formDepartment, setFormDepartment] = useState('Electrical & Elevators');
   const [formCompany, setFormCompany] = useState('');
   const [formVendorCategory, setFormVendorCategory] = useState('Technical AMC');
+  const [formCommitteeDesignation, setFormCommitteeDesignation] = useState('Treasurer');
   const [formCustomPassword, setFormCustomPassword] = useState('');
+
+  // Committee list with persistence
+  const [committeeList, setCommitteeList] = useState<UnifiedUserItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('dwellora_committee_members');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [
+      {
+        id: 'com-1',
+        name: 'Sunil Rao',
+        email: 'sunil.rao@society.org',
+        phone: '+91 98200 44332',
+        role: 'committee',
+        displayRole: 'Committee Treasurer',
+        assignment: 'Flat A-802 · Finance',
+        status: 'ACTIVE',
+        societyId: currentSocietyId,
+      },
+      {
+        id: 'com-2',
+        name: 'Anita Desai',
+        email: 'anita.desai@society.org',
+        phone: '+91 98200 11998',
+        role: 'committee',
+        displayRole: 'Committee Member',
+        assignment: 'Flat C-304 · Cultural',
+        status: 'ACTIVE',
+        societyId: currentSocietyId,
+      },
+    ];
+  });
 
   // Data
   const [residents, setResidents] = useState<Resident[]>([]);
@@ -132,29 +165,8 @@ export const ResidentManagementPage: React.FC = () => {
       status: 'ACTIVE' as const,
       societyId: v.societyId,
     })),
-    // 4. Default Seed Committee Members
-    {
-      id: 'com-1',
-      name: 'Sunil Rao',
-      email: 'sunil.rao@society.org',
-      phone: '+91 98200 44332',
-      role: 'committee' as const,
-      displayRole: 'Committee Treasurer',
-      assignment: 'Flat A-802 · Finance',
-      status: 'ACTIVE' as const,
-      societyId: currentSocietyId,
-    },
-    {
-      id: 'com-2',
-      name: 'Anita Desai',
-      email: 'anita.desai@society.org',
-      phone: '+91 98200 11998',
-      role: 'committee' as const,
-      displayRole: 'Committee Member',
-      assignment: 'Flat C-304 · Cultural',
-      status: 'ACTIVE' as const,
-      societyId: currentSocietyId,
-    },
+    // 4. Committee Members (Persistent & Secretary Provisioned)
+    ...committeeList,
     // 5. Default Facility Manager
     {
       id: 'fm-1',
@@ -212,6 +224,7 @@ export const ResidentManagementPage: React.FC = () => {
       if (formRole === 'guard') assignmentText = formGate;
       if (formRole === 'facility_manager') assignmentText = formDepartment;
       if (formRole === 'vendor') assignmentText = formCompany || `${formName} Services`;
+      if (formRole === 'committee') assignmentText = `${formCommitteeDesignation} · Flat ${formFlatNumber}`;
 
       // 1. Call Backend Universal Provisioning Service
       const res = await apiClient.provisionUser({
@@ -227,6 +240,7 @@ export const ResidentManagementPage: React.FC = () => {
           gate: formGate,
           department: formDepartment,
           company: formCompany,
+          committeeDesignation: formCommitteeDesignation,
         },
       });
 
@@ -271,6 +285,23 @@ export const ResidentManagementPage: React.FC = () => {
           },
           { id: 'sec-1', name: 'Secretary', role: 'secretary' }
         );
+      } else if (formRole === 'committee') {
+        const newCom: UnifiedUserItem = {
+          id: `com-${Date.now()}`,
+          name: formName.trim(),
+          email: formEmail.trim(),
+          phone: formPhone.trim(),
+          role: 'committee',
+          displayRole: `Committee (${formCommitteeDesignation})`,
+          assignment: `${formCommitteeDesignation} · Flat ${formFlatNumber}`,
+          status: 'ACTIVE',
+          societyId: currentSocietyId,
+        };
+        const updated = [...committeeList, newCom];
+        setCommitteeList(updated);
+        try {
+          localStorage.setItem('dwellora_committee_members', JSON.stringify(updated));
+        } catch {}
       }
 
       // 3. Trigger Real-Time Notification Broadcast
@@ -814,7 +845,7 @@ export const ResidentManagementPage: React.FC = () => {
               </div>
 
               {/* Role-Specific Assignment */}
-              {(formRole === 'resident' || formRole === 'committee') && (
+              {formRole === 'resident' && (
                 <div>
                   <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.25rem' }}>
                     Assigned Flat Code *
@@ -833,6 +864,53 @@ export const ResidentManagementPage: React.FC = () => {
                       fontSize: '0.8125rem',
                     }}
                   />
+                </div>
+              )}
+
+              {formRole === 'committee' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.25rem' }}>
+                      Flat / Unit *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. B-1204"
+                      value={formFlatNumber}
+                      onChange={(e) => setFormFlatNumber(e.target.value.toUpperCase())}
+                      style={{
+                        width: '100%',
+                        padding: '0.55rem 0.75rem',
+                        borderRadius: '8px',
+                        border: '1px solid #CBD5E1',
+                        fontSize: '0.8125rem',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.25rem' }}>
+                      Committee Portfolio *
+                    </label>
+                    <select
+                      value={formCommitteeDesignation}
+                      onChange={(e) => setFormCommitteeDesignation(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.55rem 0.75rem',
+                        borderRadius: '8px',
+                        border: '1px solid #CBD5E1',
+                        fontSize: '0.8125rem',
+                      }}
+                    >
+                      <option value="Treasurer">Treasurer (Finance)</option>
+                      <option value="Vice President">Vice President</option>
+                      <option value="Executive Committee Member">Executive Member</option>
+                      <option value="Maintenance Head">Maintenance Head</option>
+                      <option value="Cultural & Events Head">Cultural & Events Head</option>
+                      <option value="Water & Energy Head">Water & Energy Head</option>
+                    </select>
+                  </div>
                 </div>
               )}
 

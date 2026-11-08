@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Power, ArrowLeft, Search } from 'lucide-react';
+import { Plus, Power, ArrowLeft, Search, Edit2, Trash2 } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
 import type { Society, SubscriptionTier } from '../../../types/society';
 import { DataTable } from '../../../components/ui/DataTable';
@@ -17,8 +17,10 @@ export const SuperAdminSocietiesPage: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [confirmStatusModal, setConfirmStatusModal] = useState<{ open: boolean; society?: Society; newStatus?: Society['status'] }>({ open: false });
+  const [editModal, setEditModal] = useState<{ open: boolean; society?: Society }>({ open: false });
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; society?: Society }>({ open: false });
 
-  // Form states
+  // Form states (Create)
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
   const [address, setAddress] = useState('');
@@ -29,8 +31,66 @@ export const SuperAdminSocietiesPage: React.FC = () => {
   const [adminName, setAdminName] = useState('');
   const [adminEmail, setAdminEmail] = useState('');
 
+  // Form states (Edit)
+  const [editName, setEditName] = useState('');
+  const [editCode, setEditCode] = useState('');
+  const [editAddress, setEditAddress] = useState('');
+  const [editCity, setEditCity] = useState('');
+  const [editState, setEditState] = useState('');
+  const [editPincode, setEditPincode] = useState('');
+  const [editTier, setEditTier] = useState<SubscriptionTier>('PRO');
+  const [editAdminName, setEditAdminName] = useState('');
+  const [editAdminEmail, setEditAdminEmail] = useState('');
+
   const refreshData = () => {
     setSocieties(societyService.getSocieties());
+  };
+
+  const handleOpenEdit = (s: Society) => {
+    setEditName(s.name);
+    setEditCode(s.code);
+    setEditAddress(s.address);
+    setEditCity(s.city);
+    setEditState(s.state);
+    setEditPincode(s.pincode);
+    setEditTier(s.subscriptionTier);
+    setEditAdminName(s.adminName || '');
+    setEditAdminEmail(s.adminEmail || '');
+    setEditModal({ open: true, society: s });
+  };
+
+  const handleUpdateSociety = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editModal.society || !editName) return;
+
+    societyService.updateSociety(
+      editModal.society.id,
+      {
+        name: editName,
+        code: editCode,
+        address: editAddress,
+        city: editCity,
+        state: editState,
+        pincode: editPincode,
+        subscriptionTier: editTier,
+        adminName: editAdminName,
+        adminEmail: editAdminEmail,
+      },
+      { id: 'super-admin-1', name: 'System Super Admin', role: 'SUPER_ADMIN' }
+    );
+
+    refreshData();
+    setEditModal({ open: false });
+  };
+
+  const handleDeleteSociety = () => {
+    if (!deleteModal.society) return;
+    societyService.deleteSociety(
+      deleteModal.society.id,
+      { id: 'super-admin-1', name: 'System Super Admin', role: 'SUPER_ADMIN' }
+    );
+    refreshData();
+    setDeleteModal({ open: false });
   };
 
   const handleCreateSociety = (e: React.FormEvent) => {
@@ -125,26 +185,67 @@ export const SuperAdminSocietiesPage: React.FC = () => {
     {
       key: 'actions',
       header: 'Actions',
+      width: '240px',
       render: (s) => (
-        <button
-          onClick={() => setConfirmStatusModal({ open: true, society: s, newStatus: s.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE' })}
-          style={{
-            padding: '0.4rem 0.75rem',
-            border: 'none',
-            borderRadius: '8px',
-            background: s.status === 'ACTIVE' ? '#FEF2F2' : '#ECFDF5',
-            color: s.status === 'ACTIVE' ? '#DC2626' : '#059669',
-            cursor: 'pointer',
-            fontWeight: 700,
-            fontSize: '0.8rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-          }}
-          title={s.status === 'ACTIVE' ? 'Suspend Society' : 'Activate Society'}
-        >
-          <Power size={14} /> {s.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <button
+            onClick={() => handleOpenEdit(s)}
+            style={{
+              padding: '0.35rem 0.65rem',
+              border: '1px solid #CBD5E1',
+              borderRadius: '8px',
+              background: '#F8FAFC',
+              color: '#083B56',
+              cursor: 'pointer',
+              fontWeight: 700,
+              fontSize: '0.78rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+            title="Edit Society (Update)"
+          >
+            <Edit2 size={13} /> Edit
+          </button>
+          <button
+            onClick={() => setConfirmStatusModal({ open: true, society: s, newStatus: s.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE' })}
+            style={{
+              padding: '0.35rem 0.65rem',
+              border: 'none',
+              borderRadius: '8px',
+              background: s.status === 'ACTIVE' ? '#FEF2F2' : '#ECFDF5',
+              color: s.status === 'ACTIVE' ? '#DC2626' : '#059669',
+              cursor: 'pointer',
+              fontWeight: 700,
+              fontSize: '0.78rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+            title={s.status === 'ACTIVE' ? 'Suspend Society' : 'Activate Society'}
+          >
+            <Power size={13} /> {s.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
+          </button>
+          <button
+            onClick={() => setDeleteModal({ open: true, society: s })}
+            style={{
+              padding: '0.35rem 0.55rem',
+              border: '1px solid #FEE2E2',
+              borderRadius: '8px',
+              background: '#FEF2F2',
+              color: '#DC2626',
+              cursor: 'pointer',
+              fontWeight: 700,
+              fontSize: '0.78rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+            title="Delete Society"
+          >
+            <Trash2 size={13} />
+          </button>
+        </div>
       ),
     },
   ];
@@ -268,22 +369,65 @@ export const SuperAdminSocietiesPage: React.FC = () => {
                   { label: 'Admin', value: `${s.adminName || 'N/A'} (${s.adminEmail})` },
                 ]}
                 actions={
-                  <button
-                    onClick={() => setConfirmStatusModal({ open: true, society: s, newStatus: s.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE' })}
-                    style={{
-                      width: '100%',
-                      padding: '0.6rem',
-                      borderRadius: '8px',
-                      border: 'none',
-                      background: s.status === 'ACTIVE' ? '#FEF2F2' : '#ECFDF5',
-                      color: s.status === 'ACTIVE' ? '#DC2626' : '#059669',
-                      fontWeight: 700,
-                      fontSize: '0.85rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {s.status === 'ACTIVE' ? 'Suspend Society' : 'Activate Society'}
-                  </button>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.4rem', width: '100%' }}>
+                    <button
+                      onClick={() => handleOpenEdit(s)}
+                      style={{
+                        padding: '0.55rem',
+                        borderRadius: '8px',
+                        border: '1px solid #CBD5E1',
+                        background: '#F8FAFC',
+                        color: '#083B56',
+                        fontWeight: 700,
+                        fontSize: '0.78rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <Edit2 size={13} /> Edit
+                    </button>
+                    <button
+                      onClick={() => setConfirmStatusModal({ open: true, society: s, newStatus: s.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE' })}
+                      style={{
+                        padding: '0.55rem',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: s.status === 'ACTIVE' ? '#FEF2F2' : '#ECFDF5',
+                        color: s.status === 'ACTIVE' ? '#DC2626' : '#059669',
+                        fontWeight: 700,
+                        fontSize: '0.78rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <Power size={13} /> {s.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
+                    </button>
+                    <button
+                      onClick={() => setDeleteModal({ open: true, society: s })}
+                      style={{
+                        padding: '0.55rem',
+                        borderRadius: '8px',
+                        border: '1px solid #FEE2E2',
+                        background: '#FEF2F2',
+                        color: '#DC2626',
+                        fontWeight: 700,
+                        fontSize: '0.78rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <Trash2 size={13} /> Delete
+                    </button>
+                  </div>
                 }
               />
             )}
@@ -416,6 +560,127 @@ export const SuperAdminSocietiesPage: React.FC = () => {
         title={`${confirmStatusModal.newStatus === 'ACTIVE' ? 'Activate' : 'Suspend'} Society`}
         message={`Are you sure you want to change status of ${confirmStatusModal.society?.name} to ${confirmStatusModal.newStatus}?`}
         variant={confirmStatusModal.newStatus === 'SUSPENDED' ? 'danger' : 'info'}
+      />
+
+      {/* Edit Society Modal (Update) */}
+      <Modal isOpen={editModal.open} onClose={() => setEditModal({ open: false })} title="Update Society Details">
+        <Form onSubmit={handleUpdateSociety}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <FormField label="Society Name *">
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                />
+              </FormField>
+              <FormField label="Society Code *">
+                <input
+                  type="text"
+                  required
+                  value={editCode}
+                  onChange={(e) => setEditCode(e.target.value.toUpperCase())}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                />
+              </FormField>
+            </div>
+
+            <FormField label="Full Address">
+              <input
+                type="text"
+                value={editAddress}
+                onChange={(e) => setEditAddress(e.target.value)}
+                style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+              />
+            </FormField>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+              <FormField label="City">
+                <input
+                  type="text"
+                  value={editCity}
+                  onChange={(e) => setEditCity(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                />
+              </FormField>
+              <FormField label="State">
+                <input
+                  type="text"
+                  value={editState}
+                  onChange={(e) => setEditState(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                />
+              </FormField>
+              <FormField label="Pincode">
+                <input
+                  type="text"
+                  value={editPincode}
+                  onChange={(e) => setEditPincode(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                />
+              </FormField>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <FormField label="Subscription Tier">
+                <select
+                  value={editTier}
+                  onChange={(e) => setEditTier(e.target.value as SubscriptionTier)}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                >
+                  <option value="BASIC">Basic (Up to 100 flats)</option>
+                  <option value="PRO">Pro (Up to 300 flats)</option>
+                  <option value="ENTERPRISE">Enterprise (Unlimited)</option>
+                </select>
+              </FormField>
+              <FormField label="Assigned Admin Name">
+                <input
+                  type="text"
+                  value={editAdminName}
+                  onChange={(e) => setEditAdminName(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                />
+              </FormField>
+            </div>
+
+            <FormField label="Assigned Admin Email">
+              <input
+                type="email"
+                value={editAdminEmail}
+                onChange={(e) => setEditAdminEmail(e.target.value)}
+                style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+              />
+            </FormField>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #E2E8F0' }}>
+              <button
+                type="button"
+                onClick={() => setEditModal({ open: false })}
+                style={{ padding: '0.65rem 1.25rem', border: '1px solid #CBD5E1', background: '#ffffff', color: '#52788D', fontWeight: 700, borderRadius: '10px', cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                style={{ padding: '0.65rem 1.4rem', background: '#083B56', color: '#ffffff', fontWeight: 700, borderRadius: '10px', border: 'none', cursor: 'pointer', boxShadow: '0 3px 12px rgba(8, 59, 86, 0.28)' }}
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </Form>
+      </Modal>
+
+      {/* Delete Society Dialog (Delete) */}
+      <ConfirmDialog
+        isOpen={deleteModal.open}
+        onClose={() => setDeleteModal({ open: false })}
+        onConfirm={handleDeleteSociety}
+        title="Delete Society Account"
+        message={`Are you sure you want to permanently delete "${deleteModal.society?.name}"? All associated unit profiles and configurations will be removed.`}
+        variant="danger"
       />
     </div>
   );

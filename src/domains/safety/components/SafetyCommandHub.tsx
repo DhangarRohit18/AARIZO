@@ -58,6 +58,15 @@ export const SafetyCommandHub: React.FC<SafetyCommandHubProps> = ({ initialTab =
     idProofNumber: 'XXXX-XXXX-9901',
   });
 
+  const [childForm, setChildForm] = useState({
+    childName: '',
+    flatCode: flatNumber,
+    guardianName: currentUser?.name || 'Siddharth Malhotra',
+    guardianPhone: currentUser?.phone || '+91 98765 00000',
+    age: '8',
+    gender: 'Boy',
+  });
+
   const [scanChildInput, setScanChildInput] = useState('');
   const [scanPickupInput, setScanPickupInput] = useState('');
   const [gateResult, setGateResult] = useState<{ isValid: boolean; child?: ChildProfileItem; reason?: string } | null>(null);
@@ -115,6 +124,31 @@ export const SafetyCommandHub: React.FC<SafetyCommandHubProps> = ({ initialTab =
   const handleResolve = (id: string) => {
     safetyCommandEngine.resolveIncident(id, 'RESOLVED', 'Incident resolved cleanly on site.', currentUser?.name || 'Security Post');
     loadData();
+  };
+
+  const handleAddChildSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!childForm.childName.trim()) return;
+
+    safetyCommandEngine.addChildProfile(
+      childForm.childName.trim(),
+      childForm.flatCode || flatNumber,
+      childForm.guardianName,
+      childForm.guardianPhone
+    );
+
+    setModalMode(null);
+    loadData();
+    setAlertSuccess(`Child profile for "${childForm.childName}" registered with Gate Pass.`);
+    setChildForm({
+      childName: '',
+      flatCode: flatNumber,
+      guardianName: currentUser?.name || 'Siddharth Malhotra',
+      guardianPhone: currentUser?.phone || '+91 98765 00000',
+      age: '8',
+      gender: 'Boy',
+    });
+    setTimeout(() => setAlertSuccess(null), 5000);
   };
 
   const handleAddPickupSubmit = (e: React.FormEvent) => {
@@ -580,6 +614,27 @@ export const SafetyCommandHub: React.FC<SafetyCommandHubProps> = ({ initialTab =
             <h3 style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Children registered in your family ({children.length})
             </h3>
+            <button
+              type="button"
+              onClick={() => setModalMode('ADD_CHILD')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.45rem 0.85rem',
+                borderRadius: '10px',
+                background: 'var(--aarizo-navy, #083B56)',
+                color: '#ffffff',
+                fontWeight: 700,
+                fontSize: '0.78rem',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(8, 59, 86, 0.15)',
+              }}
+            >
+              <UserPlus size={14} color="var(--aarizo-gold, #E5B842)" />
+              <span>Add Child Profile</span>
+            </button>
           </div>
 
           {/* SECTION A: Eligible Children Cards Grid */}
@@ -1352,6 +1407,121 @@ export const SafetyCommandHub: React.FC<SafetyCommandHubProps> = ({ initialTab =
             <p className="text-[11px] text-emerald-700">🔒 Gate guard will scan QR and verify escort photo ID before exit.</p>
           </div>
         </div>
+      </Modal>
+
+      {/* Modal: Add Child Profile */}
+      <Modal
+        isOpen={modalMode === 'ADD_CHILD'}
+        onClose={() => setModalMode(null)}
+        title="Register Child Profile"
+        subtitle="Enable gate exit tracking, escort passes, and missing radar"
+        icon={<UserPlus size={20} />}
+        maxWidth="500px"
+      >
+        <form onSubmit={handleAddChildSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', paddingTop: '0.25rem' }}>
+          <div>
+            <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.25rem' }}>
+              Child Full Name *
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. Aarav Malhotra"
+              value={childForm.childName}
+              onChange={(e) => setChildForm({ ...childForm, childName: e.target.value })}
+              style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.25rem' }}>
+                Flat Code
+              </label>
+              <input
+                type="text"
+                value={childForm.flatCode}
+                onChange={(e) => setChildForm({ ...childForm, flatCode: e.target.value })}
+                style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.25rem' }}>
+                Age
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="17"
+                value={childForm.age}
+                onChange={(e) => setChildForm({ ...childForm, age: e.target.value })}
+                style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.25rem' }}>
+                Primary Guardian Name
+              </label>
+              <input
+                type="text"
+                value={childForm.guardianName}
+                onChange={(e) => setChildForm({ ...childForm, guardianName: e.target.value })}
+                style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.25rem' }}>
+                Guardian Phone
+              </label>
+              <input
+                type="tel"
+                value={childForm.guardianPhone}
+                onChange={(e) => setChildForm({ ...childForm, guardianPhone: e.target.value })}
+                style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.85rem' }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid #E2E8F0' }}>
+            <button
+              type="button"
+              onClick={() => setModalMode(null)}
+              style={{
+                flex: 1,
+                padding: '0.65rem',
+                borderRadius: '10px',
+                border: '1px solid #CBD5E1',
+                background: '#FFFFFF',
+                color: '#475569',
+                fontWeight: 700,
+                fontSize: '0.8125rem',
+                cursor: 'pointer',
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              style={{
+                flex: 2,
+                padding: '0.65rem',
+                borderRadius: '10px',
+                border: 'none',
+                background: 'var(--aarizo-navy, #083B56)',
+                color: '#FFFFFF',
+                fontWeight: 800,
+                fontSize: '0.8125rem',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(8, 59, 86, 0.25)',
+              }}
+            >
+              Register Child
+            </button>
+          </div>
+        </form>
       </Modal>
 
       {/* Modal: Add Escort / Pickup */}

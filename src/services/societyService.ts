@@ -107,6 +107,39 @@ export const societyService = {
     return societies[index];
   },
 
+  updateSociety: (
+    id: string,
+    updates: Partial<Omit<Society, 'id'>>,
+    actor: { id: string; name: string; role: string }
+  ): Society | null => {
+    const societies = db.getSocieties();
+    const index = societies.findIndex((s) => s.id === id);
+    if (index === -1) return null;
+
+    societies[index] = { ...societies[index], ...updates };
+    db.saveSocieties(societies);
+
+    societyRepository.update(id, updates as any).catch(() => {});
+    logAudit(id, actor, 'UPDATE', 'Society', id, `Updated society ${societies[index].name}`);
+    return societies[index];
+  },
+
+  deleteSociety: (
+    id: string,
+    actor: { id: string; name: string; role: string }
+  ): boolean => {
+    const societies = db.getSocieties();
+    const soc = societies.find((s) => s.id === id);
+    if (!soc) return false;
+
+    const remaining = societies.filter((s) => s.id !== id);
+    db.saveSocieties(remaining);
+
+    societyRepository.delete(id).catch(() => {});
+    logAudit(id, actor, 'DELETE', 'Society', id, `Deleted society ${soc.name} (${soc.code})`);
+    return true;
+  },
+
   // --- TOWERS & FLATS (SOCIETY ADMIN) ---
   getTowers: (societyId: string): Tower[] =>
     db.getTowers().filter((t) => t.societyId === societyId),

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, Plus, ArrowLeft, Search } from 'lucide-react';
+import { Home, Plus, ArrowLeft, Search, UserCheck } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
+import { realtimeService } from '../../../services/realtimeService';
 import type { Flat, BHKType, OccupancyStatus } from '../../../types/society';
 import { DataTable } from '../../../components/ui/DataTable';
 import type { Column } from '../../../components/ui/DataTable';
@@ -25,6 +26,12 @@ export const FlatManagementPage: React.FC = () => {
   const [bhkType, setBhkType] = useState<BHKType>('3BHK');
   const [occupancyStatus, setOccupancyStatus] = useState<OccupancyStatus>('OWNER_OCCUPIED');
 
+  // Resident creation during flat creation
+  const [assignResidentNow, setAssignResidentNow] = useState<boolean>(true);
+  const [residentName, setResidentName] = useState('');
+  const [residentPhone, setResidentPhone] = useState('');
+  const [residentEmail, setResidentEmail] = useState('');
+
   const refreshData = () => {
     setFlats(societyService.getFlats(currentSocietyId));
   };
@@ -34,23 +41,56 @@ export const FlatManagementPage: React.FC = () => {
     if (!flatNumber || !selectedTowerId) return;
 
     const tower = towers.find((t) => t.id === selectedTowerId);
+    const upperFlat = flatNumber.toUpperCase().trim();
+    const shouldAddResident = assignResidentNow && occupancyStatus !== 'VACANT' && residentName.trim();
 
-    societyService.createFlat(
+    const createdFlat = societyService.createFlat(
       {
         societyId: currentSocietyId,
         towerId: selectedTowerId,
         towerName: tower?.name || 'Tower B',
         floorNumber: Number(floorNumber),
-        flatNumber: flatNumber.toUpperCase(),
+        flatNumber: upperFlat,
         bhkType,
         occupancyStatus,
+        primaryResidentName: shouldAddResident ? residentName.trim() : undefined,
+        phone: shouldAddResident ? residentPhone.trim() : undefined,
       },
       { id: 'sec-admin-1', name: 'Mayuri Udar', role: 'SOCIETY_ADMIN' }
     );
 
+    // If resident details provided, automatically provision and add resident
+    if (shouldAddResident) {
+      societyService.createResident(
+        {
+          societyId: currentSocietyId,
+          flatId: createdFlat.id,
+          flatCode: upperFlat,
+          name: residentName.trim(),
+          phone: residentPhone.trim() || '+91 98000 00000',
+          email: residentEmail.trim() || `${residentName.toLowerCase().replace(/\s+/g, '')}@example.com`,
+          role: occupancyStatus === 'OWNER_OCCUPIED' ? 'OWNER' : 'TENANT',
+          moveInDate: new Date().toISOString(),
+          approvalStatus: 'APPROVED',
+        },
+        { id: 'sec-admin-1', name: 'Mayuri Udar', role: 'SOCIETY_ADMIN' }
+      );
+
+      realtimeService.publish('USER_PROVISIONED', {
+        name: residentName.trim(),
+        role: 'resident',
+        flatNumber: upperFlat,
+        action: 'RESIDENT_PROVISIONED_WITH_FLAT',
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     refreshData();
     setIsAddModalOpen(false);
     setFlatNumber('');
+    setResidentName('');
+    setResidentPhone('');
+    setResidentEmail('');
   };
 
   const filteredFlats = flats.filter((f) => {
@@ -328,6 +368,61 @@ export const FlatManagementPage: React.FC = () => {
               <option value="VACANT">Vacant</option>
             </select>
           </FormField>
+
+          {/* Section: Add Resident during Flat Creation */}
+          {occupancyStatus !== 'VACANT' && (
+            <div style={{ marginTop: '0.75rem', padding: '0.85rem', background: '#F8FAFC', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700, color: '#083B56', fontSize: '0.85rem' }}>
+                  <UserCheck size={16} color="#F06543" />
+                  <span>Assign Primary Resident</span>
+                </div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: '#475569', cursor: 'pointer', fontWeight: 600 }}>
+                  <input
+                    type="checkbox"
+                    checked={assignResidentNow}
+                    onChange={(e) => setAssignResidentNow(e.target.checked)}
+                  />
+                  <span>Add now</span>
+                </label>
+              </div>
+
+              {assignResidentNow && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                  <FormField label="Resident Full Name">
+                    <input
+                      type="text"
+                      value={residentName}
+                      onChange={(e) => setResidentName(e.target.value)}
+                      placeholder="e.g. Ananya Deshmukh"
+                      className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#F06543]"
+                    />
+                  </FormField>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
+                    <FormField label="Mobile Phone">
+                      <input
+                        type="tel"
+                        value={residentPhone}
+                        onChange={(e) => setResidentPhone(e.target.value)}
+                        placeholder="e.g. +91 98200 11223"
+                        className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#F06543]"
+                      />
+                    </FormField>
+                    <FormField label="Email Address">
+                      <input
+                        type="email"
+                        value={residentEmail}
+                        onChange={(e) => setResidentEmail(e.target.value)}
+                        placeholder="e.g. ananya@gmail.com"
+                        className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#F06543]"
+                      />
+                    </FormField>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-slate-200">
             <button
               type="button"

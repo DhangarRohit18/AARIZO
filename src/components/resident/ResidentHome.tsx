@@ -20,6 +20,8 @@ import {
   TrendingUp,
   CheckCircle2,
   X,
+  QrCode,
+  Store,
 } from 'lucide-react';
 import { ResidentParcelWidget } from '../../domains/deliveries/components/ResidentParcelWidget';
 import { Skeleton, EmptyState, ErrorState } from '../common';
@@ -194,6 +196,81 @@ export const ResidentHome: React.FC = () => {
 
       {/* Content area */}
       <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {/* ── High-Priority Resident Action Cards (Visitor Pass & Society Vendors) ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+          <button
+            onClick={() => navigate('/resident/visitors')}
+            style={{
+              padding: '0.85rem 1rem',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, #083B56 0%, #176B91 100%)',
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              textAlign: 'left',
+              boxShadow: '0 4px 14px rgba(8, 59, 86, 0.15)',
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '10px',
+                background: 'rgba(255, 255, 255, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <QrCode size={20} color="#E5B842" />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.8125rem', lineHeight: 1.2 }}>Generate Gate Pass</div>
+              <div style={{ fontSize: '0.6875rem', color: 'rgba(255, 255, 255, 0.8)', marginTop: '2px' }}>Visitors, Cabs & Delivery</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => navigate('/resident/services')}
+            style={{
+              padding: '0.85rem 1rem',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)',
+              color: '#9A3412',
+              border: '1px solid #FED7AA',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              textAlign: 'left',
+              boxShadow: '0 4px 14px rgba(240, 101, 67, 0.08)',
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '10px',
+                background: 'rgba(240, 101, 67, 0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Store size={20} color="#F06543" />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#9A3412', lineHeight: 1.2 }}>Society Vendors</div>
+              <div style={{ fontSize: '0.6875rem', color: '#C2410C', marginTop: '2px' }}>Verified Directory</div>
+            </div>
+          </button>
+        </div>
+
         {/* ── Quick Actions Grid (Screenshot matched) ── */}
         <section>
           <h2 style={{ fontWeight: 800, fontSize: '0.8125rem', color: 'var(--aarizo-navy, #083B56)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.625rem' }}>
