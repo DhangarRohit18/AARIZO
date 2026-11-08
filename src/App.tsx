@@ -8,6 +8,7 @@ import { AppRoutes } from './routes';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { SplashScreen } from './components/common/SplashScreen';
 import { initNativeMobileFeatures } from './utils/nativeMobile';
+import { RealtimeToastContainer } from './components/common/RealtimeLiveBar';
 import './styles/global.css';
 
 export const App: React.FC = () => {
@@ -37,6 +38,7 @@ export const App: React.FC = () => {
                 position: 'relative',
               }}
             >
+              <RealtimeToastContainer />
               {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
               <AppRoutes />
             </div>

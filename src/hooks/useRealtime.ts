@@ -30,13 +30,18 @@ export function useRealtimeStream(topicFilter: RealtimeTopic | 'ALL' = 'ALL') {
   );
 
   useEffect(() => {
-    const unsubscribe = realtimeService.subscribe('*', () => {
+    const unsubMsg = realtimeService.subscribe('*', () => {
       setMessages(realtimeService.getRecentMessages(topicFilter));
       setStatus(realtimeService.getConnectionStatus());
     });
 
+    const unsubStatus = realtimeService.subscribeToStatus((newStatus) => {
+      setStatus(newStatus);
+    });
+
     return () => {
-      unsubscribe();
+      unsubMsg();
+      unsubStatus();
     };
   }, [topicFilter]);
 

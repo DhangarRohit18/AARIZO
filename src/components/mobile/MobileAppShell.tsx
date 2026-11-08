@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { App } from '@capacitor/app';
 import { triggerHaptic, useVirtualKeyboard } from '../../utils/nativeMobile';
 import { QuickActionSheet } from './QuickActionSheet';
-import { RealtimeStatusBadge, RealtimeToastContainer } from '../common/RealtimeLiveBar';
+import { RealtimeStatusBadge } from '../common/RealtimeLiveBar';
 
 export interface NavItem {
   icon: LucideIcon | React.ElementType;
@@ -129,9 +129,6 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         position: 'relative',
       }}
     >
-      {/* ── Global Floating Real-Time Toast Banner & Audio Feedback ── */}
-      <RealtimeToastContainer />
-
       {/* ── Screenshot-Matched Deep Espresso Header (#231715) ── */}
       <header
         style={{
