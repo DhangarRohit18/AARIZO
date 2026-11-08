@@ -68,6 +68,56 @@ export const apiClient = {
   // Health
   checkHealth: () => apiRequest<{ status: string; engine: string }>('/health'),
 
+  // Universal Provisioning API (7 Roles)
+  provisionUser: (data: {
+    societyId: string;
+    role: string;
+    name: string;
+    email: string;
+    phone: string;
+    flatNumber?: string;
+    password?: string;
+    metadata?: Record<string, any>;
+  }) =>
+    apiRequest<{
+      success: boolean;
+      message: string;
+      userId: string;
+      role: string;
+      temporaryPassword?: string;
+      details?: any;
+    }>('/secretary/provision-user', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      societyId: data.societyId,
+    }),
+
+  provisionSociety: (data: {
+    societyName: string;
+    address: string;
+    city: string;
+    state?: string;
+    pincode: string;
+    secretaryName: string;
+    secretaryEmail: string;
+    secretaryPhone: string;
+    secretaryPassword?: string;
+    towersCount?: number;
+    flatsCount?: number;
+  }) =>
+    apiRequest<{
+      success: boolean;
+      message: string;
+      societyId: string;
+      userId: string;
+      role: string;
+      temporaryPassword?: string;
+      details?: any;
+    }>('/admin/provision-society', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
   // Societies
   getSocieties: () => apiRequest<any[]>('/societies'),
 

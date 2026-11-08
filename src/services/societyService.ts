@@ -159,6 +159,21 @@ export const societyService = {
   getResidents: (societyId: string): Resident[] =>
     db.getResidents().filter((r) => r.societyId === societyId),
 
+  createResident: (
+    data: Omit<Resident, 'id'>,
+    actor: { id: string; name: string; role: string }
+  ): Resident => {
+    const residents = db.getResidents();
+    const newResident: Resident = {
+      ...data,
+      id: `res-${Date.now()}`,
+    };
+    db.saveResidents([...residents, newResident]);
+    residentRepository.create(newResident).catch(() => {});
+    logAudit(data.societyId, actor, 'CREATE', 'Resident', newResident.id, `Created resident ${newResident.name} (${newResident.flatCode})`);
+    return newResident;
+  },
+
   updateResidentApproval: (
     id: string,
     status: 'APPROVED' | 'REJECTED',
