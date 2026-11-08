@@ -1,15 +1,12 @@
+import { getBackendBaseUrl } from '../utils/backendConfig';
+
 /**
  * AARIZO CommunityOS - Unified API Client
  * Connects React frontend directly to the Node.js + Express + Prisma + PostgreSQL backend.
  * Provides multi-tenant context headers (societyId, userId, userRole) and handles fallbacks.
  */
 
-const API_BASE =
-  (import.meta as any).env?.VITE_BACKEND_URL
-    ? `${(import.meta as any).env.VITE_BACKEND_URL}/api`
-    : (typeof window !== 'undefined' && (window.location.port === '5173' || window.location.port === '5174')
-      ? 'http://localhost:5000/api'
-      : '/api');
+const API_BASE = `${getBackendBaseUrl()}/api`;
 
 interface RequestOptions extends RequestInit {
   societyId?: string;

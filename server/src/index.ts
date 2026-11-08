@@ -79,100 +79,72 @@ app.get('/api/health', (_req: Request, res: Response) => {
 });
 
 // ==========================================
-// REAL-TIME SERVER-SENT EVENTS (SSE) ENGINE
+// REAL-TIME TRANSACTIONAL OUTBOX & SSE ENGINE
 // ==========================================
-interface SSEClient {
-  id: string;
-  res: Response;
-  societyId?: string;
-}
-let sseClients: SSEClient[] = [];
 
 // SSE Subscription endpoint for mobile APKs and web dashboards
 app.get('/api/realtime/stream', (req: Request, res: Response) => {
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-    'Access-Control-Allow-Origin': '*',
-  });
-
+  const societyId = (req.query.societyId as string) || req.societyId || 'soc-gvs';
+  const userId = (req.query.userId as string) || req.userId;
+  const role = (req.query.role as string) || req.userRole || 'resident';
+  const lastEventId = (req.headers['last-event-id'] as string) || (req.query.lastEventId as string);
   const clientId = `client_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-  const client: SSEClient = {
-    id: clientId,
-    res,
-    societyId: (req.query.societyId as string) || undefined,
-  };
-  sseClients.push(client);
 
-  // Send initial connection acknowledgement
-  res.write(`data: ${JSON.stringify({ type: 'CONNECTED', clientId, timestamp: new Date().toISOString() })}\n\n`);
-
-  // Periodic heartbeat keep-alive
-  const heartbeat = setInterval(() => {
-    try {
-      res.write(': ping\n\n');
-    } catch {
-      clearInterval(heartbeat);
-    }
-  }, 25000);
-
-  req.on('close', () => {
-    clearInterval(heartbeat);
-    sseClients = sseClients.filter((c) => c.id !== clientId);
-  });
+  realtimeEngine.registerClient(clientId, res, societyId, userId, role, lastEventId);
 });
 
 // SSE Broadcast endpoint for cross-device events
-app.post('/api/realtime/broadcast', (req: Request, res: Response) => {
-  const { topic, payload, societyId, senderRole, senderName } = req.body;
-  const msg = {
-    id: `rt-net-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-    topic: topic || 'GENERAL',
-    societyId: societyId || 'soc-gvs',
-    payload: payload || {},
-    timestamp: new Date().toISOString(),
-    senderRole: senderRole || 'NETWORK',
-    senderName: senderName || 'Remote Node',
-  };
-
-  const dataStr = `data: ${JSON.stringify(msg)}\n\n`;
-  let sentCount = 0;
-  sseClients.forEach((client) => {
-    try {
-      if (!client.societyId || client.societyId === msg.societyId) {
-        client.res.write(dataStr);
-        sentCount++;
-      }
-    } catch (e) {
-      // client connection closed
-    }
-  });
-
-  res.json({ success: true, deliveredTo: sentCount, message: msg });
+app.post('/api/realtime/broadcast', async (req: Request, res: Response) => {
+  try {
+    const { societyId, eventType, entityId, payload, topic, senderRole, senderName } = req.body;
+    const finalType = eventType || topic || 'GENERAL';
+    const eventId = await realtimeEngine.recordOutboxEvent({
+      societyId: societyId || req.societyId || 'soc-gvs',
+      eventType: finalType,
+      entityId: entityId || `evt_${Date.now()}`,
+      actorId: req.userId || senderName || 'system',
+      payload: {
+        ...(payload || {}),
+        senderRole: senderRole || 'NETWORK',
+        senderName: senderName || 'Remote Node',
+      },
+    });
+    res.json({ success: true, eventId, deliveredTo: realtimeEngine.getActiveConnectionCount(societyId) });
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
 });
 
-// Internal event broadcaster helper
-function broadcastEvent(topic: string, payload: any, societyId: string = 'soc-gvs') {
-  const msg = {
-    id: `rt-net-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-    topic,
+// Diagnostics & Health Check
+app.get('/api/realtime/health', (req: Request, res: Response) => {
+  const societyId = (req.query.societyId as string) || 'soc-gvs';
+  res.json({
+    status: 'ACTIVE',
+    mode: 'REALTIME_DURABLE_OUTBOX',
     societyId,
-    payload: payload || {},
+    activeSubscribersInSociety: realtimeEngine.getActiveConnectionCount(societyId),
+    totalActiveConnections: realtimeEngine.getActiveConnectionCount(),
     timestamp: new Date().toISOString(),
-    senderRole: 'SYSTEM',
-    senderName: 'PostgreSQL Realtime Engine',
-  };
-  const dataStr = `data: ${JSON.stringify(msg)}\n\n`;
-  sseClients.forEach((client) => {
-    try {
-      if (!client.societyId || client.societyId === societyId) {
-        client.res.write(dataStr);
-      }
-    } catch {
-      // client connection closed
-    }
   });
+});
+
+// Internal event broadcaster helper routing through authoritative Transactional Outbox
+export async function broadcastEvent(topic: string, payload: any, societyId: string = 'soc-gvs') {
+  try {
+    await realtimeEngine.recordOutboxEvent({
+      societyId,
+      eventType: topic,
+      entityId: payload?.id ? String(payload.id) : `evt_${Date.now()}`,
+      payload: payload || {},
+    });
+  } catch {
+    // In-memory fallback if database outbox table write encounters transient error
+    realtimeEngine.broadcastToSociety(societyId, topic, {
+      ...payload,
+      timestamp: new Date().toISOString(),
+      fallbackMode: true,
+    });
+  }
 }
 
 // Societies
@@ -876,35 +848,6 @@ app.post('/api/secretary/provision-user', async (req: Request, res: Response) =>
   }
 });
 
-// ==========================================
-// ⚡ SAFEGATE 2.0: REAL-TIME OUTBOX & SSE
-// ==========================================
-app.get('/api/realtime/stream', (req: Request, res: Response) => {
-  const societyId = (req.query.societyId as string) || req.societyId || 'soc-gvs';
-  const userId = (req.query.userId as string) || req.userId;
-  const role = (req.query.role as string) || req.userRole || 'resident';
-  const lastEventId = (req.headers['last-event-id'] as string) || (req.query.lastEventId as string);
-  const clientId = `client_${crypto.randomUUID()}`;
-
-  realtimeEngine.registerClient(clientId, res, societyId, userId, role, lastEventId);
-});
-
-app.post('/api/realtime/broadcast', async (req: Request, res: Response) => {
-  try {
-    const { societyId, eventType, entityId, payload, topic } = req.body;
-    const finalType = eventType || topic || 'GENERAL';
-    const eventId = await realtimeEngine.recordOutboxEvent({
-      societyId: societyId || req.societyId || 'soc-gvs',
-      eventType: finalType,
-      entityId: entityId || 'unknown',
-      actorId: req.userId || 'system',
-      payload: payload || req.body,
-    });
-    res.json({ success: true, eventId });
-  } catch (error: any) {
-    res.status(500).json({ error: error?.message });
-  }
-});
 
 // ==========================================
 // ⭐ SAFEGATE 2.0: ADVANCED DIFFERENTIATORS

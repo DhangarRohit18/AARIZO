@@ -25,6 +25,7 @@ import { FileUpload } from '../../../components/ui/FileUpload';
 import { AdvertisementPopup, OffersLauncherPill } from '../../../components/common/AdvertisementPopup';
 import { Modal } from '../../../components/ui/Modal';
 import { useAuth } from '../../../context/AuthContext';
+import { realtimeService } from '../../../services/realtimeService';
 import type {
   MarketplaceListing,
   ListingType,
@@ -107,6 +108,10 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
 
   useEffect(() => {
     refreshData();
+    const unsub = realtimeService.subscribe('*', () => {
+      refreshData();
+    });
+    return () => unsub();
   }, [selectedType, selectedCategory, selectedStatus, searchQuery]);
 
   // Keep selected listing synced if updated

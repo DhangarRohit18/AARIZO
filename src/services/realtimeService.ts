@@ -1,20 +1,95 @@
 import type { RealtimeTopic, RealtimeMessage, RealtimeConnectionStatus } from '../types/realtime';
+import { getBackendBaseUrl } from '../utils/backendConfig';
+import { triggerHaptic } from '../utils/nativeMobile';
 
 type MessageCallback<T = any> = (msg: RealtimeMessage<T>) => void;
+type StatusCallback = (status: RealtimeConnectionStatus) => void;
+type AlertCallback = (alert: {
+  id: string;
+  topic: string;
+  title: string;
+  description: string;
+  urgency: 'info' | 'alert' | 'emergency';
+  timestamp: string;
+  actionPath?: string;
+  payload?: any;
+}) => void;
+
+/**
+ * Clean Web Audio API Chime Synthesizer
+ * Produces crisp harmonic notification tones with 0 external sound files
+ */
+function playAudioChime(urgency: 'info' | 'alert' | 'emergency' = 'info') {
+  if (typeof window === 'undefined') return;
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+
+    if (urgency === 'emergency') {
+      // High-priority alternating dual-tone siren
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1174, ctx.currentTime + 0.15);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.46);
+    } else if (urgency === 'alert') {
+      // Pleasant two-tone ascending doorbell chime (G5 -> C6)
+      [784, 1046].forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        const start = ctx.currentTime + idx * 0.11;
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0.12, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.22);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.23);
+      });
+    } else {
+      // Subtle gentle confirmation ping
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(987.77, ctx.currentTime);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.2);
+    }
+  } catch {
+    // Audio autoplay restrictions before first user interaction
+  }
+}
 
 class RealtimeService {
   private channel: BroadcastChannel | null = null;
   private sseSource: EventSource | null = null;
   private subscribers: Map<string, Set<MessageCallback>> = new Map();
+  private statusSubscribers: Set<StatusCallback> = new Set();
+  private alertSubscribers: Set<AlertCallback> = new Set();
   private recentMessages: RealtimeMessage[] = [];
   private seenMessageIds: Set<string> = new Set();
   private totalMessagesReceived = 0;
-  private isConnected = true;
-  private backendBaseUrl =
-    (import.meta as any).env?.VITE_BACKEND_URL ||
-    (typeof window !== 'undefined' && (window.location.port === '5173' || window.location.port === '5174')
-      ? 'http://localhost:5000'
-      : '');
+  private isConnected = false;
+  private connectionState: 'CONNECTING' | 'CONNECTED' | 'RECONNECTING' | 'OFFLINE' = 'CONNECTING';
+  private measuredLatencyMs = 8;
+  public lastPingTime: number = Date.now();
+  private lastEventTime?: string;
+  private sseErrorCount = 0;
+  private reconnectTimeout: any = null;
+  public currentSocietyId = 'soc-gvs';
 
   constructor() {
     this.initBroadcastChannel();
@@ -23,7 +98,7 @@ class RealtimeService {
   }
 
   /**
-   * Initialize HTML5 BroadcastChannel for multi-tab real-time socket simulation
+   * Initialize HTML5 BroadcastChannel for multi-tab real-time sync
    */
   private initBroadcastChannel() {
     if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
@@ -34,21 +109,14 @@ class RealtimeService {
             this.handleIncomingMessage(event.data);
           }
         };
-      } catch (e) {
-        console.warn('BroadcastChannel fallback to in-memory event bus');
+      } catch {
+        // Fallback to in-memory bus
       }
     }
   }
 
   /**
-   * Initialize Server-Sent Events (SSE) for true cross-device network real-time sync
-   */
-  private sseErrorCount = 0;
-  private reconnectTimeout: any = null;
-  public currentSocietyId = 'soc-gvs';
-
-  /**
-   * Initialize Server-Sent Events (SSE) with resilient auto-reconnect for production deployment
+   * Initialize Server-Sent Events (SSE) with resilient auto-reconnect and live ping telemetry
    */
   public initSseStream(societyId = 'soc-gvs', userId?: string, userRole?: string) {
     this.currentSocietyId = societyId;
@@ -61,8 +129,11 @@ class RealtimeService {
       this.sseSource = null;
     }
 
+    this.connectionState = this.sseErrorCount > 0 ? 'RECONNECTING' : 'CONNECTING';
+    this.notifyStatusListeners();
+
     try {
-      const baseUrl = this.backendBaseUrl || '';
+      const baseUrl = getBackendBaseUrl();
       const params = new URLSearchParams({
         societyId,
         ...(userId ? { userId } : {}),
@@ -74,12 +145,23 @@ class RealtimeService {
 
       this.sseSource.onopen = () => {
         this.isConnected = true;
+        this.connectionState = 'CONNECTED';
         this.sseErrorCount = 0;
+        this.notifyStatusListeners();
       };
 
       this.sseSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+
+          // Handle server ping frame for instantaneous network latency measurement
+          if (data && data.type === 'PING') {
+            this.measuredLatencyMs = Math.max(2, Date.now() - (data.timestamp || Date.now()));
+            this.lastPingTime = Date.now();
+            this.notifyStatusListeners();
+            return;
+          }
+
           if (data && (data.topic || data.eventType || data.type)) {
             const topic = data.topic || data.eventType || data.type;
             this.handleIncomingMessage({
@@ -90,36 +172,46 @@ class RealtimeService {
               payload: data.payload || data,
               timestamp: data.timestamp || new Date().toISOString(),
               senderRole: data.senderRole || 'SYSTEM',
-              senderName: data.senderName || 'Server Realtime',
+              senderName: data.senderName || 'PostgreSQL Realtime',
             });
           }
         } catch {
-          // Heartbeat or ping frame
+          // Heartbeat frame
         }
       };
 
       this.sseSource.onerror = () => {
         this.isConnected = false;
+        this.connectionState = 'RECONNECTING';
+        this.notifyStatusListeners();
+
         try {
           this.sseSource?.close();
         } catch {}
         this.sseSource = null;
 
-        // Exponential backoff auto-reconnect (1s, 2s, 4s, up to 15s)
-        const delay = Math.min(1000 * Math.pow(1.5, Math.min(this.sseErrorCount, 8)), 15000);
+        // Fast jittered auto-reconnect (500ms -> 1s -> 2s -> max 10s)
+        const baseDelay = Math.min(500 * Math.pow(1.5, Math.min(this.sseErrorCount, 7)), 10000);
+        const jitter = Math.floor(Math.random() * 200);
         this.sseErrorCount += 1;
+
         clearTimeout(this.reconnectTimeout);
         this.reconnectTimeout = setTimeout(() => {
           this.initSseStream(societyId, userId, userRole);
-        }, delay);
+        }, baseDelay + jitter);
       };
     } catch {
-      // Graceful fallback to local broadcast bus
+      this.connectionState = 'OFFLINE';
+      this.notifyStatusListeners();
     }
   }
 
+  public forceReconnect(societyId?: string) {
+    this.sseErrorCount = 0;
+    this.initSseStream(societyId || this.currentSocietyId);
+  }
+
   private seedRecentMessages() {
-    // In production deployment mode, events are dynamically populated from live SSE stream
     this.recentMessages = [];
     this.totalMessagesReceived = 0;
   }
@@ -178,10 +270,10 @@ class RealtimeService {
       }
     }
 
-    // 2. Broadcast across network (to phones & other devices) via backend SSE hub
+    // 2. Broadcast across network via backend Outbox SSE hub
     if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
       try {
-        fetch(`${this.backendBaseUrl}/api/realtime/broadcast`, {
+        fetch(`${getBackendBaseUrl()}/api/realtime/broadcast`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -191,12 +283,8 @@ class RealtimeService {
             senderRole: actualSenderRole,
             senderName: actualSenderName,
           }),
-        }).catch(() => {
-          // Server offline or mobile standalone mode - continue seamlessly
-        });
-      } catch {
-        // Safe offline ignore
-      }
+        }).catch(() => {});
+      } catch {}
     }
 
     // 3. Dispatch to local subscribers
@@ -216,7 +304,7 @@ class RealtimeService {
   }
 
   /**
-   * Internal message handler with deduplication
+   * Internal message handler with deduplication, audio synthesis & haptic triggers
    */
   private handleIncomingMessage(msg: RealtimeMessage) {
     if (this.seenMessageIds.has(msg.id)) {
@@ -229,7 +317,63 @@ class RealtimeService {
     }
 
     this.totalMessagesReceived += 1;
+    this.lastEventTime = msg.timestamp;
     this.recentMessages = [msg, ...this.recentMessages.slice(0, 49)];
+
+    // Sound & Haptic dispatch based on event type
+    const topicUpper = String(msg.topic).toUpperCase();
+    if (topicUpper.includes('EMERGENCY')) {
+      playAudioChime('emergency');
+      triggerHaptic('heavy');
+      this.dispatchAlert({
+        id: msg.id,
+        topic: msg.topic,
+        title: '🚨 Emergency Alert Broadcasted',
+        description: msg.payload?.message || msg.payload?.description || 'Immediate emergency protocol activated',
+        urgency: 'emergency',
+        timestamp: msg.timestamp,
+        actionPath: '/emergency',
+        payload: msg.payload,
+      });
+    } else if (
+      topicUpper.includes('VISITOR') ||
+      topicUpper.includes('GATE') ||
+      topicUpper.includes('PARCEL') ||
+      topicUpper.includes('DELIVERY')
+    ) {
+      playAudioChime('alert');
+      triggerHaptic('medium');
+      const title = topicUpper.includes('VISITOR')
+        ? `👤 Visitor Entry: ${msg.payload?.visitorName || 'Guest'}`
+        : topicUpper.includes('PARCEL')
+        ? `📦 Parcel Arrived: ${msg.payload?.courier || 'Delivery'}`
+        : `⚡ Gate Activity: ${msg.payload?.status || 'Update'}`;
+      this.dispatchAlert({
+        id: msg.id,
+        topic: msg.topic,
+        title,
+        description: msg.payload?.flatCode ? `For Flat ${msg.payload.flatCode}` : 'Activity recorded at gate',
+        urgency: 'alert',
+        timestamp: msg.timestamp,
+        actionPath: topicUpper.includes('VISITOR') ? '/resident/visitors' : '/resident/deliveries',
+        payload: msg.payload,
+      });
+    } else if (topicUpper.includes('PAYMENT')) {
+      playAudioChime('info');
+      triggerHaptic('success');
+      this.dispatchAlert({
+        id: msg.id,
+        topic: msg.topic,
+        title: '💳 Payment Transaction Completed',
+        description: msg.payload?.amount ? `Amount: ₹${msg.payload.amount}` : 'Society payment verified',
+        urgency: 'info',
+        timestamp: msg.timestamp,
+        actionPath: '/resident/billing',
+        payload: msg.payload,
+      });
+    } else {
+      triggerHaptic('light');
+    }
 
     // Notify specific topic subscribers
     const topicSubscribers = this.subscribers.get(msg.topic);
@@ -254,6 +398,48 @@ class RealtimeService {
         }
       });
     }
+
+    this.notifyStatusListeners();
+  }
+
+  private dispatchAlert(alert: Parameters<AlertCallback>[0]) {
+    this.alertSubscribers.forEach((cb) => {
+      try {
+        cb(alert);
+      } catch (err) {
+        console.error('Error in alert subscriber:', err);
+      }
+    });
+  }
+
+  /**
+   * Subscribe to real-time UI floating alert toasts
+   */
+  public subscribeToAlerts(callback: AlertCallback): () => void {
+    this.alertSubscribers.add(callback);
+    return () => {
+      this.alertSubscribers.delete(callback);
+    };
+  }
+
+  /**
+   * Subscribe to connection status changes
+   */
+  public subscribeToStatus(callback: StatusCallback): () => void {
+    this.statusSubscribers.add(callback);
+    callback(this.getConnectionStatus());
+    return () => {
+      this.statusSubscribers.delete(callback);
+    };
+  }
+
+  private notifyStatusListeners() {
+    const status = this.getConnectionStatus();
+    this.statusSubscribers.forEach((cb) => {
+      try {
+        cb(status);
+      } catch {}
+    });
   }
 
   /**
@@ -268,7 +454,6 @@ class RealtimeService {
     const set = this.subscribers.get(key)!;
     set.add(callback as MessageCallback);
 
-    // Return Cleanup Unsubscribe Function
     return () => {
       const currentSet = this.subscribers.get(key);
       if (currentSet) {
@@ -301,10 +486,12 @@ class RealtimeService {
 
     return {
       connected: this.isConnected,
-      transportType: this.channel ? 'BROADCAST_CHANNEL' : 'EVENT_EMITTER',
-      latencyMs: 8 + Math.floor(Math.random() * 6),
+      state: this.connectionState,
+      transportType: 'HYBRID_OUTBOX',
+      latencyMs: this.measuredLatencyMs,
       activeListenersCount,
       messagesReceivedTotal: this.totalMessagesReceived,
+      lastEventTime: this.lastEventTime,
     };
   }
 }

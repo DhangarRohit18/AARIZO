@@ -133,11 +133,24 @@ export class RealtimeEngine {
       timestamp: new Date().toISOString(),
     });
 
+    // Mark as published in outbox since in-memory delivery succeeded
+    try {
+      await db.outboxEvent.update({
+        where: { eventId },
+        data: {
+          status: 'PUBLISHED',
+          processedAt: new Date(),
+        },
+      });
+    } catch {
+      // Background worker will sweep and publish if direct update fails
+    }
+
     return eventId;
   }
 
   /**
-   * Broadcast an event to all connected clients in a specific society
+   * Broadcast an event to all connected clients in a specific society or platform-wide ('*')
    */
   public broadcastToSociety(
     societyId: string,
@@ -146,7 +159,7 @@ export class RealtimeEngine {
     targetRole?: string
   ): void {
     for (const client of this.clients.values()) {
-      if (client.societyId === societyId) {
+      if (societyId === '*' || client.societyId === societyId) {
         if (!targetRole || client.role === targetRole || client.role === 'admin') {
           this.sendToClient(client, eventType, payload);
         }
@@ -214,18 +227,19 @@ export class RealtimeEngine {
   private startOutboxWorker(): void {
     if (this.outboxInterval) return;
 
-    // Send heartbeats every 15s to keep connections alive through mobile firewalls
+    // Send heartbeats every 10s to keep connections alive and provide network latency telemetry
     setInterval(() => {
+      const pingFrame = `data: ${JSON.stringify({ type: 'PING', timestamp: Date.now() })}\n\n`;
       for (const client of this.clients.values()) {
         try {
-          client.res.write(':keepalive\n\n');
+          client.res.write(pingFrame);
         } catch {
           this.clients.delete(client.id);
         }
       }
-    }, 15000);
+    }, 10000);
 
-    // Process pending outbox records
+    // Process pending outbox records with fast 500ms cycle for instant durable recovery
     this.outboxInterval = setInterval(async () => {
       if (this.isProcessing) return;
       this.isProcessing = true;
@@ -267,7 +281,7 @@ export class RealtimeEngine {
       } finally {
         this.isProcessing = false;
       }
-    }, 3000);
+    }, 500);
   }
 }
 

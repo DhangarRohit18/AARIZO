@@ -38,8 +38,10 @@ export interface RealtimeMessage<T = any> {
 
 export interface RealtimeConnectionStatus {
   connected: boolean;
-  transportType: 'WEBSOCKET' | 'BROADCAST_CHANNEL' | 'EVENT_EMITTER';
+  state: 'CONNECTING' | 'CONNECTED' | 'RECONNECTING' | 'OFFLINE';
+  transportType: 'SSE' | 'WEBSOCKET' | 'BROADCAST_CHANNEL' | 'EVENT_EMITTER' | 'HYBRID_OUTBOX';
   latencyMs: number;
   activeListenersCount: number;
   messagesReceivedTotal: number;
+  lastEventTime?: string;
 }
