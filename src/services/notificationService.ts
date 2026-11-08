@@ -7,6 +7,7 @@ import type {
   SMSNotificationAdapter
 } from '../types/notification';
 import { notificationRepository } from '../repositories/notifications/NotificationRepository';
+import { realtimeService } from './realtimeService';
 
 const NOTIFICATIONS_STORAGE_KEY = 'communityos_notifications';
 
@@ -237,6 +238,14 @@ class NotificationService {
       this.emailAdapter.sendEmail(payload.userEmail, payload.title, `<p>${payload.message}</p>`);
     }
     this.pushAdapter.sendPush(`token-${payload.recipientUserId}`, payload.title, payload.message);
+
+    realtimeService.publish(
+      'NOTIFICATIONS',
+      newNotif,
+      societyId,
+      'SYSTEM',
+      'Notification Engine'
+    );
 
     this.notifyListeners();
     return newNotif;

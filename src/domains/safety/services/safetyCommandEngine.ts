@@ -1,6 +1,7 @@
 import type { EmergencyIncidentItem, EmergencyCategory, ChildProfileItem, PickupRecord, AuthorizedPickupPerson } from '../types/index';
 import { realTimeSync } from '../../../services/realTimeSync';
 import { childSafetyService } from '../../../services/childSafetyService';
+import { realtimeService } from '../../../services/realtimeService';
 
 const cleanEncoding = (str: string): string => {
   return str
@@ -176,6 +177,15 @@ class SafetyCommandEngine {
 
     incidents.unshift(newIncident);
     this.saveIncidents(incidents);
+
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      newIncident,
+      'soc-gvs',
+      'RESIDENT',
+      residentName
+    );
+
     return newIncident;
   }
 
@@ -207,6 +217,15 @@ class SafetyCommandEngine {
 
     incidents[index] = updated;
     this.saveIncidents(incidents);
+
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      { type: 'INCIDENT_ACKNOWLEDGED', incident: updated },
+      'soc-gvs',
+      'STAFF',
+      acknowledgedBy
+    );
+
     return updated;
   }
 
@@ -238,6 +257,15 @@ class SafetyCommandEngine {
 
     incidents[index] = updated;
     this.saveIncidents(incidents);
+
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      { type: 'INCIDENT_RESPONDER_ASSIGNED', incident: updated },
+      'soc-gvs',
+      'STAFF',
+      performedBy
+    );
+
     return updated;
   }
 
@@ -268,6 +296,15 @@ class SafetyCommandEngine {
 
     incidents[index] = updated;
     this.saveIncidents(incidents);
+
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      { type: 'INCIDENT_RESOLVED', incident: updated },
+      'soc-gvs',
+      'STAFF',
+      performedBy
+    );
+
     return updated;
   }
 

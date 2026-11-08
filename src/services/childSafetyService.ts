@@ -10,6 +10,7 @@ import type {
 import { childRepository } from '../repositories/childSafety/ChildRepository';
 import { societyService } from './societyService';
 import { db } from './db';
+import { realtimeService } from './realtimeService';
 
 const CHILDREN_STORAGE_KEY = 'communityos_children_profiles';
 const QR_PASSES_STORAGE_KEY = 'communityos_child_pickup_qrs';
@@ -574,6 +575,14 @@ class ChildSafetyService {
     items.unshift(newAlert);
     localStorage.setItem(SAFETY_ALERTS_STORAGE_KEY, JSON.stringify(items));
 
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      newAlert,
+      societyId,
+      'SECURITY',
+      reportedBy
+    );
+
     return newAlert;
   }
 
@@ -597,6 +606,15 @@ class ChildSafetyService {
     }
 
     localStorage.setItem(SAFETY_ALERTS_STORAGE_KEY, JSON.stringify(items));
+
+    realtimeService.publish(
+      'EMERGENCY_ALERTS',
+      { type: 'CHILD_ALERT_RESOLVED', alert: items[index] },
+      societyId,
+      'SECURITY',
+      resolvedBy
+    );
+
     return items[index];
   }
 }

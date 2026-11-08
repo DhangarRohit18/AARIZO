@@ -10,6 +10,7 @@ import type {
 import { defaultPaymentGateway, type PaymentGatewayAdapter } from './payment/PaymentGatewayAdapter';
 import { logAudit } from './societyService';
 import { billingInvoiceRepository, billingCycleRepository, paymentTransactionRepository } from '../repositories/billing/BillingRepository';
+import { realtimeService } from './realtimeService';
 
 const STORAGE_KEYS = {
   CYCLES: 'communityos_billing_cycles_v7',
@@ -332,6 +333,22 @@ export const billingService = {
     paymentTransactionRepository.create(successTxn).catch(() => {});
 
     logAudit(inv.societyId, actor, 'UPDATE', 'SocietyInvoice', inv.id, `Processed online payment of ₹${amountToPay} for ${inv.invoiceNumber}`);
+
+    realtimeService.publish(
+      'PAYMENT_COMPLETED',
+      {
+        invoiceId: inv.id,
+        invoiceNumber: inv.invoiceNumber,
+        flatCode: inv.flatCode,
+        residentName: inv.residentName,
+        amount: amountToPay,
+        status: inv.status,
+      },
+      inv.societyId,
+      actor.role,
+      actor.name
+    );
+
     return { success: true, transaction: successTxn, message: 'Payment processed successfully' };
   },
 
@@ -382,6 +399,23 @@ export const billingService = {
     paymentTransactionRepository.create(newTxn).catch(() => {});
 
     logAudit(inv.societyId, actor, 'UPDATE', 'SocietyInvoice', inv.id, `Recorded manual ${method} payment of ₹${amount} for ${inv.invoiceNumber}`);
+
+    realtimeService.publish(
+      'PAYMENT_COMPLETED',
+      {
+        invoiceId: inv.id,
+        invoiceNumber: inv.invoiceNumber,
+        flatCode: inv.flatCode,
+        residentName: inv.residentName,
+        amount,
+        status: inv.status,
+        method,
+      },
+      inv.societyId,
+      actor.role,
+      actor.name
+    );
+
     return inv;
   },
 

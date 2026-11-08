@@ -8,6 +8,8 @@ import type {
   RSVPStatus
 } from '../types/amenity';
 import { amenityRepository, amenityBookingRepository } from '../repositories/amenities/AmenityRepository';
+import { realtimeService } from './realtimeService';
+import { getBackendBaseUrl } from '../utils/backendConfig';
 
 const AMENITIES_STORAGE_KEY = 'communityos_amenities';
 const BOOKINGS_STORAGE_KEY = 'communityos_amenity_bookings';
@@ -602,6 +604,15 @@ class AmenityService {
 
     amenityBookingRepository.create(newBooking).catch(() => {});
 
+    // Broadcast real-time booking event to all devices in society
+    realtimeService.publish(
+      'AMENITY_BOOKED',
+      newBooking,
+      societyId,
+      'RESIDENT',
+      residentName
+    );
+
     return newBooking;
   }
 
@@ -612,12 +623,20 @@ class AmenityService {
     adminNotes?: string
   ): AmenityBooking {
     if (status === 'CANCELLED') {
-      fetch(`/api/amenities/bookings/${bookingId}/cancel`, {
+      fetch(`${getBackendBaseUrl()}/api/amenities/bookings/${bookingId}/cancel`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ societyId }),
       }).catch(() => {});
     }
+
+    realtimeService.publish(
+      'AMENITY_AVAILABILITY_CHANGED',
+      { bookingId, status, adminNotes },
+      societyId,
+      'ADMIN',
+      'Management'
+    );
 
     const raw = localStorage.getItem(BOOKINGS_STORAGE_KEY);
     let allBookings: AmenityBooking[] = raw ? JSON.parse(raw) : [];
@@ -712,6 +731,15 @@ class AmenityService {
     const items: CommunityAnnouncement[] = raw ? JSON.parse(raw) : [];
     items.unshift(newAnn);
     localStorage.setItem(ANNOUNCEMENTS_STORAGE_KEY, JSON.stringify(items));
+
+    realtimeService.publish(
+      'ANNOUNCEMENT_CREATED',
+      newAnn,
+      societyId,
+      'SECRETARY',
+      authorName
+    );
+
     return newAnn;
   }
 
@@ -782,6 +810,15 @@ class AmenityService {
     const items: CommunityEvent[] = raw ? JSON.parse(raw) : [];
     items.unshift(newEvt);
     localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(items));
+
+    realtimeService.publish(
+      'COMMUNITY_EVENT_CREATED',
+      newEvt,
+      societyId,
+      'SECRETARY',
+      organizerName
+    );
+
     return newEvt;
   }
 
