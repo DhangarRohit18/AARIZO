@@ -265,6 +265,7 @@ export const ResidentServicesPage: React.FC = () => {
             {filteredVendors.map((vendor) => (
               <div
                 key={vendor.id}
+                className="card-elevate"
                 style={{
                   background: '#ffffff',
                   border: '1px solid var(--aarizo-border-soft, #E8F1F5)',

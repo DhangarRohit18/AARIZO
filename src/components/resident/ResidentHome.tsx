@@ -197,9 +197,10 @@ export const ResidentHome: React.FC = () => {
       {/* Content area */}
       <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {/* ── High-Priority Resident Action Cards (Visitor Pass & Society Vendors) ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem' }}>
           <button
             onClick={() => navigate('/resident/visitors')}
+            className="card-elevate"
             style={{
               padding: '0.85rem 1rem',
               borderRadius: '16px',
@@ -236,6 +237,7 @@ export const ResidentHome: React.FC = () => {
 
           <button
             onClick={() => navigate('/resident/services')}
+            className="card-elevate"
             style={{
               padding: '0.85rem 1rem',
               borderRadius: '16px',
