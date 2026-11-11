@@ -42,7 +42,7 @@ export const ComplaintSLAEngineHub: React.FC = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<ComplaintCategory>('PLUMBING');
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('Tower B Â· Flat B-1204');
+  const [location, setLocation] = useState('Tower B · Flat B-1204');
   const [urgency, setUrgency] = useState<'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'>('MEDIUM');
   const [photoUrl, setPhotoUrl] = useState('');
 

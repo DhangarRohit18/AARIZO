@@ -216,6 +216,7 @@ export const ResidentGarbagePage: React.FC = () => {
         >
           {/* Card 1: Today's Pickup */}
           <div
+            className="card-elevate"
             style={{
               background: 'var(--aarizo-card-bg, #ffffff)',
               borderRadius: '14px',
@@ -272,6 +273,7 @@ export const ResidentGarbagePage: React.FC = () => {
 
           {/* Card 2: Resident Confirmation */}
           <div
+            className="card-elevate"
             style={{
               background: 'var(--aarizo-card-bg, #ffffff)',
               borderRadius: '14px',
@@ -328,6 +330,7 @@ export const ResidentGarbagePage: React.FC = () => {
 
           {/* Card 3: Swimming Pool Water */}
           <div
+            className="card-elevate"
             style={{
               background: 'var(--aarizo-card-bg, #ffffff)',
               borderRadius: '14px',
@@ -377,6 +380,7 @@ export const ResidentGarbagePage: React.FC = () => {
 
           {/* Card 4: Common Sanitization */}
           <div
+            className="card-elevate"
             style={{
               background: 'var(--aarizo-card-bg, #ffffff)',
               borderRadius: '14px',

@@ -153,14 +153,16 @@ export const ResidentGuestStayPage: React.FC = () => {
         className="p-5 md:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-white"
         style={{ background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)' }}
       >
-        <div>
+        <div className="flex items-center gap-3.5">
           <div className="flex items-center gap-2">
             <Hotel className="w-6 h-6" style={{ color: 'var(--aarizo-sky, #83CBEA)' }} />
-            <h1 className="text-xl md:text-2xl font-extrabold text-white">Guest Stay & Room Accommodation</h1>
+            <div>
+              <h1 className="text-xl md:text-2xl font-extrabold text-white">Guest Stay &amp; Room Accommodation</h1>
+              <p className="text-xs md:text-sm mt-0.5" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
+                Book society guest suites for visiting family, friends, or business guests with automatic Gate Access QRs.
+              </p>
+            </div>
           </div>
-          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--aarizo-sky, #83CBEA)' }}>
-            Book society guest suites for visiting family, friends, or business guests with automatic Gate Access QRs.
-          </p>
         </div>
       </div>
 
@@ -169,7 +171,7 @@ export const ResidentGuestStayPage: React.FC = () => {
         <h2 className="text-lg font-bold text-slate-900">Available Guest Suites</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {rooms.map(room => (
-            <div key={room.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:border-[#83CBEA] transition-colors">
+            <div key={room.id} className="card-elevate bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between transition-colors">
               <div>
                 {room.imageUrl && (
                   <div className="h-44 w-full overflow-hidden relative">

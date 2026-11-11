@@ -135,68 +135,73 @@ export const FlatManagementPage: React.FC = () => {
 
   return (
     <div style={{ minHeight: '100%', background: 'var(--aarizo-page, #F7FBFE)', paddingBottom: '2.5rem' }}>
-      {/* ── Subheader Bar matching Residents, NGO, Staff & Towers tabs ── */}
+      {/* ── Signature Aarizo Hero Header ── */}
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '0.75rem',
-          padding: '0.875rem 1rem',
-          background: 'var(--aarizo-card-blue, #F4FAFE)',
-          borderBottom: '1px solid var(--aarizo-border, #DCE8EF)',
+          background: 'linear-gradient(135deg, var(--aarizo-navy, #083B56) 0%, #0D4767 100%)',
+          color: '#ffffff',
+          padding: '1.25rem 1.25rem 1.5rem',
+          borderRadius: '0 0 20px 20px',
+          boxShadow: '0 4px 20px rgba(8, 59, 86, 0.15)',
+          marginBottom: '1.25rem',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', minWidth: 0, flex: '1 1 auto' }}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3.5">
+            <button
+              onClick={() => navigate(-1)}
+              aria-label="Back"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.12)',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '0.6875rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--aarizo-gold, #E5B842)' }}>
+                  Society Units &amp; Occupancy
+                </span>
+              </div>
+              <h1 style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0.15rem 0 0.25rem', letterSpacing: '-0.02em', color: '#ffffff' }}>
+                Flat Inventory &amp; Resident Directory
+              </h1>
+              <p style={{ fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.85)', margin: 0 }}>
+                Green Valley Society · Units, occupancy status, and flat specifications
+              </p>
+            </div>
+          </div>
           <button
-            onClick={() => navigate(-1)}
-            aria-label="Back"
+            onClick={() => setIsAddModalOpen(true)}
+            className="card-elevate"
             style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              background: '#ffffff',
-              border: '1px solid var(--aarizo-border, #DCE8EF)',
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--aarizo-navy, #083B56)',
+              gap: '0.4rem',
+              padding: '0.55rem 1.15rem',
+              borderRadius: '12px',
+              background: 'var(--aarizo-coral, #F06543)',
+              color: '#ffffff',
+              fontWeight: 800,
+              fontSize: '0.8125rem',
+              border: 'none',
               cursor: 'pointer',
-              flexShrink: 0,
+              boxShadow: '0 4px 12px rgba(240, 101, 67, 0.35)',
             }}
           >
-            <ArrowLeft size={18} />
+            <Plus size={16} /> Add Flat
           </button>
-          <div>
-            <h2 style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: 0, letterSpacing: '-0.02em' }}>
-              Flat Inventory &amp; Directory
-            </h2>
-            <p style={{ fontSize: '0.6875rem', color: 'var(--aarizo-text-secondary, #657785)', margin: 0, marginTop: 2 }}>
-              Green Valley Society · Units, occupancy status, and flat specifications
-            </p>
-          </div>
         </div>
-
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            padding: '0.45rem 0.875rem',
-            borderRadius: '10px',
-            background: 'var(--aarizo-coral, #F06543)',
-            color: '#ffffff',
-            fontWeight: 800,
-            fontSize: '0.75rem',
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(240, 101, 67, 0.25)',
-          }}
-        >
-          <Plus size={15} /> Add Flat
-        </button>
       </div>
 
       {/* ── Search Bar & Filter Strip ── */}

@@ -144,6 +144,7 @@ export const FacilityStaffShiftsPage: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
           <div
             onClick={() => setFilterShift('MORNING')}
+            className="card-elevate"
             style={{
               background: '#ffffff',
               borderRadius: '14px',
@@ -167,6 +168,7 @@ export const FacilityStaffShiftsPage: React.FC = () => {
 
           <div
             onClick={() => setFilterShift('EVENING')}
+            className="card-elevate"
             style={{
               background: '#ffffff',
               borderRadius: '14px',
@@ -190,6 +192,7 @@ export const FacilityStaffShiftsPage: React.FC = () => {
 
           <div
             onClick={() => setFilterShift('NIGHT')}
+            className="card-elevate"
             style={{
               background: '#ffffff',
               borderRadius: '14px',
