@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   ChevronRight,
   Filter,
+  Store,
 } from 'lucide-react';
 import { UnifiedRequestCenter } from '../../domains/requests/components/UnifiedRequestCenter';
 import { SocietyExpenseHub } from '../../domains/expenses';
@@ -113,7 +114,9 @@ export const CommitteeDashboard: React.FC = () => {
 
   const homeSubTabs = [
     { key: 'home', label: 'Overview', icon: LayoutDashboard, path: '/committee' },
+    { key: 'approvals', label: 'Approvals', icon: FileCheck, path: '/committee/approvals' },
     { key: 'financials', label: 'Financials', icon: DollarSign, path: '/committee/financials' },
+    { key: 'vendors', label: 'Vendors', icon: Store, path: '/committee/vendors' },
     { key: 'compliance', label: 'Compliance', icon: ShieldCheck, path: '/committee/compliance' },
     { key: 'health', label: 'Health', icon: Activity, path: '/committee/health' },
     { key: 'governance', label: 'Governance', icon: BookOpen, path: '/committee/governance' },
@@ -382,6 +385,40 @@ export const CommitteeDashboard: React.FC = () => {
                   }}
                 >
                   <span>View Governance</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+
+              <div style={{ background: '#ffffff', border: '1px solid #DCE8EF', borderRadius: '16px', padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <div style={{ width: 32, height: 32, borderRadius: '8px', background: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EA580C' }}>
+                      <Store size={18} />
+                    </div>
+                    <h3 style={{ fontWeight: 800, color: '#083B56', margin: 0, fontSize: '0.98rem' }}>Society Vendors & Contractors</h3>
+                  </div>
+                  <p style={{ fontSize: '0.8rem', color: '#52788D', margin: '0 0 1rem 0' }}>
+                    Approve, manage & publish verified service vendors so residents can directly contact them from their home dashboard.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate('/committee/vendors')}
+                  style={{
+                    padding: '0.55rem 0.85rem',
+                    borderRadius: '10px',
+                    border: '1px solid #EA580C',
+                    background: '#FFF7ED',
+                    color: '#EA580C',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <span>Manage & Add Vendors</span>
                   <ChevronRight size={16} />
                 </button>
               </div>

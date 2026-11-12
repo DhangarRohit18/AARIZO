@@ -82,7 +82,7 @@ export interface CanonicalBillingRecord {
 export interface CommitteeMemberRecord {
   id: string;
   name: string;
-  designation: 'Secretary' | 'Chairman' | 'Treasurer' | 'Joint Secretary';
+  designation: string;
   flatNumber: string;
   blockWing: string;
   canonicalDisplay: string;

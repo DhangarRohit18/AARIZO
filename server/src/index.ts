@@ -74,7 +74,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
     status: 'UP',
     engine: 'Node.js + Express + Prisma + PostgreSQL',
     timestamp: new Date().toISOString(),
-    sseClientsCount: sseClients.length,
+    sseClientsCount: realtimeEngine.getActiveConnectionCount(),
   });
 });
 
@@ -159,6 +159,90 @@ app.get('/api/societies', async (_req: Request, res: Response) => {
   }
 });
 
+// Societies CRUD
+app.post('/api/societies', requireRole(['admin']), async (req: Request, res: Response) => {
+  try {
+    const { name, code, city, address, pincode, subscriptionTier, adminName, adminEmail } = req.body;
+    const newSoc = await prisma.society.create({
+      data: {
+        name,
+        code: (code || name.substring(0, 4)).toUpperCase(),
+        city: city || 'Mumbai',
+        address: address || '',
+        pincode: pincode || '400001',
+        settings: { subscriptionTier: subscriptionTier || 'PRO', adminName, adminEmail },
+      },
+    });
+    broadcastEvent('SOCIETY_CREATED', newSoc, newSoc.id);
+    res.status(201).json(newSoc);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/societies/:id', requireRole(['admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const updated = await prisma.society.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('SOCIETY_UPDATED', updated, id);
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/societies/:id', requireRole(['admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    await prisma.society.delete({ where: { id } });
+    broadcastEvent('SOCIETY_DELETED', { id }, id);
+    res.json({ success: true, id });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Towers
+app.get('/api/towers', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const towers = await prisma.tower.findMany({
+      where: societyId !== 'all' ? { societyId } : undefined,
+      include: { flats: true },
+    });
+    res.json(towers);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/towers', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { name, blockCode, totalFloors } = req.body;
+    const tower = await prisma.tower.create({
+      data: {
+        societyId,
+        name,
+        blockCode: (blockCode || name.substring(0, 2)).toUpperCase(),
+        totalFloors: Number(totalFloors) || 10,
+        totalUnits: 0,
+      },
+    });
+    await prisma.society.update({
+      where: { id: societyId },
+      data: { totalTowers: { increment: 1 } },
+    }).catch(() => null);
+    broadcastEvent('TOWER_CREATED', tower, societyId);
+    res.status(201).json(tower);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Flats
 app.get('/api/flats', async (req: Request, res: Response) => {
   try {
@@ -167,6 +251,108 @@ app.get('/api/flats', async (req: Request, res: Response) => {
       include: { tower: true },
     });
     res.json(flats);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Flat Creation with Resident Provisioning
+app.post('/api/flats', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { towerId, flatNumber, floorNumber, bhkType, occupancyStatus, residentName, residentPhone, residentEmail } = req.body;
+    
+    // Resolve valid towerId for society
+    let resolvedTowerId = towerId;
+    if (!resolvedTowerId) {
+      const firstTower = await prisma.tower.findFirst({ where: { societyId } });
+      resolvedTowerId = firstTower?.id;
+    }
+    if (!resolvedTowerId) {
+      const createdTower = await prisma.tower.create({
+        data: { societyId, name: 'Tower A', blockCode: 'A', totalFloors: 10, totalUnits: 0 },
+      });
+      resolvedTowerId = createdTower.id;
+    }
+
+    const flat = await prisma.flat.create({
+      data: {
+        societyId,
+        towerId: resolvedTowerId,
+        flatNumber: String(flatNumber).toUpperCase(),
+        floorNumber: Number(floorNumber) || 1,
+        bhkType: bhkType || '2BHK',
+        occupancyStatus: occupancyStatus || 'VACANT',
+      },
+    });
+
+    if (residentName && residentPhone) {
+      await UniversalProvisioningService.provisionUser({
+        societyId,
+        role: 'resident',
+        name: residentName,
+        email: residentEmail || `res_${Date.now()}@society.local`,
+        phone: residentPhone,
+        flatNumber: flat.flatNumber,
+        towerId: resolvedTowerId,
+        flatId: flat.id,
+      }).catch((e) => console.warn('[AutoProvisionResident] Failed:', e));
+    }
+
+    await prisma.tower.update({
+      where: { id: resolvedTowerId },
+      data: { totalUnits: { increment: 1 } },
+    }).catch(() => null);
+
+    broadcastEvent('FLAT_CREATED', flat, societyId);
+    res.status(201).json(flat);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/flats/:id', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const flat = await prisma.flat.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('FLAT_UPDATED', flat, flat.societyId);
+    res.json(flat);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Committee Members
+app.get('/api/committee', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const members = await prisma.societyMembership.findMany({
+      where: { societyId, role: 'committee' },
+    });
+    res.json(members);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/committee', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { name, email, phone, designation, flatNumber } = req.body;
+    const provisionResult = await UniversalProvisioningService.provisionUser({
+      societyId,
+      role: 'committee',
+      name,
+      email,
+      phone,
+      flatNumber,
+      metadata: { committeeDesignation: designation || 'Executive Member' },
+    });
+    broadcastEvent('COMMITTEE_MEMBER_ADDED', { name, designation, societyId }, societyId);
+    res.status(201).json(provisionResult);
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }
@@ -1020,6 +1206,448 @@ app.post('/api/move-requests', async (req: Request, res: Response) => {
     res.status(201).json(move);
   } catch (error: any) {
     res.status(400).json({ error: error?.message });
+  }
+});
+
+// ==========================================
+// 🛡️ CHILD SAFETY & BIOMETRIC GATE RADAR
+// ==========================================
+app.get('/api/children', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const residentId = req.userId || (req.query.residentId as string);
+    const where: any = { collection: 'child_profiles' };
+    if (societyId && societyId !== 'all') where.societyId = societyId;
+    const records = await prisma.entityRecord.findMany({ where, orderBy: { createdAt: 'desc' } });
+    const children = records.map((r) => ({ id: r.id, societyId: r.societyId, ...(r.data as any), createdAt: r.createdAt }));
+    const filtered = residentId && req.userRole === 'resident' ? children.filter((c: any) => c.residentId === residentId) : children;
+    res.json(filtered);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/children', requireRole(['resident', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const id = req.body.id || `child_${Date.now()}`;
+    const childData = {
+      ...req.body,
+      id,
+      societyId,
+      gatePassCode: req.body.gatePassCode || `PASS-${Math.floor(1000 + Math.random() * 9000)}`,
+      createdAt: new Date().toISOString(),
+    };
+    await prisma.entityRecord.create({
+      data: {
+        id,
+        collection: 'child_profiles',
+        societyId,
+        data: childData,
+      },
+    });
+    broadcastEvent('CHILD_PROFILE_CREATED', childData, societyId);
+    res.status(201).json(childData);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.get('/api/children/passes', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const records = await prisma.entityRecord.findMany({
+      where: { collection: 'child_gate_passes', societyId: societyId !== 'all' ? societyId : undefined },
+      orderBy: { createdAt: 'desc' },
+    });
+    const passes = records.map((r) => ({ id: r.id, societyId: r.societyId, ...(r.data as any), createdAt: r.createdAt }));
+    res.json(passes);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/children/passes', requireRole(['resident', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const id = req.body.id || `cpass_${Date.now()}`;
+    const passData = {
+      ...req.body,
+      id,
+      societyId,
+      status: 'ACTIVE',
+      passCode: req.body.passCode || `CGP-${Math.floor(100000 + Math.random() * 900000)}`,
+      validUntil: req.body.validUntil || new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+      createdAt: new Date().toISOString(),
+    };
+    await prisma.entityRecord.create({
+      data: {
+        id,
+        collection: 'child_gate_passes',
+        societyId,
+        data: passData,
+      },
+    });
+    broadcastEvent('CHILD_GATE_PASS_GENERATED', passData, societyId);
+    res.status(201).json(passData);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/children/passes/:id/verify', requireRole(['guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const { guardName, gate } = req.body;
+    const record = await prisma.entityRecord.findUnique({ where: { id } });
+    if (!record) return res.status(404).json({ error: 'Child pass not found' });
+    const updatedData = {
+      ...(record.data as any),
+      status: 'VERIFIED_EXITED',
+      verifiedAt: new Date().toISOString(),
+      verifiedByGuard: guardName || 'Gate Guard',
+      exitGate: gate || 'Main Gate',
+    };
+    await prisma.entityRecord.update({
+      where: { id },
+      data: { data: updatedData, updatedAt: new Date() },
+    });
+    broadcastEvent('CHILD_GATE_PASS_VERIFIED', updatedData, record.societyId);
+    res.json(updatedData);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/children/sos', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const incident = await prisma.emergencyIncident.create({
+      data: {
+        societyId,
+        incidentType: 'CHILD_SAFETY',
+        severity: 'CRITICAL',
+        location: req.body.location || 'Society Premises',
+        description: req.body.description || `CHILD MISSING / UNATTENDED ALERT: ${req.body.childName || 'Child'}`,
+        dispatchStatus: 'DISPATCHED',
+      },
+    });
+    broadcastEvent('EMERGENCY_INCIDENT_CREATED', incident, societyId);
+    broadcastEvent('CHILD_SAFETY_SOS_TRIGGERED', { ...req.body, incidentId: incident.id }, societyId);
+    res.status(201).json(incident);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// ==========================================
+// 🚗 QR PARKING & VEHICLE ACCESS MANAGEMENT
+// ==========================================
+app.get('/api/parking/slots', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const slots = await prisma.parkingSlot.findMany({
+      where: societyId !== 'all' ? { societyId } : undefined,
+      include: { flat: true },
+      orderBy: { slotNumber: 'asc' },
+    });
+    res.json(slots);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/parking/slots', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { slotNumber, towerBlock, slotType } = req.body;
+    const slot = await prisma.parkingSlot.create({
+      data: {
+        societyId,
+        slotNumber,
+        towerBlock: towerBlock || 'Basement 1',
+        slotType: slotType || 'RESIDENT',
+        isOccupied: false,
+      },
+    });
+    broadcastEvent('PARKING_SLOT_CREATED', slot, societyId);
+    res.status(201).json(slot);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/parking/allocate', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const { slotId, flatId } = req.body;
+    const updated = await prisma.parkingSlot.update({
+      where: { id: slotId },
+      data: {
+        allocatedFlatId: flatId || undefined,
+        isOccupied: !!flatId,
+      },
+    });
+    broadcastEvent('PARKING_SLOT_ALLOCATED', updated, updated.societyId);
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.get('/api/parking/violations', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const records = await prisma.entityRecord.findMany({
+      where: { collection: 'parking_violations', societyId: societyId !== 'all' ? societyId : undefined },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(records.map((r) => ({ id: r.id, societyId: r.societyId, ...(r.data as any), createdAt: r.createdAt })));
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/parking/violations', requireRole(['guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const id = req.body.id || `viol_${Date.now()}`;
+    const violationData = {
+      ...req.body,
+      id,
+      societyId,
+      status: 'REPORTED',
+      fineAmount: req.body.fineAmount || 500,
+      createdAt: new Date().toISOString(),
+    };
+    await prisma.entityRecord.create({
+      data: {
+        id,
+        collection: 'parking_violations',
+        societyId,
+        data: violationData,
+      },
+    });
+    broadcastEvent('PARKING_VIOLATION_REPORTED', violationData, societyId);
+    res.status(201).json(violationData);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// ==========================================
+// 🏨 GUEST STAY & ACCOMMODATION SUITES
+// ==========================================
+app.get('/api/guest-stay/rooms', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const records = await prisma.entityRecord.findMany({
+      where: { collection: 'guest_rooms', societyId: societyId !== 'all' ? societyId : undefined },
+      orderBy: { createdAt: 'asc' },
+    });
+    res.json(records.map((r) => ({ id: r.id, societyId: r.societyId, ...(r.data as any), createdAt: r.createdAt })));
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/guest-stay/rooms', requireRole(['secretary', 'admin', 'facility_manager']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const id = req.body.id || `room_${Date.now()}`;
+    const roomData = { ...req.body, id, societyId, isAvailable: true, createdAt: new Date().toISOString() };
+    await prisma.entityRecord.create({
+      data: { id, collection: 'guest_rooms', societyId, data: roomData },
+    });
+    broadcastEvent('GUEST_ROOM_CREATED', roomData, societyId);
+    res.status(201).json(roomData);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.get('/api/guest-stay/reservations', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const residentId = req.userId || (req.query.residentId as string);
+    const records = await prisma.entityRecord.findMany({
+      where: { collection: 'guest_reservations', societyId: societyId !== 'all' ? societyId : undefined },
+      orderBy: { createdAt: 'desc' },
+    });
+    const resvs = records.map((r) => ({ id: r.id, societyId: r.societyId, ...(r.data as any), createdAt: r.createdAt }));
+    const filtered = residentId && req.userRole === 'resident' ? resvs.filter((v: any) => v.residentId === residentId) : resvs;
+    res.json(filtered);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/guest-stay/reservations', requireRole(['resident', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const id = req.body.id || `resv_${Date.now()}`;
+    const reservationData = {
+      ...req.body,
+      id,
+      societyId,
+      status: 'CONFIRMED',
+      qrCodeData: `GUEST-${id}-${req.body.guestName || 'GUEST'}`,
+      createdAt: new Date().toISOString(),
+    };
+    await prisma.entityRecord.create({
+      data: { id, collection: 'guest_reservations', societyId, data: reservationData },
+    });
+    broadcastEvent('GUEST_STAY_BOOKED', reservationData, societyId);
+    res.status(201).json(reservationData);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// ==========================================
+// 🧹 HOUSEKEEPING, WASTE & SANITIZATION
+// ==========================================
+app.get('/api/housekeeping/garbage-logs', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const records = await prisma.entityRecord.findMany({
+      where: { collection: 'garbage_pickup_logs', societyId: societyId !== 'all' ? societyId : undefined },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(records.map((r) => ({ id: r.id, societyId: r.societyId, ...(r.data as any), createdAt: r.createdAt })));
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/housekeeping/garbage-logs/confirm', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+    const record = await prisma.entityRecord.findUnique({ where: { id } });
+    if (!record) return res.status(404).json({ error: 'Pickup log not found' });
+    const updated = { ...(record.data as any), status: 'COLLECTED', confirmedByResident: true, confirmedAt: new Date().toISOString() };
+    await prisma.entityRecord.update({
+      where: { id },
+      data: { data: updated, updatedAt: new Date() },
+    });
+    broadcastEvent('GARBAGE_PICKUP_CONFIRMED', updated, record.societyId);
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/housekeeping/garbage-logs/missed', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const id = `missed_${Date.now()}`;
+    const logData = { ...req.body, id, societyId, status: 'MISSED', createdAt: new Date().toISOString() };
+    await prisma.entityRecord.create({
+      data: { id, collection: 'garbage_pickup_logs', societyId, data: logData },
+    });
+    broadcastEvent('GARBAGE_PICKUP_MISSED', logData, societyId);
+    res.status(201).json(logData);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.get('/api/housekeeping/tasks', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const records = await prisma.entityRecord.findMany({
+      where: { collection: 'housekeeping_tasks', societyId: societyId !== 'all' ? societyId : undefined },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(records.map((r) => ({ id: r.id, societyId: r.societyId, ...(r.data as any), createdAt: r.createdAt })));
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/housekeeping/tasks/:id', requireRole(['facility_manager', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const record = await prisma.entityRecord.findUnique({ where: { id } });
+    if (!record) return res.status(404).json({ error: 'Task not found' });
+    const updated = { ...(record.data as any), ...req.body, updatedAt: new Date().toISOString() };
+    await prisma.entityRecord.update({
+      where: { id },
+      data: { data: updated, updatedAt: new Date() },
+    });
+    broadcastEvent('HOUSEKEEPING_TASK_UPDATED', updated, record.societyId);
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// ==========================================
+// ⏰ FACILITY STAFF SHIFTS & DUTY ATTENDANCE
+// ==========================================
+app.get('/api/facility/staff-shifts', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const shifts = await prisma.shift.findMany({
+      where: societyId !== 'all' ? { societyId } : undefined,
+    });
+    res.json(shifts);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/facility/staff-shifts', requireRole(['facility_manager', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { shiftName, startTime, endTime, staffCount } = req.body;
+    const shift = await prisma.shift.create({
+      data: {
+        societyId,
+        shiftName: shiftName || 'MORNING',
+        startTime: startTime || '06:00',
+        endTime: endTime || '14:00',
+        staffCount: Number(staffCount) || 1,
+      },
+    });
+    broadcastEvent('STAFF_SHIFT_SCHEDULED', shift, societyId);
+    res.status(201).json(shift);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.get('/api/facility/staff-attendance', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const attendances = await prisma.attendance.findMany({
+      where: societyId !== 'all' ? { societyId } : undefined,
+      orderBy: { checkIn: 'desc' },
+      take: 100,
+    });
+    res.json(attendances);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/facility/staff-attendance/check-in', requireRole(['guard', 'facility_manager', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { staffId, staffName, role, gateId } = req.body;
+    const att = await prisma.attendance.create({
+      data: {
+        societyId,
+        staffId: staffId || `stf_${Date.now()}`,
+        staffName: staffName || 'Staff Member',
+        role: role || 'SECURITY_GUARD',
+        gateId: gateId || 'MAIN_GATE',
+        status: 'PRESENT',
+      },
+    });
+    broadcastEvent('STAFF_CHECKED_IN', att, societyId);
+    res.status(201).json(att);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
   }
 });
 
@@ -1901,6 +2529,7 @@ const ALLOWED_QUERY_TABLES: Record<string, string[]> = {
   domesticWorker: ['resident', 'guard', 'secretary', 'admin', 'facility_manager'],
   vendor: ['resident', 'secretary', 'facility_manager', 'admin', 'vendor'],
   amenity: ['resident', 'secretary', 'committee', 'facility_manager', 'admin'],
+  amenityBooking: ['resident', 'secretary', 'committee', 'facility_manager', 'admin'],
   parkingSlot: ['resident', 'secretary', 'guard', 'admin'],
   emergencyIncident: ['resident', 'guard', 'secretary', 'admin'],
   notification: ['resident', 'guard', 'secretary', 'committee', 'facility_manager', 'vendor', 'admin'],
@@ -1909,6 +2538,17 @@ const ALLOWED_QUERY_TABLES: Record<string, string[]> = {
   advertisement: ['resident', 'secretary', 'guard', 'committee', 'facility_manager', 'vendor', 'admin'],
   auditLog: ['secretary', 'admin', 'committee'],
   payment: ['resident', 'secretary', 'admin', 'committee'],
+  workOrder: ['facility_manager', 'secretary', 'admin', 'vendor'],
+  attendance: ['guard', 'facility_manager', 'secretary', 'admin'],
+  shift: ['guard', 'facility_manager', 'secretary', 'admin'],
+  complianceDocument: ['secretary', 'admin', 'committee', 'facility_manager'],
+  amcContract: ['secretary', 'admin', 'committee', 'facility_manager', 'vendor'],
+  moveRequest: ['resident', 'secretary', 'admin', 'guard'],
+  renovationRequest: ['resident', 'secretary', 'admin', 'guard'],
+  approval: ['secretary', 'admin', 'committee'],
+  trustScore: ['resident', 'guard', 'secretary', 'admin', 'vendor'],
+  visitorLog: ['guard', 'secretary', 'admin', 'resident'],
+  societyMembership: ['secretary', 'admin', 'committee'],
   entityRecord: ['resident', 'secretary', 'guard', 'committee', 'facility_manager', 'vendor', 'admin'],
 };
 

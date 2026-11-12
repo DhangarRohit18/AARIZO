@@ -20,6 +20,7 @@ import { societyService } from '../../../services/societyService';
 
 const QUICK_ACTIONS = [
   { label: 'Residents', path: '/admin/residents', icon: Users, desc: 'Manage & Provision' },
+  { label: 'Committee', path: '/admin/committee', icon: Shield, desc: 'Elected officers' },
   { label: 'Complaints', path: '/admin/requests', icon: FileText, desc: 'Resolve issues' },
   { label: 'Maintenance', path: '/admin/maintenance', icon: Wrench, desc: 'Work orders' },
   { label: 'Amenities', path: '/admin/amenities', icon: Sparkles, desc: 'Clubhouse & slots' },

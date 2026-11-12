@@ -12,6 +12,7 @@ import { TowerManagementPage } from '../pages/dashboard/admin/TowerManagementPag
 import { FlatManagementPage } from '../pages/dashboard/admin/FlatManagementPage';
 import { ResidentManagementPage } from '../pages/dashboard/admin/ResidentManagementPage';
 import { StaffManagementPage } from '../pages/dashboard/admin/StaffManagementPage';
+import { CommitteeManagementPage } from '../pages/dashboard/admin/CommitteeManagementPage';
 import { VendorManagementPage } from '../pages/dashboard/admin/VendorManagementPage';
 import { AuditLogsPage } from '../pages/dashboard/admin/AuditLogsPage';
 import { ParkingManagementPage } from '../pages/dashboard/admin/ParkingManagementPage';
@@ -189,6 +190,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="/admin/flats" element={<FlatManagementPage />} />
           <Route path="/admin/residents" element={<ResidentManagementPage />} />
           <Route path="/admin/staff" element={<StaffManagementPage />} />
+          <Route path="/admin/committee" element={<CommitteeManagementPage />} />
           <Route path="/admin/domestic-workers" element={<DomesticWorkerManagementPage />} />
           <Route path="/admin/vendors" element={<VendorManagementPage />} />
           <Route path="/admin/audit-logs" element={<AuditLogsPage />} />
@@ -284,6 +286,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="/committee/compliance" element={<CommitteeDashboard />} />
           <Route path="/committee/health" element={<CommitteeDashboard />} />
           <Route path="/committee/governance" element={<CommitteeDashboard />} />
+          <Route path="/committee/vendors" element={<VendorManagementPage />} />
           <Route path="/committee/reports" element={<CommitteeDashboard />} />
           <Route path="/committee/profile" element={<CommitteeDashboard />} />
           <Route path="/committee/*" element={<CommitteeDashboard />} />

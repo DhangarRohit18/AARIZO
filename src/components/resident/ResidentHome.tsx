@@ -22,10 +22,13 @@ import {
   X,
   QrCode,
   Store,
+  Phone,
+  ShieldCheck,
 } from 'lucide-react';
 import { ResidentParcelWidget } from '../../domains/deliveries/components/ResidentParcelWidget';
 import { Skeleton, EmptyState, ErrorState } from '../common';
 import { apiClient } from '../../services/apiClient';
+import { societyService } from '../../services/societyService';
 import { AdvertisementPopup, OffersLauncherPill } from '../common/AdvertisementPopup';
 
 const QUICK_ACTIONS = [
@@ -80,6 +83,19 @@ export const ResidentHome: React.FC = () => {
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [urgentAlert, setUrgentAlert] = useState<{ title: string; message: string } | null>(null);
   const [showOffersModal, setShowOffersModal] = useState(false);
+  const currentSocietyId = currentUser?.societyId || 'soc-gvs';
+  const [approvedVendors, setApprovedVendors] = useState<any[]>(() => societyService.getVendors(currentSocietyId));
+
+  React.useEffect(() => {
+    const list = societyService.getVendors(currentSocietyId);
+    if (list && list.length > 0) setApprovedVendors(list);
+
+    apiClient.getVendors(currentSocietyId).then((res) => {
+      if (res && res.length > 0) {
+        setApprovedVendors(res);
+      }
+    });
+  }, [currentSocietyId]);
 
   React.useEffect(() => {
     apiClient.getAnnouncements().then((res) => {
@@ -401,6 +417,115 @@ export const ResidentHome: React.FC = () => {
             </div>
           </section>
         )}
+
+        {/* ── Approved Society Vendors (Added by Committee) ── */}
+        <section>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              <h2 style={{ fontWeight: 800, fontSize: '0.8125rem', color: 'var(--aarizo-navy, #083B56)', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>
+                Approved Society Vendors
+              </h2>
+              <span
+                style={{
+                  background: '#ECFDF5',
+                  color: '#059669',
+                  border: '1px solid #A7F3D0',
+                  borderRadius: '10px',
+                  padding: '1px 6px',
+                  fontSize: '0.6875rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+              >
+                <ShieldCheck size={11} /> Committee Verified
+              </span>
+            </div>
+            <button
+              onClick={() => navigate('/resident/services')}
+              style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700, background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '2px', cursor: 'pointer' }}
+            >
+              All Vendors <ChevronRight size={12} />
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
+            {approvedVendors.slice(0, 3).map((v) => (
+              <div
+                key={v.id || v.uid}
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '16px',
+                  border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                  padding: '0.875rem 1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                  boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '0.875rem', color: 'var(--aarizo-navy, #083B56)' }}>
+                      {v.companyName || v.name}
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--aarizo-text-secondary, #657785)', marginTop: '2px' }}>
+                      {v.category ? v.category.replace(/_/g, ' ') : 'General Maintenance'} • {v.contactPerson || 'Authorized Partner'}
+                    </div>
+                  </div>
+                  <span
+                    style={{
+                      background: 'var(--aarizo-light-blue, #EAF6FC)',
+                      color: 'var(--aarizo-blue, #176B91)',
+                      fontSize: '0.6875rem',
+                      fontWeight: 700,
+                      padding: '2px 6px',
+                      borderRadius: '8px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    ★ {v.rating || '4.9'}
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.25rem' }}>
+                  <a
+                    href={`tel:${v.phone}`}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      padding: '0.4rem 0.75rem',
+                      borderRadius: '10px',
+                      background: 'var(--aarizo-light-blue, #EAF6FC)',
+                      color: 'var(--aarizo-blue, #176B91)',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <Phone size={13} />
+                    <span>Call Vendor</span>
+                  </a>
+                  <button
+                    onClick={() => navigate('/resident/services')}
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      color: 'var(--aarizo-coral, #F06543)',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Book Service
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* ── Responsive 2-Col Grid for Activity & Announcements on Desktop ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>

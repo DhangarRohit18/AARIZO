@@ -120,6 +120,60 @@ export const apiClient = {
 
   // Societies
   getSocieties: () => apiRequest<any[]>('/societies'),
+  createSociety: (data: any) =>
+    apiRequest<any>('/societies', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  updateSociety: (id: string, data: any) =>
+    apiRequest<any>(`/societies/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+  deleteSociety: (id: string) =>
+    apiRequest<any>(`/societies/${id}`, {
+      method: 'DELETE',
+    }),
+
+  // Committee Members
+  getCommitteeMembers: (societyId?: string) => apiRequest<any[]>('/committee', { societyId }),
+  createCommitteeMember: (data: {
+    societyId?: string;
+    name: string;
+    email: string;
+    phone: string;
+    designation: string;
+    flatNumber?: string;
+  }) =>
+    apiRequest<any>('/committee', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      societyId: data.societyId,
+    }),
+
+  // Child Safety
+  getChildren: (societyId?: string) => apiRequest<any[]>('/children', { societyId }),
+  createChild: (data: any) =>
+    apiRequest<any>('/children', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  getChildPasses: (societyId?: string) => apiRequest<any[]>('/children/passes', { societyId }),
+  createChildPass: (data: any) =>
+    apiRequest<any>('/children/passes', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  verifyChildPass: (id: string, societyId?: string) =>
+    apiRequest<any>(`/children/passes/${id}/verify`, {
+      method: 'POST',
+      body: JSON.stringify({ societyId }),
+    }),
+  triggerChildSOS: (data: any) =>
+    apiRequest<any>('/children/sos', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 
   // Flats
   getFlats: (societyId?: string) => apiRequest<any[]>('/flats', { societyId }),
