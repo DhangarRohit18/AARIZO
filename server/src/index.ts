@@ -243,6 +243,39 @@ app.post('/api/towers', requireRole(['secretary', 'admin']), async (req: Request
   }
 });
 
+app.patch('/api/towers/:id', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const tower = await prisma.tower.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('TOWER_UPDATED', tower, tower.societyId);
+    res.json(tower);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/towers/:id', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const tower = await prisma.tower.findUnique({ where: { id } });
+    if (!tower) return res.status(404).json({ error: 'Tower not found' });
+
+    await prisma.tower.delete({ where: { id } });
+    await prisma.society.update({
+      where: { id: tower.societyId },
+      data: { totalTowers: { decrement: 1 } },
+    }).catch(() => null);
+
+    broadcastEvent('TOWER_DELETED', { id }, tower.societyId);
+    res.json({ success: true, id });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Flats
 app.get('/api/flats', async (req: Request, res: Response) => {
   try {
@@ -325,6 +358,31 @@ app.patch('/api/flats/:id', requireRole(['secretary', 'admin']), async (req: Req
   }
 });
 
+app.delete('/api/flats/:id', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const flat = await prisma.flat.findUnique({ where: { id } });
+    if (!flat) return res.status(404).json({ error: 'Flat not found' });
+
+    // Unlink any allocated parking slots safely before deleting
+    await prisma.parkingSlot.updateMany({
+      where: { allocatedFlatId: id },
+      data: { allocatedFlatId: null, isOccupied: false },
+    }).catch(() => null);
+
+    await prisma.flat.delete({ where: { id } });
+    await prisma.tower.update({
+      where: { id: flat.towerId },
+      data: { totalUnits: { decrement: 1 } },
+    }).catch(() => null);
+
+    broadcastEvent('FLAT_DELETED', { id }, flat.societyId);
+    res.json({ success: true, id });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Committee Members
 app.get('/api/committee', async (req: Request, res: Response) => {
   try {
@@ -361,11 +419,82 @@ app.post('/api/committee', requireRole(['secretary', 'admin']), async (req: Requ
 // Residents
 app.get('/api/residents', requireRole(['secretary', 'guard', 'facility_manager', 'admin', 'resident']), async (req: Request, res: Response) => {
   try {
+    const limit = Math.min(Number(req.query.limit) || 100, 200);
+    const offset = Number(req.query.offset) || 0;
     const residents = await prisma.resident.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
       include: { flat: true, familyMembers: true, vehicles: true },
+      take: limit,
+      skip: offset,
+      orderBy: { name: 'asc' },
     });
     res.json(residents);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/residents', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { name, phone, email, flatId, flatCode, residentType = 'OWNER' } = req.body;
+    if (!name || !phone) return res.status(400).json({ error: 'Name and phone are required' });
+
+    let resolvedFlatId = flatId;
+    if (!resolvedFlatId && flatCode) {
+      const flat = await prisma.flat.findFirst({ where: { societyId, flatNumber: String(flatCode).toUpperCase() } });
+      resolvedFlatId = flat?.id;
+    }
+
+    if (!resolvedFlatId) {
+      const firstFlat = await prisma.flat.findFirst({ where: { societyId } });
+      resolvedFlatId = firstFlat?.id;
+    }
+
+    const resident = await prisma.resident.create({
+      data: {
+        societyId,
+        flatId: resolvedFlatId,
+        name,
+        phone,
+        email,
+        residentType,
+        isVerified: true,
+      },
+      include: { flat: true },
+    });
+
+    broadcastEvent('RESIDENT_CREATED', resident, societyId);
+    res.status(201).json(resident);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/residents/:id', requireRole(['secretary', 'admin', 'resident']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const resident = await prisma.resident.update({
+      where: { id },
+      data: req.body,
+      include: { flat: true },
+    });
+    broadcastEvent('RESIDENT_UPDATED', resident, resident.societyId);
+    res.json(resident);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/residents/:id', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const resident = await prisma.resident.findUnique({ where: { id } });
+    if (!resident) return res.status(404).json({ error: 'Resident not found' });
+
+    await prisma.resident.delete({ where: { id } });
+    broadcastEvent('RESIDENT_DELETED', { id }, resident.societyId);
+    res.json({ success: true, id });
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }
@@ -374,9 +503,14 @@ app.get('/api/residents', requireRole(['secretary', 'guard', 'facility_manager',
 // Visitor Passes
 app.get('/api/visitor-passes', requireRole(['resident', 'guard', 'secretary', 'admin', 'facility_manager']), async (req: Request, res: Response) => {
   try {
+    const limit = Math.min(Number(req.query.limit) || 100, 200);
+    const offset = Number(req.query.offset) || 0;
     const passes = await prisma.visitorPass.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
       orderBy: { validFrom: 'desc' },
+      take: limit,
+      skip: offset,
+      include: { resident: true, flat: true },
     });
     res.json(passes);
   } catch (error) {
@@ -398,7 +532,7 @@ app.post('/api/visitor-passes', requireRole(['resident', 'guard', 'secretary', '
 
 app.patch('/api/visitor-passes/:id', requireRole(['resident', 'guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string;
+    const id = String(req.params.id);
     const pass = await prisma.visitorPass.update({
       where: { id },
       data: req.body,
@@ -406,6 +540,60 @@ app.patch('/api/visitor-passes/:id', requireRole(['resident', 'guard', 'secretar
     const topic = req.body.status === 'CHECKED_IN' ? 'VISITOR_ENTRY' : req.body.status === 'CHECKED_OUT' ? 'VISITOR_EXIT' : 'VISITOR_APPROVAL';
     broadcastEvent(topic, pass, pass.societyId);
     res.json(pass);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/visitor-passes/:id', requireRole(['resident', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const pass = await prisma.visitorPass.findUnique({ where: { id } });
+    if (!pass) return res.status(404).json({ error: 'Visitor pass not found' });
+
+    await prisma.visitorPass.delete({ where: { id } });
+    broadcastEvent('VISITOR_PASS_DELETED', { id }, pass.societyId);
+    res.json({ success: true, id });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Automated Visitor Overstay Detection & Alert Engine
+app.post('/api/visitor-passes/check-overstay', requireRole(['guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const now = new Date();
+
+    const overstayPasses = await prisma.visitorPass.findMany({
+      where: {
+        societyId,
+        status: 'CHECKED_IN',
+        validTo: { lt: now },
+      },
+      include: { resident: true, flat: true },
+    });
+
+    const flagged = [];
+    for (const p of overstayPasses) {
+      const updated = await prisma.visitorPass.update({
+        where: { id: p.id },
+        data: { status: 'EXPIRED' },
+      });
+
+      broadcastEvent('VISITOR_OVERSTAY_ALERT', {
+        passId: p.id,
+        visitorName: p.visitorName,
+        phone: p.phone,
+        flatNumber: p.flat?.flatNumber,
+        validTo: p.validTo,
+        overstayMinutes: Math.round((now.getTime() - new Date(p.validTo).getTime()) / 60000),
+      }, societyId);
+
+      flagged.push(updated);
+    }
+
+    res.json({ success: true, checkedAt: now.toISOString(), overstayCount: flagged.length, passes: flagged });
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }
@@ -525,13 +713,130 @@ app.get('/api/billing/invoices', requireRole(['resident', 'secretary', 'admin', 
 
 app.patch('/api/billing/invoices/:id', requireRole(['resident', 'secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string;
+    const id = String(req.params.id);
     const invoice = await prisma.billingInvoice.update({
       where: { id },
       data: req.body,
     });
     broadcastEvent('BILLING_INVOICES_UPDATED', invoice, invoice.societyId);
     res.json(invoice);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/billing/invoices', requireRole(['secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { residentId, flatId, maintenanceAmount, utilityAmount = 0, sinkingFund = 0, lateFee = 0, dueDate, breakdown } = req.body;
+
+    const totalAmount = Number(maintenanceAmount || 0) + Number(utilityAmount || 0) + Number(sinkingFund || 0) + Number(lateFee || 0);
+    const invoiceNumber = `INV-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+
+    const invoice = await prisma.billingInvoice.create({
+      data: {
+        societyId,
+        residentId,
+        flatId,
+        invoiceNumber,
+        maintenanceAmount: Number(maintenanceAmount || 0),
+        utilityAmount: Number(utilityAmount || 0),
+        sinkingFund: Number(sinkingFund || 0),
+        lateFee: Number(lateFee || 0),
+        totalAmount,
+        dueDate: dueDate ? new Date(dueDate) : new Date(Date.now() + 15 * 86400000),
+        status: 'PENDING',
+        breakdown: breakdown || {},
+      },
+      include: { resident: true, flat: true },
+    });
+
+    broadcastEvent('BILLING_INVOICE_CREATED', invoice, societyId);
+    res.status(201).json(invoice);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/billing/invoices/:id', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    await prisma.billingInvoice.delete({ where: { id } });
+    broadcastEvent('BILLING_INVOICE_DELETED', { id });
+    res.json({ success: true, id });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Billing Cycles API
+app.get('/api/billing/cycles', requireRole(['secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const cycles = await prisma.billingCycle.findMany({
+      where: societyId !== 'all' ? { societyId } : undefined,
+      orderBy: { billingDate: 'desc' },
+      include: { invoices: true },
+    });
+    res.json(cycles);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/billing/cycles', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { cycleName, monthYear, billingDate, dueDate, lateFeeAmount = 250 } = req.body;
+
+    const cycle = await prisma.billingCycle.create({
+      data: {
+        societyId,
+        cycleName: cycleName || `Cycle ${monthYear || 'Current'}`,
+        monthYear: monthYear || new Date().toISOString().slice(0, 7),
+        billingDate: billingDate ? new Date(billingDate) : new Date(),
+        dueDate: dueDate ? new Date(dueDate) : new Date(Date.now() + 15 * 86400000),
+        lateFeeAmount: Number(lateFeeAmount),
+      },
+    });
+
+    broadcastEvent('BILLING_CYCLE_GENERATED', cycle, societyId);
+    res.status(201).json(cycle);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Automated Late Fee Assessment Engine
+app.post('/api/billing/apply-late-fees', requireRole(['secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const feeAmount = Number(req.body.feeAmount) || 250;
+    const now = new Date();
+
+    const overdueInvoices = await prisma.billingInvoice.findMany({
+      where: {
+        societyId,
+        status: 'PENDING',
+        dueDate: { lt: now },
+      },
+    });
+
+    const updatedList = [];
+    for (const inv of overdueInvoices) {
+      const updated = await prisma.billingInvoice.update({
+        where: { id: inv.id },
+        data: {
+          status: 'OVERDUE',
+          lateFee: { increment: feeAmount },
+          totalAmount: { increment: feeAmount },
+        },
+      });
+      updatedList.push(updated);
+    }
+
+    broadcastEvent('BILLING_LATE_FEES_APPLIED', { count: updatedList.length, feeAmount }, societyId);
+    res.json({ success: true, assessedCount: updatedList.length, lateFeeAmount: feeAmount });
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }
@@ -583,13 +888,61 @@ app.patch('/api/parcels/:id/collect', requireRole(['resident', 'guard', 'secreta
 });
 
 // Staff
-app.get('/api/staff', requireRole(['guard', 'secretary', 'facility_manager', 'admin']), async (req: Request, res: Response) => {
+app.get('/api/staff', requireRole(['guard', 'secretary', 'facility_manager', 'admin', 'resident']), async (req: Request, res: Response) => {
   try {
     const staff = await prisma.staff.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
       orderBy: { name: 'asc' },
     });
     res.json(staff);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/staff', requireRole(['secretary', 'facility_manager', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { name, roleCategory, phone, shiftTimings, isPoliceVerified = false } = req.body;
+    if (!name || !phone) return res.status(400).json({ error: 'Name and phone are required' });
+
+    const staffMember = await prisma.staff.create({
+      data: {
+        societyId,
+        name,
+        roleCategory: roleCategory || 'SECURITY_GUARD',
+        phone,
+        shiftTimings: shiftTimings || '08:00 - 20:00',
+        isPoliceVerified: Boolean(isPoliceVerified),
+      },
+    });
+    broadcastEvent('STAFF_MEMBER_CREATED', staffMember, societyId);
+    res.status(201).json(staffMember);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/staff/:id', requireRole(['secretary', 'facility_manager', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const updated = await prisma.staff.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('STAFF_MEMBER_UPDATED', updated, updated.societyId);
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/staff/:id', requireRole(['secretary', 'facility_manager', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const staff = await prisma.staff.delete({ where: { id } });
+    broadcastEvent('STAFF_MEMBER_DELETED', { id }, staff.societyId);
+    res.json({ success: true, id });
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }
@@ -608,14 +961,139 @@ app.get('/api/domestic-workers', requireRole(['resident', 'guard', 'secretary', 
   }
 });
 
-// Vendors
-app.get('/api/vendors', requireRole(['resident', 'secretary', 'facility_manager', 'admin', 'vendor']), async (req: Request, res: Response) => {
+app.post('/api/domestic-workers', requireRole(['resident', 'guard', 'secretary', 'facility_manager', 'admin']), async (req: Request, res: Response) => {
   try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { name, profession, phone, associatedFlats = [], passcode, isPoliceVerified = true } = req.body;
+    if (!name || !phone) return res.status(400).json({ error: 'Name and phone are required' });
+
+    const worker = await prisma.domesticWorker.create({
+      data: {
+        societyId,
+        name,
+        profession: profession || 'House Maid',
+        phone,
+        associatedFlats: Array.isArray(associatedFlats) ? associatedFlats : [associatedFlats],
+        passcode: passcode || String(Math.floor(1000 + Math.random() * 9000)),
+        isPoliceVerified: Boolean(isPoliceVerified),
+      },
+    });
+    broadcastEvent('DOMESTIC_WORKER_CREATED', worker, societyId);
+    res.status(201).json(worker);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/domestic-workers/:id', requireRole(['resident', 'guard', 'secretary', 'facility_manager', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const updated = await prisma.domesticWorker.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('DOMESTIC_WORKER_UPDATED', updated, updated.societyId);
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/domestic-workers/:id', requireRole(['secretary', 'facility_manager', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const worker = await prisma.domesticWorker.delete({ where: { id } });
+    broadcastEvent('DOMESTIC_WORKER_DELETED', { id }, worker.societyId);
+    res.json({ success: true, id });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Vendors
+app.get('/api/vendors', requireRole(['resident', 'secretary', 'facility_manager', 'admin', 'vendor', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const societyId = (req.query.societyId as string) || req.societyId || 'soc-gvs';
+    const category = req.query.category as string | undefined;
+    const where: any = { societyId };
+    if (category && category !== 'ALL') where.serviceType = category;
+
     const vendors = await prisma.vendor.findMany({
-      where: req.societyId ? { societyId: req.societyId } : undefined,
-      orderBy: { businessName: 'asc' },
+      where,
+      include: { advertisements: true },
+      orderBy: { rating: 'desc' },
     });
     res.json(vendors);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/vendors', requireRole(['secretary', 'admin', 'committee', 'facility_manager']), async (req: Request, res: Response) => {
+  try {
+    const {
+      societyId = req.societyId || 'soc-gvs',
+      businessName,
+      companyName,
+      contactPerson,
+      serviceType,
+      category,
+      phone,
+      email,
+      gstNumber,
+      documentUrl,
+      logoUrl,
+    } = req.body;
+
+    const resolvedName = businessName || companyName;
+    const resolvedType = serviceType || category || 'GENERAL_MAINTENANCE';
+
+    if (!resolvedName || !phone) {
+      return res.status(400).json({ error: 'businessName and phone are required' });
+    }
+
+    const vendor = await prisma.vendor.create({
+      data: {
+        societyId,
+        businessName: resolvedName,
+        contactPerson: contactPerson || resolvedName,
+        serviceType: resolvedType,
+        phone,
+        email,
+        gstNumber,
+        documentUrl,
+        logoUrl,
+        status: 'ACTIVE',
+      },
+    });
+
+    broadcastEvent('VENDOR_REGISTERED', vendor, societyId);
+    res.status(201).json(vendor);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/vendors/:id', requireRole(['secretary', 'admin', 'committee', 'facility_manager']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const vendor = await prisma.vendor.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('VENDOR_UPDATED', vendor, vendor.societyId);
+    res.json(vendor);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/vendors/:id', requireRole(['secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const vendor = await prisma.vendor.delete({ where: { id } });
+    broadcastEvent('VENDOR_DELETED', { id }, vendor.societyId);
+    res.json({ success: true, id });
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }
@@ -626,8 +1104,60 @@ app.get('/api/amenities', async (req: Request, res: Response) => {
   try {
     const amenities = await prisma.amenity.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
+      orderBy: { name: 'asc' },
     });
     res.json(amenities);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/amenities', requireRole(['secretary', 'admin', 'facility_manager']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const { name, category, capacityPerSlot = 10, slotDurationMinutes = 60, hourlyCharge = 0, requiresApproval = false, rulesText } = req.body;
+    if (!name) return res.status(400).json({ error: 'Amenity name is required' });
+
+    const amenity = await prisma.amenity.create({
+      data: {
+        societyId,
+        name,
+        category: category || 'SPORTS',
+        capacityPerSlot: Number(capacityPerSlot) || 10,
+        slotDurationMinutes: Number(slotDurationMinutes) || 60,
+        hourlyCharge: Number(hourlyCharge) || 0,
+        requiresApproval: Boolean(requiresApproval),
+        rulesText,
+      },
+    });
+
+    broadcastEvent('AMENITY_CREATED', amenity, societyId);
+    res.status(201).json(amenity);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.patch('/api/amenities/:id', requireRole(['secretary', 'admin', 'facility_manager']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const amenity = await prisma.amenity.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('AMENITY_UPDATED', amenity, amenity.societyId);
+    res.json(amenity);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/amenities/:id', requireRole(['secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const amenity = await prisma.amenity.delete({ where: { id } });
+    broadcastEvent('AMENITY_DELETED', { id }, amenity.societyId);
+    res.json({ success: true, id });
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }
@@ -729,7 +1259,7 @@ app.get('/api/amenities/:id/availability', async (req: Request, res: Response) =
 });
 
 // Atomic Server-Side Amenity Booking Endpoint
-app.post('/api/amenities/:id/book', async (req: Request, res: Response) => {
+app.post('/api/amenities/:id/book', requireRole(['resident', 'secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
   try {
     const amenityId = String(req.params.id);
     const societyId = req.societyId || req.body.societyId || 'soc-gvs';
@@ -851,7 +1381,7 @@ app.post('/api/amenities/:id/book', async (req: Request, res: Response) => {
 });
 
 // Cancel Booking Endpoint
-app.post('/api/amenities/bookings/:id/cancel', async (req: Request, res: Response) => {
+app.post('/api/amenities/bookings/:id/cancel', requireRole(['resident', 'secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
   try {
     const bookingId = String(req.params.id);
     const societyId = req.societyId || req.body.societyId || 'soc-gvs';
@@ -917,6 +1447,17 @@ app.post('/api/announcements', requireRole(['secretary', 'admin', 'committee']),
   }
 });
 
+app.delete('/api/announcements/:id', requireRole(['secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const ann = await prisma.announcement.delete({ where: { id } });
+    broadcastEvent('ANNOUNCEMENT_DELETED', { id }, ann.societyId);
+    res.json({ success: true, id });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Community Events
 app.get('/api/community-events', async (req: Request, res: Response) => {
   try {
@@ -942,6 +1483,45 @@ app.post('/api/community-events', requireRole(['secretary', 'admin', 'committee'
   }
 });
 
+app.patch('/api/community-events/:id', requireRole(['secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const event = await prisma.communityEvent.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('COMMUNITY_EVENT_UPDATED', event, event.societyId);
+    res.json(event);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.delete('/api/community-events/:id', requireRole(['secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const event = await prisma.communityEvent.delete({ where: { id } });
+    broadcastEvent('COMMUNITY_EVENT_DELETED', { id }, event.societyId);
+    res.json({ success: true, id });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+app.post('/api/community-events/:id/rsvp', requireRole(['resident', 'secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const event = await prisma.communityEvent.update({
+      where: { id },
+      data: { rsvpCount: { increment: 1 } },
+    });
+    broadcastEvent('COMMUNITY_EVENT_RSVP', { eventId: id, rsvpCount: event.rsvpCount }, event.societyId);
+    res.json({ success: true, rsvpCount: event.rsvpCount });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Emergency Incidents
 app.get('/api/emergency-incidents', async (req: Request, res: Response) => {
   try {
@@ -955,7 +1535,7 @@ app.get('/api/emergency-incidents', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/emergency-incidents', async (req: Request, res: Response) => {
+app.post('/api/emergency-incidents', requireRole(['resident', 'guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
   try {
     const incident = await prisma.emergencyIncident.create({
       data: req.body,
@@ -967,12 +1547,33 @@ app.post('/api/emergency-incidents', async (req: Request, res: Response) => {
   }
 });
 
+app.patch('/api/emergency-incidents/:id/resolve', requireRole(['guard', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const incident = await prisma.emergencyIncident.update({
+      where: { id },
+      data: {
+        dispatchStatus: 'RESOLVED',
+        resolvedAt: new Date(),
+      },
+    });
+    broadcastEvent('EMERGENCY_INCIDENT_RESOLVED', incident, incident.societyId);
+    res.json(incident);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Notifications
 app.get('/api/notifications', async (req: Request, res: Response) => {
   try {
+    const limit = Math.min(Number(req.query.limit) || 50, 100);
+    const offset = Number(req.query.offset) || 0;
     const notifications = await prisma.notification.findMany({
       where: req.societyId ? { societyId: req.societyId } : undefined,
       orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip: offset,
     });
     res.json(notifications);
   } catch (error) {
@@ -980,7 +1581,7 @@ app.get('/api/notifications', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/notifications', async (req: Request, res: Response) => {
+app.post('/api/notifications', requireRole(['secretary', 'admin', 'guard', 'committee']), async (req: Request, res: Response) => {
   try {
     const notif = await prisma.notification.create({
       data: req.body,
@@ -995,11 +1596,30 @@ app.post('/api/notifications', async (req: Request, res: Response) => {
 app.patch('/api/notifications/:id/read', async (req: Request, res: Response) => {
   try {
     const notif = await prisma.notification.update({
-      where: { id: req.params.id as string },
+      where: { id: String(req.params.id) },
       data: { isRead: true, readAt: new Date() },
     });
     broadcastEvent('NOTIFICATIONS_READ', notif, notif.societyId);
     res.json(notif);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+// Audit Logs API
+app.get('/api/audit-logs', requireRole(['secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const limit = Math.min(Number(req.query.limit) || 100, 200);
+    const offset = Number(req.query.offset) || 0;
+    const logs = await prisma.auditLog.findMany({
+      where: societyId !== 'all' ? { societyId } : undefined,
+      orderBy: { timestamp: 'desc' },
+      take: limit,
+      skip: offset,
+      include: { actor: true },
+    });
+    res.json(logs);
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }
@@ -1118,7 +1738,7 @@ app.get('/api/work-orders', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/work-orders', async (req: Request, res: Response) => {
+app.post('/api/work-orders', requireRole(['facility_manager', 'secretary', 'admin']), async (req: Request, res: Response) => {
   try {
     const order = await prisma.workOrder.create({ data: req.body });
     await realtimeEngine.recordOutboxEvent({
@@ -1130,6 +1750,20 @@ app.post('/api/work-orders', async (req: Request, res: Response) => {
     res.status(201).json(order);
   } catch (error: any) {
     res.status(400).json({ error: error?.message });
+  }
+});
+
+app.patch('/api/work-orders/:id', requireRole(['facility_manager', 'secretary', 'admin', 'vendor']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const updated = await prisma.workOrder.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('WORK_ORDER_UPDATED', updated, updated.societyId);
+    res.json(updated);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
   }
 });
 
@@ -1148,7 +1782,7 @@ app.get('/api/attendance', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/attendance/check-in', async (req: Request, res: Response) => {
+app.post('/api/attendance/check-in', requireRole(['guard', 'facility_manager', 'secretary', 'admin']), async (req: Request, res: Response) => {
   try {
     const att = await prisma.attendance.create({ data: req.body });
     await realtimeEngine.recordOutboxEvent({
@@ -1177,12 +1811,38 @@ app.get('/api/compliance-documents', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/compliance-documents', async (req: Request, res: Response) => {
+app.post('/api/compliance-documents', requireRole(['facility_manager', 'secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
   try {
     const doc = await prisma.complianceDocument.create({ data: req.body });
+    broadcastEvent('COMPLIANCE_DOC_UPLOADED', doc, doc.societyId);
     res.status(201).json(doc);
   } catch (error: any) {
     res.status(400).json({ error: error?.message });
+  }
+});
+
+app.patch('/api/compliance-documents/:id', requireRole(['facility_manager', 'secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const updated = await prisma.complianceDocument.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('COMPLIANCE_DOC_UPDATED', updated, updated.societyId);
+    res.json(updated);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+app.delete('/api/compliance-documents/:id', requireRole(['secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const doc = await prisma.complianceDocument.delete({ where: { id } });
+    broadcastEvent('COMPLIANCE_DOC_DELETED', { id }, doc.societyId);
+    res.json({ success: true, id });
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
   }
 });
 
@@ -1200,12 +1860,111 @@ app.get('/api/move-requests', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/move-requests', async (req: Request, res: Response) => {
+app.post('/api/move-requests', requireRole(['resident', 'secretary', 'admin']), async (req: Request, res: Response) => {
   try {
     const move = await prisma.moveRequest.create({ data: req.body });
+    broadcastEvent('MOVE_REQUEST_CREATED', move, move.societyId);
     res.status(201).json(move);
   } catch (error: any) {
     res.status(400).json({ error: error?.message });
+  }
+});
+
+app.patch('/api/move-requests/:id', requireRole(['secretary', 'admin', 'committee', 'guard']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const updated = await prisma.moveRequest.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('MOVE_REQUEST_UPDATED', updated, updated.societyId);
+    res.json(updated);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+// Renovation Requests API
+app.get('/api/renovation-requests', async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const renovations = await prisma.renovationRequest.findMany({
+      where: societyId !== 'all' ? { societyId } : undefined,
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(renovations);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+app.post('/api/renovation-requests', requireRole(['resident', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const renovation = await prisma.renovationRequest.create({ data: req.body });
+    broadcastEvent('RENOVATION_REQUEST_CREATED', renovation, renovation.societyId);
+    res.status(201).json(renovation);
+  } catch (error: any) {
+    res.status(400).json({ error: error?.message });
+  }
+});
+
+app.patch('/api/renovation-requests/:id', requireRole(['secretary', 'admin', 'committee']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const updated = await prisma.renovationRequest.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('RENOVATION_REQUEST_UPDATED', updated, updated.societyId);
+    res.json(updated);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+// Facility AMC Contracts API
+app.get('/api/facility/amc', requireRole(['facility_manager', 'secretary', 'admin', 'committee', 'vendor']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || (req.query.societyId as string) || 'soc-gvs';
+    const contracts = await prisma.aMCContract.findMany({
+      where: societyId !== 'all' ? { societyId } : undefined,
+      orderBy: { startDate: 'desc' },
+    });
+    res.json(contracts);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+});
+
+app.post('/api/facility/amc', requireRole(['facility_manager', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const societyId = req.societyId || req.body.societyId || 'soc-gvs';
+    const contract = await prisma.aMCContract.create({
+      data: {
+        ...req.body,
+        societyId,
+        startDate: new Date(req.body.startDate || Date.now()),
+        endDate: new Date(req.body.endDate || Date.now() + 365 * 86400000),
+      },
+    });
+    broadcastEvent('AMC_CONTRACT_CREATED', contract, societyId);
+    res.status(201).json(contract);
+  } catch (error: any) {
+    res.status(400).json({ error: error?.message });
+  }
+});
+
+app.patch('/api/facility/amc/:id', requireRole(['facility_manager', 'secretary', 'admin']), async (req: Request, res: Response) => {
+  try {
+    const id = String(req.params.id);
+    const updated = await prisma.aMCContract.update({
+      where: { id },
+      data: req.body,
+    });
+    broadcastEvent('AMC_CONTRACT_UPDATED', updated, updated.societyId);
+    res.json(updated);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
   }
 });
 
@@ -1666,12 +2425,25 @@ app.post('/api/upload', async (req: Request, res: Response) => {
     let ext = 'bin';
 
     if (matches && matches.length === 3) {
-      const mimeType = matches[1];
+      const mimeType = matches[1].toLowerCase();
       const subtype = mimeType.split('/')[1] || 'bin';
       ext = subtype === 'jpeg' ? 'jpg' : subtype.split(';')[0];
       buffer = Buffer.from(matches[2], 'base64');
     } else {
       buffer = Buffer.from(fileData, 'base64');
+    }
+
+    // Security: Validate allowed extensions and file size limit (15MB)
+    const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'pdf', 'svg', 'gif'];
+    const cleanExt = ext.toLowerCase().trim();
+    if (!ALLOWED_EXTENSIONS.includes(cleanExt)) {
+      return res.status(400).json({
+        error: `Unsupported file type '${cleanExt}'. Allowed formats: JPG, PNG, WEBP, PDF, SVG, GIF.`,
+      });
+    }
+
+    if (buffer.length > 15 * 1024 * 1024) {
+      return res.status(400).json({ error: 'File size exceeds 15MB maximum limit.' });
     }
 
     const sanitizedBase = (filename || `file_${Date.now()}.${ext}`)
@@ -2308,6 +3080,23 @@ app.post('/api/payments/razorpay/webhook', async (req: Request, res: Response) =
             reconciledBy: 'WEBHOOK',
           });
         }
+
+        // Auto-credit resident ledger wallet on successful online wallet top-up
+        if (paymentEntity?.notes?.type === 'WALLET_TOPUP' || paymentEntity?.notes?.purpose === 'WALLET_RECHARGE') {
+          const residentId = paymentEntity.notes.residentId;
+          const topupAmount = (paymentEntity.amount || 0) / 100;
+          if (residentId && topupAmount > 0) {
+            await WalletService.executeTransaction({
+              societyId: paymentEntity.notes.societyId || 'soc-gvs',
+              residentId,
+              type: 'CREDIT',
+              category: 'RECHARGE',
+              amount: topupAmount,
+              description: `Online Wallet Recharge via Razorpay (${paymentId || paymentEntity.id})`,
+              referenceId: paymentId || paymentEntity.id,
+            }).catch((err) => console.warn('[WalletRechargeWebhook] Failed to credit wallet:', err));
+          }
+        }
       }
     } else if (event?.event === 'payment.failed') {
       const paymentEntity = event.payload?.payment?.entity;
@@ -2451,65 +3240,6 @@ app.post('/api/advertisements/:id/click', async (req: Request, res: Response) =>
       data: { clicksCount: { increment: 1 } },
     });
     res.json({ success: true, clicksCount: ad.clicksCount });
-  } catch (error) {
-    res.status(500).json({ error: String(error) });
-  }
-});
-
-// ==========================================
-// 🏪 Vendor Hub & Service Management
-// ==========================================
-app.get('/api/vendors', async (req: Request, res: Response) => {
-  try {
-    const societyId = (req.query.societyId as string) || req.societyId || 'soc-gvs';
-    const vendors = await prisma.vendor.findMany({
-      where: { societyId },
-      include: {
-        advertisements: true,
-      },
-      orderBy: { rating: 'desc' },
-    });
-    res.json(vendors);
-  } catch (error) {
-    res.status(500).json({ error: String(error) });
-  }
-});
-
-app.post('/api/vendors', async (req: Request, res: Response) => {
-  try {
-    const {
-      societyId = req.societyId || 'soc-gvs',
-      businessName,
-      contactPerson,
-      serviceType,
-      phone,
-      email,
-      gstNumber,
-      documentUrl,
-      logoUrl,
-    } = req.body;
-
-    if (!businessName || !phone || !serviceType) {
-      return res.status(400).json({ error: 'businessName, serviceType, and phone are required' });
-    }
-
-    const vendor = await prisma.vendor.create({
-      data: {
-        societyId,
-        businessName,
-        contactPerson: contactPerson || businessName,
-        serviceType,
-        phone,
-        email,
-        gstNumber,
-        documentUrl,
-        logoUrl,
-        status: 'ACTIVE',
-      },
-    });
-
-    broadcastEvent('VENDOR_REGISTERED', vendor);
-    res.status(201).json(vendor);
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }

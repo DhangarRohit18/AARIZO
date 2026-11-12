@@ -25,6 +25,7 @@ import {
 } from '../repositories/societies/OperationsRepositories';
 import { logAuditEvent } from '../repositories/auditRepository';
 import { realtimeService } from './realtimeService';
+import { apiClient } from './apiClient';
 
 // Helper to append audit logs to Firestore and local cache
 export function logAudit(
@@ -86,6 +87,7 @@ export const societyService = {
     db.saveSocieties([newSoc, ...societies]);
 
     societyRepository.create(newSoc as any).catch(() => {});
+    apiClient.createSociety(newSoc).catch(() => {});
     logAudit(newSoc.id, actor, 'CREATE', 'Society', newSoc.id, `Created society ${newSoc.name} (${newSoc.code})`);
     return newSoc;
   },
@@ -103,6 +105,7 @@ export const societyService = {
     db.saveSocieties(societies);
 
     societyRepository.update(id, { status } as any).catch(() => {});
+    apiClient.updateSociety(id, { status }).catch(() => {});
     logAudit(id, actor, 'STATUS_CHANGE', 'Society', id, `Changed society status to ${status}`);
     return societies[index];
   },
@@ -120,6 +123,7 @@ export const societyService = {
     db.saveSocieties(societies);
 
     societyRepository.update(id, updates as any).catch(() => {});
+    apiClient.updateSociety(id, updates).catch(() => {});
     logAudit(id, actor, 'UPDATE', 'Society', id, `Updated society ${societies[index].name}`);
     return societies[index];
   },
@@ -136,6 +140,7 @@ export const societyService = {
     db.saveSocieties(remaining);
 
     societyRepository.delete(id).catch(() => {});
+    apiClient.deleteSociety(id).catch(() => {});
     logAudit(id, actor, 'DELETE', 'Society', id, `Deleted society ${soc.name} (${soc.code})`);
     return true;
   },
@@ -184,8 +189,26 @@ export const societyService = {
     }
 
     flatRepository.create(newFlat).catch(() => {});
+    apiClient.createFlat(newFlat).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'Flat', newFlat.id, `Created flat ${newFlat.flatNumber}`);
     return newFlat;
+  },
+
+  deleteFlat: (
+    id: string,
+    actor: { id: string; name: string; role: string }
+  ): boolean => {
+    const flats = db.getFlats();
+    const flat = flats.find((f) => f.id === id);
+    if (!flat) return false;
+
+    const remaining = flats.filter((f) => f.id !== id);
+    db.saveFlats(remaining);
+
+    flatRepository.delete(id).catch(() => {});
+    apiClient.deleteFlat(id).catch(() => {});
+    logAudit(flat.societyId, actor, 'DELETE', 'Flat', id, `Deleted flat ${flat.flatNumber}`);
+    return true;
   },
 
   // --- RESIDENTS ---
@@ -203,8 +226,26 @@ export const societyService = {
     };
     db.saveResidents([...residents, newResident]);
     residentRepository.create(newResident).catch(() => {});
+    apiClient.createResident(newResident).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'Resident', newResident.id, `Created resident ${newResident.name} (${newResident.flatCode})`);
     return newResident;
+  },
+
+  deleteResident: (
+    id: string,
+    actor: { id: string; name: string; role: string }
+  ): boolean => {
+    const residents = db.getResidents();
+    const resident = residents.find((r) => r.id === id);
+    if (!resident) return false;
+
+    const remaining = residents.filter((r) => r.id !== id);
+    db.saveResidents(remaining);
+
+    residentRepository.delete(id).catch(() => {});
+    apiClient.deleteResident(id).catch(() => {});
+    logAudit(resident.societyId, actor, 'DELETE', 'Resident', id, `Deleted resident ${resident.name} (${resident.flatCode})`);
+    return true;
   },
 
   updateResidentApproval: (

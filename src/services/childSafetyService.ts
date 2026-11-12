@@ -11,6 +11,7 @@ import { childRepository } from '../repositories/childSafety/ChildRepository';
 import { societyService } from './societyService';
 import { db } from './db';
 import { realtimeService } from './realtimeService';
+import { apiClient } from './apiClient';
 
 const CHILDREN_STORAGE_KEY = 'communityos_children_profiles';
 const QR_PASSES_STORAGE_KEY = 'communityos_child_pickup_qrs';
@@ -280,6 +281,7 @@ class ChildSafetyService {
 
     localStorage.setItem(CHILDREN_STORAGE_KEY, JSON.stringify(items));
     childRepository.create(updated).catch(() => {});
+    apiClient.createChild(updated).catch(() => {});
     return updated;
   }
 
@@ -407,6 +409,7 @@ class ChildSafetyService {
     const qrs: ChildPickupQR[] = raw ? JSON.parse(raw) : [];
     qrs.unshift(newQR);
     localStorage.setItem(QR_PASSES_STORAGE_KEY, JSON.stringify(qrs));
+    apiClient.createChildPass(newQR).catch(() => {});
 
     return newQR;
   }
@@ -574,6 +577,7 @@ class ChildSafetyService {
     const items: ChildSafetyAlert[] = raw ? JSON.parse(raw) : [];
     items.unshift(newAlert);
     localStorage.setItem(SAFETY_ALERTS_STORAGE_KEY, JSON.stringify(items));
+    apiClient.triggerChildSOS(newAlert).catch(() => {});
 
     realtimeService.publish(
       'EMERGENCY_ALERTS',

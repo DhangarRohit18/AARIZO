@@ -26,6 +26,8 @@ import { AdvertisementPopup, OffersLauncherPill } from '../../../components/comm
 import { Modal } from '../../../components/ui/Modal';
 import { useAuth } from '../../../context/AuthContext';
 import { realtimeService } from '../../../services/realtimeService';
+import { societyService } from '../../../services/societyService';
+import type { Vendor } from '../../../types/society';
 import type {
   MarketplaceListing,
   ListingType,
@@ -37,7 +39,7 @@ import type {
 
 interface CommunityMarketplaceHubProps {
   userRole?: 'RESIDENT' | 'SOCIETY_ADMIN' | 'SUPER_ADMIN';
-  initialTab?: 'MARKETPLACE' | 'DIRECTORY' | 'LOST_FOUND';
+  initialTab?: 'MARKETPLACE' | 'DIRECTORY' | 'LOST_FOUND' | 'VENDORS';
   hideHeaderBanner?: boolean;
   hideTabs?: boolean;
 }
@@ -55,7 +57,11 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
     (currentUser as any)?.flatNumber ||
     'Tower B · Flat 1204';
 
-  const [activeTab, setActiveTab] = useState<'MARKETPLACE' | 'DIRECTORY' | 'LOST_FOUND'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'MARKETPLACE' | 'DIRECTORY' | 'LOST_FOUND' | 'VENDORS'>(initialTab);
+  const currentSocietyId = (currentUser as any)?.societyId || 'soc-gvs';
+  const [vendors, setVendors] = useState<Vendor[]>(() => societyService.getVendors(currentSocietyId));
+  const [vendorSearch, setVendorSearch] = useState('');
+  const [vendorCategoryFilter, setVendorCategoryFilter] = useState('ALL');
 
   // Marketplace State
   const [listings, setListings] = useState<MarketplaceListing[]>([]);
@@ -104,6 +110,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
     );
     setDirectory(communityMarketplaceEngine.getDirectoryEntries());
     setLostFound(communityMarketplaceEngine.getLostAndFoundItems());
+    setVendors(societyService.getVendors(currentSocietyId));
   };
 
   useEffect(() => {
@@ -580,6 +587,7 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
           {[
             { key: 'MARKETPLACE', label: 'Resident Marketplace', count: listings.length, icon: Store },
+            { key: 'VENDORS', label: 'Society Vendors', count: vendors.length, icon: ShieldCheck },
             { key: 'DIRECTORY', label: 'Neighbour Directory', count: directory.length, icon: Users },
             { key: 'LOST_FOUND', label: 'Lost & Found Board', count: lostFound.length, icon: HelpCircle },
           ].map((tab) => {
@@ -950,6 +958,223 @@ export const CommunityMarketplaceHub: React.FC<CommunityMarketplaceHubProps> = (
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* Tab: Approved Society Vendors */}
+      {activeTab === 'VENDORS' && (
+        <div className="space-y-4">
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid #DCE8EF',
+              padding: '1rem',
+              boxShadow: '0 1px 3px rgba(8, 59, 86, 0.04)',
+            }}
+            className="space-y-3"
+          >
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div>
+                <h2 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <ShieldCheck size={18} color="#059669" />
+                  <span>Approved Society Vendors Directory</span>
+                </h2>
+                <p style={{ fontSize: '0.78rem', color: 'var(--aarizo-text-secondary, #657785)', margin: '0.2rem 0 0' }}>
+                  Management-verified technicians, daily essentials, and local services
+                </p>
+              </div>
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: '10px',
+                  background: '#ECFDF5',
+                  color: '#059669',
+                  border: '1px solid #A7F3D0',
+                }}
+              >
+                {vendors.length} Verified Providers
+              </span>
+            </div>
+
+            <div className="relative w-full">
+              <Search className="absolute left-3.5 top-3 text-slate-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search vendor company, service category, or contact person..."
+                value={vendorSearch}
+                onChange={(e) => setVendorSearch(e.target.value)}
+                style={{
+                  width: '100%',
+                  paddingLeft: '2.5rem',
+                  paddingRight: '1rem',
+                  paddingTop: '0.65rem',
+                  paddingBottom: '0.65rem',
+                  borderRadius: '12px',
+                  background: '#F8FAFC',
+                  border: '1px solid #E2E8F0',
+                  fontSize: '0.8125rem',
+                  color: '#083B56',
+                  outline: 'none',
+                }}
+              />
+            </div>
+
+            {/* Category filter chips */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+              {[
+                { id: 'ALL', label: 'All Services' },
+                { id: 'PLUMBING', label: '🔧 Plumbing' },
+                { id: 'ELECTRICAL', label: '⚡ Electrical' },
+                { id: 'CARPENTRY', label: '🪚 Carpentry' },
+                { id: 'APPLIANCE', label: '🧊 Appliances' },
+                { id: 'CLEANING', label: '🧹 Cleaning' },
+                { id: 'SECURITY', label: '🛡️ Security' },
+              ].map((chip) => {
+                const isSelected = vendorCategoryFilter === chip.id;
+                return (
+                  <button
+                    key={chip.id}
+                    onClick={() => setVendorCategoryFilter(chip.id)}
+                    style={{
+                      padding: '0.35rem 0.75rem',
+                      borderRadius: '10px',
+                      fontSize: '0.75rem',
+                      fontWeight: isSelected ? 800 : 600,
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                      transition: 'all 0.15s ease',
+                      background: isSelected ? 'var(--aarizo-navy, #083B56)' : '#ffffff',
+                      color: isSelected ? '#ffffff' : '#64748B',
+                      border: isSelected ? '1px solid #083B56' : '1px solid #E2E8F0',
+                    }}
+                  >
+                    {chip.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Vendors Card Grid */}
+          {(() => {
+            const filtered = vendors.filter((v) => {
+              const q = vendorSearch.toLowerCase().trim();
+              const matchesSearch =
+                !q ||
+                v.companyName.toLowerCase().includes(q) ||
+                v.category.toLowerCase().includes(q) ||
+                v.contactPerson.toLowerCase().includes(q) ||
+                v.phone.includes(q);
+              const matchesCat =
+                vendorCategoryFilter === 'ALL' ||
+                v.category.toUpperCase().includes(vendorCategoryFilter);
+              return matchesSearch && matchesCat;
+            });
+
+            if (filtered.length === 0) {
+              return (
+                <div
+                  style={{
+                    background: '#ffffff',
+                    borderRadius: '16px',
+                    border: '1px solid #DCE8EF',
+                    padding: '2.5rem 1rem',
+                    textAlign: 'center',
+                    color: '#64748B',
+                  }}
+                >
+                  <Store size={36} className="mx-auto text-slate-300 mb-2" />
+                  <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#083B56' }}>No Vendors Found</div>
+                  <div style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                    No verified vendors match your current search or filter.
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '0.85rem' }}>
+                {filtered.map((vendor) => (
+                  <div
+                    key={vendor.id}
+                    className="card-elevate"
+                    style={{
+                      background: '#ffffff',
+                      border: '1px solid var(--aarizo-border-soft, #E8F1F5)',
+                      borderRadius: '16px',
+                      padding: '1.1rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      gap: '0.85rem',
+                      boxShadow: '0 2px 8px rgba(8, 59, 86, 0.04)',
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: 'var(--aarizo-navy, #083B56)' }}>
+                              {vendor.companyName}
+                            </h3>
+                            <ShieldCheck size={15} color="#059669" />
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.2rem' }}>
+                            Contact: <strong style={{ color: '#1E293B' }}>{vendor.contactPerson}</strong>
+                          </div>
+                        </div>
+                        <span
+                          style={{
+                            padding: '3px 8px',
+                            borderRadius: '8px',
+                            background: 'var(--aarizo-light-blue, #EAF6FC)',
+                            color: 'var(--aarizo-blue, #176B91)',
+                            fontSize: '0.68rem',
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {vendor.category.replace(/_/g, ' ')}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.65rem', borderTop: '1px solid #F1F5F9' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', color: '#334155', fontWeight: 600 }}>
+                        <Phone size={13} color="#059669" />
+                        <span>{vendor.phone}</span>
+                      </div>
+
+                      <a
+                        href={`tel:${vendor.phone}`}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          padding: '0.45rem 0.95rem',
+                          borderRadius: '10px',
+                          background: '#ECFDF5',
+                          color: '#059669',
+                          border: '1px solid #A7F3D0',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          textDecoration: 'none',
+                          boxShadow: '0 1px 3px rgba(5, 150, 105, 0.1)',
+                        }}
+                      >
+                        <Phone size={13} /> Call Now
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
         </div>
       )}
 

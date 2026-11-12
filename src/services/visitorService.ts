@@ -10,6 +10,7 @@ import type {
 import { logAudit } from './societyService';
 import { visitorRepository } from '../repositories/visitors/VisitorRepository';
 import { realtimeService } from './realtimeService';
+import { apiClient } from './apiClient';
 
 const STORAGE_KEYS = {
   PASSES: 'communityos_visitor_passes_v2',
@@ -218,6 +219,7 @@ export const visitorService = {
 
     setItem(STORAGE_KEYS.PASSES, [newPass, ...passes]);
     visitorRepository.create(newPass).catch(() => {});
+    apiClient.createVisitorPass(newPass).catch(() => {});
     logAudit(data.societyId, actor, 'CREATE', 'VisitorPass', newPass.id, `Generated ${data.category} pass ${passCode} for ${data.visitorName}`);
 
     // Publish to Realtime Hub

@@ -177,9 +177,32 @@ export const apiClient = {
 
   // Flats
   getFlats: (societyId?: string) => apiRequest<any[]>('/flats', { societyId }),
+  createFlat: (data: any) =>
+    apiRequest<any>('/flats', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  deleteFlat: (id: string) =>
+    apiRequest<any>(`/flats/${id}`, {
+      method: 'DELETE',
+    }),
 
   // Residents
   getResidents: (societyId?: string) => apiRequest<any[]>('/residents', { societyId }),
+  createResident: (data: any) =>
+    apiRequest<any>('/residents', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  updateResident: (id: string, data: any) =>
+    apiRequest<any>(`/residents/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+  deleteResident: (id: string) =>
+    apiRequest<any>(`/residents/${id}`, {
+      method: 'DELETE',
+    }),
 
   // Visitor Passes
   getVisitorPasses: (societyId?: string) => apiRequest<any[]>('/visitor-passes', { societyId }),
@@ -192,6 +215,10 @@ export const apiClient = {
     apiRequest<any>('/visitor-passes', {
       method: 'POST',
       body: JSON.stringify(data),
+    }),
+  deleteVisitorPass: (id: string) =>
+    apiRequest<any>(`/visitor-passes/${id}`, {
+      method: 'DELETE',
     }),
 
   // Maintenance Tickets
@@ -356,6 +383,15 @@ export const apiClient = {
     apiRequest<any>('/vendors', {
       method: 'POST',
       body: JSON.stringify(data),
+    }),
+  updateVendor: (id: string, data: any) =>
+    apiRequest<any>(`/vendors/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+  deleteVendor: (id: string) =>
+    apiRequest<any>(`/vendors/${id}`, {
+      method: 'DELETE',
     }),
 
   // Generic Query
