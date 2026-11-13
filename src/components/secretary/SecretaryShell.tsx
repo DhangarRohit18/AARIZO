@@ -36,6 +36,18 @@ export const SecretaryShell: React.FC = () => {
   const [noticeDrawerOpen, setNoticeDrawerOpen] = useState<boolean>(false);
   const [issueBillModalOpen, setIssueBillModalOpen] = useState<boolean>(false);
 
+  // Provision Resident Modal
+  const [isProvisionResidentOpen, setIsProvisionResidentOpen] = useState(false);
+  const [provResName, setProvResName] = useState('');
+  const [provResEmail, setProvResEmail] = useState('');
+  const [provResPassword, setProvResPassword] = useState('');
+  const [provResPhone, setProvResPhone] = useState('');
+  const [provResFlat, setProvResFlat] = useState('');
+  const [provResRole, setProvResRole] = useState<'resident' | 'committee'>('resident');
+  const [provResSubmitting, setProvResSubmitting] = useState(false);
+  const [provResError, setProvResError] = useState<string | null>(null);
+  const [provResSuccess, setProvResSuccess] = useState<string | null>(null);
+
   // Live state loaded from PostgreSQL
   const [residents, setResidents] = useState<SecretaryResidentRecord[]>([]);
   const [notices, setNotices] = useState<SecretaryNoticeItem[]>([]);
@@ -183,6 +195,43 @@ export const SecretaryShell: React.FC = () => {
     setNotices((prev) => [draftNotice, ...prev]);
   };
 
+  const handleProvisionResident = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!provResName || !provResEmail || !provResPassword || !provResPhone) {
+      setProvResError('Name, email, phone and password are all required.');
+      return;
+    }
+    setProvResSubmitting(true);
+    setProvResError(null);
+    try {
+      await apiClient.provisionUser({
+        societyId: currentUser?.societyId || 'soc-gvs',
+        role: provResRole,
+        name: provResName.trim(),
+        email: provResEmail.trim(),
+        password: provResPassword,
+        phone: provResPhone.trim(),
+        flatNumber: provResFlat.trim() || 'TBD',
+      });
+      setProvResSuccess(`${provResRole === 'committee' ? 'Committee member' : 'Resident'} ${provResName} provisioned! They can log in with ${provResEmail}.`);
+      await loadSecretaryData();
+      setTimeout(() => {
+        setIsProvisionResidentOpen(false);
+        setProvResSuccess(null);
+        setProvResName('');
+        setProvResEmail('');
+        setProvResPassword('');
+        setProvResPhone('');
+        setProvResFlat('');
+        setProvResRole('resident');
+      }, 3000);
+    } catch (err: any) {
+      setProvResError(err?.message || 'Failed to provision resident. Please try again.');
+    } finally {
+      setProvResSubmitting(false);
+    }
+  };
+
   const handleIssueNewBill = (
     billData: Omit<
       CanonicalBillingRecord,
@@ -207,8 +256,10 @@ export const SecretaryShell: React.FC = () => {
   };
 
   const handleNavigateFromHome = (action: string) => {
-    if (action === 'Add Resident' || action === 'Pending Approvals') {
-      setResidentsFilter(action === 'Pending Approvals' ? 'PENDING' : 'ALL');
+    if (action === 'Add Resident') {
+      setIsProvisionResidentOpen(true);
+    } else if (action === 'Pending Approvals') {
+      setResidentsFilter('PENDING');
       setActiveTab('residents');
     } else if (action === 'Broadcast Notice') {
       setActiveTab('notices');
@@ -237,6 +288,7 @@ export const SecretaryShell: React.FC = () => {
             onApproveResident={handleApproveResident}
             onRejectResident={handleRejectResident}
             initialFilter={residentsFilter}
+            onOpenAddResident={() => setIsProvisionResidentOpen(true)}
           />
         );
       case 'notices':
@@ -412,6 +464,63 @@ export const SecretaryShell: React.FC = () => {
             >
               Close Notifications
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Provision Resident Modal */}
+      {isProvisionResidentOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(8,59,86,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div style={{ background: '#ffffff', borderRadius: '20px', width: '100%', maxWidth: '480px', padding: '1.5rem', boxShadow: '0 20px 60px rgba(8,59,86,0.2)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#083B56' }}>Provision New Resident / User</h2>
+              <button onClick={() => { setIsProvisionResidentOpen(false); setProvResError(null); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8' }}><X size={20} /></button>
+            </div>
+            {provResError && (
+              <div style={{ marginBottom: '0.75rem', padding: '0.65rem 1rem', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '10px', color: '#DC2626', fontSize: '0.83rem', fontWeight: 600 }}>{provResError}</div>
+            )}
+            {provResSuccess && (
+              <div style={{ marginBottom: '0.75rem', padding: '0.65rem 1rem', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '10px', color: '#166534', fontSize: '0.83rem', fontWeight: 600 }}>✓ {provResSuccess}</div>
+            )}
+            <form onSubmit={handleProvisionResident} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem' }}>Full Name *</label>
+                <input type="text" required value={provResName} onChange={(e) => setProvResName(e.target.value)} placeholder="e.g. Priya Sharma" style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem' }}>Email (Login ID) *</label>
+                  <input type="email" required value={provResEmail} onChange={(e) => setProvResEmail(e.target.value)} placeholder="resident@email.com" style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem' }}>Login Password *</label>
+                  <input type="password" required minLength={8} value={provResPassword} onChange={(e) => setProvResPassword(e.target.value)} placeholder="Min. 8 characters" style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }} />
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem' }}>Phone Number *</label>
+                  <input type="tel" required value={provResPhone} onChange={(e) => setProvResPhone(e.target.value)} placeholder="+91 98200 00000" style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem' }}>Flat / Unit Number</label>
+                  <input type="text" value={provResFlat} onChange={(e) => setProvResFlat(e.target.value)} placeholder="e.g. B-1204" style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }} />
+                </div>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem' }}>Assigned Role</label>
+                <select value={provResRole} onChange={(e) => setProvResRole(e.target.value as 'resident' | 'committee')} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}>
+                  <option value="resident">Resident</option>
+                  <option value="committee">Committee Member</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid #E2E8F0' }}>
+                <button type="button" onClick={() => { setIsProvisionResidentOpen(false); setProvResError(null); }} style={{ padding: '0.65rem 1.25rem', border: '1px solid #CBD5E1', background: '#ffffff', color: '#52788D', fontWeight: 700, borderRadius: '10px', cursor: 'pointer', fontSize: '0.85rem' }}>Cancel</button>
+                <button type="submit" disabled={provResSubmitting} style={{ padding: '0.65rem 1.4rem', background: provResSubmitting ? '#94A3B8' : '#F06543', color: '#ffffff', fontWeight: 700, borderRadius: '10px', border: 'none', cursor: provResSubmitting ? 'not-allowed' : 'pointer', fontSize: '0.85rem' }}>
+                  {provResSubmitting ? 'Provisioning...' : 'Provision User'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

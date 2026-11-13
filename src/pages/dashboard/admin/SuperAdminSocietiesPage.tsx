@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Power, ArrowLeft, Search, Edit2, Trash2 } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
+import { apiClient } from '../../../services/apiClient';
 import type { Society, SubscriptionTier } from '../../../types/society';
 import { DataTable } from '../../../components/ui/DataTable';
 import type { Column } from '../../../components/ui/DataTable';
@@ -22,7 +23,6 @@ export const SuperAdminSocietiesPage: React.FC = () => {
 
   // Form states (Create)
   const [name, setName] = useState('');
-  const [code, setCode] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('Mumbai');
   const [state, setState] = useState('Maharashtra');
@@ -30,6 +30,13 @@ export const SuperAdminSocietiesPage: React.FC = () => {
   const [subscriptionTier, setSubscriptionTier] = useState<SubscriptionTier>('PRO');
   const [adminName, setAdminName] = useState('');
   const [adminEmail, setAdminEmail] = useState('');
+  const [secretaryName, setSecretaryName] = useState('');
+  const [secretaryEmail, setSecretaryEmail] = useState('');
+  const [secretaryPhone, setSecretaryPhone] = useState('');
+  const [secretaryPassword, setSecretaryPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [provisionError, setProvisionError] = useState<string | null>(null);
+  const [provisionSuccess, setProvisionSuccess] = useState<string | null>(null);
 
   // Form states (Edit)
   const [editName, setEditName] = useState('');
@@ -93,33 +100,63 @@ export const SuperAdminSocietiesPage: React.FC = () => {
     setDeleteModal({ open: false });
   };
 
-  const handleCreateSociety = (e: React.FormEvent) => {
+  const handleCreateSociety = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !code) return;
-
-    societyService.createSociety(
-      {
-        name,
-        code,
-        address,
-        city,
-        state,
-        pincode,
-        status: 'ACTIVE',
-        subscriptionTier,
-        adminName: adminName || 'Assigned Admin',
-        adminEmail: adminEmail || 'admin@society.org',
-      },
-      { id: 'super-admin-1', name: 'System Super Admin', role: 'SUPER_ADMIN' }
-    );
-
-    refreshData();
-    setIsAddModalOpen(false);
-    setName('');
-    setCode('');
-    setAddress('');
-    setAdminName('');
-    setAdminEmail('');
+    if (!name || !secretaryEmail || !secretaryPassword || !secretaryPhone) {
+      setProvisionError('Society name, secretary email, phone and password are required.');
+      return;
+    }
+    setIsSubmitting(true);
+    setProvisionError(null);
+    try {
+      await apiClient.provisionSociety({
+        societyName: name.trim(),
+        address: address.trim() || '—',
+        city: city.trim() || 'Mumbai',
+        state: state.trim() || 'Maharashtra',
+        pincode: pincode.trim() || '400001',
+        secretaryName: secretaryName.trim() || name.trim() + ' Secretary',
+        secretaryEmail: secretaryEmail.trim(),
+        secretaryPhone: secretaryPhone.trim(),
+        secretaryPassword: secretaryPassword,
+        towersCount: 1,
+        flatsCount: 20,
+      });
+      // Also save locally for immediate UI update
+      societyService.createSociety(
+        {
+          name,
+          code: `SOC-${Date.now().toString(36).toUpperCase()}`,
+          address,
+          city,
+          state,
+          pincode,
+          status: 'ACTIVE',
+          subscriptionTier,
+          adminName: secretaryName || adminName || 'Assigned Admin',
+          adminEmail: secretaryEmail || adminEmail || 'admin@society.org',
+        },
+        { id: 'super-admin-1', name: 'System Super Admin', role: 'SUPER_ADMIN' }
+      );
+      setProvisionSuccess(`Society "${name}" provisioned! Secretary login: ${secretaryEmail}`);
+      refreshData();
+      setTimeout(() => {
+        setIsAddModalOpen(false);
+        setProvisionSuccess(null);
+      }, 3000);
+      setName('');
+      setAddress('');
+      setAdminName('');
+      setAdminEmail('');
+      setSecretaryName('');
+      setSecretaryEmail('');
+      setSecretaryPhone('');
+      setSecretaryPassword('');
+    } catch (err: any) {
+      setProvisionError(err?.message || 'Failed to provision society. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleToggleStatus = () => {
@@ -436,9 +473,20 @@ export const SuperAdminSocietiesPage: React.FC = () => {
       </div>
 
       {/* Add Society Modal */}
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Provision New Society Account">
+      <Modal isOpen={isAddModalOpen} onClose={() => { setIsAddModalOpen(false); setProvisionError(null); setProvisionSuccess(null); }} title="Provision New Society Account">
         <Form onSubmit={handleCreateSociety}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '0.5rem' }}>
+            {provisionError && (
+              <div style={{ padding: '0.65rem 1rem', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '10px', color: '#DC2626', fontSize: '0.83rem', fontWeight: 600 }}>
+                {provisionError}
+              </div>
+            )}
+            {provisionSuccess && (
+              <div style={{ padding: '0.65rem 1rem', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '10px', color: '#166534', fontSize: '0.83rem', fontWeight: 600 }}>
+                ✓ {provisionSuccess}
+              </div>
+            )}
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <FormField label="Society Name" required>
                 <input
@@ -450,57 +498,6 @@ export const SuperAdminSocietiesPage: React.FC = () => {
                   style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
                 />
               </FormField>
-              <FormField label="Society Code" required>
-                <input
-                  type="text"
-                  required
-                  value={code}
-                  onChange={(e) => setCode(e.target.value.toUpperCase())}
-                  placeholder="e.g. SKL-01"
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
-                />
-              </FormField>
-            </div>
-
-            <FormField label="Street Address" required>
-              <input
-                type="text"
-                required
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="e.g. Plot 15, Sector 4, Vashi"
-                style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
-              />
-            </FormField>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
-              <FormField label="City">
-                <input
-                  type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
-                />
-              </FormField>
-              <FormField label="State">
-                <input
-                  type="text"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
-                />
-              </FormField>
-              <FormField label="Pincode">
-                <input
-                  type="text"
-                  value={pincode}
-                  onChange={(e) => setPincode(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
-                />
-              </FormField>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <FormField label="Subscription Tier">
                 <select
                   value={subscriptionTier}
@@ -512,40 +509,94 @@ export const SuperAdminSocietiesPage: React.FC = () => {
                   <option value="ENTERPRISE">Enterprise (Unlimited)</option>
                 </select>
               </FormField>
-              <FormField label="Assigned Admin Name">
-                <input
-                  type="text"
-                  value={adminName}
-                  onChange={(e) => setAdminName(e.target.value)}
-                  placeholder="e.g. Ramesh Kumar"
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
-                />
-              </FormField>
             </div>
 
-            <FormField label="Assigned Admin Email">
+            <FormField label="Street Address">
               <input
-                type="email"
-                value={adminEmail}
-                onChange={(e) => setAdminEmail(e.target.value)}
-                placeholder="e.g. admin@skylineresidency.org"
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="e.g. Plot 15, Sector 4, Vashi"
                 style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
               />
             </FormField>
 
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+              <FormField label="City">
+                <input type="text" value={city} onChange={(e) => setCity(e.target.value)} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }} />
+              </FormField>
+              <FormField label="State">
+                <input type="text" value={state} onChange={(e) => setState(e.target.value)} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }} />
+              </FormField>
+              <FormField label="Pincode">
+                <input type="text" value={pincode} onChange={(e) => setPincode(e.target.value)} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.88rem', background: '#F8FAFC', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }} />
+              </FormField>
+            </div>
+
+            {/* Secretary / Admin Credentials Section */}
+            <div style={{ padding: '1rem', background: '#F0F9FF', border: '1px solid #BAE6FD', borderRadius: '12px' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#0369A1', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                🔑 Society Secretary Credentials (Required for Login)
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <FormField label="Secretary Full Name" required>
+                  <input
+                    type="text"
+                    required
+                    value={secretaryName}
+                    onChange={(e) => setSecretaryName(e.target.value)}
+                    placeholder="e.g. Ramesh Kumar"
+                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #93C5FD', fontSize: '0.88rem', background: '#ffffff', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                  />
+                </FormField>
+                <FormField label="Secretary Phone" required>
+                  <input
+                    type="tel"
+                    required
+                    value={secretaryPhone}
+                    onChange={(e) => setSecretaryPhone(e.target.value)}
+                    placeholder="e.g. +91 98200 12345"
+                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #93C5FD', fontSize: '0.88rem', background: '#ffffff', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                  />
+                </FormField>
+                <FormField label="Secretary Email (Login ID)" required>
+                  <input
+                    type="email"
+                    required
+                    value={secretaryEmail}
+                    onChange={(e) => setSecretaryEmail(e.target.value)}
+                    placeholder="e.g. secretary@skylineresidency.org"
+                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #93C5FD', fontSize: '0.88rem', background: '#ffffff', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                  />
+                </FormField>
+                <FormField label="Secretary Password" required>
+                  <input
+                    type="password"
+                    required
+                    minLength={8}
+                    value={secretaryPassword}
+                    onChange={(e) => setSecretaryPassword(e.target.value)}
+                    placeholder="Min. 8 characters"
+                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #93C5FD', fontSize: '0.88rem', background: '#ffffff', color: '#083B56', fontWeight: 600, boxSizing: 'border-box' }}
+                  />
+                </FormField>
+              </div>
+            </div>
+
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #E2E8F0' }}>
               <button
                 type="button"
-                onClick={() => setIsAddModalOpen(false)}
+                onClick={() => { setIsAddModalOpen(false); setProvisionError(null); }}
                 style={{ padding: '0.65rem 1.25rem', border: '1px solid #CBD5E1', background: '#ffffff', color: '#52788D', fontWeight: 700, borderRadius: '10px', cursor: 'pointer' }}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                style={{ padding: '0.65rem 1.4rem', background: '#F06543', color: '#ffffff', fontWeight: 700, borderRadius: '10px', border: 'none', cursor: 'pointer', boxShadow: '0 3px 12px rgba(240, 101, 67, 0.28)' }}
+                disabled={isSubmitting}
+                style={{ padding: '0.65rem 1.4rem', background: isSubmitting ? '#94A3B8' : '#F06543', color: '#ffffff', fontWeight: 700, borderRadius: '10px', border: 'none', cursor: isSubmitting ? 'not-allowed' : 'pointer', boxShadow: '0 3px 12px rgba(240, 101, 67, 0.28)' }}
               >
-                Create Society
+                {isSubmitting ? 'Provisioning...' : 'Create & Provision Society'}
               </button>
             </div>
           </div>

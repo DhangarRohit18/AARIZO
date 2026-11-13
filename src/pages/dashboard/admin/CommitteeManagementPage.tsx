@@ -30,7 +30,9 @@ export const CommitteeManagementPage: React.FC = () => {
   const [flatNumber, setFlatNumber] = useState('B-101');
   const [phone, setPhone] = useState('+91 98000 00000');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [termDuration, setTermDuration] = useState('2025–2027');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const loadData = async () => {
     try {
@@ -72,9 +74,18 @@ export const CommitteeManagementPage: React.FC = () => {
 
   const handleCreateMember = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !phone.trim()) return;
+    if (!name.trim() || !phone.trim() || !email.trim() || !password.trim()) {
+      setErrorMessage('Name, email, phone and password are all required.');
+      return;
+    }
+    if (password.trim().length < 8) {
+      setErrorMessage('Password must be at least 8 characters long.');
+      return;
+    }
 
     setIsSubmitting(true);
+    setErrorMessage(null);
+    const memberEmail = email.trim();
     const newRecord: CommitteeMemberRecord = {
       id: `cm-${Date.now().toString().slice(-4)}`,
       name: name.trim(),
@@ -83,22 +94,24 @@ export const CommitteeManagementPage: React.FC = () => {
       blockWing: 'Block B',
       canonicalDisplay: `${name.trim()} (${flatNumber.trim()})`,
       phone: phone.trim(),
-      email: email.trim() || `${name.toLowerCase().replace(/\s+/g, '')}@society.aarizo.com`,
+      email: memberEmail,
       termDuration: termDuration.trim(),
       avatarUrl: `https://images.unsplash.com/photo-1534528741775?w=150&auto=format&fit=crop&q=80`,
     };
 
     try {
-      await apiClient.createCommitteeMember({
+      await apiClient.provisionUser({
         societyId: 'soc-gvs',
+        role: 'committee',
         name: newRecord.name,
-        email: newRecord.email,
+        email: memberEmail,
+        password: password.trim(),
         phone: newRecord.phone,
-        designation: newRecord.designation,
         flatNumber: newRecord.flatNumber,
+        metadata: { committeeDesignation: designation },
       });
-    } catch (err) {
-      console.warn('API error, saving locally:', err);
+    } catch (err: any) {
+      console.warn('provisionUser API error, saving locally:', err?.message || err);
     }
 
     setMembers((prev) => [newRecord, ...prev]);
@@ -110,12 +123,13 @@ export const CommitteeManagementPage: React.FC = () => {
 
     setIsSubmitting(false);
     setIsAddModalOpen(false);
-    setSuccessToast(`Successfully added ${newRecord.name} as ${newRecord.designation}!`);
+    setSuccessToast(`Successfully provisioned ${newRecord.name} as ${newRecord.designation}! Login: ${memberEmail}`);
     setTimeout(() => setSuccessToast(null), 5000);
 
     setName('');
     setEmail('');
     setPhone('+91 98000 00000');
+    setPassword('');
   };
 
   const filteredMembers = members.filter((m) => {
@@ -443,12 +457,17 @@ export const CommitteeManagementPage: React.FC = () => {
       {/* Add Member Modal */}
       <Modal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => { setIsAddModalOpen(false); setErrorMessage(null); }}
         title="Add Committee Member"
       >
         <p style={{ margin: '0 0 1rem', fontSize: '0.8rem', color: '#64748B' }}>
           Provision elected governing body officer with Committee portal access.
         </p>
+        {errorMessage && (
+          <div style={{ marginBottom: '1rem', padding: '0.65rem 1rem', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '10px', color: '#DC2626', fontSize: '0.83rem', fontWeight: 600 }}>
+            {errorMessage}
+          </div>
+        )}
         <Form onSubmit={handleCreateMember}>
           <FormField label="Full Name">
             <input
@@ -511,12 +530,25 @@ export const CommitteeManagementPage: React.FC = () => {
             />
           </FormField>
 
-          <FormField label="Email Address">
+          <FormField label="Email Address (Login ID) *">
             <input
               type="email"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="e.g. anand.patil@society.aarizo.com"
+              className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#F06543]"
+            />
+          </FormField>
+
+          <FormField label="Password (Min. 8 characters) *">
+            <input
+              type="password"
+              required
+              minLength={8}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter secure password for committee member login"
               className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#F06543]"
             />
           </FormField>

@@ -9,6 +9,7 @@ interface SecretaryResidentsProps {
   onApproveResident: (id: string, note?: string) => void;
   onRejectResident: (id: string, reason: string) => void;
   initialFilter?: 'ALL' | 'PENDING';
+  onOpenAddResident?: () => void;
 }
 
 export const SecretaryResidents: React.FC<SecretaryResidentsProps> = ({
@@ -16,6 +17,7 @@ export const SecretaryResidents: React.FC<SecretaryResidentsProps> = ({
   onApproveResident,
   onRejectResident,
   initialFilter = 'ALL',
+  onOpenAddResident,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedWing, setSelectedWing] = useState<string>('ALL');
@@ -49,16 +51,38 @@ export const SecretaryResidents: React.FC<SecretaryResidentsProps> = ({
   return (
     <div>
       {/* Header & Stats Banner */}
-      <div className="section-heading-row">
+      <div className="section-heading-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h3 className="section-title">Society Resident Directory</h3>
           <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>
             Operational Directory & KYC Approval Center
           </p>
         </div>
-        <span style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700 }}>
-          {activeCount} Active • {pendingCount} Pending
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--aarizo-blue, #176B91)', fontWeight: 700 }}>
+            {activeCount} Active • {pendingCount} Pending
+          </span>
+          {onOpenAddResident && (
+            <button
+              onClick={onOpenAddResident}
+              style={{
+                background: 'var(--aarizo-coral, #F06543)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '0.35rem 0.75rem',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              + Add Resident
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Pending Approval Highlight Banner */}

@@ -118,6 +118,24 @@ export const apiClient = {
       body: JSON.stringify(data),
     }),
 
+  loginWithPassword: (data: { email: string; password: string }) =>
+    apiRequest<{
+      success: boolean;
+      user: {
+        id: string;
+        name: string;
+        email: string;
+        phone: string;
+        role: string;
+        societyId?: string;
+        flatNumber?: string;
+        societyName?: string;
+      };
+    }>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
   // Societies
   getSocieties: () => apiRequest<any[]>('/societies'),
   createSociety: (data: any) =>

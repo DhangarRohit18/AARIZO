@@ -209,8 +209,12 @@ export const ResidentManagementPage: React.FC = () => {
 
   const handleProvisionUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formName.trim() || !formEmail.trim() || !formPhone.trim()) {
-      setProvisionError('Name, email, and phone number are required.');
+    if (!formName.trim() || !formEmail.trim() || !formPhone.trim() || !formCustomPassword.trim()) {
+      setProvisionError('Name, email, phone number, and password are all required.');
+      return;
+    }
+    if (formCustomPassword.trim().length < 8) {
+      setProvisionError('Password must be at least 8 characters long.');
       return;
     }
 
@@ -218,7 +222,7 @@ export const ResidentManagementPage: React.FC = () => {
     setProvisionError(null);
 
     try {
-      const generatedPassword = formCustomPassword.trim() || `SG-${Math.random().toString(36).substring(2, 6).toUpperCase()}!${Math.floor(10 + Math.random() * 90)}`;
+      const userPassword = formCustomPassword.trim();
       
       let assignmentText = formFlatNumber;
       if (formRole === 'guard') assignmentText = formGate;
@@ -227,14 +231,14 @@ export const ResidentManagementPage: React.FC = () => {
       if (formRole === 'committee') assignmentText = `${formCommitteeDesignation} · Flat ${formFlatNumber}`;
 
       // 1. Call Backend Universal Provisioning Service
-      const res = await apiClient.provisionUser({
+      await apiClient.provisionUser({
         societyId: currentSocietyId,
         role: formRole,
         name: formName.trim(),
         email: formEmail.trim(),
         phone: formPhone.trim(),
         flatNumber: formFlatNumber,
-        password: generatedPassword,
+        password: userPassword,
         metadata: {
           assignment: assignmentText,
           gate: formGate,
@@ -325,7 +329,7 @@ export const ResidentManagementPage: React.FC = () => {
         email: formEmail.trim(),
         role: formRole.toUpperCase(),
         assignment: assignmentText,
-        temporaryPassword: res?.temporaryPassword || generatedPassword,
+        temporaryPassword: userPassword,
       });
 
       // Reset Form
@@ -1004,11 +1008,13 @@ export const ResidentManagementPage: React.FC = () => {
 
               <div>
                 <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.25rem' }}>
-                  Temporary Password (Leave blank to auto-generate secure 12-char key)
+                  Login Password (Min. 8 characters) *
                 </label>
                 <input
-                  type="text"
-                  placeholder="Auto-generated if empty"
+                  type="password"
+                  required
+                  minLength={8}
+                  placeholder="Enter password for user login"
                   value={formCustomPassword}
                   onChange={(e) => setFormCustomPassword(e.target.value)}
                   style={{

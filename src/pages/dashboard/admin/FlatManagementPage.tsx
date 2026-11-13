@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, Plus, ArrowLeft, Search, UserCheck } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
+import { apiClient } from '../../../services/apiClient';
 import { realtimeService } from '../../../services/realtimeService';
 import type { Flat, BHKType, OccupancyStatus } from '../../../types/society';
 import { DataTable } from '../../../components/ui/DataTable';
@@ -31,18 +32,32 @@ export const FlatManagementPage: React.FC = () => {
   const [residentName, setResidentName] = useState('');
   const [residentPhone, setResidentPhone] = useState('');
   const [residentEmail, setResidentEmail] = useState('');
+  const [residentPassword, setResidentPassword] = useState('');
+  const [flatError, setFlatError] = useState<string | null>(null);
 
   const refreshData = () => {
     setFlats(societyService.getFlats(currentSocietyId));
   };
 
-  const handleCreateFlat = (e: React.FormEvent) => {
+  const handleCreateFlat = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!flatNumber || !selectedTowerId) return;
 
     const tower = towers.find((t) => t.id === selectedTowerId);
     const upperFlat = flatNumber.toUpperCase().trim();
     const shouldAddResident = assignResidentNow && occupancyStatus !== 'VACANT' && residentName.trim();
+
+    if (shouldAddResident) {
+      if (!residentEmail.trim() || !residentPassword.trim() || !residentPhone.trim()) {
+        setFlatError('When assigning a resident, email, phone, and password are required.');
+        return;
+      }
+      if (residentPassword.trim().length < 8) {
+        setFlatError('Resident password must be at least 8 characters long.');
+        return;
+      }
+    }
+    setFlatError(null);
 
     const createdFlat = societyService.createFlat(
       {
@@ -61,6 +76,20 @@ export const FlatManagementPage: React.FC = () => {
 
     // If resident details provided, automatically provision and add resident
     if (shouldAddResident) {
+      try {
+        await apiClient.provisionUser({
+          societyId: currentSocietyId,
+          role: 'resident',
+          name: residentName.trim(),
+          email: residentEmail.trim(),
+          password: residentPassword.trim(),
+          phone: residentPhone.trim(),
+          flatNumber: upperFlat,
+        });
+      } catch (err: any) {
+        console.warn('Backend provisioning fallback:', err?.message || err);
+      }
+
       societyService.createResident(
         {
           societyId: currentSocietyId,
@@ -91,6 +120,7 @@ export const FlatManagementPage: React.FC = () => {
     setResidentName('');
     setResidentPhone('');
     setResidentEmail('');
+    setResidentPassword('');
   };
 
   const filteredFlats = flats.filter((f) => {
@@ -314,8 +344,13 @@ export const FlatManagementPage: React.FC = () => {
       </div>
 
       {/* Modal: Register New Flat */}
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Register New Flat">
+      <Modal isOpen={isAddModalOpen} onClose={() => { setIsAddModalOpen(false); setFlatError(null); }} title="Register New Flat">
         <Form onSubmit={handleCreateFlat}>
+          {flatError && (
+            <div style={{ marginBottom: '1rem', padding: '0.65rem 1rem', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '10px', color: '#DC2626', fontSize: '0.83rem', fontWeight: 600 }}>
+              {flatError}
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <FormField label="Tower / Block">
               <select
@@ -423,6 +458,16 @@ export const FlatManagementPage: React.FC = () => {
                       />
                     </FormField>
                   </div>
+                  <FormField label="Resident Password (Min. 8 characters) *">
+                    <input
+                      type="password"
+                      minLength={8}
+                      value={residentPassword}
+                      onChange={(e) => setResidentPassword(e.target.value)}
+                      placeholder="Password for resident app login"
+                      className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#F06543]"
+                    />
+                  </FormField>
                 </div>
               )}
             </div>

@@ -82,7 +82,7 @@ export class UniversalProvisioningService {
       secretaryName,
       secretaryEmail,
       secretaryPhone,
-      secretaryPassword = this.generateSecurePassword(),
+      secretaryPassword,
       creatorId = 'admin-system',
     } = input;
 
@@ -90,6 +90,8 @@ export class UniversalProvisioningService {
     if (!societyName?.trim()) throw new Error('Society name is required.');
     if (!secretaryEmail?.trim() || !secretaryEmail.includes('@')) throw new Error('Valid secretary email is required.');
     if (!secretaryPhone?.trim()) throw new Error('Valid secretary phone number is required.');
+    if (!secretaryPassword?.trim()) throw new Error('Secretary password is required.');
+    if (secretaryPassword.trim().length < 8) throw new Error('Secretary password must be at least 8 characters.');
 
     // 2. Duplicate checks
     const existingUser = await prisma.user.findFirst({
@@ -156,6 +158,8 @@ export class UniversalProvisioningService {
           flatId: flat.id,
           flatNumber: 'A-101',
           status: 'ACTIVE',
+          passwordHash,
+          salt,
         },
       });
 
@@ -248,7 +252,7 @@ export class UniversalProvisioningService {
       name,
       email,
       phone,
-      password = this.generateSecurePassword(),
+      password,
       flatNumber = 'A-101',
       towerId,
       flatId,
@@ -261,6 +265,8 @@ export class UniversalProvisioningService {
     if (!name?.trim()) throw new Error('User name is required.');
     if (!email?.trim() || !email.includes('@')) throw new Error('Valid email address is required.');
     if (!phone?.trim()) throw new Error('Valid phone number is required.');
+    if (!password?.trim()) throw new Error('User password is required.');
+    if (password.trim().length < 8) throw new Error('Password must be at least 8 characters.');
 
     // 2. Verify Society Exists
     const society = await prisma.society.findUnique({ where: { id: societyId } });
@@ -324,6 +330,8 @@ export class UniversalProvisioningService {
           name: name.trim(),
           role: role,
           status: 'ACTIVE',
+          passwordHash,
+          salt,
         },
       });
 

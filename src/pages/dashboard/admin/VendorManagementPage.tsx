@@ -29,6 +29,7 @@ import { MobileDataCard } from '../../../components/ui/MobileDataCard';
 import { ConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { DocumentList } from '../../../components/common/DocumentList';
 import { FileUploader } from '../../../components/common/FileUploader';
+import { apiClient } from '../../../services/apiClient';
 import {
   vendorRepository,
   vendorDocumentRepository,
@@ -83,9 +84,11 @@ export const VendorManagementPage: React.FC = () => {
   const [contactPerson, setContactPerson] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [address, setAddress] = useState('');
   const [documentUrl, setDocumentUrl] = useState('');
   const [documentName, setDocumentName] = useState('');
+  const [vendorError, setVendorError] = useState<string | null>(null);
 
   // Vendor Details & Audit Inspection Modal
   const [selectedVendor, setSelectedVendor] = useState<VendorProfile | null>(null);
@@ -128,9 +131,32 @@ export const VendorManagementPage: React.FC = () => {
   // Handle Create or Invite Vendor
   const handleCreateOrInviteVendor = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!companyName || !contactPerson) return;
+    if (!companyName.trim() || !contactPerson.trim() || !email.trim() || !password.trim() || !phone.trim()) {
+      setVendorError('Company name, contact person, phone, email, and password are all required.');
+      return;
+    }
+    if (password.trim().length < 8) {
+      setVendorError('Vendor password must be at least 8 characters long.');
+      return;
+    }
 
+    setVendorError(null);
     const vendorUid = `vendor-${Date.now().toString().slice(-6)}`;
+
+    try {
+      await apiClient.provisionUser({
+        societyId: currentSocietyId,
+        role: 'vendor',
+        name: companyName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        password: password.trim(),
+        metadata: { category, contactPerson, address },
+      });
+    } catch (err: any) {
+      console.warn('Backend vendor provisioning fallback:', err?.message || err);
+    }
+
     await vendorRepository.create({
       uid: vendorUid,
       societyId: currentSocietyId,
@@ -165,6 +191,7 @@ export const VendorManagementPage: React.FC = () => {
     setContactPerson('');
     setPhone('');
     setEmail('');
+    setPassword('');
     setAddress('');
     setDocumentUrl('');
     setDocumentName('');
@@ -708,11 +735,16 @@ export const VendorManagementPage: React.FC = () => {
       {/* Onboard / Invite Vendor Modal */}
       <Modal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => { setIsAddModalOpen(false); setVendorError(null); }}
         title={isInviting ? 'Invite New Society Vendor' : 'Onboard Society Vendor'}
       >
         <Form onSubmit={handleCreateOrInviteVendor}>
           <div className="space-y-4">
+            {vendorError && (
+              <div style={{ padding: '0.65rem 1rem', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '10px', color: '#DC2626', fontSize: '0.83rem', fontWeight: 600 }}>
+                {vendorError}
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <FormField label="Company Name *">
                 <input
@@ -767,15 +799,29 @@ export const VendorManagementPage: React.FC = () => {
               </FormField>
             </div>
 
-            <FormField label="Email Address">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g. vendor@supplier.com"
-                className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#176B91]"
-              />
-            </FormField>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <FormField label="Email Address (Login ID) *">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. vendor@supplier.com"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+              <FormField label="Login Password (Min. 8 chars) *">
+                <input
+                  type="password"
+                  required
+                  minLength={8}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password for vendor portal"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+            </div>
 
             <FormField label="Registered Office Address">
               <input

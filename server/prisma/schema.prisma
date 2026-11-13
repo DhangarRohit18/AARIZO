@@ -177,6 +177,8 @@ model User {
   status      EntityStatus @default(ACTIVE)
   preferences Json?        @default("{\"theme\": \"dark\", \"notifications\": true}")
   metadata    Json?        @default("{}")
+  passwordHash String?      @map("password_hash")
+  salt        String?
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
 

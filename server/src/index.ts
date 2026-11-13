@@ -1654,6 +1654,44 @@ app.post('/api/secretary/provision-user', async (req: Request, res: Response) =>
   }
 });
 
+app.post('/api/auth/login', async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+    const user = await prisma.user.findFirst({
+      where: { email: email.toLowerCase().trim() },
+      include: { society: true, flat: true },
+    });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    if (!user.passwordHash || !user.salt) {
+      return res.status(401).json({ error: 'Password authentication is not configured for this user. Please contact administrator.' });
+    }
+    const computedHash = UniversalProvisioningService.hashPassword(password, user.salt);
+    if (!timingSafeCompare(computedHash, user.passwordHash)) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    res.json({
+      success: true,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        societyId: user.societyId,
+        flatNumber: user.flatNumber,
+        societyName: user.society?.name,
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message || 'Login failed' });
+  }
+});
+
 
 // ==========================================
 // ⭐ SAFEGATE 2.0: ADVANCED DIFFERENTIATORS

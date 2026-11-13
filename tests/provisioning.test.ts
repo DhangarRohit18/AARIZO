@@ -45,4 +45,33 @@ describe('SafeGate 2.0 Universal User Provisioning Service', () => {
       })
     ).rejects.toThrow('Society ID is required.');
   });
+
+  test('should reject society provisioning when secretary password is missing', async () => {
+    await expect(
+      UniversalProvisioningService.provisionSociety({
+        societyName: 'Test Heights',
+        address: 'MG Road',
+        city: 'Pune',
+        state: 'Maharashtra',
+        pincode: '411001',
+        secretaryName: 'Rohit Secretary',
+        secretaryEmail: 'rohit@safegate.com',
+        secretaryPhone: '9876543210',
+        secretaryPassword: '',
+      })
+    ).rejects.toThrow('Secretary password is required.');
+  });
+
+  test('should reject user provisioning when user password is missing', async () => {
+    await expect(
+      UniversalProvisioningService.provisionUser({
+        societyId: 'soc-test-123',
+        role: 'resident',
+        name: 'Amit Resident',
+        email: 'amit@safegate.com',
+        phone: '9876543211',
+        password: '',
+      })
+    ).rejects.toThrow('User password is required.');
+  });
 });

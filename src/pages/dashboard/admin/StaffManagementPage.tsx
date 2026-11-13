@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Users, Home, CheckCircle2, ArrowLeft, Search } from 'lucide-react';
 import { societyService } from '../../../services/societyService';
+import { apiClient } from '../../../services/apiClient';
 import { realtimeService } from '../../../services/realtimeService';
 import { FileUpload } from '../../../components/ui/FileUpload';
 import type { Staff, StaffType, DomesticWorker } from '../../../types/society';
@@ -26,10 +27,13 @@ export const StaffManagementPage: React.FC = () => {
   // New staff form state
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [staffType, setStaffType] = useState<StaffType>('GUARD');
   const [gateAssigned, setGateAssigned] = useState('Main Gate 1');
   const [shiftTiming] = useState('08:00 AM - 08:00 PM');
   const [staffDocUrl, setStaffDocUrl] = useState('');
+  const [staffError, setStaffError] = useState<string | null>(null);
 
   const refreshData = () => {
     setStaff(societyService.getStaff(currentSocietyId));
@@ -48,15 +52,38 @@ export const StaffManagementPage: React.FC = () => {
     return () => unsub();
   }, []);
 
-  const handleCreateStaff = (e: React.FormEvent) => {
+  const handleCreateStaff = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return;
+    if (!name.trim() || !phone.trim() || !email.trim() || !password.trim()) {
+      setStaffError('Name, phone, email and password are all required.');
+      return;
+    }
+    if (password.trim().length < 8) {
+      setStaffError('Password must be at least 8 characters long.');
+      return;
+    }
+
+    setStaffError(null);
+
+    try {
+      await apiClient.provisionUser({
+        societyId: currentSocietyId,
+        role: staffType === 'GUARD' ? 'guard' : 'facility_manager',
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        password: password.trim(),
+        metadata: { staffType, gateAssigned, shiftTiming, staffDocUrl },
+      });
+    } catch (err: any) {
+      console.warn('Backend staff provision error, continuing locally:', err?.message || err);
+    }
 
     societyService.createStaff(
       {
         societyId: currentSocietyId,
-        name,
-        phone,
+        name: name.trim(),
+        phone: phone.trim(),
         staffType,
         gateAssigned,
         shiftTiming,
@@ -69,6 +96,8 @@ export const StaffManagementPage: React.FC = () => {
     setIsAddStaffModalOpen(false);
     setName('');
     setPhone('');
+    setEmail('');
+    setPassword('');
   };
 
   const filteredStaff = staff.filter((s) => {
@@ -324,24 +353,54 @@ export const StaffManagementPage: React.FC = () => {
       </div>
 
       {/* Modal: Assign Staff */}
-      <Modal isOpen={isAddStaffModalOpen} onClose={() => setIsAddStaffModalOpen(false)} title="Assign New Staff Member">
+      <Modal isOpen={isAddStaffModalOpen} onClose={() => { setIsAddStaffModalOpen(false); setStaffError(null); }} title="Assign New Staff Member">
         <Form onSubmit={handleCreateStaff}>
           <div className="space-y-4">
-            <FormField label="Staff Name">
+            {staffError && (
+              <div style={{ padding: '0.65rem 1rem', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '10px', color: '#DC2626', fontSize: '0.83rem', fontWeight: 600 }}>
+                {staffError}
+              </div>
+            )}
+            <FormField label="Staff Name *">
               <input
                 type="text"
+                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Rahul Sharma"
                 className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
               />
             </FormField>
-            <FormField label="Phone Number">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField label="Mobile Phone *">
+                <input
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="e.g. +91 9876543210"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+              <FormField label="Email Address (Login ID) *">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. rahul.guard@aarizo.com"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
+                />
+              </FormField>
+            </div>
+            <FormField label="Login Password (Min. 8 characters) *">
               <input
-                type="text"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="e.g. +91 9876543210"
+                type="password"
+                required
+                minLength={8}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Secure password for Guard/Staff app login"
                 className="w-full p-2.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#176B91]"
               />
             </FormField>
