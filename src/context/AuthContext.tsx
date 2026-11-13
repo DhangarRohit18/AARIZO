@@ -33,6 +33,7 @@ interface AuthContextProps {
   submitLogin: (appVerifier: RecaptchaVerifier) => Promise<void>;
   verifyOtp: (code: string) => Promise<void>;
   loginAsRole: (role: UserRole) => void;
+  loginWithProfile: (profile: UserProfile) => void;
   logout: () => Promise<void>;
   setError: (err: string | null) => void;
 }
@@ -236,6 +237,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setStatus('AUTHENTICATED');
   };
 
+  const loginWithProfile = (profile: UserProfile) => {
+    try {
+      sessionStorage.setItem(ACTIVE_SESSION_KEY, 'true');
+      sessionStorage.setItem(LAST_ROLE_KEY, profile.role.toLowerCase());
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(profile));
+    } catch (e) {
+      console.warn("Failed to persist active session:", e);
+    }
+    setCurrentUser(profile);
+    setStatus('AUTHENTICATED');
+  };
+
   const logout = async () => {
     try {
       await signOut(auth);
@@ -266,6 +279,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         submitLogin,
         verifyOtp,
         loginAsRole,
+        loginWithProfile,
         logout,
         setError,
       }}

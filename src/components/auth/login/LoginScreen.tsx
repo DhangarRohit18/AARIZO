@@ -18,9 +18,11 @@ import {
   Lock,
   Loader2,
   Smartphone,
+  Mail,
 } from 'lucide-react';
 import { MOCK_USERS } from '../../../mockData/auth/mockUsers';
-import type { UserRole } from '../../../domains/auth/types';
+import { apiClient } from '../../../services/apiClient';
+import type { UserRole, UserProfile } from '../../../domains/auth/types';
 import '../auth.css';
 
 export const LoginScreen: React.FC = () => {
@@ -30,6 +32,7 @@ export const LoginScreen: React.FC = () => {
     setPhoneNumber,
     verifyOtp,
     loginAsRole,
+    loginWithProfile,
     error,
     setError,
   } = useAuth();
@@ -81,12 +84,62 @@ export const LoginScreen: React.FC = () => {
     handleRoleSelect(role);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phoneNumber.trim()) {
+    const identifier = phoneNumber.trim();
+    if (!identifier) {
       setError('Please enter a valid mobile number or email.');
       return;
     }
+
+    // Real Authentication: If email is entered, authenticate with PostgreSQL backend using stored salt & hash
+    if (identifier.includes('@')) {
+      if (!password.trim()) {
+        setError('Please enter your account password.');
+        return;
+      }
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await apiClient.loginWithPassword({
+          email: identifier,
+          password: password.trim(),
+        });
+        if (res && res.success && res.user) {
+          const userRole = (res.user.role || 'resident').toLowerCase() as UserRole;
+          const userProfile: UserProfile = {
+            id: res.user.id,
+            uid: res.user.id,
+            name: res.user.name,
+            email: res.user.email,
+            phone: res.user.phone,
+            role: userRole,
+            societyId: res.user.societyId || 'soc-gvs',
+            societyName: res.user.societyName || 'Green Valley Society',
+            flatNumber: res.user.flatNumber,
+            status: 'ACTIVE',
+            avatarUrl: `https://images.unsplash.com/photo-1534528741775?auto=format&fit=crop&w=250&q=80`,
+          };
+          loginWithProfile(userProfile);
+          setLoading(false);
+
+          if (userRole === 'secretary') navigate('/admin', { replace: true });
+          else if (userRole === 'guard') navigate('/security', { replace: true });
+          else if (userRole === 'committee') navigate('/committee', { replace: true });
+          else if (userRole === 'facility_manager') navigate('/facility', { replace: true });
+          else if (userRole === 'vendor') navigate('/vendor', { replace: true });
+          else if (userRole === 'admin') navigate('/super-admin', { replace: true });
+          else navigate('/resident', { replace: true });
+          return;
+        }
+      } catch (err: any) {
+        setError(err?.message || 'Invalid email or password. Please verify credentials.');
+        setLoading(false);
+        return;
+      }
+    }
+
+    // Role demo flow when mobile number is provided
     executeLogin(activeRole);
   };
 
@@ -437,12 +490,12 @@ export const LoginScreen: React.FC = () => {
                   gap: '0.3rem',
                 }}
               >
-                <Smartphone size={14} />
-                <span>+91</span>
+                {phoneNumber.includes('@') ? <Mail size={14} /> : <Smartphone size={14} />}
+                <span>{phoneNumber.includes('@') ? 'ID' : '+91'}</span>
               </div>
               <input
                 type="text"
-                placeholder="Enter mobile number"
+                placeholder="Enter email or mobile number"
                 value={phoneNumber}
                 onChange={(e) => {
                   setPhoneNumber(e.target.value);
